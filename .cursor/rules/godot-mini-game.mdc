@@ -1,0 +1,20 @@
+---
+description: Godot K12 小游戏 AI 开发约束
+globs: "**/*.{gd,tscn,tres,godot}"
+alwaysApply: true
+---
+
+# AI 小游戏创作工坊 · Cursor 开发约束
+
+- 使用 Godot 4.6 Standard + GDScript，**全部函数强类型**
+- 单次会话只改 **一个品类模板** 目录
+- **禁止修改 `core/` 目录**（移动、命中、公式、调度逻辑已预制）
+- 用户创作时**只改 `config/game_config.json`** 的 `tuning` 与 `theme` 字段
+- 生成前执行 `python 05-工具脚本/query_rag.py "{主题}" -k 5` 获取依据
+- `tuning` 数值调整须在规格文档范围内（±30%），不得越界
+- 禁止新建：联机、存档、内购、广告、商城系统
+- 场景深度 ≤ 5 层；单场景节点 ≤ 80
+- 素材仅用 `assets/` 与 Kenney CC0
+- 完成后必须 **godot-mcp run_project** 且无 ERROR
+- 面向 14 岁以下：无暴力血腥恐怖；操作 ≤ 3 键
+- 演示导出：Windows exe 优先，HTML 仅降级

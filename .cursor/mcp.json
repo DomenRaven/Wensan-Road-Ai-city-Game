@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "godot": {
+      "command": "npx",
+      "args": ["-y", "@coding-solo/godot-mcp"],
+      "env": {
+        "DEBUG": "true",
+        "npm_config_cache": "C:\\Users\\MAC\\AppData\\Local\\Temp\\npm-cache-cursor-mcp",
+        "GODOT_PATH": "F:\\Godot\\Godot_v4.6.3-stable_win64.exe\\Godot_v4.6.3-stable_win64_console.exe"
+      }
+    }
+  }
+}

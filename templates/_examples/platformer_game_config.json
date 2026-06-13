@@ -1,0 +1,36 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "platformer",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "星星大冒险"
+  },
+  "core_locked": true,
+  "tuning": {
+    "player": {
+      "move_speed": 220,
+      "jump_velocity": -380,
+      "max_fall_speed": 500
+    },
+    "level": {
+      "tilemap": "res://scenes/level_01.tscn"
+    },
+    "collectible": {
+      "target_count": 5
+    },
+    "enemy": {
+      "patrol_speed": 80
+    }
+  },
+  "theme": {
+    "asset_pack": "platformer",
+    "player_sprite": "res://assets/kenney/platformer/character.png",
+    "tileset": "res://assets/kenney/platformer/tiles.png",
+    "title": "星星大冒险"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

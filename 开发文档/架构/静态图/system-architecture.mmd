@@ -1,0 +1,53 @@
+%% AI 小游戏创作工坊 · 系统架构 v1.1
+%% Phase 1 制作核（实线）+ Phase 3 展陈（虚线）
+
+flowchart TB
+    subgraph P1_INPUT["Phase 1 · 输入"]
+        USER["Cursor 对话"]
+        RAG["本地 RAG · 882 chunks"]
+    end
+
+    subgraph CREATION["制作层 · P1 核心"]
+        CURSOR["Cursor Agent"]
+        RULES[".cursor/rules"]
+        MCP["godot-mcp"]
+        GODOT["Godot 4.6"]
+        TPL["templates/ + workspace/"]
+        CONFIG["game_config.json"]
+    end
+
+    subgraph DEMO["演示层"]
+        RUN["Godot Run"]
+        EXE["Windows exe"]
+    end
+
+    subgraph P3_INTERACTION["Phase 3 · 交互层"]
+        KIOSK["55″ Kiosk"]
+        DISPLAY["49″ 横屏"]
+        QR["QR / 背墙"]
+    end
+
+    subgraph P3_ORCH["Phase 3 · 编排层"]
+        API["FastAPI"]
+        REDIS["Redis"]
+        MINIO["MinIO"]
+    end
+
+    USER --> CURSOR
+    RAG --> CURSOR
+    RULES --> CURSOR
+    CURSOR --> CONFIG
+    CURSOR --> MCP
+    TPL --> GODOT
+    MCP --> GODOT
+    CONFIG --> GODOT
+    GODOT --> RUN
+    GODOT --> EXE
+
+    KIOSK -.-> API
+    DISPLAY -.-> API
+    API -.-> REDIS
+    API -.-> CURSOR
+    EXE -.-> MINIO
+    MINIO -.-> QR
+    API -.-> DISPLAY

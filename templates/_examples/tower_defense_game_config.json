@@ -1,0 +1,43 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "tower_defense",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "花园守卫战"
+  },
+  "core_locked": true,
+  "tuning": {
+    "economy": {
+      "start_gold": 120
+    },
+    "tower": {
+      "basic": {
+        "damage": 15,
+        "range": 3,
+        "cost": 50
+      }
+    },
+    "enemy": {
+      "basic": {
+        "hp": 40,
+        "speed": 60
+      }
+    },
+    "wave": {
+      "count": 5,
+      "spawn_interval_ms": 800
+    }
+  },
+  "theme": {
+    "asset_pack": "garden",
+    "tower_sprite": "res://assets/kenney/tower-defense/tower.png",
+    "enemy_sprite": "res://assets/kenney/tower-defense/enemy.png",
+    "map_tileset": "res://assets/kenney/tower-defense/tiles.png",
+    "title": "花园守卫战"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

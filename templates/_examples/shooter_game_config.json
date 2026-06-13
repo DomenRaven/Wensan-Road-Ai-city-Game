@@ -1,0 +1,39 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "shooter",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "小行星守卫战"
+  },
+  "core_locked": true,
+  "tuning": {
+    "player": {
+      "speed": 280,
+      "max_hp": 3
+    },
+    "bullet": {
+      "speed": 520,
+      "interval_ms": 180
+    },
+    "enemy": {
+      "speed": 120,
+      "hp": 1
+    },
+    "wave": {
+      "count": 3,
+      "enemies_per_wave": 8
+    }
+  },
+  "theme": {
+    "asset_pack": "space",
+    "player_sprite": "res://assets/kenney/space/Ship.png",
+    "enemy_sprite": "res://assets/kenney/space/Enemy.png",
+    "bg_color": "#0a1628",
+    "title": "小行星守卫战"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

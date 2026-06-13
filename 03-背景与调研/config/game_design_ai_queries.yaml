@@ -1,0 +1,82 @@
+# AI 小游戏创作工坊 · 游戏设计与 AI 创作检索主题
+# 对齐：技术选型 v1.0 · 品类核心参数规格 · Godot+Cursor 路线
+topics:
+  - id: ai_game_creation
+    name: AI辅助游戏创作与智能体
+    queries:
+      - AI 生成游戏 Godot Cursor MCP
+      - AI assisted game development LLM agent
+      - procedural game generation AI tutorial
+      - godot-mcp Cursor 游戏开发
+      - 大模型 辅助 游戏制作 工作流
+      - site:csdn.net AI 游戏开发 Godot
+      - site:juejin.cn AI 生成 小游戏
+      - site:bilibili.com AI 做游戏 教程
+      - site:zhihu.com AI 辅助 独立游戏 开发
+
+  - id: godot_design
+    name: Godot游戏设计与GDScript
+    queries:
+      - Godot 4 2D 游戏设计 教程
+      - Godot platformer game feel coyote jump
+      - Godot top down shooter tutorial
+      - Godot tower defense game design
+      - GDScript 游戏 架构 最佳实践
+      - site:csdn.net Godot 小游戏 开发
+      - site:bilibili.com Godot 入门 2D
+      - site:gamedev.net Godot design patterns
+
+  - id: game_feel_mechanics
+    name: 游戏手感与核心机制设计
+    queries:
+      - game feel juice platformer movement
+      - 游戏手感 设计 射击 反馈
+      - 塔防 数值平衡 设计 公式
+      - 横版闯关 跳跃 手感 参数
+      - MDA framework game design mechanics dynamics aesthetics
+      - 休闲小游戏 核心循环 设计
+      - 推理解谜 游戏 关卡 设计
+      - 生活模拟 游戏 交互 设计
+
+  - id: template_parametric
+    name: 模板化与参数化游戏生成
+    queries:
+      - data driven game design JSON config
+      - game template rapid prototyping indie
+      - 游戏 模板 参数化 关卡 配置
+      - roguelike data driven design godot
+      - 游戏 jam 10 minute prototype template
+      - site:github.com godot game template starter
+      - site:github.com godot platformer template
+
+  - id: k12_edu_game
+    name: K12教育游戏与展陈
+    queries:
+      - 教育游戏 设计 儿童 14岁
+      - serious games museum exhibition interactive
+      - 研学 游戏 编程 体验 设计
+      - 游戏化学习 展馆 互动 设计
+      - 少儿 编程 游戏创作 教学
+      - site:bilibili.com 少儿 游戏开发 教育
+      - STEAM 游戏设计 课程 小学
+
+  - id: genre_specific
+    name: 分品类设计参考
+    queries:
+      - 飞机大战 游戏 设计 核心机制
+      - 塔防游戏 波次 数值 设计
+      - 跑酷游戏 障碍 生成 设计
+      - 平台跳跃 关卡 设计 原则
+      - 推理解谜 游戏 物品 组合 设计
+      - 接球 消除 休闲 arcade 游戏 设计
+
+  - id: ai_theory_paper
+    name: 学术与行业理论
+    queries:
+      - procedural content generation survey game
+      - LLM code generation game development paper
+      - AI game design academic journal
+      - 程序化 内容 生成 游戏 综述
+      - 人工智能 游戏 设计 研究 论文
+      - site:arxiv.org game generation LLM
+      - site:ieee.org serious game design

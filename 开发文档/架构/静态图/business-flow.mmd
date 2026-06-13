@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> IDLE
+    IDLE --> INTENT: 点击开始
+    INTENT --> CREATE: 确认生成
+    CREATE --> PLAY: 生成成功
+    CREATE --> RESET: 超时失败
+    PLAY --> DONE: 试玩结束
+    DONE --> RESET: 交付完成
+    RESET --> IDLE: 清理完成
