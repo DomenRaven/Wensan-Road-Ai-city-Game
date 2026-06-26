@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "genre": "sports_race",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "田径冲刺"
+  },
+  "core_locked": true,
+  "tuning": {
+    "runner": {
+      "speed": 260,
+      "boost_multiplier": 1.45,
+      "accel_rate": 4.5
+    },
+    "jump": {
+      "velocity": -420,
+      "max_fall_speed": 520
+    },
+    "physics": {
+      "gravity": 980
+    },
+    "track": {
+      "length_px": 3000
+    },
+    "obstacle": {
+      "density": 0.4,
+      "min_gap_px": 200
+    },
+    "round": {
+      "duration_sec": 60
+    },
+    "enabled_skills": [],
+    "skills": {
+      "sprint_burst": {
+        "cooldown_scale": 1.0
+      },
+      "high_jump": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "sports-pack",
+    "player_sprite": "res://assets/kenney/sports-pack/PNG/Blue/characterBlue (1).png",
+    "track_sprite": "res://assets/kenney/sports-pack/Tilesheet/groundGrass.png",
+    "hurdle_sprite": "res://assets/kenney/sports-pack/PNG/Elements/element (21).png",
+    "background_color": "#87CEEB",
+    "title": "田径冲刺",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactWood_heavy_000.ogg",
+        "jump": "res://assets/kenney/impact-sounds/Audio/footstep_grass_000.ogg",
+        "land": "res://assets/kenney/impact-sounds/Audio/footstep_concrete_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

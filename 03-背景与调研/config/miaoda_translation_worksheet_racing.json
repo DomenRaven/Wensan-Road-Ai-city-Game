@@ -1,0 +1,53 @@
+{
+  "slug": "racing",
+  "godot_config": "templates/racing/config/game_config.json",
+  "miaoda_source": "03-背景与调研/data/秒哒精选源码/racing",
+  "preview_url": "https://app-cikgdwwv35z5.appmiaoda.com",
+  "tuning_candidates": {
+    "car.max_speed": {
+      "miaoda_value": 800.0,
+      "godot_default": 340,
+      "proposed": 442,
+      "notes": "transform=direct; clamped"
+    },
+    "car.acceleration": {
+      "miaoda_value": 300.0,
+      "godot_default": 200,
+      "proposed": 260,
+      "notes": "transform=direct; clamped"
+    },
+    "car.turn_rate": {
+      "miaoda_value": 300.0,
+      "godot_default": 3.0,
+      "proposed": 3.0,
+      "notes": "transform=ratio"
+    },
+    "obstacle.density": {
+      "miaoda_value": 0.6,
+      "godot_default": 0.5,
+      "proposed": 0.4,
+      "notes": "transform=obstacle_chance"
+    },
+    "round.duration_sec": {
+      "miaoda_value": 90.0,
+      "godot_default": 90,
+      "proposed": 90,
+      "notes": "transform=direct"
+    }
+  },
+  "theme_candidates": {
+    "title": {
+      "miaoda": "",
+      "proposed": "",
+      "kenney_pack": "racing-pack"
+    },
+    "player_sprite": {
+      "miaoda": "",
+      "proposed": ""
+    }
+  },
+  "enabled_skills": [],
+  "ux_notes": "",
+  "verified": false,
+  "verified_at": ""
+}

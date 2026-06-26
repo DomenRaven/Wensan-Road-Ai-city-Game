@@ -1,0 +1,43 @@
+{
+  "slug": "fighting",
+  "godot_config": "templates/fighting/config/game_config.json",
+  "miaoda_source": "03-背景与调研/data/秒哒精选源码/fighting",
+  "preview_url": "https://app-cijahlqb7pj5.appmiaoda.com",
+  "tuning_candidates": {
+    "player.walk_speed": {
+      "miaoda_value": 300.0,
+      "godot_default": 180,
+      "proposed": 234,
+      "notes": "transform=direct; clamped"
+    },
+    "player.max_hp": {
+      "miaoda_value": 100.0,
+      "godot_default": 100,
+      "proposed": 100,
+      "notes": "transform=direct"
+    },
+    "move.light.damage": {
+      "miaoda_value": 15.0,
+      "godot_default": 12,
+      "proposed": 15,
+      "notes": "transform=direct"
+    },
+    "ai.reaction_interval_sec": {
+      "miaoda_value": 0.25,
+      "godot_default": 0.45,
+      "proposed": 0.315,
+      "notes": "transform=direct; clamped"
+    }
+  },
+  "theme_candidates": {
+    "title": {
+      "miaoda": "",
+      "proposed": "",
+      "kenney_pack": "platformer-art-deluxe"
+    }
+  },
+  "enabled_skills": [],
+  "ux_notes": "",
+  "verified": false,
+  "verified_at": ""
+}

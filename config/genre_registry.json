@@ -1,0 +1,133 @@
+{
+  "version": "1.3",
+  "updated_at": "2026-06-20",
+  "max_concurrent_sessions": 10,
+  "recommended_simultaneous_play": 6,
+  "wizard_flow": "开发文档/模板引擎/AI创作引导流程_v1.0.md",
+  "play_variants_config": "config/play_variants.json",
+  "optional_skills_config": "config/optional_skills.json",
+  "genres": [
+    {
+      "tpl_id": "TPL-01",
+      "slug": "shooter",
+      "display_name": "射击",
+      "meta_genre": "shooter",
+      "camera_modes": ["tps", "fps"],
+      "d10_tier": "L0",
+      "l1_ai": true,
+      "template_path": "templates/shooter",
+      "batch": "D4"
+    },
+    {
+      "tpl_id": "TPL-02",
+      "slug": "fighting",
+      "display_name": "横版格斗",
+      "meta_genre": "fighting",
+      "camera_modes": ["side"],
+      "d10_tier": "L0",
+      "l1_ai": false,
+      "template_path": "templates/fighting",
+      "batch": "D4"
+    },
+    {
+      "tpl_id": "TPL-03",
+      "slug": "survivor",
+      "display_name": "割草肉鸽",
+      "meta_genre": "survivor",
+      "camera_modes": ["topdown"],
+      "d10_tier": "L0",
+      "l1_ai": true,
+      "template_path": "templates/survivor",
+      "batch": "D4"
+    },
+    {
+      "tpl_id": "TPL-04",
+      "slug": "tower_defense",
+      "display_name": "塔防",
+      "meta_genre": "tower_defense",
+      "camera_modes": ["topdown"],
+      "d10_tier": "L0",
+      "l1_ai": true,
+      "template_path": "templates/tower_defense",
+      "batch": "D3"
+    },
+    {
+      "tpl_id": "TPL-05",
+      "slug": "parkour",
+      "display_name": "跑酷",
+      "meta_genre": "parkour",
+      "camera_modes": ["side", "track"],
+      "d10_tier": "L0",
+      "l1_ai": false,
+      "template_path": "templates/parkour",
+      "batch": "D4"
+    },
+    {
+      "tpl_id": "TPL-06",
+      "slug": "platformer",
+      "display_name": "横版闯关",
+      "meta_genre": "platformer",
+      "camera_modes": ["side"],
+      "d10_tier": "L0",
+      "l1_ai": true,
+      "template_path": "templates/platformer",
+      "batch": "D3"
+    },
+    {
+      "tpl_id": "TPL-07",
+      "slug": "life_sim",
+      "display_name": "生活模拟",
+      "meta_genre": "life_sim",
+      "camera_modes": ["isometric", "side"],
+      "d10_tier": "L0",
+      "l1_ai": false,
+      "reference": "4399 做饭/种菜风",
+      "template_path": "templates/life_sim",
+      "batch": "D5"
+    },
+    {
+      "tpl_id": "TPL-08",
+      "slug": "sports_race",
+      "display_name": "体育竞速",
+      "meta_genre": "sports_race",
+      "camera_modes": ["side"],
+      "d10_tier": "L0",
+      "l1_ai": false,
+      "template_path": "templates/sports_race",
+      "batch": "D5"
+    },
+    {
+      "tpl_id": "TPL-09",
+      "slug": "pingpong",
+      "display_name": "乒乓球",
+      "meta_genre": "pingpong",
+      "camera_modes": ["topdown"],
+      "d10_tier": "L0",
+      "l1_ai": false,
+      "template_path": "templates/pingpong",
+      "batch": "D5"
+    },
+    {
+      "tpl_id": "TPL-10",
+      "slug": "racing",
+      "display_name": "赛车",
+      "meta_genre": "racing",
+      "camera_modes": ["topdown", "pseudo3d"],
+      "d10_tier": "L0",
+      "l1_ai": false,
+      "template_path": "templates/racing",
+      "batch": "D5"
+    },
+    {
+      "tpl_id": "TPL-11",
+      "slug": "shmup",
+      "display_name": "雷霆战机",
+      "meta_genre": "shmup",
+      "camera_modes": ["vertical"],
+      "d10_tier": "L0",
+      "l1_ai": true,
+      "template_path": "templates/shmup",
+      "batch": "D3"
+    }
+  ]
+}

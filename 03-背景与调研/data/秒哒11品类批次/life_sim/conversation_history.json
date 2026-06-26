@@ -1,0 +1,20 @@
+[
+  {
+    "eventId": 6,
+    "role": "user",
+    "type": "message",
+    "content": "请制作一款【K12 小厨房模拟】浏览器小游戏，参考《美食烹饪家》《Township》《Cooking Fever》。\n\n## 参考要点\n- 烹饪家：顾客订单→备料→烹饪→上菜\n- Township：简单生产链\n- Cooking Fever：点击热区+进度条\n\n## 核心玩法\n- 鼠标点击：点冰箱取料→点炉灶烹饪（4 秒进度条）→点顾客上菜\n- 2 分钟内完成 3 单订单\n- 顾客 patienc"
+  },
+  {
+    "eventId": 555,
+    "role": "user",
+    "type": "message",
+    "content": "生成应用"
+  },
+  {
+    "eventId": 704,
+    "role": "system",
+    "type": "status",
+    "content": "state=completed"
+  }
+]

@@ -1,0 +1,38 @@
+[gd_scene load_steps=6 format=3 uid="uid://sports_race_game"]
+
+[ext_resource type="Script" path="res://core/track_runner.gd" id="1_runner"]
+[ext_resource type="PackedScene" uid="uid://sports_race_player" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://core/scroll_track.gd" id="3_scroll"]
+[ext_resource type="Script" path="res://core/hurdle_spawner.gd" id="4_spawner"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(800, 24)
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_runner")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.53, 0.81, 0.92, 1)
+
+[node name="ScrollTrack" type="Node2D" parent="."]
+script = ExtResource("3_scroll")
+
+[node name="Tiles" type="Node2D" parent="ScrollTrack"]
+
+[node name="Ground" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+position = Vector2(320, 300)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="HurdleSpawner" type="Node2D" parent="."]
+script = ExtResource("4_spawner")
+
+[node name="Hurdles" type="Node2D" parent="HurdleSpawner"]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(120, 300)

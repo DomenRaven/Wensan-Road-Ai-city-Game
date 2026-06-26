@@ -1,0 +1,372 @@
+{
+  "version": "1.2",
+  "updated_at": "2026-06-23",
+  "milestone_r2": {
+    "status": "complete",
+    "date": "2026-06-23",
+    "acceptance": "7/7",
+    "tier": "A 深 R2",
+    "signed_off_by": "user"
+  },
+  "fighting_acceptance_at": "2026-06-23",
+  "survivor_acceptance_at": "2026-06-23",
+  "deadline": "2026-06-30",
+  "pingpong_acceptance_at": "2026-06-23",
+  "session_note": "七天交工策略定稿；精选7款均为 A 深 R2 且全部 r2_done；7/7 用户侧验收或审查通过（含 pingpong 2026-06-23）",
+  "delivery_tiers": {
+    "A_r2_done": {
+      "label": "深 R2",
+      "count_target": "7",
+      "slugs_done": ["platformer", "shmup", "survivor", "racing", "pingpong", "parkour", "fighting"],
+      "slugs_planned": []
+    },
+    "C_pipeline_ok": {
+      "label": "11类流水线",
+      "requirements": ["kiosk_playable", "run_project_no_error", "config_tunable"]
+    }
+  },
+  "delivery_docs": {
+    "checklist": "开发文档/模板引擎/6.23_七天交工工作清单_v1.0.md",
+    "playbook": "开发文档/模板引擎/6.23_R2对齐执行规范手册_v1.0.md"
+  },
+  "description": "秒哒对齐 R2 · 全方位落实秒哒成熟版到 Godot（用户 2026-06-23 立项）",
+  "supersedes": "仅 game_config.json 的 v1 转译手册（config 层保留为初稿，不作完成标准）",
+  "user_decision": {
+    "date": "2026-06-23",
+    "statement": "本地 Godot L0 原型质量不足，需大幅度向秒哒版本对齐：交互逻辑、数值设计、美术素材等全方位落实。仅改 config 的自动转译看不出差别，不作为交付标准。",
+    "miaoda_billing": "秒哒账户欠费 · API/编辑器续生成不可用 · 以本地落盘源码+PRD 为唯一参考"
+  },
+  "scope_layers": [
+    "gameplay_core",
+    "tuning_numbers",
+    "level_ui_hud",
+    "art_animation_audio"
+  ],
+  "session_rules": {
+    "one_slug_per_session": true,
+    "may_edit_core_and_scenes": true,
+    "config_still_user_tunable": "templates/{slug}/config/game_config.json",
+    "forbidden": ["联机", "存档", "内购", "广告", "一次改多品类"]
+  },
+  "references": {
+    "brief": "开发文档/模板引擎/秒哒对齐R2_立项说明_v1.0.md",
+    "seven_day_checklist": "开发文档/模板引擎/6.23_七天交工工作清单_v1.0.md",
+    "r2_playbook": "开发文档/模板引擎/6.23_R2对齐执行规范手册_v1.0.md",
+    "miaoda_registry": "config/miaoda_reference_registry.json",
+    "source_root": "03-背景与调研/data/秒哒精选源码",
+    "v1_translation": "开发文档/模板引擎/秒哒转Godot_game_config_指导手册_v1.0.md",
+    "apply_script": "05-工具脚本/miaoda_apply_translation.py"
+  },
+  "slug_order": [
+    "platformer",
+    "survivor",
+    "racing",
+    "fighting",
+    "pingpong",
+    "shmup",
+    "parkour"
+  ],
+  "entries": {
+    "platformer": {
+      "status": "r2_done",
+      "r2_completed_at": "2026-06-23",
+      "tier_planned": "A",
+      "miaoda_app_id": "app-chu2c3e6u4g1",
+      "preview_url": "https://app-chu2c3e6u4g1.appmiaoda.com",
+      "user_download_path": "秒哒游戏原型/横版闯关游戏/app-chu2c3e6u4g1",
+      "user_download_verified": "2026-06-23",
+      "source": "03-背景与调研/data/秒哒精选源码/platformer",
+      "godot_template": "templates/platformer",
+      "gap_doc": "开发文档/模板引擎/评审记录/platformer_R2_差距勾选.md",
+      "config_backup": "templates/platformer/config/game_config.json.pre_miaoda_translation",
+      "gap_summary": [
+        "已对齐：开始/结束/胜利 UI · 3 命 HUD · 踩头杀怪/侧面扣命/无敌帧",
+        "已对齐：金币+10 · 通关旗+500 · 横版卷轴相机 · 3×关卡宽",
+        "已对齐：地面 32px 色块/砖块/管道/樱桃金币/终点旗 · 秒哒坐标映射 800×600→640×360",
+        "扩展：Lv4+ 紫(2踩)/橙(跳跃)/红(炮台) 敌人类 · configure_level 先于 add_child",
+        "已知可接受：多关布局 profile+seed 变体 · 顶砖必出金币 · 640×360 Kiosk · 无 BGM",
+        "经验沉淀：platformer_R2复刻经验手册_v1.0.md"
+      ],
+      "p0_checklist_percent": 100,
+      "acceptance": {
+        "status": "passed",
+        "date": "2026-06-23",
+        "signed_off_by": "user",
+        "note": "用户验收通过：踩头/侧面扣命/同向接触 · Lv4+ 紫橙红新敌人 · 地面与碰撞稳定"
+      },
+      "verification": {
+        "godot_mcp_run_project": "2026-06-23 errors: []",
+        "godot_playtest": "2026-06-23 用户确认玩法正常",
+        "godot_acceptance": "2026-06-23 用户验收通过",
+        "local_miaoda_run": "npm install 依赖冲突 · 以 PRD/MainGame.ts 落盘为准",
+        "experience_doc": "开发文档/模板引擎/platformer_R2复刻经验手册_v1.0.md",
+        "collision_fix": "2026-06-23 StompArea+HurtArea · mask 2→3 · 动态 StaticBody2D layer=2",
+        "level_enemy_fix": "2026-06-23 configure_level 传入关卡号 · Lv4/5 保底新敌人生成"
+      },
+      "r2_checklist": [
+        "PRD 功能对照表 100% 勾选",
+        "与秒哒 H5 左右试玩无明显玩法缺失",
+        "godot-mcp run_project 无 ERROR",
+        "game_config 可调项外置",
+        "Lv4+ 紫/橙/红扩展敌人",
+        "用户验收通过 2026-06-23"
+      ]
+    },
+    "survivor": {
+      "status": "r2_done",
+      "r2_completed_at": "2026-06-23",
+      "acceptance": {
+        "status": "passed",
+        "date": "2026-06-23",
+        "signed_off_by": "user",
+        "note": "大地图+Boss激光/光球+受击反馈+血条/升级UI；WASD手感与光球扣血修复后验收通过"
+      },
+      "tier_planned": "A",
+      "tier_delivered": "A",
+      "miaoda_app_id": "app-cikthp6wjz0h",
+      "preview_url": "https://app-cikthp6wjz0h.appmiaoda.com",
+      "user_download_path": "秒哒游戏原型/割草肉鸽/app-cikthp6wjz0h",
+      "godot_template": "templates/survivor",
+      "experience_handbook": "开发文档/模板引擎/survivor_R2复刻经验手册_v1.0.md",
+      "r2_checklist": [
+        "PRD P0 ≥90%",
+        "180s 倒计时 + Boss 战",
+        "6 类升级 + Boss 升级回血",
+        "WASD + 鼠标朝向自动射击",
+        "3000×3000 大地图 + 相机跟随",
+        "Boss 全图激光 + 半血光球环",
+        "玩家血条 + 受击/激光受击反馈",
+        "开始/胜利/失败 UI",
+        "godot-mcp run_project 无 ERROR",
+        "用户验收通过 2026-06-23"
+      ],
+      "gap_summary": [
+        "秒哒 top-down PNG 未落盘，暂用 Kenney + 糖果配色",
+        "无行走动画（Kenney 静帧替代）",
+        "秒哒 H5 左右试玩待展陈前补做"
+      ]
+    },
+    "racing": {
+      "status": "r2_done",
+      "r2_completed_at": "2026-06-23",
+      "acceptance": {
+        "status": "passed",
+        "date": "2026-06-23",
+        "signed_off_by": "user",
+        "note": "SubViewport 等比缩放 + 整图集 tileSprite 对齐 Phaser；用户审查通过"
+      },
+      "tier_planned": "A",
+      "tier_delivered": "A",
+      "miaoda_app_id": "app-cikgdwwv35z5",
+      "preview_url": "https://app-cikgdwwv35z5.appmiaoda.com",
+      "user_download_path": "秒哒游戏原型/赛车小游戏/app-cikgdwwv35z5",
+      "user_download_verified": "2026-06-23",
+      "godot_template": "templates/racing",
+      "verification": {
+        "game_code_complete": true,
+        "prd_complete": true,
+        "cars_racing_png": true,
+        "local_run": "npm install && npx vite --host 127.0.0.1 --port 5173",
+        "godot_mcp_run_project": "2026-06-23 errors: []",
+        "godot_acceptance": "2026-06-23 用户审查通过"
+      },
+      "r2_checklist": [
+        "开始/结算 UI + 90s 倒计时",
+        "←→ 转向 + 空格加速",
+        "圈数计分 + NPC/路障碰撞减速",
+        "cars-racing 秒哒素材",
+        "540×960 竖屏 + 大屏等比缩放",
+        "godot-mcp run_project 无 ERROR",
+        "game_config tuning/theme 外置"
+      ],
+      "gap_summary": [
+        "2026-06-23 A档对齐：秒哒 MainGame 逻辑复刻（卷轴赛道/NPC/锥桶/碰撞减速）",
+        "2026-06-23 自查修复：setup/start 时序 · 贴图预热缓存 · 首帧刷怪 · 双端碰撞",
+        "2026-06-23 大屏/display：_refit_display 时序守卫 · min 等比 contain · 540×960 SubViewport",
+        "2026-06-23 赛道渲染：整图集非等比拉伸对齐 Phaser tileSprite(540×960)",
+        "2026-06-23 用户审查通过",
+        "非阻塞：秒哒 H5 左右对照试玩未做",
+        "非阻塞：PRD 声明本期不做音效，Godot 保留 Kenney 碰撞音"
+      ]
+    },
+    "fighting": {
+      "status": "r2_done",
+      "r2_completed_at": "2026-06-23",
+      "acceptance": {
+        "status": "passed",
+        "date": "2026-06-23",
+        "signed_off_by": "user",
+        "note": "双人对战/P2小键盘/大招特写/人机移动/MP满闪 试玩验收通过"
+      },
+      "tier_planned": "A",
+      "tier_delivered": "A",
+      "miaoda_app_id": "app-cikmsjmwyjnl",
+      "preview_url": "https://app-cikmsjmwyjnl.appmiaoda.com",
+      "user_download_path": "秒哒游戏原型/横版格斗小游戏/app-cikmsjmwyjnl",
+      "user_download_verified": "2026-06-23",
+      "godot_template": "templates/fighting",
+      "verification": {
+        "game_code_complete": true,
+        "prd_complete": true,
+        "local_run": "npm install && npx vite --host 127.0.0.1 --port 5173",
+        "godot_mcp_run_project": "2026-06-23 errors: []",
+        "godot_acceptance": "2026-06-23 用户验收通过",
+        "assets_source": "Free_Warrior_Pixel_Art_Sprite_Sheets CDN → templates/fighting/assets/warrior/"
+      },
+      "r2_checklist": [
+        "PRD P0 ≥90%",
+        "模式选择/角色选择/对战/结算 UI + 操作说明",
+        "轻拳/重拳/格挡/双击冲刺/大招定格特写+能量条满闪",
+        "人机+双人对战（P2 小键盘 1/2/3/4）",
+        "Warrior_2/3 像素动画",
+        "godot-mcp run_project 无 ERROR",
+        "game_config tuning/theme 外置"
+      ],
+      "gap_summary": [
+        "2026-06-23 A档深R2：秒哒 Game.ts 逻辑复刻（距离判定/格挡减伤/冲刺冷却/AI）",
+        "2026-06-23 试玩修复：脚底对齐地线 · 选角预览 · 开屏操作说明 · 大招定格镜头+hitstop",
+        "2026-06-23 试玩修复：AI 连续移动 · move_speed_scale 0.8 · P2 KEY_KP 小键盘映射",
+        "2026-06-23 用户验收通过",
+        "非阻塞：秒哒 H5 左右对照试玩未做",
+        "非阻塞：大招粒子为程序化色块（同秒哒 particle 占位思路）"
+      ]
+    },
+    "pingpong": {
+      "status": "r2_done",
+      "r2_completed_at": "2026-06-23",
+      "acceptance": {
+        "status": "passed",
+        "date": "2026-06-23",
+        "signed_off_by": "user",
+        "note": "开始图标/3秒倒计时/球拍判定与球场范围/球阴影/人机难度试玩验收通过"
+      },
+      "tier_planned": "A",
+      "tier_delivered": "A",
+      "miaoda_app_id": "app-cika5uyinqip",
+      "preview_url": "https://app-cika5uyinqip.appmiaoda.com",
+      "user_download_path": "秒哒游戏原型/乒乓球小游戏/app-cika5uyinqip",
+      "user_download_verified": "2026-06-23",
+      "godot_template": "templates/pingpong",
+      "gap_doc": "开发文档/模板引擎/评审记录/pingpong_R2_验收记录.md",
+      "verification": {
+        "game_code_complete": true,
+        "prd_complete": true,
+        "local_run": "npm install && npx vite --host 127.0.0.1 --port 5173",
+        "godot_mcp_run_project": "2026-06-23 errors: []",
+        "godot_acceptance": "2026-06-23 用户验收通过",
+        "assets_source": "pong-football CDN zip + assets/paddles 自绘球拍/阴影"
+      },
+      "r2_checklist": [
+        "经典 Pong 左右球拍 + ↑↓ 控制",
+        "5 分制 + 3 击加速 + 0.85–1.15 球速浮动",
+        "开始仅 START 图标 + 开局 3 秒倒计时",
+        "球拍显示/判定分离 + 对称球场边距",
+        "球阴影 + 可配置人机（aim_error/react_line）",
+        "开始/结束 UI + pong-football 素材",
+        "godot-mcp run_project 无 ERROR",
+        "game_config 可调项外置",
+        "用户验收通过 2026-06-23"
+      ],
+      "gap_summary": [
+        "2026-06-23 试玩调优：倒计时 setup 时序 · 竖直球拍贴图 · hit_radius/hit_width 缩小判定",
+        "2026-06-23 球场 margin_top/bottom 24 · 球顶底反弹 · 程序化椭圆阴影",
+        "2026-06-23 人机：瞄准误差+反应线；终值 speed 118（K12 友好）",
+        "2026-06-23 用户验收通过",
+        "非阻塞：结束页 Back 入场动画未 1:1 · 秒哒 H5 左右对照待展陈前补做"
+      ]
+    },
+    "shmup": {
+      "status": "r2_done",
+      "r2_completed_at": "2026-06-23",
+      "acceptance": {
+        "status": "passed",
+        "date": "2026-06-23",
+        "signed_off_by": "user",
+        "note": "Godot 试玩与手感调优验收通过；贴图残留为非阻塞已知项"
+      },
+      "tier_planned": "A",
+      "r2_start_date": "2026-06-23",
+      "miaoda_app_id": "app-chu7pw7h454x",
+      "preview_url": "https://app-chu7pw7h454x.appmiaoda.com",
+      "user_download_path": "秒哒游戏原型/街机飞机射击/app-chu7pw7h454x",
+      "user_download_verified": "2026-06-23",
+      "verification": {
+        "game_code_complete": true,
+        "prd_complete": true,
+        "core_png_count": 5,
+        "local_run": "npm install && npx vite --host 127.0.0.1 --port 5173",
+        "godot_mcp_run_project": "2026-06-23 errors: []",
+        "godot_playtest": "2026-06-23 用户确认可正常运行",
+        "godot_acceptance": "2026-06-23 用户验收通过",
+        "experience_doc": "开发文档/模板引擎/shmup_R2复刻经验手册_v1.0.md",
+        "missing_non_blocking": [".skills 平台技能库未检出", "无 node_modules 需自行安装"]
+      },
+      "trajectory_fallback": "03-背景与调研/data/秒哒精选源码/shmup",
+      "godot_template": "templates/shmup",
+      "r2_checklist": [
+        "三类敌机 + Boss 循环（500/1000 分）",
+        "道具 fireRate/doubleShot/shield",
+        "开始/结束 UI + 无尽得分",
+        "pixel-plane-shmup 素材",
+        "godot-mcp run_project 无 ERROR",
+        "Boss 实时血条 + 追踪弹 120° 锁定"
+      ],
+      "gap_summary": [
+        "验收通过（2026-06-23）：Boss/三类敌机/道具/无尽得分/像素素材/手感调优",
+        "非阻塞：秒哒 H5 左右对照试玩、贴图偶发残留（清场补丁已回退）",
+        "经验沉淀：shmup_R2复刻经验手册_v1.0.md"
+      ]
+    },
+    "parkour": {
+      "status": "r2_done",
+      "r2_completed_at": "2026-06-23",
+      "acceptance": {
+        "status": "passed",
+        "date": "2026-06-23",
+        "signed_off_by": "user",
+        "note": "Godot 试玩验证通过：地面/碰撞/滑铲手感 · canvas_items 文字清晰 · 滑铲高度微调"
+      },
+      "tier_planned": "A",
+      "tier_delivered": "A",
+      "miaoda_app_id": "app-cijx9ysx61vl",
+      "preview_url": "https://app-cijx9ysx61vl.appmiaoda.com",
+      "user_download_path": "秒哒游戏原型/跑酷小游戏/app-cijx9ysx61vl",
+      "user_download_verified": "2026-06-23",
+      "godot_template": "templates/parkour",
+      "verification": {
+        "game_code_complete": true,
+        "prd_complete": true,
+        "local_run": "npm install && npx vite --host 127.0.0.1 --port 5173",
+        "godot_mcp_run_project": "2026-06-23 errors: []",
+        "godot_playtest": "2026-06-23 用户确认玩法正常",
+        "godot_acceptance": "2026-06-23 用户验收通过",
+        "assets_source": "PixelAdventure_1_Free CDN → mask_dude char_*.png",
+        "experience_doc": "开发文档/模板引擎/shmup_R2复刻经验手册_v1.0.md（自查 §五/§七 参照）"
+      },
+      "r2_checklist": [
+        "PRD P0 10/10",
+        "无尽跑酷 + 空格跳跃 + ↓滑铲",
+        "高栏/低栏四类障碍",
+        "金币 + 无敌5s + 双倍金币8s",
+        "开始/结束 UI + 昼夜渐变",
+        "Mask Dude 像素动画",
+        "godot-mcp run_project 无 ERROR",
+        "game_config tuning/theme 外置"
+      ],
+      "gap_summary": [
+        "2026-06-23 A档对齐 + 经验手册自查修复（预热/时序/云朵/受击动画）",
+        "2026-06-23 试玩修复：地块 64px 无缝 · 碰撞脚底对齐 · floor_snap",
+        "2026-06-23 显示：canvas_items 拉伸（UI 文字清晰）· SubViewport 全屏方案已回退",
+        "2026-06-23 手感：滑铲高度比 0.42 · 脚底贴地",
+        "2026-06-23 用户验收通过",
+        "非阻塞：障碍/掉落物为程序化色块（同秒哒 Phaser Graphics）",
+        "非阻塞：秒哒 H5 左右对照试玩 · PRD 声明本期不做 BGM"
+      ]
+    }
+  },
+  "v1_translation_status": {
+    "automated_config_patch": "done_7_7",
+    "human_verified": false,
+    "user_accepted_as_delivery": false
+  }
+}

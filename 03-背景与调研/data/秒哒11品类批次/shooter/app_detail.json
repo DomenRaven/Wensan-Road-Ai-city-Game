@@ -1,0 +1,39 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "28eb80e87d8cac9b65a94a3aa627aa3c",
+  "data": {
+    "name": "K12俯视角射击游戏",
+    "appDesc": "一款浏览器俯视角射击小游戏，玩家通过WASD移动和空格射击消灭3波敌人。具有快节奏玩法、命中反馈、递增难度，适合K12年龄段玩家。包含开始、游戏、结算三个页面。",
+    "avatar": "http://miaoda-preview-img.cdn.bcebos.com/image-3f4d94c6f9c14ede9de5a8f68c7cc3c4.jpeg",
+    "type": "GAME",
+    "appId": "app-cijj73r3iyv5",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T21:13:19.285+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T21:03:53.892+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cijpzrl2flds",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 俯视角射击】浏览器小游戏，参考《Enter the Gungeon》《Nuclear Throne》《小行星》的简化版。\n\n## 参考要点\n- Gungeon：俯视角、弹幕 dodge、房间清敌\n- Nuclear Throne：快节奏、命中反馈、波次\n- 小行星：屏幕边缘穿越、递增难度\n\n## 核心玩法\n- WASD 移动 + 空格射击（或方向键移动+空格，≤3 键组合）\n- 自动瞄准最近敌人或八向射击\n- 3 波敌人，清完胜利\n- 命中：敌人闪白+短停顿+音效\n- 玩家 3 条命\n\n## 视觉\n- 太空/卡通机器人主题，无写实枪械血腥\n\n## 交付\n- 完整可玩 3 波流程+计分",
+    "labelColor": {
+      "colorCode": "#E5FBF9",
+      "colorCodeSecondary": "#94F7F2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_2.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

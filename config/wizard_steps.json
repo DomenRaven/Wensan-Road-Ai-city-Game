@@ -1,0 +1,20 @@
+{
+  "version": "1.1",
+  "updated_at": "2026-06-20",
+  "flow_doc": "开发文档/模板引擎/AI创作引导流程_v1.0.md",
+  "total_steps": 8,
+  "recap_step_id": "R",
+  "steps": [
+    { "id": "S0", "key": "welcome_name", "writes": ["meta.display_name"], "preview": false, "max_sec": 45 },
+    { "id": "S1", "key": "genre", "writes": ["meta.genre"], "preview": true, "max_sec": 45 },
+    { "id": "S2", "key": "play_variant", "writes": ["meta.play_variant", "meta.genre"], "preview": true, "max_sec": 30 },
+    { "id": "S3", "key": "style", "writes": ["theme.style_pack", "theme.mood_keywords"], "preview": true, "max_sec": 30 },
+    { "id": "S4", "key": "character", "writes": ["theme.character"], "preview": true, "max_sec": 60 },
+    { "id": "S5", "key": "props", "writes": ["theme.props"], "preview": true, "max_sec": 45 },
+    { "id": "S6", "key": "feel", "writes": ["tuning"], "preview": true, "max_sec": 30 },
+    { "id": "S7", "key": "skills", "writes": ["tuning.enabled_skills"], "preview": true, "max_sec": 30 },
+    { "id": "R", "key": "recap", "writes": [], "preview": true, "max_sec": 30 },
+    { "id": "S8", "key": "generate", "phase": "CREATE", "max_sec": 360 },
+    { "id": "S9", "key": "play", "phase": "PLAY", "max_sec": 180 }
+  ]
+}

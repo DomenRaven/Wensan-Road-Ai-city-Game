@@ -1,0 +1,53 @@
+{
+  "slug": "survivor",
+  "godot_config": "templates/survivor/config/game_config.json",
+  "miaoda_source": "03-背景与调研/data/秒哒精选源码/survivor",
+  "preview_url": "https://app-cikthp6wjz0h.appmiaoda.com",
+  "tuning_candidates": {
+    "session.duration_sec": {
+      "miaoda_value": 180.0,
+      "godot_default": 180,
+      "proposed": 180,
+      "notes": "transform=direct"
+    },
+    "player.speed": {
+      "miaoda_value": 150.0,
+      "godot_default": 200,
+      "proposed": 150,
+      "notes": "transform=direct"
+    },
+    "weapon.interval_ms": {
+      "miaoda_value": 500.0,
+      "godot_default": 800,
+      "proposed": 560,
+      "notes": "transform=direct; clamped"
+    },
+    "spawn.rate_per_sec": {
+      "miaoda_value": 4000.0,
+      "godot_default": 1.8,
+      "proposed": 1.26,
+      "notes": "transform=inverse_ratio; clamped"
+    },
+    "spawn.max_alive": {
+      "miaoda_value": null,
+      "godot_default": 45,
+      "proposed": null,
+      "notes": ""
+    }
+  },
+  "theme_candidates": {
+    "title": {
+      "miaoda": "",
+      "proposed": "",
+      "kenney_pack": "food-kit"
+    },
+    "asset_pack": {
+      "miaoda": "",
+      "proposed": ""
+    }
+  },
+  "enabled_skills": [],
+  "ux_notes": "",
+  "verified": false,
+  "verified_at": ""
+}

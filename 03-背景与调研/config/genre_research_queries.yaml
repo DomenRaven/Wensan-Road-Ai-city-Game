@@ -1,0 +1,91 @@
+# Survey-03 · 十一品类设计规范检索
+# 对齐：03-背景与调研/品类调研/{slug}/
+# 运行：05-工具脚本/run_game_research_crawler.py（需扩展 topic 或手动合并 report）
+
+topics:
+  - id: genre_shooter
+    name: 射击 FPS TPS
+    queries:
+      - top down shooter game design core mechanics
+      - 射击游戏 反馈 手感 设计 site:zhihu.com
+      - Godot top down shooter tutorial
+      - dual stick shooter controls game feel
+      - site:gamedeveloper.com shooter design
+
+  - id: genre_fighting
+    name: 横版格斗
+    queries:
+      - 2D fighting game hitbox frame data design
+      - fighting game startup active recovery frames
+      - site:gamedev.stackexchange.com fighting game hitbox
+      - 格斗游戏 设计 帧数 site:csdn.net
+
+  - id: genre_survivor
+    name: 割草肉鸽
+    queries:
+      - vampire survivors core loop game design
+      - horde survivor roguelike godot
+      - 割草 肉鸽 游戏 设计 site:bilibili.com
+      - bullet heaven game design parameters
+
+  - id: genre_tower_defense
+    name: 塔防
+    queries:
+      - tower defense wave balance formula design
+      - 塔防 数值 波次 设计 site:zhihu.com
+      - Godot tower defense grid pathfinding
+      - site:gamedev.stackexchange.com tower defense spawn
+
+  - id: genre_parkour
+    name: 跑酷 endless runner
+    queries:
+      - endless runner obstacle spawn algorithm design
+      - 跑酷 游戏 障碍 生成 设计
+      - controlled randomness endless runner prefab
+      - Godot endless runner tutorial
+
+  - id: genre_platformer
+    name: 横版闯关 platformer
+    queries:
+      - platformer coyote time jump buffer game feel
+      - Celeste movement design constants
+      - 平台跳跃 关卡 设计 原则 site:bilibili.com
+      - Godot platformer game feel tutorial
+
+  - id: genre_life_sim
+    name: 生活模拟 做饭种菜
+    queries:
+      - 模拟经营 游戏 核心循环 设计 site:zhihu.com
+      - 4399 做饭 小游戏 设计
+      - cooking game time management design
+      - site:gcores.com 模拟经营 拆解
+
+  - id: genre_sports_race
+    name: 体育竞速
+    queries:
+      - side view racing runner timer game design
+      - 体育 竞速 小游戏 设计
+      - auto run jump obstacle track game
+
+  - id: genre_pingpong
+    name: 乒乓球 pong
+    queries:
+      - pong paddle bounce angle physics game design
+      - 乒乓球 游戏 设计 2D
+      - table tennis arcade game AI paddle
+
+  - id: genre_racing
+    name: 赛车 arcade
+    queries:
+      - arcade racing game drift design top down
+      - pseudo 3D racing outrun segment design
+      - 赛车 小游戏 设计 site:bilibili.com
+      - Lou pseudo 3d racing tutorial
+
+  - id: genre_shmup
+    name: 纵版射击 雷霆战机
+    queries:
+      - bullet hell danmaku design density
+      - vertical shmup spawn pattern design
+      - 飞机大战 弹幕 设计 site:zhihu.com
+      - Toaplan pattern shmup level design

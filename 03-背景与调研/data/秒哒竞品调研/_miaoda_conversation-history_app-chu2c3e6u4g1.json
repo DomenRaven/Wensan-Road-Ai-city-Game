@@ -1,0 +1,4 @@
+{"eventId": 6, "role": "user", "type": "message", "content": "ai生成一个马里奥小游戏"}
+{"eventId": 525, "role": "agent", "type": "file", "content": "[file: 需求文档.md]"}
+{"eventId": 540, "role": "user", "type": "message", "content": "立即创作"}
+{"eventId": 682, "role": "system", "type": "status", "content": "state=canceled"}

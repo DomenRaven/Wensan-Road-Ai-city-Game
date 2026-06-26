@@ -1,0 +1,59 @@
+{
+  "at": "2026-06-23T08:35:18Z",
+  "dry_run": false,
+  "results": [
+    {
+      "slug": "platformer",
+      "status": "ok",
+      "app_id": "app-chu2c3e6u4g1",
+      "preview_url": "https://app-chu2c3e6u4g1.appmiaoda.com",
+      "changes_count": 4,
+      "changes": [
+        {
+          "godot_path": "player.move_speed",
+          "miaoda_raw": 200.0,
+          "godot_before": 200,
+          "proposed": 200.0,
+          "godot_after": 200,
+          "clamped": false,
+          "transform": "direct"
+        },
+        {
+          "godot_path": "player.jump_velocity",
+          "miaoda_raw": -400.0,
+          "godot_before": -400,
+          "proposed": -400.0,
+          "godot_after": -400,
+          "clamped": false,
+          "transform": "direct"
+        },
+        {
+          "godot_path": "physics.gravity",
+          "miaoda_raw": 800.0,
+          "godot_before": 800,
+          "proposed": 800.0,
+          "godot_after": 800,
+          "clamped": false,
+          "transform": "direct"
+        },
+        {
+          "godot_path": "enemy.patrol_speed",
+          "miaoda_raw": 50.0,
+          "godot_before": 50,
+          "proposed": 50.0,
+          "godot_after": 50,
+          "clamped": false,
+          "transform": "direct"
+        }
+      ],
+      "theme_changes": {
+        "meta.display_name": "马里奥风格横版闯关游戏",
+        "theme.title": "马里奥风格横版闯关游戏"
+      },
+      "worksheet": "03-背景与调研/config/miaoda_translation_worksheet_platformer.json",
+      "dry_run": false,
+      "godot_smoke": "pass",
+      "godot_errors": []
+    }
+  ]
+}

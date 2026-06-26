@@ -1,0 +1,41 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "b1416aa79cf78ceb2b2abf3726dd2004",
+  "data": {
+    "name": "横版2D格斗游戏",
+    "appDesc": "一款参考拳皇、街霸风格的横版2D格斗游戏，支持双人对战和人机对战模式，玩家通过键盘操控角色进行回合制战斗，使用普通攻击、特殊技能和必杀技击败对手。",
+    "avatar": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/c51faffe-de9a-40a7-842a-c9386f1d350a/app-chugph9y43cx_web_1782124472302.png",
+    "mobileCover": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/e65cdb36-96d0-40bd-b544-7d7262136dac/app-chugph9y43cx_h5_1782124472310.png",
+    "type": "GAME",
+    "appId": "app-chugph9y43cx",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T18:34:19.758+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T00:28:54.651+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cighsu29wwzk",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "创作一个横版2d格斗小游戏。参考拳皇，街霸。角色需要有完善的出招表，技能以及大招。支持双人对决与人机对战。",
+    "labelColor": {
+      "colorCode": "#FEFFED",
+      "colorCodeSecondary": "#FFF2A2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": false,
+    "hideWatermark": false,
+    "conversationId": "conv-chugph9y43cw"
+  }
+}

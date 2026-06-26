@@ -1,0 +1,75 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-21",
+  "description": "各品类 L0 默认 Kenney 素材路径 · 供 theme 换皮与 Kiosk 预览",
+  "genres": {
+    "platformer": {
+      "asset_pack": "pixel-adventure-1",
+      "player_sprite": "templates/platformer/assets/pixel_adventure/Main Characters/Mask Dude/Idle (32x32).png",
+      "enemy_sprite": "assets/kenney/platformer-art-deluxe/extracted/Enemies/slimeWalk1.png",
+      "collectible_sprite": "templates/platformer/assets/pixel_adventure/Items/Fruits/Cherries.png",
+      "platform_sprite": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHalf.png",
+      "background_sprite": "templates/platformer/assets/pixel_adventure/Background/Blue.png"
+    },
+    "tower_defense": {
+      "asset_pack": "tower-defense-topdown",
+      "tower_sprite": "assets/kenney/tower-defense-topdown/extracted/PNG/Default size/towerDefense_tile010.png",
+      "enemy_sprite": "assets/kenney/tower-defense-topdown/extracted/PNG/Default size/towerDefense_tile020.png",
+      "map_tileset": "assets/kenney/tower-defense-topdown/extracted/PNG/Default size/towerDefense_tile001.png",
+      "background_sprite": "assets/kenney/tower-defense-topdown/extracted/Sample.png"
+    },
+    "shmup": {
+      "asset_pack": "space-shooter-redux",
+      "player_sprite": "assets/kenney/space-shooter-redux/extracted/PNG/playerShip1_blue.png",
+      "enemy_sprite": "assets/kenney/space-shooter-redux/extracted/PNG/ufoBlue.png",
+      "bullet_sprite": "assets/kenney/space-shooter-redux/extracted/PNG/Lasers/laserBlue01.png",
+      "background_sprite": "assets/kenney/space-shooter-redux/extracted/Backgrounds/black.png"
+    },
+    "shooter": {
+      "asset_pack": "topdown-shooter",
+      "player_sprite": "assets/kenney/topdown-shooter/extracted/PNG/Survivor 1/survivor1_stand.png",
+      "enemy_sprite": "assets/kenney/topdown-shooter/extracted/PNG/Zombie 1/zombie1_stand.png"
+    },
+    "survivor": {
+      "asset_pack": "topdown-shooter",
+      "player_sprite": "assets/kenney/topdown-shooter/extracted/PNG/Survivor 1/survivor1_stand.png",
+      "enemy_sprite": "assets/kenney/micro-roguelike/extracted/Tiles/Colored/tile_0105.png"
+    },
+    "fighting": {
+      "asset_pack": "abstract-platformer",
+      "player_sprite": "assets/kenney/abstract-platformer/extracted/PNG/Players/Player Blue/playerBlue_stand.png",
+      "enemy_sprite": "assets/kenney/abstract-platformer/extracted/PNG/Players/Player Red/playerRed_stand.png",
+      "background_sprite": "assets/kenney/abstract-platformer/extracted/PNG/Backgrounds/set1_background.png"
+    },
+    "parkour": {
+      "asset_pack": "jumper-pack",
+      "player_sprite": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk01.png",
+      "platform_sprite": "assets/kenney/jumper-pack/extracted/PNG/Environment/ground_grass.png",
+      "obstacle_sprite": "assets/kenney/jumper-pack/extracted/PNG/Environment/spikes_top.png"
+    },
+    "life_sim": {
+      "asset_pack": "pixel-platformer-farm-expansion",
+      "crop_sprite": "assets/kenney/pixel-platformer-farm-expansion/extracted/Tiles/tile_0024.png",
+      "dish_sprite": "assets/kenney/pixel-platformer-food-expansion/extracted/Tiles/tile_0032.png",
+      "background_sprite": "assets/kenney/pixel-platformer-farm-expansion/extracted/Sample.png"
+    },
+    "sports_race": {
+      "asset_pack": "sports-pack",
+      "player_sprite": "assets/kenney/sports-pack/extracted/PNG/Blue/characterBlue (1).png",
+      "track_sprite": "assets/kenney/sports-pack/extracted/Tilesheet/groundGrass.png",
+      "hurdle_sprite": "assets/kenney/sports-pack/extracted/PNG/Elements/element (21).png"
+    },
+    "pingpong": {
+      "asset_pack": "sports-pack",
+      "table_sprite": "assets/kenney/sports-pack/extracted/Tilesheet/groundBeige_blue.png",
+      "ball_sprite": "assets/kenney/sports-pack/extracted/PNG/Equipment/ball_tennis1.png",
+      "paddle_sprite": "assets/kenney/sports-pack/extracted/PNG/Equipment/racket_wood.png"
+    },
+    "racing": {
+      "asset_pack": "pixel-vehicle-pack",
+      "player_sprite": "assets/kenney/pixel-vehicle-pack/extracted/PNG/Cars/sports_red.png",
+      "road_sprite": "assets/kenney/racing-pack/extracted/PNG/Roads/road_asphalt01.png",
+      "obstacle_sprite": "assets/kenney/racing-pack/extracted/PNG/Objects/cone_straight.png"
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{"delay_ms": 0, "text": "// AI 正在写入 config/game_config.json", "highlight": false}
+{"delay_ms": 713, "text": "{", "highlight": false}
+{"delay_ms": 624, "text": "  \"tuning\": {", "highlight": false}
+{"delay_ms": 624, "text": "    \"player\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"move_speed\": 200,", "highlight": true, "anchor_id": "move"}
+{"delay_ms": 802, "text": "      \"jump_velocity\": -400,", "highlight": true, "anchor_id": "jump"}
+{"delay_ms": 624, "text": "      \"max_fall_speed\": 650", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"physics\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"gravity\": 800", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"scoring\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"coin\": 10,", "highlight": true, "anchor_id": "collect_coin"}
+{"delay_ms": 535, "text": "      \"enemy_stomp\": 100,", "highlight": false}
+{"delay_ms": 535, "text": "      \"goal\": 500", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"enemy\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"patrol_speed\": 50,", "highlight": true, "anchor_id": "enemy_patrol"}
+{"delay_ms": 535, "text": "      \"bounce_on_stomp\": -300", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"enabled_skills\": [],", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 535, "text": "    \"skills\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"double_jump\": { \"cooldown_scale\": 1.0 },", "highlight": false}
+{"delay_ms": 535, "text": "      \"ground_pound\": { \"cooldown_scale\": 1.0 }", "highlight": false}
+{"delay_ms": 535, "text": "    }", "highlight": false}
+{"delay_ms": 535, "text": "  }", "highlight": false}
+{"delay_ms": 535, "text": "}", "highlight": false}
+{"delay_ms": 1426, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/player_platformer.gd", "highlight": false}
+{"delay_ms": 713, "text": "extends CharacterBody2D", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    var tuning = GameConfig.get_tuning()", "highlight": false}
+{"delay_ms": 713, "text": "    var player_cfg = tuning.get(\"player\", {})", "highlight": false}
+{"delay_ms": 802, "text": "    _move_speed = player_cfg.get(\"move_speed\", 200)", "highlight": true, "anchor_id": "move"}
+{"delay_ms": 891, "text": "    _jump_velocity = player_cfg.get(\"jump_velocity\", -400)", "highlight": true, "anchor_id": "jump"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _handle_jump() -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    if can_ground_jump and buffered:", "highlight": false}
+{"delay_ms": 980, "text": "        velocity.y = _jump_velocity", "highlight": true, "anchor_id": "jump"}
+{"delay_ms": 624, "text": "        ThemeSoundUtil.play(self, \"impact\", \"jump\")", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _check_enemy_contacts() -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    for enemy in enemies:", "highlight": false}
+{"delay_ms": 802, "text": "        if _try_stomp_enemy(enemy, player_bottom):", "highlight": true, "anchor_id": "stomp_enemy"}
+{"delay_ms": 624, "text": "            return", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 802, "text": "func _try_stomp_enemy(enemy, player_bottom) -> bool:", "highlight": true, "anchor_id": "stomp_enemy"}
+{"delay_ms": 624, "text": "    if not is_stomp: return false", "highlight": false}
+{"delay_ms": 624, "text": "    velocity.y = _bounce_on_enemy", "highlight": false}
+{"delay_ms": 713, "text": "    enemy.on_stomped()", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/game_manager.gd — 拾取金币", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    _score_coin = scoring_cfg.get(\"coin\", 10)", "highlight": true, "anchor_id": "collect_coin"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _on_collectible_collected() -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    _add_score(_score_coin)", "highlight": true, "anchor_id": "collect_coin"}
+{"delay_ms": 624, "text": "    ThemeSoundUtil.play(self, \"impact\", \"collect\")", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# 小技能开关", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"double_jump\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 空中再跳一次", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"ground_pound\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 空中下砸", "highlight": false}
+{"delay_ms": 713, "text": "", "highlight": false}
+{"delay_ms": 879, "text": "// 你的横版闯关游戏配置完成！", "highlight": false}

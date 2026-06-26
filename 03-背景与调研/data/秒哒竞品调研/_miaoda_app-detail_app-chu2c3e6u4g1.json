@@ -1,0 +1,41 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "c75c653a661c08a59a1d1502cfe95577",
+  "data": {
+    "name": "横版闯关游戏",
+    "appDesc": "一款像素风格的经典横版闯关游戏，玩家通过键盘控制角色移动跳跃，踩踏敌人、收集金币、避开障碍，到达终点完成关卡挑战。",
+    "avatar": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/4e794361-d16d-44e1-acc7-aed685dbf8d7/app-chu2c3e6u4g1_web_1782058729922.png",
+    "mobileCover": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/be13eb4f-cf6e-448a-b617-404156790841/app-chu2c3e6u4g1_h5_1782058753874.png",
+    "type": "GAME",
+    "appId": "app-chu2c3e6u4g1",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T00:18:36.775+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T00:09:14.909+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-chu93fveueps",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "ai生成一个马里奥小游戏",
+    "labelColor": {
+      "colorCode": "#F5F3FD",
+      "colorCodeSecondary": "#D6C9FB",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_1.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": false,
+    "hideWatermark": false,
+    "conversationId": "conv-chu2c3e6u4g0"
+  }
+}

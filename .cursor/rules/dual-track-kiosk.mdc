@@ -1,0 +1,49 @@
+---
+description: Kiosk / Backend 双轨并行开发约束（线 A 展陈 + 线 B 个性化）
+globs: "kiosk/**/*,backend/**/*,config/dual_track_registry.json,config/kiosk_ui_spec.json,config/wizard_payload_mapping.json,config/l1_e2e_acceptance.json"
+alwaysApply: false
+---
+
+# 双轨并行 · Kiosk / Backend 约束
+
+> 完整计划：[`开发文档/模板引擎/D6-D10双轨并行计划_v1.0.md`](开发文档/模板引擎/D6-D10双轨并行计划_v1.0.md)
+
+## 真实状态（勿误判）
+
+- `kiosk/` 当前为**开发者灰盒**，不是产品 UI
+- S8 **未**写 workspace；S9 **未**加载用户 config
+- 个性化 E2E **未测试**
+
+## 会话范围
+
+| 会话类型 | 可改目录 |
+|----------|----------|
+| 线 A 前端 | `kiosk/` · `assets/previews/`（只读引用） |
+| 线 B 后端 | `backend/` · `workspace/`（生成产物） |
+| 线 B 对接 | `kiosk/wizard.js` 仅 S8/S9/★R 相关段落 |
+| 禁止 | `templates/{genre}/core/` · 单次跨 kiosk+backend 大重构 |
+
+## 线 A（L0 展陈）
+
+- UI 遵循 [`config/kiosk_ui_spec.json`](config/kiosk_ui_spec.json)
+- 必须实现 `track_a_shortcut_flow`：S1 选类 → S9 启 `templates/{genre}/`
+- 品类选择用**大卡片宫格**，禁止仅用 `<select>`
+- ★R 禁止裸 `JSON.stringify` 作为主展示
+
+## 线 B（L1 MVP）
+
+- 映射遵循 [`config/wizard_payload_mapping.json`](config/wizard_payload_mapping.json)
+- 新增 API：`POST /sessions/{session_id}/generate`（契约见 mapping JSON）
+- 试玩：`play/launch` **优先** `workspace/{session_id}/`
+- 合并 tuning 时读 [`config/tuning_feel_overrides.json`](config/tuning_feel_overrides.json)，±30% clamp
+- 验收：[`config/l1_e2e_acceptance.json`](config/l1_e2e_acceptance.json) · 首条 `E2E-B-001` 必须 PASS
+- pilot 品类固定 **platformer**，扩类另开会话
+
+## 降级
+
+- `generate` 失败 → launch 回退 `templates/{genre}/` + UI 文案「正在加载经典版」
+
+## 完成后
+
+- 更新 `config/dual_track_registry.json` 对应 checklist `status`
+- 回写 [`D6-D10执行工作清单_v1.0.md`](开发文档/模板引擎/D6-D10执行工作清单_v1.0.md)

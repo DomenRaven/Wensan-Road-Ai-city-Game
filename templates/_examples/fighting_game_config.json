@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "genre": "fighting",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "机器人格斗场"
+  },
+  "core_locked": true,
+  "tuning": {
+    "player": {
+      "max_hp": 100,
+      "walk_speed": 180
+    },
+    "move": {
+      "light": {
+        "startup_frames": 6,
+        "active_frames": 3,
+        "damage": 12,
+        "hitstun_frames": 12
+      }
+    },
+    "ai": {
+      "reaction_interval_sec": 0.45,
+      "attack_chance": 0.5
+    }
+  },
+  "theme": {
+    "asset_pack": "platformer-art-deluxe",
+    "player_sprite": "res://assets/kenney/platformer/Player/p2_stand.png",
+    "enemy_sprite": "res://assets/kenney/platformer/Enemies/blockerBody.png",
+    "bg_color": "#1a2332",
+    "title": "机器人格斗场"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

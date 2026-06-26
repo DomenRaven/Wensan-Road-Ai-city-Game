@@ -1,0 +1,65 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "survivor",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "糖果幸存者"
+  },
+  "core_locked": true,
+  "tuning": {
+    "session": {
+      "duration_sec": 180
+    },
+    "player": {
+      "speed": 200,
+      "max_hp": 3
+    },
+    "weapon": {
+      "base_damage": 10,
+      "interval_ms": 800,
+      "projectile_speed": 420
+    },
+    "enemy": {
+      "base_hp": 15,
+      "speed": 70,
+      "contact_damage": 1
+    },
+    "spawn": {
+      "rate_per_sec": 1.5,
+      "ring_min": 400,
+      "ring_max": 560,
+      "max_alive": 40
+    },
+    "xp": {
+      "gem_value": 5,
+      "magnet_range": 64,
+      "level_threshold_base": 15
+    },
+    "level": {
+      "up_choice_count": 3
+    },
+    "win": {
+      "mode": "time",
+      "target_waves": 8
+    },
+    "enabled_skills": ["magnet", "nova"],
+    "skills": {
+      "magnet": { "cooldown_scale": 1.0 },
+      "nova": { "cooldown_scale": 1.0 }
+    }
+  },
+  "theme": {
+    "asset_pack": "topdown-shooter",
+    "player_sprite": "res://assets/kenney/topdown/PNG/Survivor 1/survivor1_stand.png",
+    "enemy_sprite": "res://assets/kenney/roguelike/Tiles/Colored/tile_0105.png",
+    "xp_gem_sprite": "res://assets/kenney/roguelike/Tiles/Colored/tile_0118.png",
+    "projectile_sprite": "res://assets/kenney/topdown/PNG/Tiles/tile_57.png",
+    "background_color": "#1a2a1a",
+    "title": "糖果幸存者"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 2
+  }
+}

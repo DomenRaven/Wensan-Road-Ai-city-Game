@@ -1,0 +1,39 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "d0458f5b549ad666dd586faaeff5d017",
+  "data": {
+    "name": "K12厨房模拟游戏",
+    "appDesc": "一款面向K12学生的浏览器烹饪模拟游戏，玩家通过点击操作在2分钟内完成3单订单（取料&rarr;烹饪&rarr;上菜），采用可爱厨房风格和大按钮设计，适合儿童操作和休闲娱乐。",
+    "avatar": "http://miaoda-preview-img.cdn.bcebos.com/image-b110312cfd914555932a69b580adf668.jpeg",
+    "type": "GAME",
+    "appId": "app-cikz7rz45fy9",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T22:23:39.723+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T22:15:04.841+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cil5e2sgz474",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 小厨房模拟】浏览器小游戏，参考《美食烹饪家》《Township》《Cooking Fever》。\n\n## 参考要点\n- 烹饪家：顾客订单→备料→烹饪→上菜\n- Township：简单生产链\n- Cooking Fever：点击热区+进度条\n\n## 核心玩法\n- 鼠标点击：点冰箱取料→点炉灶烹饪（4 秒进度条）→点顾客上菜\n- 2 分钟内完成 3 单订单\n- 顾客 patience 条，超时离开扣分\n- 完成 3 单胜利\n\n## 视觉\n- 可爱厨房、大按钮热区\n\n## 禁止\n- 无刀具暴力画面\n\n## 交付\n- 订单列表 HUD + 金币/分数",
+    "labelColor": {
+      "colorCode": "#EBFFE9",
+      "colorCodeSecondary": "#ABFEA0",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_3.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

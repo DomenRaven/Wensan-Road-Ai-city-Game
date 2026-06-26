@@ -1,0 +1,85 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-22",
+  "target": "GameForge K12 · 11 L0 品类 · 秒哒 H5 小游戏对标原型",
+  "k12_constraints": "面向14岁以下：无血腥暴力恐怖；操作≤3键；单局≤3分钟；卡通像素/明亮配色",
+  "genres": [
+    {
+      "slug": "platformer",
+      "display_name": "横版闯关",
+      "reference_games": ["超级马里奥兄弟", "Celeste", "索尼克"],
+      "reference_mechanics": "Coyote Time 100ms、跳跃缓冲、可变高度跳、收集物胜利、巡逻敌人",
+      "prompt": "请制作一款【K12 横版闯关】浏览器小游戏（H5），对标《超级马里奥》《Celeste》《索尼克》的简化手感。\n\n## 参考成功作品要点\n- 马里奥：左右移动+跳跃、踩敌人、收集金币/星星、固定关卡终点\n- Celeste：Coyote Time、跳跃缓冲、落地反馈清晰\n- 索尼克：加速感、平台间距节奏\n\n## 核心玩法（必须实现）\n- 键盘：← → 移动，空格跳跃（仅3键）\n- 2D 横版侧视，单屏关卡约 2 分钟\n- 收集 5 颗星星即胜利；碰敌人回到检查点\n- 平台跳跃间距适合儿童（64px 网格感）\n- 跳跃有缓冲与可变高度（松开提前落）\n\n## 视觉与音效\n- 明亮卡通像素风，Kenney 风格配色\n- 跳跃/收集/受伤各有短音效\n\n## 禁止\n- 无暴力血腥；无超过 3 个操作键\n\n## 交付\n- 可立即在浏览器试玩的完整小游戏 MVP\n- 含开始界面、游戏中 HUD（星星计数）、胜利/失败界面"
+    },
+    {
+      "slug": "fighting",
+      "display_name": "横版格斗",
+      "reference_games": ["街头霸王", "拳皇", "任天堂明星大乱斗（简化版）"],
+      "reference_mechanics": "回合制血条、轻拳/格挡、简单连招、人机对战",
+      "prompt": "请制作一款【K12 横版 2D 格斗】浏览器小游戏，参考《街头霸王》《拳皇》《大乱斗》但大幅简化。\n\n## 参考成功作品要点\n- 街霸：左右移动、轻/重攻击、格挡、血条 KO\n- 拳皇：出招表简化（最多 3 招+1 大招）\n- 大乱斗：卡通角色、清晰 hit 反馈\n\n## 核心玩法（必须实现）\n- 键盘 ≤3 键：← → 移动，J 轻拳，K 格挡\n- 1v1 人机对战，先清空对方 HP 者胜\n- 2 角色可选（不同颜色即可）\n- 轻拳有 startup/active/recovery 简化帧感（命中闪白+击退）\n- 格挡减伤 50%\n\n## 视觉\n- Q 版卡通擂台，无写实暴力\n\n## 禁止\n- 无血腥、无复杂 10 键出招\n\n## 交付\n- 选角色→对战→KO→再来一局 完整循环"
+    },
+    {
+      "slug": "tower_defense",
+      "display_name": "塔防",
+      "reference_games": ["保卫萝卜", "植物大战僵尸", "王国保卫战"],
+      "reference_mechanics": "固定路径、多种塔、波次递增、金币经济、卖塔",
+      "prompt": "请制作一款【K12 塔防】浏览器小游戏，融合《保卫萝卜》《植物大战僵尸》《王国保卫战》的入门体验。\n\n## 参考成功作品要点\n- 保卫萝卜：固定弯道路径、多种炮塔、可爱敌人\n- PVZ：格子放塔、阳光/金币经济\n- 王国保卫战：波次预告、塔升级、路径清晰\n\n## 核心玩法（必须实现）\n- 鼠标：点击空地放塔，右键卖塔（返还 50% 金币）\n- 预设 S 形路径，敌人沿路径行走\n- 至少 2 种塔（箭塔/炮塔），5 波敌人\n- 波次结束奖励金币；漏怪扣生命，生命归零失败\n- 单局 ≤3 分钟\n\n## 视觉\n- 明亮卡通，萝卜/植物主题均可\n\n## 禁止\n- 无恐怖元素\n\n## 交付\n- 选塔面板+波次 HUD+胜利/失败界面"
+    },
+    {
+      "slug": "shooter",
+      "display_name": "射击",
+      "reference_games": ["Enter the Gungeon", "Nuclear Throne", "小行星"],
+      "reference_mechanics": "俯视角八向移动、射击、波次敌人生成、命中反馈",
+      "prompt": "请制作一款【K12 俯视角射击】浏览器小游戏，参考《Enter the Gungeon》《Nuclear Throne》《小行星》的简化版。\n\n## 参考要点\n- Gungeon：俯视角、弹幕 dodge、房间清敌\n- Nuclear Throne：快节奏、命中反馈、波次\n- 小行星：屏幕边缘穿越、递增难度\n\n## 核心玩法\n- WASD 移动 + 空格射击（或方向键移动+空格，≤3 键组合）\n- 自动瞄准最近敌人或八向射击\n- 3 波敌人，清完胜利\n- 命中：敌人闪白+短停顿+音效\n- 玩家 3 条命\n\n## 视觉\n- 太空/卡通机器人主题，无写实枪械血腥\n\n## 交付\n- 完整可玩 3 波流程+计分"
+    },
+    {
+      "slug": "survivor",
+      "display_name": "割草肉鸽",
+      "reference_games": ["Vampire Survivors", "Brotato", "20 Minutes Till Dawn"],
+      "reference_mechanics": "自动攻击、经验宝石、升级三选一、敌潮递增",
+      "prompt": "请制作一款【K12 割草幸存者】浏览器小游戏，参考《Vampire Survivors》《Brotato》《20 Minutes Till Dawn》。\n\n## 参考要点\n- VS：WASD 移动、自动攻击、捡宝石升级、选 1/3 强化\n- Brotato：短局、数值成长清晰\n- 20MTD：敌潮环形生成\n\n## 核心玩法\n- WASD 移动（单键位模式）\n- 自动向最近敌人发射\n- 180 秒计时，存活到时间即胜利\n- 杀怪掉宝石，经验条满弹出 3 选 1 升级（攻速/伤害/移速）\n- 敌人从屏幕外环形靠近\n\n## 视觉\n- 糖果/卡通怪物，无血腥\n\n## 交付\n- 计时 HUD + 升级弹窗 + 结束界面"
+    },
+    {
+      "slug": "shmup",
+      "display_name": "雷霆战机",
+      "reference_games": ["雷电", "1942", "东方Project（简化弹幕）"],
+      "reference_mechanics": "纵版卷轴、弹幕躲避、炸弹清屏、波次 Boss",
+      "prompt": "请制作一款【K12 纵版射击 STG】浏览器小游戏，参考《雷电》《1942》《东方Project》的少儿简化版。\n\n## 参考要点\n- 雷电：纵版、主机在下方、敌机编队\n- 1942：循环背景、拾取火力 P\n- 东方：弹幕留缝可躲（密度降低 70% 给儿童）\n\n## 核心玩法\n- 方向键移动 + 空格射击 + X 炸弹（各算 1 键，共 3 操作概念）\n- 5 波敌机，最后 1 波小 Boss\n- 炸弹全屏清弹 1 次（冷却 15 秒）\n- 被弹扣命，3 命\n\n## 视觉\n- 科幻卡通飞机，亮色子弹轨迹\n\n## 交付\n- 波次提示 + 分数 + 胜利/失败"
+    },
+    {
+      "slug": "parkour",
+      "display_name": "跑酷",
+      "reference_games": ["Subway Surfers", "Temple Run", "Canabalt"],
+      "reference_mechanics": "自动前进、跳跃/滑铲、障碍随机段、距离计分",
+      "prompt": "请制作一款【K12 无尽跑酷】浏览器小游戏，参考《Subway Surfers》《Temple Run》《Canabalt》。\n\n## 参考要点\n- Subway Surfers：三轨道、跳跃滑铲\n- Temple Run：自动跑、转弯/跳跃/下滑\n- Canabalt：单键跳跃、节奏障碍\n\n## 核心玩法\n- 自动向前跑，空格跳跃，↓ 滑铲（2 键）\n- 60 秒计时，距离越远分越高\n- 障碍：低栏（滑铲）、高栏（跳跃）\n- 碰撞结束并显示距离\n\n## 视觉\n- 明亮街景/森林侧视\n\n## 交付\n- 开始→跑→撞停→重开 循环"
+    },
+    {
+      "slug": "life_sim",
+      "display_name": "生活模拟",
+      "reference_games": ["美食烹饪家", "Township", "Cooking Fever"],
+      "reference_mechanics": "点击热区、订单链、计时烹饪、上菜得分",
+      "prompt": "请制作一款【K12 小厨房模拟】浏览器小游戏，参考《美食烹饪家》《Township》《Cooking Fever》。\n\n## 参考要点\n- 烹饪家：顾客订单→备料→烹饪→上菜\n- Township：简单生产链\n- Cooking Fever：点击热区+进度条\n\n## 核心玩法\n- 鼠标点击：点冰箱取料→点炉灶烹饪（4 秒进度条）→点顾客上菜\n- 2 分钟内完成 3 单订单\n- 顾客 patience 条，超时离开扣分\n- 完成 3 单胜利\n\n## 视觉\n- 可爱厨房、大按钮热区\n\n## 禁止\n- 无刀具暴力画面\n\n## 交付\n- 订单列表 HUD + 金币/分数"
+    },
+    {
+      "slug": "sports_race",
+      "display_name": "体育竞速",
+      "reference_games": ["Mario & Sonic 奥运会", "SpeedRunners", "跨栏田径小游戏"],
+      "reference_mechanics": "计时冲刺、跨栏跳跃、加速键、终点排名",
+      "prompt": "请制作一款【K12 田径冲刺】浏览器小游戏，参考《Mario & Sonic 奥运会》《SpeedRunners》跨栏模式与经典跨栏小游戏。\n\n## 参考要点\n- 奥运径赛：短跑计时、跨栏节奏\n- SpeedRunners：侧视加速竞争感\n- 跨栏：固定栏位间距、跳跃时机\n\n## 核心玩法\n- ← → 加速，空格跨栏（≤3 键）\n- 60 秒跑到终点，撞栏减速但不立即失败\n- 显示计时与距离\n- 到达终点显示成绩\n\n## 视觉\n- 卡通跑道与运动员\n\n## 交付\n- 开始倒计时→跑→终点成绩"
+    },
+    {
+      "slug": "pingpong",
+      "display_name": "乒乓球",
+      "reference_games": ["Pong", "Wii 乒乓球", "Roundabout"],
+      "reference_mechanics": "1v1 挡板、球角度反弹、先得 5 分",
+      "prompt": "请制作一款【K12 乒乓球】浏览器小游戏，参考经典《Pong》《Wii 乒乓球》简化规则。\n\n## 参考要点\n- Pong：挡板接球、角度反弹\n- Wii 乒乓球：上下移动挡板、节奏对打\n\n## 核心玩法\n- ↑ ↓ 移动球拍（1 键方向）\n- 玩家 vs 简单 AI\n- 先得 5 分胜\n- 球速每 3 回合略增\n- 触网/出界对方得分\n\n## 视觉\n- 俯视球桌，亮色球拍\n\n## 交付\n- 比分 HUD + 回合重置"
+    },
+    {
+      "slug": "racing",
+      "display_name": "赛车",
+      "reference_games": ["Horizon Chase", "OutRun", "Micro Machines"],
+      "reference_mechanics": "俯视角或伪 3D、转向加速、撞墙减速、计时跑圈",
+      "prompt": "请制作一款【K12 欢乐赛车】浏览器小游戏，参考《Horizon Chase》《OutRun》《Micro Machines》。\n\n## 参考要点\n- Horizon Chase：俯视角 arcade 手感\n- OutRun：分段道路、加速感\n- Micro Machines：小场景竞速\n\n## 核心玩法\n- ← → 转向，空格加速（≤3 键）\n- 90 秒计时，绕圈或点到点\n- 撞障碍减速，不翻车即继续\n- 显示圈数/计时\n\n## 视觉\n- 像素/卡通赛车顶视\n\n## 禁止\n- 无碰撞爆炸血腥\n\n## 交付\n- 开始→驾驶→时间到结算"
+    }
+  ]
+}

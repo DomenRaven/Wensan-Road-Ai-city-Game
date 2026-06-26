@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>AI 游戏创作工坊 · GameForge K12</title>
+  <link rel="stylesheet" href="edu-styles.css" />
+  <link rel="stylesheet" href="edu-ambient.css" />
+</head>
+<body>
+  <header class="edu-header" id="eduHeader">
+    <div class="edu-brand">
+      <strong>AI 游戏创作工坊</strong>
+      <small>文三路 AI 教育区 · 看得见的代码</small>
+    </div>
+    <div class="edu-header-center">
+      <div id="workName" class="edu-work-name empty">欢迎来到创作工坊</div>
+      <div class="edu-phase-bar" id="phaseBar" aria-label="创作阶段">
+        <span class="phase-segment" data-phase="create">创作</span>
+        <span class="phase-segment" data-phase="build">制作</span>
+        <span class="phase-segment" data-phase="play">试玩</span>
+      </div>
+    </div>
+    <div class="edu-header-actions">
+      <a href="../" class="btn btn-secondary edu-back-link" aria-label="返回展厅快玩 A 链">← 展厅快玩</a>
+      <button type="button" id="btnReset" class="btn btn-secondary">重新开始</button>
+    </div>
+  </header>
+
+  <main id="mainContent">
+    <!-- B0 welcome / blocked -->
+    <section id="welcomePanel" class="welcome-panel" hidden>
+      <div class="welcome-card">
+        <h1>欢迎来到 AI 游戏创作工坊</h1>
+        <p>说出你想玩的游戏，我们一起像程序员一样创作！</p>
+        <div class="welcome-spinner" id="bootstrapSpinner"></div>
+        <p class="welcome-status" id="bootstrapStatus">正在准备展厅…</p>
+      </div>
+    </section>
+
+    <!-- B1–B2 single-column steps -->
+    <section id="stepPanel" class="step-panel" hidden>
+      <h2 id="stepTitle">加载中…</h2>
+      <p class="step-subtitle" id="stepSubtitle"></p>
+      <div id="stepForm"></div>
+      <div class="toolbar">
+        <button type="button" id="btnPrev" class="btn btn-secondary" disabled>上一步</button>
+        <button type="button" id="btnNext" class="btn btn-primary">下一步</button>
+      </div>
+    </section>
+
+    <!-- B3+ dual pane -->
+    <section id="dualPaneRoot" class="dual-pane-root" hidden></section>
+  </main>
+
+  <div id="captionBubble" class="caption-bubble" hidden></div>
+  <div class="status-log" id="log" aria-live="polite"></div>
+
+  <script src="starry-background.js"></script>
+  <script src="genre-preview-scene.js"></script>
+  <script src="session.js"></script>
+  <script src="layout/dual-pane.js"></script>
+  <script src="edu-file-tree.js"></script>
+  <script src="code-viewer.js"></script>
+  <script src="code-highlight.js"></script>
+  <script src="code-theater.js"></script>
+  <script src="build-wait.js"></script>
+  <script src="steps/b1-intent.js"></script>
+  <script src="steps/b2-name.js"></script>
+  <script src="steps/b4-creative.js"></script>
+  <script src="edu-wizard.js"></script>
+</body>
+</html>

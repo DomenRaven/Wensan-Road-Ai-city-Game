@@ -1,0 +1,31 @@
+{
+  "slug": "shmup",
+  "display_name": "雷霆战机",
+  "reference_games": [
+    "雷电",
+    "1942",
+    "东方Project（简化弹幕）"
+  ],
+  "started_at": "2026-06-22T13:13:49Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T13:13:49Z",
+      "appId": "app-cijqi6jg95he",
+      "conversationId": "conv-cijqi6jg95hd"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T13:14:44Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T13:23:03Z",
+  "appId": "app-cijqi6jg95he",
+  "conversationId": "conv-cijqi6jg95hd",
+  "editor_url": "https://www.miaoda.cn/projects/app-cijqi6jg95he",
+  "preview_url": "https://app-cijqi6jg95he.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

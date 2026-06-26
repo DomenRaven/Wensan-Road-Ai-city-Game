@@ -1,0 +1,90 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-22",
+  "launch_date": "2026-06-30",
+  "description": "D6–D10 双轨并行注册表 · 线 A 展陈 L0 保底 · 线 B L1 个性化 MVP",
+  "tracks": {
+    "A": {
+      "id": "track_a_l0_exhibition",
+      "name": "线 A · 展陈 L0 保底",
+      "goal": "6/30 观众可选品类、起名、一键试玩 L0 preset；不要求个性化生效",
+      "deadline": "2026-06-26",
+      "modules_allowed": ["kiosk/", "backend/routers/", "backend/app/services/godot_launcher.py", "05-工具脚本/", "开发文档/"],
+      "forbidden": ["templates/{genre}/core/", "repo 根 core/", "同时改 kiosk + backend 大重构单 PR"],
+      "checklist_ids": ["A1", "A2", "A3", "A4", "A5", "A6"],
+      "gate_items": ["G1", "G2", "G3", "G4", "G6", "G7"]
+    },
+    "B": {
+      "id": "track_b_l1_personalization",
+      "name": "线 B · L1 个性化 MVP",
+      "goal": "platformer 单品类 S0→S9 真 E2E：payload → workspace/game_config.json → 试玩可见差异",
+      "deadline": "2026-06-27",
+      "modules_allowed": ["backend/app/services/config_builder.py", "backend/app/services/workspace.py", "backend/app/routers/generate.py", "templates/platformer/config/", "kiosk/wizard.js S8/S9 对接"],
+      "pilot_genre": "platformer",
+      "checklist_ids": ["B1", "B2", "B3", "B4", "B5", "B6"],
+      "gate_items": ["G1", "G5_partial"]
+    }
+  },
+  "parallel_rules": {
+    "agent_session_scope": "单次会话只改一个模块族：kiosk/ 或 backend/ 或 templates/{one_genre}/",
+    "no_core_edits": true,
+    "ai_config_only": "workspace/{session_id}/config/game_config.json · 仅 tuning/theme/enabled_skills",
+    "doc_sync_required": [
+      "开发文档/模板引擎/D6-D10执行工作清单_v1.0.md",
+      "开发文档/模板引擎/工作状态记录_v1.0.md"
+    ]
+  },
+  "checklist": {
+    "A1": { "track": "A", "task": "Kiosk 产品 UI v1（品类大卡片 + 作品名 + 进度点）", "status": "done", "module": "kiosk/", "completed_at": "2026-06-22" },
+    "A2": { "track": "A", "task": "L0 快速通道：S1 选类 → 可选 S0 起名 → S9 直启 templates/{genre}", "status": "done", "module": "kiosk/", "completed_at": "2026-06-22" },
+    "A3": { "track": "A", "task": "局域网访问 nginx 或等价反代 + 静态 Kiosk", "status": "draft", "module": "05-工具脚本/", "note": "kiosk_lan_nginx.ps1 草案 · LAN API base 待联调" },
+    "A4": { "track": "A", "task": "30min soak · load_test_sessions.py", "status": "pending", "module": "backend/" },
+    "A5": { "track": "A", "task": "讲解员手册 + demo_preset 降级文案", "status": "pending", "module": "开发文档/" },
+    "A6": { "track": "A", "task": "抽 3 类 L0 人工试玩签字（platformer · pingpong · td）", "status": "pending", "module": "评审记录/" },
+    "B1": { "track": "B", "task": "POST /sessions/{id}/generate · 复制 templates → workspace", "status": "done", "module": "backend/", "completed_at": "2026-06-22" },
+    "B2": { "track": "B", "task": "config_builder：Session.payload → game_config.json", "status": "done", "module": "backend/", "completed_at": "2026-06-22" },
+    "B3": { "track": "B", "task": "feel_id → tuning 数值合并（±30% clamp）", "status": "done", "module": "backend/", "completed_at": "2026-06-22" },
+    "B4": { "track": "B", "task": "S9 launch 优先 workspace/{session_id}", "status": "done", "module": "backend/", "completed_at": "2026-06-22" },
+    "B5": { "track": "B", "task": "Kiosk S8 调 generate + loading；★R 可读配方卡", "status": "done", "module": "kiosk/", "completed_at": "2026-06-22" },
+    "B6": { "track": "B", "task": "platformer E2E 人工用例 1 份 PASS（见 config/l1_e2e_acceptance.json）", "status": "done", "module": "全链路", "completed_at": "2026-06-22", "note": "A1–A6 自动 PASS · A7 人工清单见评审记录" }
+  },
+  "current_truth": {
+    "l0_godot_templates": "done",
+    "kiosk_product_ui": "tier_1_track_a_mvp",
+    "kiosk_dev_graybox": "replaced_by_product_ui",
+    "personalization_e2e": "done_a1_a6_kiosk_s8_s9",
+    "workspace_generate_api": "done",
+    "redis_and_load_test_script": "done_short_only",
+    "assets_29_packs": "done",
+    "miaoda_dual_track": "optional_non_blocking",
+    "miaoda_batch_11": "complete",
+    "miaoda_reference_tier": "7_selected_downloaded",
+    "miaoda_parity_r2": "user_approved_platformer_next"
+  },
+  "miaoda_parity_r2": {
+    "approved_at": "2026-06-23",
+    "goal": "全方位落实秒哒成熟版到 Godot（玩法+数值+美术+UI）",
+    "v1_config_translation": "done_not_accepted",
+    "registry": "config/miaoda_parity_r2_registry.json",
+    "brief": "开发文档/模板引擎/秒哒对齐R2_立项说明_v1.0.md",
+    "session_rule": "新会话单品类开工；本立项允许 templates/{slug}/core+scenes",
+    "first_slug": "platformer",
+    "miaoda_api": "欠费_仅用本地落盘"
+  },
+  "miaoda_reference_tier": {
+    "batch_11_complete": true,
+    "batch_output": "03-背景与调研/data/秒哒11品类批次",
+    "selected_7": {
+      "count": 7,
+      "registry": "config/miaoda_reference_registry.json",
+      "output_root": "03-背景与调研/data/秒哒精选源码",
+      "download_script": "05-工具脚本/miaoda_download_sources.py",
+      "apply_script": "05-工具脚本/miaoda_apply_translation.py",
+      "translation_mappings": "config/miaoda_translation_mappings.json",
+      "translation_handbook": "开发文档/模板引擎/秒哒转Godot_game_config_指导手册_v1.0.md",
+      "worksheet_template": "03-背景与调研/config/miaoda_translation_worksheet.template.json",
+      "slugs": ["platformer", "survivor", "racing", "fighting", "pingpong", "shmup", "parkour"],
+      "translation_priority": ["platformer", "survivor", "racing", "fighting", "pingpong", "shmup", "parkour"]
+    }
+  }
+}

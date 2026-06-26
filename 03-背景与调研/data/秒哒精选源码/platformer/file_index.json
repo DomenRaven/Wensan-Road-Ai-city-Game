@@ -1,0 +1,20 @@
+{
+  "total_files": 10,
+  "paths": [
+    "src/App.tsx",
+    "src/game/AssetImports.ts",
+    "src/game/EventBus.ts",
+    "src/game/assets.ts",
+    "src/game/constants.ts",
+    "src/game/model/store.ts",
+    "src/game/scenes/Boot.ts",
+    "src/game/scenes/MainGame.ts",
+    "src/game/scenes/index.ts",
+    "需求文档.md"
+  ],
+  "key_files": [
+    "src/game/constants.ts",
+    "src/game/scenes/MainGame.ts",
+    "需求文档.md"
+  ]
+}

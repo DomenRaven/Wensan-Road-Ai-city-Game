@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "genre": "pingpong",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "快乐乒乓"
+  },
+  "core_locked": true,
+  "tuning": {
+    "physics": {
+      "bounce_mode": "paddle_angle",
+      "speed_ramp": "every_4_hits"
+    },
+    "rules": {
+      "points_to_win": 5
+    },
+    "table": {
+      "margin_x": 40,
+      "margin_y": 60,
+      "bounds": "aabb"
+    },
+    "ball": {
+      "base_speed": 380,
+      "max_speed": 620,
+      "radius": 8
+    },
+    "paddle": {
+      "speed": 360,
+      "height": 120
+    },
+    "ai": {
+      "reaction_ms": 175
+    },
+    "enabled_skills": [],
+    "skills": {
+      "power_smash": {
+        "cooldown_scale": 1.0
+      },
+      "curve_ball": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "sports-pack",
+    "table_sprite": "res://assets/kenney/sports-pack/Tilesheet/groundBeige_blue.png",
+    "ball_sprite": "res://assets/kenney/sports-pack/PNG/Equipment/ball_tennis1.png",
+    "paddle_sprite": "res://assets/kenney/sports-pack/PNG/Equipment/racket_wood.png",
+    "background_color": "#153d24",
+    "title": "快乐乒乓",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "rally": "res://assets/kenney/impact-sounds/Audio/impactTin_medium_000.ogg",
+        "score": "res://assets/kenney/interface-sounds/Audio/confirmation_002.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

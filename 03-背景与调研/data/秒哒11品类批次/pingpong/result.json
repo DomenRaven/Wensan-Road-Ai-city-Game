@@ -1,0 +1,31 @@
+{
+  "slug": "pingpong",
+  "display_name": "乒乓球",
+  "reference_games": [
+    "Pong",
+    "Wii 乒乓球",
+    "Roundabout"
+  ],
+  "started_at": "2026-06-22T13:40:45Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T13:40:45Z",
+      "appId": "app-cika5uyinqip",
+      "conversationId": "conv-cika5uyinqio"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T13:41:37Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T13:49:11Z",
+  "appId": "app-cika5uyinqip",
+  "conversationId": "conv-cika5uyinqio",
+  "editor_url": "https://www.miaoda.cn/projects/app-cika5uyinqip",
+  "preview_url": "https://app-cika5uyinqip.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

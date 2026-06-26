@@ -1,0 +1,235 @@
+{
+  "version": "1.0.0",
+  "pack_id": "pong-football",
+  "pack_path": "pong-football/assets/png",
+  "format": "individual_pngs",
+  "description": "K12乒乓球小游戏资产包，基于pong-football素材，含球场背景、球拍、球、比分数字、UI按钮等",
+  "phaser_config": {
+    "note": "所有路径相对于 Phaser 的 setPath 或 baseURL，建议设置 this.load.setPath('assets/pong-football/assets/png')",
+    "load_code": [
+      "// 在 Phaser Scene 的 preload() 中加载所有资产",
+      "this.load.setPath('assets/pong-football/assets/png');",
+      "// 球场背景（横版 1280×860）",
+      "this.load.image('court_bg', 'court_01.png');",
+      "// 中线装饰（344×560，可选）",
+      "this.load.image('court_center_line', 'court_center_line.png');",
+      "// 玩家球拍（左侧，500×200）",
+      "this.load.image('paddle_player', 'pud_left.png');",
+      "// AI球拍（右侧，500×200）",
+      "this.load.image('paddle_ai', 'pud_right.png');",
+      "// 球动画精灵表（288×48，6帧，每帧48×48）",
+      "this.load.spritesheet('ball', 'ball_frames.png', { frameWidth: 48, frameHeight: 48 });",
+      "// 球阴影（51×51）",
+      "this.load.image('ball_shadow', 'ball_shadow.png');",
+      "// 比分数字精灵表（256×192，10帧，5列×2行，每帧约51×96，帧0=数字0 … 帧9=数字9）",
+      "this.load.spritesheet('score_digits', 'numbers_score.png', { frameWidth: 51, frameHeight: 96 });",
+      "// 胜利文字图像（739×190）",
+      "this.load.image('text_win', 'text_win.png');",
+      "// 失败文字图像（753×202）",
+      "this.load.image('text_lose', 'text_lose.png');",
+      "// 开始游戏按钮（横版，290×620）",
+      "this.load.image('btn_start', 'btn_menu_h_start.png');",
+      "// 再玩一次按钮（174×348）",
+      "this.load.image('btn_again', 'btn_round_again.png');",
+      "// 记分板背景（821×650，可选）",
+      "this.load.image('board', 'board.png');"
+    ],
+    "usage": [
+      "// ── 球场背景 ──",
+      "const bg = this.add.image(640, 430, 'court_bg').setDisplaySize(1280, 860);",
+      "",
+      "// ── 玩家球拍（左侧）──",
+      "// 原始尺寸500×200，建议缩放至游戏内合适大小（如 20×80）",
+      "const playerPaddle = this.physics.add.image(60, 430, 'paddle_player').setDisplaySize(20, 80);",
+      "playerPaddle.setImmovable(true);",
+      "",
+      "// ── AI球拍（右侧）──",
+      "const aiPaddle = this.physics.add.image(1220, 430, 'paddle_ai').setDisplaySize(20, 80);",
+      "aiPaddle.setImmovable(true);",
+      "",
+      "// ── 球（带旋转动画）──",
+      "const ball = this.physics.add.sprite(640, 430, 'ball', 0).setDisplaySize(24, 24);",
+      "this.anims.create({",
+      "  key: 'ball_spin',",
+      "  frames: this.anims.generateFrameNumbers('ball', { start: 0, end: 5 }),",
+      "  frameRate: 12,",
+      "  repeat: -1",
+      "});",
+      "ball.play('ball_spin');",
+      "",
+      "// ── 比分显示（使用 score_digits 精灵表，帧索引 = 数字值）──",
+      "// 例如显示玩家得分 3：",
+      "const playerScoreImg = this.add.image(400, 40, 'score_digits', 3).setDisplaySize(30, 56);",
+      "// 例如显示AI得分 0：",
+      "const aiScoreImg = this.add.image(880, 40, 'score_digits', 0).setDisplaySize(30, 56);",
+      "// 更新比分时：playerScoreImg.setFrame(newScore);",
+      "",
+      "// ── 胜利/失败文字 ──",
+      "const winText  = this.add.image(640, 300, 'text_win').setDisplaySize(370, 95).setVisible(false);",
+      "const loseText = this.add.image(640, 300, 'text_lose').setDisplaySize(376, 101).setVisible(false);",
+      "",
+      "// ── 开始游戏按钮 ──",
+      "const btnStart = this.add.image(640, 430, 'btn_start').setDisplaySize(145, 310).setInteractive();",
+      "btnStart.on('pointerdown', () => this.scene.start('GameScene'));",
+      "",
+      "// ── 再玩一次按钮 ──",
+      "const btnAgain = this.add.image(640, 500, 'btn_again').setDisplaySize(87, 174).setInteractive();",
+      "btnAgain.on('pointerdown', () => this.scene.start('GameScene'));"
+    ]
+  },
+  "assets": {
+    "court_bg": {
+      "key": "court_bg",
+      "file": "court_01.png",
+      "type": "image",
+      "width": 1280,
+      "height": 860,
+      "description": "乒乓球桌俯视背景（横版），绿色球场，含中线区域，1280×860",
+      "usage_note": "作为游戏场景背景，setDisplaySize(1280, 860) 铺满画布"
+    },
+    "court_center_line": {
+      "key": "court_center_line",
+      "file": "court_center_line.png",
+      "type": "image",
+      "width": 344,
+      "height": 560,
+      "description": "球场中线装饰图，344×560，可叠加在背景中央",
+      "usage_note": "this.add.image(640, 430, 'court_center_line').setAlpha(0.6)"
+    },
+    "paddles": {
+      "paddle_player": {
+        "key": "paddle_player",
+        "file": "pud_left.png",
+        "type": "image",
+        "width": 500,
+        "height": 200,
+        "description": "玩家球拍（左侧），亮色，500×200，建议 setDisplaySize(20, 80) 缩放使用",
+        "usage_note": "this.physics.add.image(60, 430, 'paddle_player').setDisplaySize(20, 80)"
+      },
+      "paddle_ai": {
+        "key": "paddle_ai",
+        "file": "pud_right.png",
+        "type": "image",
+        "width": 500,
+        "height": 200,
+        "description": "AI球拍（右侧），亮色，500×200，建议 setDisplaySize(20, 80) 缩放使用",
+        "usage_note": "this.physics.add.image(1220, 430, 'paddle_ai').setDisplaySize(20, 80)"
+      }
+    },
+    "ball": {
+      "ball_spin": {
+        "key": "ball",
+        "file": "ball_frames.png",
+        "type": "spritesheet",
+        "sheet_width": 288,
+        "sheet_height": 48,
+        "frame_width": 48,
+        "frame_height": 48,
+        "columns": 6,
+        "rows": 1,
+        "total_frames": 6,
+        "description": "乒乓球旋转动画精灵表，6帧（帧0-5），每帧48×48，1行6列",
+        "frames": {
+          "0": "球正面，无旋转",
+          "1": "球旋转约30度",
+          "2": "球旋转约60度",
+          "3": "球旋转约90度",
+          "4": "球旋转约120度",
+          "5": "球旋转约150度，循环回帧0"
+        },
+        "animation": {
+          "key": "ball_spin",
+          "start": 0,
+          "end": 5,
+          "frameRate": 12,
+          "repeat": -1
+        },
+        "usage_note": "this.load.spritesheet('ball','ball_frames.png',{frameWidth:48,frameHeight:48}); ball.play('ball_spin');"
+      },
+      "ball_shadow": {
+        "key": "ball_shadow",
+        "file": "ball_shadow.png",
+        "type": "image",
+        "width": 51,
+        "height": 51,
+        "description": "球的阴影图，51×51，可叠加在球下方增加立体感",
+        "usage_note": "this.add.image(ball.x+2, ball.y+2, 'ball_shadow').setDisplaySize(24,24).setAlpha(0.4)"
+      }
+    },
+    "score_digits": {
+      "key": "score_digits",
+      "file": "numbers_score.png",
+      "type": "spritesheet",
+      "sheet_width": 256,
+      "sheet_height": 192,
+      "frame_width": 51,
+      "frame_height": 96,
+      "columns": 5,
+      "rows": 2,
+      "total_frames": 10,
+      "description": "比分数字精灵表，包含数字0-9，5列×2行，每帧约51×96",
+      "frame_map": {
+        "0": "数字 0（第0行第0列，x=0）",
+        "1": "数字 1（第0行第1列，x=51）",
+        "2": "数字 2（第0行第2列，x=102）",
+        "3": "数字 3（第0行第3列，x=153）",
+        "4": "数字 4（第0行第4列，x=204）",
+        "5": "数字 5（第1行第0列，x=0，y=96）",
+        "6": "数字 6（第1行第1列，x=51，y=96）",
+        "7": "数字 7（第1行第2列，x=102，y=96）",
+        "8": "数字 8（第1行第3列，x=153，y=96）",
+        "9": "数字 9（第1行第4列，x=204，y=96）"
+      },
+      "usage_note": "帧索引直接等于数字值：setFrame(score) 即可更新显示。建议 setDisplaySize(30, 56) 缩放"
+    },
+    "ui_texts": {
+      "text_win": {
+        "key": "text_win",
+        "file": "text_win.png",
+        "type": "image",
+        "width": 739,
+        "height": 190,
+        "description": "YOU WIN 胜利文字图像，739×190，用于结束页面玩家胜利时显示",
+        "usage_note": "this.add.image(640, 300, 'text_win').setDisplaySize(370, 95)"
+      },
+      "text_lose": {
+        "key": "text_lose",
+        "file": "text_lose.png",
+        "type": "image",
+        "width": 753,
+        "height": 202,
+        "description": "YOU LOSE 失败文字图像，753×202，用于结束页面AI胜利时显示",
+        "usage_note": "this.add.image(640, 300, 'text_lose').setDisplaySize(376, 101)"
+      }
+    },
+    "ui_buttons": {
+      "btn_start": {
+        "key": "btn_start",
+        "file": "btn_menu_h_start.png",
+        "type": "image",
+        "width": 290,
+        "height": 620,
+        "description": "开始游戏按钮（横版），290×620，用于开始页面",
+        "usage_note": "this.add.image(640, 430, 'btn_start').setDisplaySize(145, 310).setInteractive()"
+      },
+      "btn_again": {
+        "key": "btn_again",
+        "file": "btn_round_again.png",
+        "type": "image",
+        "width": 174,
+        "height": 348,
+        "description": "再玩一次按钮，174×348，用于结束页面",
+        "usage_note": "this.add.image(640, 500, 'btn_again').setDisplaySize(87, 174).setInteractive()"
+      },
+      "board": {
+        "key": "board",
+        "file": "board.png",
+        "type": "image",
+        "width": 821,
+        "height": 650,
+        "description": "记分板背景面板，821×650，可用于结束页面显示最终比分",
+        "usage_note": "this.add.image(640, 430, 'board').setDisplaySize(410, 325)"
+      }
+    }
+  }
+}

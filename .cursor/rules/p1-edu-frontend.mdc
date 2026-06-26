@@ -1,0 +1,43 @@
+---
+description: 6.24 P1-R 教育前端与联调收工约束
+globs:
+  - "kiosk/**"
+  - "config/intent_genre_lexicon.json"
+  - "config/kiosk_edu_spec.json"
+  - "backend/app/routers/intent.py"
+  - "backend/app/routers/play.py"
+  - "backend/app/routers/creative.py"
+  - "05-工具脚本/e2e_b_edu*.py"
+alwaysApply: false
+---
+
+# P1-R · 教育前端与联调 · Cursor 约束
+
+## 会话范围（必守）
+
+- **单窗单层**：config+backend（窗9/11）与 `kiosk/edu`（窗10）**分窗**
+- **禁止**修改 `templates/{slug}/core/**`
+- **禁止**为通过测试回改窗1–6 的 `creative_templates` / anchors / theater
+
+## kiosk/edu
+
+- B4 必须支持 `single_choice` + `skill_pick`（读 `creative_templates` 真 schema）
+- B2 主路径：`GET /creative/name-suggestions?genre=`
+- B1 示例芯片与 `intent_genre_lexicon.example_chips` 或 spec 对齐，七款齐全
+- 移除或降级 `TODO fallback` 时保留 **API 不可用** 时的最小降级（须 log）
+
+## 后端
+
+- `intent/match-genre`：以 `config/intent_genre_lexicon.json` 为唯一关键词真相
+- `POST /sessions/{id}/play/action`：append `.edu_actions.jsonl`，格式与 Godot 桥一致
+- 不改 `generate/v2` 注入逻辑（除非修 bug）
+
+## 验收
+
+- 改 `kiosk/edu` 后：浏览器手动或 `e2e_b_edu_browser` 至少 smoke 1 款
+- 改 `play.py` 后：pytest 或 curl POST 验证
+- 完成窗13 前：`python 05-工具脚本/validate_creative_templates.py` 仍 7/7
+
+## 儿童向
+
+- 触控目标 ≥48px · 文案口语化 · 无恐怖暴力

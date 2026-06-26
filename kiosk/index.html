@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+  <title>GameForge K12 · 展厅创作</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <strong>GameForge K12</strong>
+      <small>文三路 AI 教育区 · 展厅试玩</small>
+      <span class="mode-badge">展厅快玩</span>
+    </div>
+    <div class="header-center">
+      <div id="workName" class="work-name empty">给你的游戏起个名字吧</div>
+      <div class="progress-dots" id="progressDots" aria-label="向导进度"></div>
+      <span class="progress-label" id="progressLabel">—</span>
+    </div>
+    <div class="header-actions">
+      <button type="button" id="btnReset" class="btn btn-secondary">重新开始</button>
+    </div>
+  </header>
+
+  <main class="app-body">
+    <section class="panel panel-left">
+      <h2 id="stepTitle">加载中…</h2>
+      <p class="step-subtitle" id="stepSubtitle"></p>
+      <div id="stepForm"></div>
+      <div class="toolbar">
+        <button type="button" id="btnPrev" class="btn btn-secondary" disabled>上一步</button>
+        <button type="button" id="btnNext" class="btn btn-primary">下一步</button>
+        <button type="button" id="btnSkip" class="btn btn-ghost" hidden>跳过</button>
+      </div>
+      <div class="status-log" id="log" aria-live="polite"></div>
+      <div class="footer-link">
+        <a href="edu/" class="edu-entry-link">🎨 创作工坊（B 链教育版 B0–B7）</a>
+        <button type="button" id="btnFullWizard">完整创作向导（S0–S9 个性化）</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>实时预览</h2>
+      <div id="preview" class="preview-panel">
+        <p class="preview-placeholder">选择游戏类型后，这里会显示预览图</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="wizard.js"></script>
+</body>
+</html>

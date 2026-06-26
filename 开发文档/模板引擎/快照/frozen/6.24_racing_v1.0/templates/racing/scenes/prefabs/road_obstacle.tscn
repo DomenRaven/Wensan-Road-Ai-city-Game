@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://racing_obstacle"]
+
+[ext_resource type="Script" path="res://core/road_obstacle.gd" id="1_obs"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_obs"]
+size = Vector2(30, 30)
+
+[node name="RoadObstacle" type="Area2D"]
+collision_layer = 4
+collision_mask = 1
+monitoring = true
+monitorable = true
+script = ExtResource("1_obs")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -16)
+shape = SubResource("RectangleShape2D_obs")

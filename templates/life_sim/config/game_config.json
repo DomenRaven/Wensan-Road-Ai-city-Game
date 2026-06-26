@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "genre": "life_sim",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "美味小厨房"
+  },
+  "core_locked": true,
+  "task": {
+    "chain_steps": 3
+  },
+  "interaction": {
+    "mode": "click_hotspot"
+  },
+  "economy": {
+    "mode": "order_based"
+  },
+  "fail": {
+    "mode": "forgiving"
+  },
+  "tuning": {
+    "crop": {
+      "grow_time_sec": 6
+    },
+    "cook": {
+      "time_sec": 4
+    },
+    "order": {
+      "count_to_win": 3,
+      "patience_sec": 40
+    },
+    "reward": {
+      "coins_per_order": 10
+    },
+    "items": {
+      "crop_id": "生菜",
+      "dish_id": "田园沙拉"
+    },
+    "level": {
+      "scene": "res://scenes/room.tscn"
+    },
+    "enabled_skills": [],
+    "skills": {
+      "speed_cook": {
+        "cooldown_scale": 1.0
+      },
+      "instant_grow": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "pixel-platformer",
+    "farm_sprite": "res://assets/kenney/platformer-art-deluxe/extracted/Items/plant.png",
+    "stove_sprite": "res://assets/kenney/platformer-art-deluxe/extracted/Tiles/box.png",
+    "customer_sprite": "res://assets/kenney/platformer-art-deluxe/extracted/Player/p2_stand.png",
+    "crop_sprite": "res://assets/kenney/platformer-art-deluxe/extracted/Items/mushroomBrown.png",
+    "dish_sprite": "res://assets/kenney/platformer-art-deluxe/extracted/Items/star.png",
+    "background_color": "#87c9a8",
+    "title": "美味小厨房",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "harvest": "res://assets/kenney/impact-sounds/Audio/impactWood_heavy_000.ogg",
+        "cook": "res://assets/kenney/interface-sounds/Audio/drop_001.ogg",
+        "serve": "res://assets/kenney/interface-sounds/Audio/pluck_001.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

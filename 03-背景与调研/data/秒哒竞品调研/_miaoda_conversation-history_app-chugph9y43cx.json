@@ -1,0 +1,4 @@
+{"eventId": 6, "role": "user", "type": "message", "content": "创作一个横版2d格斗小游戏。参考拳皇，街霸。角色需要有完善的出招表，技能以及大招。支持双人对决与人机对战。"}
+{"eventId": 694, "role": "agent", "type": "file", "content": "[file: 需求文档.md]"}
+{"eventId": 713, "role": "user", "type": "message", "content": "立即创作"}
+{"eventId": 829, "role": "system", "type": "status", "content": "state=canceled"}

@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "genre": "survivor",
+  "anchors": {
+    "move": {
+      "file": "config/game_config.json",
+      "path": "tuning.player.speed",
+      "line_hint": 21,
+      "caption": "移动速度：你选得越快，主角冲得越猛！",
+      "action_id": null
+    },
+    "spawn_rate": {
+      "file": "config/game_config.json",
+      "path": "tuning.spawn.interval_ms",
+      "line_hint": 38,
+      "caption": "怪物刷新间隔：数字越小怪越多！",
+      "action_id": null
+    },
+    "session_duration": {
+      "file": "config/game_config.json",
+      "path": "tuning.session.duration_sec",
+      "line_hint": 11,
+      "caption": "游戏时长：撑过这么多秒就进入 Boss 战！",
+      "action_id": null
+    },
+    "enabled_skills": {
+      "file": "config/game_config.json",
+      "path": "tuning.enabled_skills",
+      "line_hint": 76,
+      "caption": "这里记录你开启的小技能！",
+      "action_id": null
+    },
+    "pickup_xp": {
+      "file": "core/survivor_arena.gd",
+      "path": null,
+      "line_hint": 152,
+      "caption": "吸收经验宝石就在这里，攒够就能升级！",
+      "action_id": "pickup_xp",
+      "snippet_gd": "func _on_gem_collected(value: int) -> void:"
+    },
+    "kill_enemy": {
+      "file": "core/horde_enemy.gd",
+      "path": null,
+      "line_hint": 46,
+      "caption": "子弹打中怪物，血量归零就会被击败！",
+      "action_id": "kill_enemy",
+      "snippet_gd": "func take_damage(amount: int) -> void:"
+    },
+    "level_up": {
+      "file": "core/survivor_arena.gd",
+      "path": null,
+      "line_hint": 152,
+      "caption": "升级啦！选一个增益技能吧！",
+      "action_id": "level_up",
+      "snippet_gd": "if _level_up_ui.has_method(\"show_choices\"):"
+    }
+  }
+}

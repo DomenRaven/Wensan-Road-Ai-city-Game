@@ -1,0 +1,11 @@
+export const BATTLE_CONSTANTS = {
+  GRAVITY: 800,
+  PLAYER_SPEED: 300,
+  HP_MAX: 100,
+  BASE_DAMAGE: 15,
+  DEFENSE_REDUCTION: 0.5,
+  KNOCKBACK_FORCE: 200,
+  ARENA_WIDTH: 1000, // Background width
+  ARENA_HEIGHT: 600,
+  GROUND_Y: 450, // Y coordinate of the floor
+};

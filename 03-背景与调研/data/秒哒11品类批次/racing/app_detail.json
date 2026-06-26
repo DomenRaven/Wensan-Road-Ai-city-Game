@@ -1,0 +1,38 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "a86266d6a1ff391e78e3147d3e095c1e",
+  "data": {
+    "name": "K12竞速小游戏",
+    "appDesc": "K12欢乐赛车是一款面向6-18岁学生的浏览器竞速小游戏，采用俯视角卡通风格，玩家在90秒内通过键盘操作控制赛车竞速，目标是完成尽可能多的圈数，提供轻松愉快的休闲娱乐体验。",
+    "type": "GAME",
+    "appId": "app-cikgdwwv35z5",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T21:57:11.703+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T21:49:18.113+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cikm3zp2lts0",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 欢乐赛车】浏览器小游戏，参考《Horizon Chase》《OutRun》《Micro Machines》。\n\n## 参考要点\n- Horizon Chase：俯视角 arcade 手感\n- OutRun：分段道路、加速感\n- Micro Machines：小场景竞速\n\n## 核心玩法\n- ← → 转向，空格加速（≤3 键）\n- 90 秒计时，绕圈或点到点\n- 撞障碍减速，不翻车即继续\n- 显示圈数/计时\n\n## 视觉\n- 像素/卡通赛车顶视\n\n## 禁止\n- 无碰撞爆炸血腥\n\n## 交付\n- 开始→驾驶→时间到结算",
+    "labelColor": {
+      "colorCode": "#FEFFED",
+      "colorCodeSecondary": "#FFF2A2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

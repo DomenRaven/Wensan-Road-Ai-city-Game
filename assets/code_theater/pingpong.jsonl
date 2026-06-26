@@ -1,0 +1,63 @@
+{"delay_ms": 0, "text": "// AI 正在写入 config/game_config.json", "highlight": false}
+{"delay_ms": 713, "text": "{", "highlight": false}
+{"delay_ms": 624, "text": "  \"tuning\": {", "highlight": false}
+{"delay_ms": 624, "text": "    \"rules\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"points_to_win\": 5", "highlight": true, "anchor_id": "points_to_win"}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"ball\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"base_speed\": 250,", "highlight": true, "anchor_id": "ball_speed"}
+{"delay_ms": 624, "text": "      \"speed_increment\": 25,", "highlight": false}
+{"delay_ms": 624, "text": "      \"hits_per_ramp\": 3,", "highlight": false}
+{"delay_ms": 624, "text": "      \"radius\": 9", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"paddle\": {", "highlight": false}
+{"delay_ms": 624, "text": "      \"speed\": 168,", "highlight": false}
+{"delay_ms": 535, "text": "      \"height\": 50", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"ai\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"speed\": 118,", "highlight": true, "anchor_id": "ai_speed"}
+{"delay_ms": 624, "text": "      \"deadzone\": 10,", "highlight": false}
+{"delay_ms": 624, "text": "      \"aim_error\": 16,", "highlight": false}
+{"delay_ms": 535, "text": "      \"react_line_x\": 340", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 713, "text": "    \"enabled_skills\": [],", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 535, "text": "    \"skills\": {", "highlight": false}
+{"delay_ms": 624, "text": "      \"power_smash\": { \"cooldown_scale\": 1.0 },", "highlight": false}
+{"delay_ms": 535, "text": "      \"curve_ball\": { \"cooldown_scale\": 1.0 }", "highlight": false}
+{"delay_ms": 535, "text": "    }", "highlight": false}
+{"delay_ms": 535, "text": "  }", "highlight": false}
+{"delay_ms": 535, "text": "}", "highlight": false}
+{"delay_ms": 1780, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/ball.gd — 拍击反弹", "highlight": false}
+{"delay_ms": 713, "text": "extends Area2D", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 802, "text": "func _apply_paddle_bounce(paddle, direction) -> void:", "highlight": true, "anchor_id": "rally"}
+{"delay_ms": 713, "text": "    _hit_count += 1", "highlight": false}
+{"delay_ms": 713, "text": "    if _hit_count % hits_per_speed_ramp == 0:", "highlight": false}
+{"delay_ms": 624, "text": "        _current_speed += speed_increment", "highlight": false}
+{"delay_ms": 713, "text": "    velocity.x = float(direction) * new_speed", "highlight": false}
+{"delay_ms": 891, "text": "    ThemeSoundUtil.play(self, \"impact\", \"rally\")", "highlight": true, "anchor_id": "rally"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _check_scoring() -> void:", "highlight": false}
+{"delay_ms": 713, "text": "    if global_position.x <= table_left - hit_radius:", "highlight": false}
+{"delay_ms": 891, "text": "        scored.emit(\"ai\")", "highlight": true, "anchor_id": "score"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/match_controller.gd — 得分处理", "highlight": false}
+{"delay_ms": 891, "text": "func _on_ball_scored(side: String) -> void:", "highlight": true, "anchor_id": "score"}
+{"delay_ms": 713, "text": "    ThemeSoundUtil.play(self, \"impact\", \"score\")", "highlight": false}
+{"delay_ms": 713, "text": "    _score.add_point_to_player()", "highlight": false}
+{"delay_ms": 624, "text": "    _start_rally()", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/skills/power_smash.gd — 大力扣杀", "highlight": false}
+{"delay_ms": 891, "text": "static func try_activate() -> bool:", "highlight": true, "anchor_id": "power_smash"}
+{"delay_ms": 713, "text": "    if not is_enabled(): return false", "highlight": false}
+{"delay_ms": 713, "text": "    _armed = true", "highlight": false}
+{"delay_ms": 713, "text": "    return true", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# 小技能开关", "highlight": false}
+{"delay_ms": 891, "text": "if GameConfig.has_skill(\"power_smash\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 713, "text": "    # 下一拍打出去超快", "highlight": false}
+{"delay_ms": 891, "text": "if GameConfig.has_skill(\"curve_ball\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 713, "text": "    # 球会拐大弯", "highlight": false}
+{"delay_ms": 713, "text": "", "highlight": false}
+{"delay_ms": 2131, "text": "// 你的乒乓球游戏配置完成！", "highlight": false}

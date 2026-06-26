@@ -1,0 +1,147 @@
+{
+  "updated_at": "2026-06-21T13:08:32.976817+00:00",
+  "source_root": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效",
+  "license": "local-education-library",
+  "entries": [
+    {
+      "dest": "assets/sfx/ui/click.wav",
+      "patterns": [
+        "click_01.wav",
+        "click1.wav",
+        "CLICK.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\PART 1\\PART 1\\动效音\\click1.wav",
+      "bytes": 2148
+    },
+    {
+      "dest": "assets/sfx/ui/button.wav",
+      "patterns": [
+        "BUTTON1.WAV",
+        "Button11.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\part2\\钮扣\\B2\\BUTTON1.WAV",
+      "bytes": 50610
+    },
+    {
+      "dest": "assets/sfx/ui/select.mp3",
+      "patterns": [
+        "SELECT (44100 Hz).mp3",
+        "SELECT.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\part3\\敲击破碎摩擦\\SELECT (44100 Hz).mp3",
+      "bytes": 4075
+    },
+    {
+      "dest": "assets/sfx/hit/punch.wav",
+      "patterns": [
+        "PUNCH1.WAV",
+        "PUNCH2.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\part2\\战斗\\PUNCH1.WAV",
+      "bytes": 2988
+    },
+    {
+      "dest": "assets/sfx/hit/impact.wav",
+      "patterns": [
+        "Explosive impact.wav",
+        "Electronic impact.wav",
+        "CATHIT.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\part2\\影响\\Electronic impact.wav",
+      "bytes": 546444
+    },
+    {
+      "dest": "assets/sfx/shoot/gun.wav",
+      "patterns": [
+        "GUN1.WAV",
+        "BIGGUN.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\part3\\枪\\BIGGUN.WAV",
+      "bytes": 44344
+    },
+    {
+      "dest": "assets/sfx/shoot/laser.mp3",
+      "patterns": [
+        "LASER1 (44100 Hz).mp3",
+        "LASER1.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\PART 1\\PART 1\\电声雷雨\\LASER1 (44100 Hz).mp3",
+      "bytes": 2821
+    },
+    {
+      "dest": "assets/sfx/fx/explode.mp3",
+      "patterns": [
+        "EXPLODEA.WAV",
+        "c4_explode1 (44100 Hz).mp3"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\part3\\枪声-爆破声\\c4_explode1 (44100 Hz).mp3",
+      "bytes": 30302
+    },
+    {
+      "dest": "assets/sfx/fx/coin.wav",
+      "patterns": [
+        "COINDROP.WAV",
+        "COINROLL.WAV"
+      ],
+      "status": "copied",
+      "source": "D:\\AAA学习\\大一上\\数字音视频\\素材-音效\\part3\\射击\\COINDROP.WAV",
+      "bytes": 12192
+    },
+    {
+      "dest": "assets/sfx/fx/jump.wav",
+      "patterns": [
+        "JUMP.WAV",
+        "jump.wav"
+      ],
+      "status": "missing"
+    }
+  ],
+  "mapping": {
+    "ui_click": "assets/sfx/ui/click.wav",
+    "ui_button": "assets/sfx/ui/button.wav",
+    "ui_select": "assets/sfx/ui/select.mp3",
+    "hit_default": "assets/sfx/hit/punch.wav",
+    "shoot_gun": "assets/sfx/shoot/gun.wav",
+    "shoot_laser": "assets/sfx/shoot/laser.mp3",
+    "fx_explode": "assets/sfx/fx/explode.mp3",
+    "fx_collect": "assets/sfx/fx/coin.wav"
+  },
+  "genres": {
+    "all": {
+      "ui_click": "assets/sfx/ui/click.wav",
+      "ui_confirm": "assets/sfx/ui/button.wav"
+    },
+    "shooter": {
+      "shoot": "assets/sfx/shoot/gun.wav",
+      "hit": "assets/sfx/hit/punch.wav"
+    },
+    "shmup": {
+      "shoot": "assets/sfx/shoot/laser.mp3",
+      "hit": "assets/sfx/fx/explode.mp3"
+    },
+    "survivor": {
+      "hit": "assets/sfx/hit/punch.wav",
+      "collect": "assets/sfx/fx/coin.wav"
+    },
+    "fighting": {
+      "hit": "assets/sfx/hit/punch.wav"
+    },
+    "platformer": {
+      "jump": "",
+      "collect": "assets/sfx/fx/coin.wav"
+    }
+  },
+  "kiosk": {
+    "click": "assets/sfx/ui/click.wav",
+    "success": "assets/sfx/ui/button.wav",
+    "step": "assets/sfx/ui/select.mp3"
+  }
+}

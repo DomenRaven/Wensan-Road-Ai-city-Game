@@ -1,0 +1,39 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "b03868343ea9914044d8b28ab32c1f47",
+  "data": {
+    "name": "K12横版闯关游戏",
+    "appDesc": "一款面向K12儿童的2D横版跳跃闯关H5小游戏，支持浏览器即玩。玩家通过左右移动和跳跃操作角色，收集星星、避开敌人、到达终点即可通关。采用卡通像素风格，单关约2分钟。",
+    "avatar": "http://miaoda-preview-img.cdn.bcebos.com/image-0ad041b136fc4e55bc31863fb14f54f8.jpeg",
+    "type": "GAME",
+    "appId": "app-cij488f80bup",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T20:51:26.467+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T20:43:24.805+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cija0i4o1czk",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 横版闯关】浏览器小游戏（H5），对标《超级马里奥》《Celeste》《索尼克》的简化手感。\n\n## 参考成功作品要点\n- 马里奥：左右移动+跳跃、踩敌人、收集金币/星星、固定关卡终点\n- Celeste：Coyote Time、跳跃缓冲、落地反馈清晰\n- 索尼克：加速感、平台间距节奏\n\n## 核心玩法（必须实现）\n- 键盘：← → 移动，空格跳跃（仅3键）\n- 2D 横版侧视，单屏关卡约 2 分钟\n- 收集 5 颗星星即胜利；碰敌人回到检查点\n- 平台跳跃间距适合儿童（64px 网格感）\n- 跳跃有缓冲与可变高度（松开提前落）\n\n## 视觉与音效\n- 明亮卡通像素风，Kenney 风格配色\n- 跳跃/收集/受伤各有短音效\n\n## 禁止\n- 无暴力血腥；无超过 3 个操作键\n\n## 交付\n- 可立即在浏览器试玩的完整小游戏 MVP\n- 含开始界面、游戏中 HUD（星星计数）、胜利/失败界面",
+    "labelColor": {
+      "colorCode": "#FFF2F7",
+      "colorCodeSecondary": "#FFBFD5",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_5.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

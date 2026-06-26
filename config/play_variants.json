@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-20",
+  "description": "玩法体验子模式：在单品类模板内用 tuning 预设或引导跳转，满足「融合感」需求而不改 core",
+  "variants": {
+    "shooter": [
+      {
+        "id": "wave_adventure",
+        "label": "打怪闯关",
+        "subtitle": "一关一关消灭敌人",
+        "maps_to": { "genre": "shooter", "tuning_preset": "shooter_wave_clear" },
+        "user_phrases": ["打怪闯关", "一关关打", "像冒险一样"]
+      },
+      {
+        "id": "power_growth",
+        "label": "越变越强",
+        "subtitle": "打败敌人变得更强",
+        "maps_to": { "genre": "survivor", "tuning_preset": "survivor_default" },
+        "redirect_hint": "这类玩法在「割草肉鸽」里体验最好",
+        "user_phrases": ["越变越强", "升级", "割草", "肉鸽"]
+      },
+      {
+        "id": "bullet_hell",
+        "label": "躲避弹幕",
+        "subtitle": "躲开满屏子弹",
+        "maps_to": { "genre": "shmup", "tuning_preset": "shmup_default" },
+        "user_phrases": ["雷霆战机", "躲子弹", "飞机"]
+      }
+    ],
+    "platformer": [
+      {
+        "id": "level_clear",
+        "label": "闯关冒险",
+        "maps_to": { "genre": "platformer", "tuning_preset": "platformer_adventure" }
+      },
+      {
+        "id": "speed_run",
+        "label": "快跑挑战",
+        "maps_to": { "genre": "parkour", "tuning_preset": "parkour_default" },
+        "redirect_hint": "快跑模式在「跑酷」里更带感"
+      }
+    ],
+    "tower_defense": [
+      {
+        "id": "defend_waves",
+        "label": "守城打波次",
+        "maps_to": { "genre": "tower_defense", "tuning_preset": "td_waves" }
+      },
+      {
+        "id": "strategy_growth",
+        "label": "慢慢变强",
+        "maps_to": { "genre": "tower_defense", "tuning_preset": "td_economy_slow" }
+      }
+    ],
+    "life_sim": [
+      {
+        "id": "cooking",
+        "label": "做饭做菜",
+        "maps_to": { "genre": "life_sim", "tuning_preset": "life_cooking" }
+      },
+      {
+        "id": "farming",
+        "label": "种菜经营",
+        "maps_to": { "genre": "life_sim", "tuning_preset": "life_farming" }
+      }
+    ],
+    "racing": [
+      {
+        "id": "time_trial",
+        "label": "计时赛跑",
+        "maps_to": { "genre": "racing", "tuning_preset": "racing_time" }
+      },
+      {
+        "id": "sprint_track",
+        "label": "田径冲刺",
+        "maps_to": { "genre": "sports_race", "tuning_preset": "sports_default" },
+        "redirect_hint": "田径冲刺在「体育竞速」更合适"
+      }
+    ]
+  },
+  "default_for_genre": {
+    "fighting": { "id": "duel", "label": "双人对战" },
+    "survivor": { "id": "horde", "label": "越变越强" },
+    "parkour": { "id": "endless", "label": "无尽跑酷" },
+    "sports_race": { "id": "sprint", "label": "计时冲刺" },
+    "pingpong": { "id": "versus", "label": "双人对打" },
+    "shmup": { "id": "vertical", "label": "纵版射击" }
+  }
+}

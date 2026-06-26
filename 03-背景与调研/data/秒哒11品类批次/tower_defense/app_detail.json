@@ -1,0 +1,39 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "cb6be2d4ca346c42803589f42ffe852e",
+  "data": {
+    "name": "K12塔防游戏",
+    "appDesc": "一款面向K12学生的浏览器塔防游戏，玩家通过放置防御塔抵御敌人进攻、保护基地，单局3分钟内完成，采用卡通萝卜/植物主题风格。",
+    "avatar": "http://miaoda-preview-img.cdn.bcebos.com/image-c9447aa5469a4696bdccff6cca74108b.jpeg",
+    "type": "GAME",
+    "appId": "app-cijbpg71a0w1",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T21:03:37.556+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T20:53:38.545+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cijiwkx60ao0",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 塔防】浏览器小游戏，融合《保卫萝卜》《植物大战僵尸》《王国保卫战》的入门体验。\n\n## 参考成功作品要点\n- 保卫萝卜：固定弯道路径、多种炮塔、可爱敌人\n- PVZ：格子放塔、阳光/金币经济\n- 王国保卫战：波次预告、塔升级、路径清晰\n\n## 核心玩法（必须实现）\n- 鼠标：点击空地放塔，右键卖塔（返还 50% 金币）\n- 预设 S 形路径，敌人沿路径行走\n- 至少 2 种塔（箭塔/炮塔），5 波敌人\n- 波次结束奖励金币；漏怪扣生命，生命归零失败\n- 单局 ≤3 分钟\n\n## 视觉\n- 明亮卡通，萝卜/植物主题均可\n\n## 禁止\n- 无恐怖元素\n\n## 交付\n- 选塔面板+波次 HUD+胜利/失败界面",
+    "labelColor": {
+      "colorCode": "#E5FBF9",
+      "colorCodeSecondary": "#94F7F2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_2.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

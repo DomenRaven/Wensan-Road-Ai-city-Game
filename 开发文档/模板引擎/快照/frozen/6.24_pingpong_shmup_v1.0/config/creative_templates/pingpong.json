@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "genre": "pingpong",
+  "display_name": "乒乓球",
+  "name_suggestions": [
+    "弹弹乐",
+    "乒乓对决",
+    "教室球王",
+    "快慢球"
+  ],
+  "tuning_defaults_ref": "templates/pingpong/config/game_config.json",
+  "clamp_percent": 30,
+  "questions": [
+    {
+      "id": "q_ball",
+      "widget": "single_choice",
+      "prompt": "球飞得快慢——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.ball.base_speed",
+          "value": 175,
+          "code_anchor_id": "ball_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.ball.base_speed",
+          "value": 250,
+          "code_anchor_id": "ball_speed"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.ball.base_speed",
+          "value": 325,
+          "code_anchor_id": "ball_speed"
+        }
+      ]
+    },
+    {
+      "id": "q_win",
+      "widget": "single_choice",
+      "prompt": "几分算赢——",
+      "options": [
+        {
+          "id": "short",
+          "label": "3 分",
+          "tuning_path": "tuning.rules.points_to_win",
+          "value": 3,
+          "code_anchor_id": "points_to_win"
+        },
+        {
+          "id": "default",
+          "label": "5 分",
+          "tuning_path": "tuning.rules.points_to_win",
+          "value": 5,
+          "code_anchor_id": "points_to_win"
+        },
+        {
+          "id": "long",
+          "label": "7 分",
+          "tuning_path": "tuning.rules.points_to_win",
+          "value": 7,
+          "code_anchor_id": "points_to_win"
+        }
+      ]
+    },
+    {
+      "id": "q_ai",
+      "widget": "single_choice",
+      "prompt": "电脑对手——",
+      "options": [
+        {
+          "id": "weak",
+          "label": "弱一点",
+          "tuning_path": "tuning.ai.speed",
+          "value": 82,
+          "code_anchor_id": "ai_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.ai.speed",
+          "value": 118,
+          "code_anchor_id": "ai_speed"
+        },
+        {
+          "id": "strong",
+          "label": "强一点",
+          "tuning_path": "tuning.ai.speed",
+          "value": 153,
+          "code_anchor_id": "ai_speed"
+        }
+      ]
+    },
+    {
+      "id": "q_skill",
+      "widget": "skill_pick",
+      "prompt": "想开启一个小技能？（可选）",
+      "optional": true,
+      "tuning_path": "tuning.enabled_skills",
+      "skill_ids": ["power_smash", "curve_ball"],
+      "code_anchor_id": "enabled_skills"
+    }
+  ]
+}

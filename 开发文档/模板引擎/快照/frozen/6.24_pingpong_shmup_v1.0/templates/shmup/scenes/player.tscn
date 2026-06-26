@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://shmup_player"]
+
+[ext_resource type="Script" path="res://core/player_ship.gd" id="1_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(24, 24)
+
+[node name="Player" type="Area2D" groups=["player"]]
+collision_layer = 1
+collision_mask = 20
+script = ExtResource("1_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="ShieldSprite" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(2, 2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_player")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

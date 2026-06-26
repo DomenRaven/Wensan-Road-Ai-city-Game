@@ -1,0 +1,18 @@
+{
+  "slug": "pingpong",
+  "app_id": "app-cika5uyinqip",
+  "started_at": "2026-06-23T08:19:58Z",
+  "status": "ok",
+  "trajectory_events": 156,
+  "files_written": 12,
+  "rebuild_stats": {
+    "add": 0,
+    "edit": 14,
+    "file_add": 11,
+    "file_part": 1,
+    "skipped": 0,
+    "failed": 5
+  },
+  "has_prd": true,
+  "finished_at": "2026-06-23T08:21:23Z"
+}

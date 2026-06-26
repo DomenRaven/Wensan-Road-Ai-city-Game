@@ -1,0 +1,69 @@
+{"delay_ms": 0, "text": "// AI 正在写入 config/game_config.json", "highlight": false}
+{"delay_ms": 713, "text": "{", "highlight": false}
+{"delay_ms": 624, "text": "  \"tuning\": {", "highlight": false}
+{"delay_ms": 624, "text": "    \"car\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"max_speed\": 800,", "highlight": true, "anchor_id": "car_speed"}
+{"delay_ms": 802, "text": "      \"acceleration\": 300,", "highlight": false}
+{"delay_ms": 624, "text": "      \"friction\": 200,", "highlight": false}
+{"delay_ms": 891, "text": "      \"turn_speed\": 300,", "highlight": true, "anchor_id": "turn_speed"}
+{"delay_ms": 535, "text": "      \"hit_cooldown_ms\": 500", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"track\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"lap_distance_px\": 10000,", "highlight": true, "anchor_id": "lap_distance"}
+{"delay_ms": 535, "text": "      \"margin_px\": 50", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"round\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"duration_sec\": 90", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"enabled_skills\": [],", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 535, "text": "    \"skills\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"boost\": { \"cooldown_scale\": 1.0 },", "highlight": false}
+{"delay_ms": 535, "text": "      \"drift_snap\": { \"cooldown_scale\": 1.0 }", "highlight": false}
+{"delay_ms": 535, "text": "    }", "highlight": false}
+{"delay_ms": 535, "text": "  }", "highlight": false}
+{"delay_ms": 535, "text": "}", "highlight": false}
+{"delay_ms": 1426, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/car_topdown.gd", "highlight": false}
+{"delay_ms": 713, "text": "extends Node2D", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    var car_cfg = tuning.get(\"car\", {})", "highlight": false}
+{"delay_ms": 802, "text": "    _max_speed = car_cfg.get(\"max_speed\", _max_speed)", "highlight": true, "anchor_id": "car_speed"}
+{"delay_ms": 891, "text": "    _turn_speed = car_cfg.get(\"turn_speed\", _turn_speed)", "highlight": true, "anchor_id": "turn_speed"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _process(delta: float) -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    if Input.is_action_pressed(\"skill\"):", "highlight": true, "anchor_id": "boost"}
+{"delay_ms": 624, "text": "        _current_speed += _acceleration * delta", "highlight": true, "anchor_id": "boost"}
+{"delay_ms": 624, "text": "    _current_speed = clampf(_current_speed, 0.0, _max_speed)", "highlight": false}
+{"delay_ms": 713, "text": "    if Input.is_action_pressed(\"steer_left\"):", "highlight": true, "anchor_id": "steer"}
+{"delay_ms": 802, "text": "        vx = -_turn_speed", "highlight": true, "anchor_id": "steer"}
+{"delay_ms": 713, "text": "    elif Input.is_action_pressed(\"steer_right\"):", "highlight": true, "anchor_id": "steer"}
+{"delay_ms": 624, "text": "        vx = _turn_speed", "highlight": true, "anchor_id": "steer"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/track_runner.gd — 圈数计数", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    _lap_distance = track_cfg.get(\"lap_distance_px\", _lap_distance)", "highlight": true, "anchor_id": "lap_distance"}
+{"delay_ms": 624, "text": "    _lap_counter.setup(_lap_distance, 999)", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _on_lap_completed(lap_index: int) -> void:", "highlight": true, "anchor_id": "lap_complete"}
+{"delay_ms": 802, "text": "    ThemeSoundUtil.play(self, \"impact\", \"pass\")", "highlight": true, "anchor_id": "lap_complete"}
+{"delay_ms": 624, "text": "    _manager.set_lap_count(lap_index)", "highlight": true, "anchor_id": "lap_complete"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/lap_counter.gd", "highlight": false}
+{"delay_ms": 713, "text": "func advance(scroll_delta_px: float) -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    _distance_since_checkpoint += scroll_delta_px", "highlight": false}
+{"delay_ms": 891, "text": "    while _distance_since_checkpoint >= _lap_distance_px:", "highlight": true, "anchor_id": "lap_complete"}
+{"delay_ms": 802, "text": "        lap_completed.emit(_current_lap)", "highlight": true, "anchor_id": "lap_complete"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _process(delta: float) -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    else:", "highlight": false}
+{"delay_ms": 802, "text": "        _current_speed -= _friction * delta", "highlight": false}
+{"delay_ms": 624, "text": "    position.x += vx * delta", "highlight": true, "anchor_id": "steer"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# 小技能开关", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"boost\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 氮气短时极速", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"drift_snap\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 弯道保速漂移", "highlight": false}
+{"delay_ms": 713, "text": "", "highlight": false}
+{"delay_ms": 879, "text": "// 你的欢乐赛车游戏配置完成！", "highlight": false}

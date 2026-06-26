@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "genre": "parkour",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "极速跑酷"
+  },
+  "core_locked": true,
+  "tuning": {
+    "runner": {
+      "speed": 240
+    },
+    "jump": {
+      "velocity": -420,
+      "max_fall_speed": 520
+    },
+    "physics": {
+      "gravity": 980
+    },
+    "obstacle": {
+      "density": 0.55,
+      "min_gap_px": 200
+    },
+    "round": {
+      "duration_sec": 60
+    },
+    "prefab_weights": {
+      "single": 0.7,
+      "short": 0.3,
+      "low": 0.25
+    },
+    "enabled_skills": [],
+    "skills": {
+      "double_jump": {
+        "cooldown_scale": 1.0
+      },
+      "slide": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "platformer-art-deluxe",
+    "player_sprite": "res://assets/kenney/platformer-art-deluxe/Player/p1_walk/PNG/p1_walk01.png",
+    "platform_sprite": "res://assets/kenney/jumper-pack/PNG/Environment/ground_grass.png",
+    "obstacle_sprite": "res://assets/kenney/jumper-pack/PNG/Environment/spikes_top.png",
+    "low_obstacle_sprite": "res://assets/kenney/jumper-pack/PNG/Environment/spike_top.png",
+    "background_color": "#6eb5ff",
+    "title": "极速跑酷",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactGeneric_light_000.ogg",
+        "jump": "res://assets/kenney/impact-sounds/Audio/footstep_grass_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

@@ -273,4 +273,6 @@ C:\Users\MAC\.conda\envs\py310_torch251_cu121\python.exe run_game_research_crawl
 
 ---
 
+**关联报告**：用户向补调研见 [`K12用户向调研整合.md`](./K12用户向调研整合.md)（Survey-02 · 252/252 · POV/移情图/HMW）。
+
 *游戏设计与 AI 创作 · 调研整合 Survey-01*

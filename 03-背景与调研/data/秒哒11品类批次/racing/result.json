@@ -1,0 +1,31 @@
+{
+  "slug": "racing",
+  "display_name": "赛车",
+  "reference_games": [
+    "Horizon Chase",
+    "OutRun",
+    "Micro Machines"
+  ],
+  "started_at": "2026-06-22T13:49:16Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T13:49:16Z",
+      "appId": "app-cikgdwwv35z5",
+      "conversationId": "conv-cikgdwwv35z4"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T13:50:10Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T13:57:21Z",
+  "appId": "app-cikgdwwv35z5",
+  "conversationId": "conv-cikgdwwv35z4",
+  "editor_url": "https://www.miaoda.cn/projects/app-cikgdwwv35z5",
+  "preview_url": "https://app-cikgdwwv35z5.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

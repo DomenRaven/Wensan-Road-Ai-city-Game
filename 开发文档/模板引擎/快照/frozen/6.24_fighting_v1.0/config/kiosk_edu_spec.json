@@ -1,0 +1,114 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-24",
+  "doc_ref": "开发文档/模板引擎/6.24_B链教育版用户旅程与需求规格_v1.0.md",
+  "target_audience": "K12 · 展厅触控 · 14 岁以下",
+  "api_base": "http://127.0.0.1:8000",
+  "session_storage_key": "gameforge_kiosk_session_id",
+  "config_base": "../../config",
+  "assets_base": "../../assets",
+  "layout": {
+    "left_min_width_pct": 45,
+    "code_font_size_px": 14,
+    "code_line_height": 1.6,
+    "preview_aspect": "540/960"
+  },
+  "colors": {
+    "background": "#1e1e2e",
+    "code_bg": "#282a36",
+    "highlight": "#fef08a",
+    "accent": "#38bdf8",
+    "keyword": "#ff79c6",
+    "string": "#f1fa8c",
+    "text": "#e2e8f0",
+    "muted": "#94a3b8",
+    "panel_border": "#334155"
+  },
+  "phases": {
+    "create": { "label": "创作", "steps": ["B1", "B2", "B3", "B4"] },
+    "build": { "label": "制作", "steps": ["B5"] },
+    "play": { "label": "试玩", "steps": ["B6", "B7"] }
+  },
+  "touch_constraints": {
+    "min_button_height_px": 48,
+    "min_card_height_px": 72,
+    "max_text_input_length": 20
+  },
+  "theater": {
+    "theater_total_ms": 45000,
+    "line_scroll_speed": "linear",
+    "background": "#282a36",
+    "keyword_color": "#ff79c6",
+    "string_color": "#f1fa8c",
+    "sound_typing": false,
+    "assets_path": "../../assets/code_theater/{slug}.jsonl",
+    "workspace_trees_path": "../../config/edu_workspace_trees.json",
+    "multi_file_reveal": true
+  },
+  "code_highlight": {
+    "poll_interval_ms": 200,
+    "debounce_ms": 500,
+    "highlight_duration_ms": 2000,
+    "caption_duration_ms": 3000,
+    "suppress_actions": ["fire", "boost"],
+    "action_priority": {
+      "steer": 1,
+      "fire": 1,
+      "boost": 2,
+      "jump": 9,
+      "slide": 9,
+      "hit": 7,
+      "pickup": 9,
+      "pickup_powerup": 9,
+      "collect_coin": 9,
+      "stomp_enemy": 9,
+      "light_punch": 9,
+      "heavy_punch": 9,
+      "block": 9,
+      "special": 9,
+      "kill_enemy": 9,
+      "hit_npc": 9,
+      "hit_trap": 9,
+      "lap_complete": 8
+    }
+  },
+  "featured_genres": {
+    "slugs": ["platformer", "shmup", "survivor", "pingpong", "fighting", "parkour", "racing"],
+    "display_name_overrides": {
+      "shmup": "街机飞机射击",
+      "racing": "欢乐赛车"
+    }
+  },
+  "name_suggestions": {
+    "platformer": ["星星大冒险", "跳跳小子", "管道奇遇", "金币猎人"],
+    "shmup": ["雷霆小队", "星空守护者", "小小飞行员", "弹幕闪避"],
+    "survivor": ["糖果幸存者", "怪物克星", "时间大作战", "升级小英雄"],
+    "pingpong": ["弹弹乐", "乒乓对决", "教室球王", "快慢球"],
+    "fighting": ["像素拳王", "双人对决", "校园格斗赛", "闪电出拳"],
+    "parkour": ["无尽奔跑", "障碍小子", "滑铲达人", "晨跑冒险"],
+    "racing": ["欢乐赛车", "弯道之王", "小小车手", "冲刺吧"]
+  },
+  "intent_example_chips": [
+    "马里奥闯关",
+    "我想打飞机",
+    "割草打怪",
+    "乒乓球",
+    "格斗双人",
+    "跑酷",
+    "赛车"
+  ],
+  "genre_display_names": {
+    "platformer": "横版闯关",
+    "shmup": "街机飞机射击",
+    "survivor": "生存升级",
+    "pingpong": "乒乓球",
+    "fighting": "格斗对战",
+    "parkour": "跑酷",
+    "racing": "欢乐赛车"
+  },
+  "b_chain_isolation": {
+    "startup_api": "GET /bootstrap",
+    "release_api": "POST /sessions/{session_id}/release",
+    "on_page_hide": "sendBeacon release"
+  }
+}

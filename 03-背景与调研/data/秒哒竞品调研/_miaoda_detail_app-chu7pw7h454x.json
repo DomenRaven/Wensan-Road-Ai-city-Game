@@ -1,0 +1,41 @@
+﻿{
+  "msg": "",
+  "status": 0,
+  "trace": "01f0352fa8a5f44dd74a813996974f52",
+  "data": {
+    "name": "琛楁満椋炴満灏勫嚮娓告垙",
+    "appDesc": "涓€娆捐鏈洪鏍肩殑椋炴満灏勫嚮娓告垙锛岀帺瀹舵搷鎺ф垬鏈哄嚮姣佸绉嶆晫鏈猴紝鏀寔瑙﹀睆鎿嶄綔銆佸畬鏁撮煶鏁堢郴缁熷拰寰楀垎鎺掕锛屾彁渚涘揩鑺傚鐨勫皠鍑讳綋楠屻€?,
+    "avatar": "https://miaoda-preview-img.cdn.bcebos.com/preview.png",
+    "mobileCover": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/54e5b26c-313d-474f-b18d-38563962660c/app-chu7pw7h454x_h5_1782058643122.png",
+    "type": "GAME",
+    "appId": "app-chu7pw7h454x",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T00:19:03.287+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T00:16:36.090+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-chu81alwdxq8",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "璇风敓鎴愪竴涓綉椤碉紝鍐呭濡備笅锛氬府鎴戠敓鎴愪竴涓鏈洪鏍肩殑椋炴満灏勫嚮娓告垙锛屽弻鏂逛簰鐩告敾鍑伙紝鏁屾満闇€瑕佹湁澶氱椋庢牸锛屾鍣ㄥ舰鐘朵竴鑷达紝鍙﹀闇€瑕佸鍔犻煶鏁堬紝鏁翠釜娓告垙鏇存湁绱у紶鍒烘縺鐨勬劅瑙夛紝鏀寔鎵嬫満瑙﹀睆鎿嶄綔",
+    "labelColor": {
+      "colorCode": "#FEFFED",
+      "colorCodeSecondary": "#FFF2A2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": false,
+    "hideWatermark": false,
+    "conversationId": "conv-chu7pw7h454w"
+  }
+}

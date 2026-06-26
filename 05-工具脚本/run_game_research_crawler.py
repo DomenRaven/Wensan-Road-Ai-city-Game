@@ -55,6 +55,13 @@ raise SystemExit(main())
 """.strip()
 
 
+def _utf8_env() -> dict[str, str]:
+    env = os.environ.copy()
+    env.setdefault("PYTHONIOENCODING", "utf-8")
+    env.setdefault("PYTHONUTF8", "1")
+    return env
+
+
 def main() -> int:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     code = LAUNCHER.format(
@@ -67,7 +74,7 @@ def main() -> int:
     print("Python:", PYTHON)
     print("Config:", CONFIG)
     print("Output:", OUTPUT)
-    return subprocess.call(cmd)
+    return subprocess.call(cmd, env=_utf8_env())
 
 
 if __name__ == "__main__":

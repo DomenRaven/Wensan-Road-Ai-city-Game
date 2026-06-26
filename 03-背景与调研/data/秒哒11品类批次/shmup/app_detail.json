@@ -1,0 +1,38 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "cf0a4d563524a89bc86dadb4510fb457",
+  "data": {
+    "name": "K12纵版射击小游戏",
+    "appDesc": "一款面向K12儿童的纵版射击浏览器小游戏，采用科幻卡通风格，降低弹幕密度，提供5波敌机挑战，支持方向键移动、空格射击、X键炸弹等操作，适合课余休闲娱乐和反应能力训练。",
+    "type": "GAME",
+    "appId": "app-cijqi6jg95he",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T21:22:58.072+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T21:13:53.727+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cijx3ttglb7l",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 纵版射击 STG】浏览器小游戏，参考《雷电》《1942》《东方Project》的少儿简化版。\n\n## 参考要点\n- 雷电：纵版、主机在下方、敌机编队\n- 1942：循环背景、拾取火力 P\n- 东方：弹幕留缝可躲（密度降低 70% 给儿童）\n\n## 核心玩法\n- 方向键移动 + 空格射击 + X 炸弹（各算 1 键，共 3 操作概念）\n- 5 波敌机，最后 1 波小 Boss\n- 炸弹全屏清弹 1 次（冷却 15 秒）\n- 被弹扣命，3 命\n\n## 视觉\n- 科幻卡通飞机，亮色子弹轨迹\n\n## 交付\n- 波次提示 + 分数 + 胜利/失败",
+    "labelColor": {
+      "colorCode": "#E5FBF9",
+      "colorCodeSecondary": "#94F7F2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_2.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

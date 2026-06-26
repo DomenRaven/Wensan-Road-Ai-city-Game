@@ -1,0 +1,150 @@
+{
+  "version": "1.0",
+  "description": "秒哒 H5 → Godot game_config 转译工作表 · 每 slug 复制一份填写",
+  "handbook": "开发文档/模板引擎/秒哒转Godot_game_config_指导手册_v1.0.md",
+  "registry": "config/miaoda_reference_registry.json",
+  "source_root": "03-背景与调研/data/秒哒精选源码",
+  "clamp_percent": 30,
+  "entries": {
+    "platformer": {
+      "slug": "platformer",
+      "godot_config": "templates/platformer/config/game_config.json",
+      "miaoda_source": "03-背景与调研/data/秒哒精选源码/platformer",
+      "preview_url": "",
+      "tuning_candidates": {
+        "player.move_speed": { "miaoda_value": null, "godot_default": 240, "proposed": null, "notes": "" },
+        "player.jump_velocity": { "miaoda_value": null, "godot_default": -514, "proposed": null, "notes": "" },
+        "physics.gravity": { "miaoda_value": null, "godot_default": 980, "proposed": null, "notes": "" },
+        "enemy.patrol_speed": { "miaoda_value": null, "godot_default": 40, "proposed": null, "notes": "" },
+        "collectible.target_count": { "miaoda_value": null, "godot_default": 5, "proposed": null, "notes": "" }
+      },
+      "theme_candidates": {
+        "title": { "miaoda": "", "proposed": "", "kenney_pack": "platformer-deluxe" },
+        "player_sprite": { "miaoda": "", "proposed": "", "notes": "Kenney Player 系列" },
+        "background_color": { "miaoda": "", "proposed": "" }
+      },
+      "enabled_skills": [],
+      "ux_notes": "",
+      "verified": false,
+      "verified_at": ""
+    },
+    "survivor": {
+      "slug": "survivor",
+      "godot_config": "templates/survivor/config/game_config.json",
+      "miaoda_source": "03-背景与调研/data/秒哒精选源码/survivor",
+      "preview_url": "",
+      "tuning_candidates": {
+        "session.duration_sec": { "miaoda_value": null, "godot_default": 180, "proposed": null, "notes": "" },
+        "player.speed": { "miaoda_value": null, "godot_default": 200, "proposed": null, "notes": "" },
+        "weapon.interval_ms": { "miaoda_value": null, "godot_default": 800, "proposed": null, "notes": "" },
+        "spawn.rate_per_sec": { "miaoda_value": null, "godot_default": 1.8, "proposed": null, "notes": "" },
+        "spawn.max_alive": { "miaoda_value": null, "godot_default": 45, "proposed": null, "notes": "" }
+      },
+      "theme_candidates": {
+        "title": { "miaoda": "", "proposed": "", "kenney_pack": "food-kit" },
+        "asset_pack": { "miaoda": "", "proposed": "" }
+      },
+      "enabled_skills": [],
+      "ux_notes": "",
+      "verified": false,
+      "verified_at": ""
+    },
+    "racing": {
+      "slug": "racing",
+      "godot_config": "templates/racing/config/game_config.json",
+      "miaoda_source": "03-背景与调研/data/秒哒精选源码/racing",
+      "preview_url": "",
+      "tuning_candidates": {
+        "car.max_speed": { "miaoda_value": null, "godot_default": 340, "proposed": null, "notes": "" },
+        "car.acceleration": { "miaoda_value": null, "godot_default": 200, "proposed": null, "notes": "" },
+        "car.turn_rate": { "miaoda_value": null, "godot_default": 3.0, "proposed": null, "notes": "" },
+        "obstacle.density": { "miaoda_value": null, "godot_default": 0.5, "proposed": null, "notes": "" },
+        "round.duration_sec": { "miaoda_value": null, "godot_default": 90, "proposed": null, "notes": "" }
+      },
+      "theme_candidates": {
+        "title": { "miaoda": "", "proposed": "", "kenney_pack": "racing-pack" },
+        "player_sprite": { "miaoda": "", "proposed": "" }
+      },
+      "enabled_skills": [],
+      "ux_notes": "",
+      "verified": false,
+      "verified_at": ""
+    },
+    "fighting": {
+      "slug": "fighting",
+      "godot_config": "templates/fighting/config/game_config.json",
+      "miaoda_source": "03-背景与调研/data/秒哒精选源码/fighting",
+      "preview_url": "",
+      "tuning_candidates": {
+        "player.walk_speed": { "miaoda_value": null, "godot_default": 180, "proposed": null, "notes": "" },
+        "player.max_hp": { "miaoda_value": null, "godot_default": 100, "proposed": null, "notes": "" },
+        "move.light.damage": { "miaoda_value": null, "godot_default": 12, "proposed": null, "notes": "" },
+        "ai.reaction_interval_sec": { "miaoda_value": null, "godot_default": 0.45, "proposed": null, "notes": "" }
+      },
+      "theme_candidates": {
+        "title": { "miaoda": "", "proposed": "", "kenney_pack": "platformer-art-deluxe" }
+      },
+      "enabled_skills": [],
+      "ux_notes": "",
+      "verified": false,
+      "verified_at": ""
+    },
+    "pingpong": {
+      "slug": "pingpong",
+      "godot_config": "templates/pingpong/config/game_config.json",
+      "miaoda_source": "03-背景与调研/data/秒哒精选源码/pingpong",
+      "preview_url": "",
+      "tuning_candidates": {
+        "ball.base_speed": { "miaoda_value": null, "godot_default": 380, "proposed": null, "notes": "" },
+        "paddle.speed": { "miaoda_value": null, "godot_default": 360, "proposed": null, "notes": "" },
+        "ai.reaction_ms": { "miaoda_value": null, "godot_default": 175, "proposed": null, "notes": "" },
+        "rules.points_to_win": { "miaoda_value": null, "godot_default": 5, "proposed": null, "notes": "" }
+      },
+      "theme_candidates": {
+        "title": { "miaoda": "", "proposed": "", "kenney_pack": "sports-pack" }
+      },
+      "enabled_skills": [],
+      "ux_notes": "",
+      "verified": false,
+      "verified_at": ""
+    },
+    "shmup": {
+      "slug": "shmup",
+      "godot_config": "templates/shmup/config/game_config.json",
+      "miaoda_source": "03-背景与调研/data/秒哒精选源码/shmup",
+      "preview_url": "",
+      "tuning_candidates": {
+        "player.speed": { "miaoda_value": null, "godot_default": 260, "proposed": null, "notes": "" },
+        "player.bullet_interval_ms": { "miaoda_value": null, "godot_default": 120, "proposed": null, "notes": "" },
+        "wave.enemy_count": { "miaoda_value": null, "godot_default": 6, "proposed": null, "notes": "" },
+        "spawn.interval_ms": { "miaoda_value": null, "godot_default": 1200, "proposed": null, "notes": "" }
+      },
+      "theme_candidates": {
+        "title": { "miaoda": "", "proposed": "", "kenney_pack": "space-shooter-redux" }
+      },
+      "enabled_skills": [],
+      "ux_notes": "",
+      "verified": false,
+      "verified_at": ""
+    },
+    "parkour": {
+      "slug": "parkour",
+      "godot_config": "templates/parkour/config/game_config.json",
+      "miaoda_source": "03-背景与调研/data/秒哒精选源码/parkour",
+      "preview_url": "",
+      "tuning_candidates": {
+        "runner.speed": { "miaoda_value": null, "godot_default": 240, "proposed": null, "notes": "" },
+        "jump.velocity": { "miaoda_value": null, "godot_default": -420, "proposed": null, "notes": "" },
+        "obstacle.density": { "miaoda_value": null, "godot_default": 0.55, "proposed": null, "notes": "" },
+        "round.duration_sec": { "miaoda_value": null, "godot_default": 60, "proposed": null, "notes": "" }
+      },
+      "theme_candidates": {
+        "title": { "miaoda": "", "proposed": "", "kenney_pack": "jumper-pack" }
+      },
+      "enabled_skills": [],
+      "ux_notes": "",
+      "verified": false,
+      "verified_at": ""
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "__file_desc": "cars-racing 素材包 manifest",
+  "version": "1.0.0",
+  "pack_id": "cars-racing",
+  "pack_path": "assets/cars-racing",
+  "format": "individual_pngs",
+  "description": "Cars Racing游戏UI素材包，含23个游戏元素，包括等分类",
+  "png_dir": ".",
+  "assets": [
+    {
+      "id": "atlas_01",
+      "file": "atlas/png/atlas_01_2048x2048.png",
+      "description": "赛车游戏素材集（道路/障碍/道具/燃料罐）"
+    },
+    {
+      "id": "atlas_01_color2",
+      "file": "atlas/png/atlas_01_color2_2048x2048.png",
+      "description": "赛车游戏地图素材集（含道路、障碍物、金币、燃料桶等游戏元素）"
+    },
+    {
+      "id": "atlas_01_color3",
+      "file": "atlas/png/atlas_01_color3_2048x2048.png",
+      "description": "游戏场景素材集（道路/障碍/道具图集）"
+    },
+    {
+      "id": "atlas_01_color4",
+      "file": "atlas/png/atlas_01_color4_2048x2048.png",
+      "description": "游戏素材图集（含道路、车辆、障碍物等元素）"
+    },
+    {
+      "id": "atlas_02_menu",
+      "file": "atlas/png/atlas_02_menu_2048x2048.png",
+      "description": "游戏UI菜单组件集（按钮/标签/图标素材包）"
+    },
+    {
+      "id": "atlas_03_menu",
+      "file": "atlas/png/atlas_03_menu_2048x2048.png",
+      "description": "奖励工具箱界面UI元素（菜单背景色块与图标）"
+    },
+    {
+      "id": "atlas_04_menu",
+      "file": "atlas/png/atlas_04_menu_2048x2048.png",
+      "description": "游戏菜单界面图标集（道具与卡牌元素）"
+    },
+    {
+      "id": "atlas_05_menu",
+      "file": "atlas/png/atlas_05_menu_2048x2048.png",
+      "description": "彩色标签栏与金币奖励图标（游戏菜单UI素材）"
+    },
+    {
+      "id": "atlas_06_hud",
+      "file": "atlas/png/atlas_06_hud_512x512.png",
+      "description": "游戏HUD界面元素（按钮/图标/状态栏）"
+    },
+    {
+      "id": "background",
+      "file": "atlas/png/background_1080x1920.png",
+      "description": "深色几何三角形拼接（低多边形背景素材）"
+    },
+    {
+      "id": "logo",
+      "file": "atlas/png/logo_960x360.png",
+      "description": "2 Cars Racing（赛车游戏标志/Logo）"
+    },
+    {
+      "id": "car_10",
+      "file": "cars/png/car_10_440x680.png",
+      "description": "黄色轿车（俯视角，交通载具）"
+    },
+    {
+      "id": "car_10_v2",
+      "file": "cars/png/car_10_v2_440x680.png",
+      "description": "蓝色轿车（俯视角，交通游戏素材）"
+    },
+    {
+      "id": "car_10_v3",
+      "file": "cars/png/car_10_v3_440x680.png",
+      "description": "绿色赛车俯视图（编号59，游戏车辆素材）"
+    },
+    {
+      "id": "car_10_v4",
+      "file": "cars/png/car_10_v4_440x680.png",
+      "description": "蓝色轿车（俯视角，交通类游戏素材）"
+    },
+    {
+      "id": "car_17",
+      "file": "cars/png/car_17_440x680.png",
+      "description": "黄色跑车（俯视视角，赛车游戏素材）"
+    },
+    {
+      "id": "car_17_v2",
+      "file": "cars/png/car_17_v2_440x680.png",
+      "description": "蓝色赛车3号（俯视角赛车游戏素材）"
+    },
+    {
+      "id": "car_17_v3",
+      "file": "cars/png/car_17_v3_440x680.png",
+      "description": "红色赛车（俯视角，编号10，竞速游戏素材）"
+    },
+    {
+      "id": "car_17_v4",
+      "file": "cars/png/car_17_v4_440x680.png",
+      "description": "白色超跑俯视图（赛车游戏车辆素材）"
+    },
+    {
+      "id": "car_23",
+      "file": "cars/png/car_23_440x680.png",
+      "description": "蓝色赛车（俯视角，带白色双条纹）"
+    },
+    {
+      "id": "car_23_v2",
+      "file": "cars/png/car_23_v2_440x680.png",
+      "description": "青绿色轿车（俯视角，赛车游戏素材）"
+    },
+    {
+      "id": "car_23_v3",
+      "file": "cars/png/car_23_v3_440x680.png",
+      "description": "棕色赛车俯视图（编号14，竞速游戏素材）"
+    },
+    {
+      "id": "car_23_v4",
+      "file": "cars/png/car_23_v4_440x680.png",
+      "description": "黄色赛车（俯视角，带LL编号标志）"
+    }
+  ],
+  "categories": {},
+  "phaser_config": {
+    "load_method": "image",
+    "load_code_template": "this.load.image(KEY, 'assets/cars-racing/' + FILE);",
+    "usage_template": "this.add.image(x, y, KEY);"
+  },
+  "name": "cars-racing"
+}

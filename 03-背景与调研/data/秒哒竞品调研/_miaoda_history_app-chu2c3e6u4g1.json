@@ -1,0 +1,4 @@
+﻿{"eventId": 6, "role": "user", "type": "message", "content": "ai鐢熸垚涓€涓┈閲屽ゥ灏忔父鎴?}
+{"eventId": 525, "role": "agent", "type": "file", "content": "[file: 闇€姹傛枃妗?md]"}
+{"eventId": 540, "role": "user", "type": "message", "content": "绔嬪嵆鍒涗綔"}
+{"eventId": 682, "role": "system", "type": "status", "content": "state=canceled"}

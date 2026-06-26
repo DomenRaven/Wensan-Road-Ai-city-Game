@@ -1,0 +1,35 @@
+[gd_scene load_steps=7 format=3 uid="uid://shmup_game"]
+
+[ext_resource type="Script" path="res://core/game_area.gd" id="1_game"]
+[ext_resource type="Script" path="res://core/scroll_background.gd" id="2_scroll"]
+[ext_resource type="PackedScene" uid="uid://shmup_player" path="res://scenes/player.tscn" id="3_player"]
+[ext_resource type="Script" path="res://core/bullet_pool.gd" id="4_pool"]
+[ext_resource type="Script" path="res://core/enemy_spawner.gd" id="5_spawner"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(320, 180)
+current = true
+
+[node name="ScrollBackground" type="Node2D" parent="."]
+script = ExtResource("2_scroll")
+
+[node name="BgA" type="Sprite2D" parent="ScrollBackground"]
+position = Vector2(0, -360)
+
+[node name="BgB" type="Sprite2D" parent="ScrollBackground"]
+
+[node name="BulletPool" type="Node2D" parent="." groups=["bullet_pool"]]
+script = ExtResource("4_pool")
+
+[node name="EnemySpawner" type="Node2D" parent="."]
+script = ExtResource("5_spawner")
+
+[node name="Enemies" type="Node2D" parent="EnemySpawner"]
+
+[node name="Powerups" type="Node2D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("3_player")]
+position = Vector2(320, 300)

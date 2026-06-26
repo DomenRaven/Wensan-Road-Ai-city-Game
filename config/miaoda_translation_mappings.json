@@ -1,0 +1,141 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-23",
+  "description": "秒哒 TS 常量 → Godot game_config.tuning 字段映射 · 供 miaoda_apply_translation.py",
+  "clamp_percent": 30,
+  "slug_order": [
+    "platformer",
+    "survivor",
+    "racing",
+    "fighting",
+    "pingpong",
+    "shmup",
+    "parkour"
+  ],
+  "genres": {
+    "platformer": {
+      "constants_export": "CONSTANTS",
+      "fields": [
+        { "miaoda_key": "PLAYER_SPEED", "godot_path": "player.move_speed", "transform": "direct" },
+        { "miaoda_key": "PLAYER_JUMP", "godot_path": "player.jump_velocity", "transform": "direct" },
+        { "miaoda_key": "GRAVITY", "godot_path": "physics.gravity", "transform": "direct" },
+        { "miaoda_key": "ENEMY_SPEED", "godot_path": "enemy.patrol_speed", "transform": "direct" }
+      ],
+      "theme_from_prd": true
+    },
+    "survivor": {
+      "constants_export": "CONSTANTS",
+      "fields": [
+        { "miaoda_key": "GAME_DURATION", "godot_path": "session.duration_sec", "transform": "direct" },
+        {
+          "source": "gameStore",
+          "miaoda_key": "moveSpeed",
+          "godot_path": "player.speed",
+          "transform": "direct"
+        },
+        {
+          "source": "gameStore",
+          "miaoda_key": "attackSpeed",
+          "godot_path": "weapon.interval_ms",
+          "transform": "direct"
+        },
+        {
+          "source": "gameStore",
+          "miaoda_key": "attackDamage",
+          "godot_path": "weapon.base_damage",
+          "transform": "direct"
+        },
+        {
+          "miaoda_key": "ENEMY_SPAWN_RATE_BASE",
+          "godot_path": "spawn.rate_per_sec",
+          "transform": "inverse_ratio",
+          "miaoda_baseline": 2000
+        }
+      ],
+      "theme_from_prd": true
+    },
+    "racing": {
+      "inline_file": "src/**/scenes/MainGame.ts",
+      "fields": [
+        { "regex": "MAX_SPEED\\s*=\\s*([\\d.]+)", "godot_path": "car.max_speed", "transform": "direct" },
+        { "regex": "ACCEL\\s*=\\s*([\\d.]+)", "godot_path": "car.acceleration", "transform": "direct" },
+        {
+          "regex": "TURN_SPEED\\s*=\\s*([\\d.]+)",
+          "godot_path": "car.turn_rate",
+          "transform": "ratio",
+          "miaoda_baseline": 300
+        },
+        { "regex": "GAME_DURATION\\s*=\\s*([\\d.]+)", "godot_path": "round.duration_sec", "transform": "direct" },
+        {
+          "regex": "FloatBetween\\(0,\\s*1\\)\\s*>\\s*([\\d.]+)",
+          "godot_path": "obstacle.density",
+          "transform": "obstacle_chance",
+          "notes": "1 - spawn_threshold"
+        }
+      ],
+      "theme_from_prd": true
+    },
+    "fighting": {
+      "constants_export": "BATTLE_CONSTANTS",
+      "fields": [
+        { "miaoda_key": "PLAYER_SPEED", "godot_path": "player.walk_speed", "transform": "direct" },
+        { "miaoda_key": "HP_MAX", "godot_path": "player.max_hp", "transform": "direct" },
+        { "miaoda_key": "BASE_DAMAGE", "godot_path": "move.light.damage", "transform": "direct" },
+        {
+          "inline_file": "src/**/scenes/Battle.ts",
+          "regex": "aiNextActionTime\\s*=\\s*time\\s*\\+\\s*(\\d+)\\s*\\+",
+          "godot_path": "ai.reaction_interval_sec",
+          "transform": "ms_to_sec_avg",
+          "regex_max": "Math\\.random\\(\\)\\s*\\*\\s*(\\d+)"
+        }
+      ],
+      "theme_from_prd": true
+    },
+    "pingpong": {
+      "constants_export": "CONSTANTS",
+      "fields": [
+        { "miaoda_key": "BALL_INITIAL_SPEED", "godot_path": "ball.base_speed", "transform": "direct" },
+        {
+          "miaoda_key": "BALL_INITIAL_SPEED",
+          "miaoda_key_2": "BALL_SPEED_INCREMENT",
+          "godot_path": "ball.max_speed",
+          "transform": "sum"
+        },
+        { "miaoda_key": "PADDLE_SPEED", "godot_path": "paddle.speed", "transform": "direct" },
+        { "miaoda_key": "WIN_SCORE", "godot_path": "rules.points_to_win", "transform": "direct" },
+        {
+          "miaoda_key": "AI_SPEED",
+          "godot_path": "ai.reaction_ms",
+          "transform": "inverse_ratio",
+          "miaoda_baseline": 360
+        }
+      ],
+      "theme_from_prd": true
+    },
+    "shmup": {
+      "constants_export": "CONSTANTS",
+      "fields": [
+        { "miaoda_key": "PLAYER_SPEED", "godot_path": "player.speed", "transform": "direct" },
+        { "miaoda_key": "PLAYER_FIRE_RATE", "godot_path": "player.bullet_interval_ms", "transform": "direct" },
+        { "miaoda_key": "ENEMY_BASE_SPEED", "godot_path": "enemy.speed", "transform": "direct" },
+        { "miaoda_key": "ENEMY_SPAWN_RATE", "godot_path": "spawn.interval_ms", "transform": "direct" }
+      ],
+      "theme_from_prd": true
+    },
+    "parkour": {
+      "constants_export": "CONSTANTS",
+      "fields": [
+        { "miaoda_key": "GAME_DURATION", "godot_path": "round.duration_sec", "transform": "direct" },
+        { "miaoda_key": "JUMP_VELOCITY", "godot_path": "jump.velocity", "transform": "direct" },
+        {
+          "miaoda_key": "SPEED_START",
+          "godot_path": "runner.speed",
+          "transform": "abs"
+        },
+        { "miaoda_key": "GRAVITY", "godot_path": "physics.gravity", "transform": "direct" },
+        { "miaoda_key": "OBSTACLE_MIN_GAP", "godot_path": "obstacle.min_gap_px", "transform": "direct" }
+      ],
+      "theme_from_prd": true
+    }
+  }
+}

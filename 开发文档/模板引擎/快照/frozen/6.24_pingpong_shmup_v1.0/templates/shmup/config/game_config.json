@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "genre": "shmup",
+    "template_version": "1.1",
+    "session_id": "",
+    "display_name": "街机飞机射击游戏"
+  },
+  "core_locked": true,
+  "tuning": {
+    "player": {
+      "speed": 300,
+      "max_hp": 3,
+      "bullet_interval_ms": 200,
+      "bullet_speed": 500
+    },
+    "enemy": {
+      "bullet_speed": 210,
+      "aim_cone_deg": 120
+    },
+    "spawn": {
+      "interval_ms": 1500,
+      "min_interval_ms": 500
+    },
+    "boss": {
+      "first_score": 500,
+      "score_step": 1000
+    },
+    "powerup": {
+      "duration_sec": 15,
+      "fall_speed": 100
+    },
+    "win": {
+      "mode": "endless"
+    },
+    "enemy_types": {
+      "player": { "frame": 4 },
+      "player_bullet": { "frame": 0 },
+      "enemy_bullet": { "frame": 2 },
+      "normal": {
+        "frame": 9,
+        "score": 10,
+        "hp": 1,
+        "speed": 135,
+        "fire_rate_ms": 2000,
+        "drop_rate": 0.3,
+        "scale": 1.0
+      },
+      "fast": {
+        "frame": 5,
+        "score": 20,
+        "hp": 1,
+        "speed": 225,
+        "fire_rate_ms": 0,
+        "drop_rate": 0.4,
+        "scale": 1.0
+      },
+      "heavy": {
+        "frame": 1,
+        "score": 30,
+        "hp": 3,
+        "speed": 72,
+        "fire_rate_ms": 1500,
+        "drop_rate": 0.5,
+        "scale": 1.2
+      },
+      "boss": {
+        "frame": 1,
+        "score": 200,
+        "hp": 100,
+        "speed": 45,
+        "fire_rate_ms": 800,
+        "drop_rate": 1.0,
+        "scale": 2.5
+      }
+    },
+    "powerup_types": [
+      { "name": "fireRate", "frame": 12 },
+      { "name": "doubleShot", "frame": 1 },
+      { "name": "shield", "frame": 13 }
+    ],
+    "enabled_skills": [],
+    "skills": {
+      "bomb": { "cooldown_scale": 1.0 },
+      "laser_beam": { "cooldown_scale": 1.0 }
+    }
+  },
+  "theme": {
+    "asset_pack": "pixel-plane-shmup",
+    "ships_sheet": "res://assets/pixel-plane-shmup/Tilemap/ships_packed.png",
+    "tiles_sheet": "res://assets/pixel-plane-shmup/Tilemap/tiles_packed.png",
+    "background_image": "res://assets/pixel-plane-shmup/Tilemap/background.png",
+    "background_color": "#0a0a0c",
+    "title": "街机飞机射击游戏",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "shoot": "res://assets/kenney/impact-sounds/Audio/impactTin_medium_000.ogg",
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactMetal_heavy_000.ogg",
+        "explode": "res://assets/kenney/impact-sounds/Audio/impactGlass_heavy_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

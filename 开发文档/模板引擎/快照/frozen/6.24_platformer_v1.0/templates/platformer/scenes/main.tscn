@@ -1,0 +1,287 @@
+[gd_scene load_steps=2 format=3 uid="uid://platformer_main"]
+
+[ext_resource type="Script" path="res://core/game_manager.gd" id="1_main"]
+
+[node name="Main" type="Node2D" groups=["game_manager"]]
+script = ExtResource("1_main")
+
+[node name="LevelRoot" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 180.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "分数  000000"
+
+[node name="CoinsLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 8.0
+offset_right = 280.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(0.98, 0.82, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "🍒 x 00"
+
+[node name="LevelLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 8.0
+offset_right = 380.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+horizontal_alignment = 1
+text = "关卡 1"
+
+[node name="LivesLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = 32.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0.9, 0.15, 0.15, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 2
+text = "♥♥♥"
+
+[node name="HelpLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -28.0
+offset_right = 240.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+text = "← → / AD 移动   空格 跳跃   踩头消灭敌人   到达终点旗"
+
+[node name="StartScreen" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.35, 0.75, 0.85)
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -100.0
+offset_right = 220.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.9, 0.15, 0.15, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+text = "马里奥风格横版闯关游戏"
+
+[node name="StartButton" type="Button" parent="CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = 10.0
+offset_right = 80.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 16
+text = "开始游戏"
+
+[node name="HintLabel" type="Label" parent="CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = 56.0
+offset_right = 160.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 0.9)
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+text = "← → / AD 移动  ·  空格 跳跃"
+
+[node name="GameOverScreen" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.72)
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -90.0
+offset_right = 160.0
+offset_bottom = 90.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/GameOverScreen/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.15, 0.15, 1)
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+text = "游戏结束"
+
+[node name="ScoreCaption" type="Label" parent="CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "最终分数"
+
+[node name="ScoreValue" type="Label" parent="CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+text = "0"
+
+[node name="Buttons" type="HBoxContainer" parent="CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="RetryButton" type="Button" parent="CanvasLayer/GameOverScreen/Panel/VBox/Buttons"]
+layout_mode = 2
+text = "再试一次"
+
+[node name="MenuButton" type="Button" parent="CanvasLayer/GameOverScreen/Panel/VBox/Buttons"]
+layout_mode = 2
+text = "返回菜单"
+
+[node name="VictoryScreen" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="CanvasLayer/VictoryScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.65)
+
+[node name="Panel" type="PanelContainer" parent="CanvasLayer/VictoryScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -80.0
+offset_right = 160.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/VictoryScreen/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="CanvasLayer/VictoryScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.82, 0, 1)
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+text = "关卡完成！"
+
+[node name="ScoreCaption" type="Label" parent="CanvasLayer/VictoryScreen/Panel/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+text = "分数"
+
+[node name="ScoreValue" type="Label" parent="CanvasLayer/VictoryScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+text = "0"
+
+[node name="NextButton" type="Button" parent="CanvasLayer/VictoryScreen/Panel/VBox"]
+layout_mode = 2
+text = "下一关"

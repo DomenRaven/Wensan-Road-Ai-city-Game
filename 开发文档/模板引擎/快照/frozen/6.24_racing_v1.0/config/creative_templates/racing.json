@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "genre": "racing",
+  "display_name": "欢乐赛车",
+  "name_suggestions": [
+    "欢乐赛车",
+    "弯道之王",
+    "小小车手",
+    "冲刺吧"
+  ],
+  "tuning_defaults_ref": "templates/racing/config/game_config.json",
+  "clamp_percent": 30,
+  "questions": [
+    {
+      "id": "q_speed",
+      "widget": "single_choice",
+      "prompt": "你的赛车最快能跑——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.car.max_speed",
+          "value": 560,
+          "code_anchor_id": "car_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.car.max_speed",
+          "value": 800,
+          "code_anchor_id": "car_speed"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.car.max_speed",
+          "value": 1040,
+          "code_anchor_id": "car_speed"
+        }
+      ]
+    },
+    {
+      "id": "q_turn",
+      "widget": "single_choice",
+      "prompt": "转弯手感——",
+      "options": [
+        {
+          "id": "dull",
+          "label": "钝一点",
+          "tuning_path": "tuning.car.turn_speed",
+          "value": 210,
+          "code_anchor_id": "turn_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.car.turn_speed",
+          "value": 300,
+          "code_anchor_id": "turn_speed"
+        },
+        {
+          "id": "nimble",
+          "label": "灵一点",
+          "tuning_path": "tuning.car.turn_speed",
+          "value": 390,
+          "code_anchor_id": "turn_speed"
+        }
+      ]
+    },
+    {
+      "id": "q_lap",
+      "widget": "single_choice",
+      "prompt": "每圈赛道长度——",
+      "options": [
+        {
+          "id": "short",
+          "label": "短一点",
+          "tuning_path": "tuning.track.lap_distance_px",
+          "value": 7000,
+          "code_anchor_id": "lap_distance"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.track.lap_distance_px",
+          "value": 10000,
+          "code_anchor_id": "lap_distance"
+        },
+        {
+          "id": "long",
+          "label": "长一点",
+          "tuning_path": "tuning.track.lap_distance_px",
+          "value": 13000,
+          "code_anchor_id": "lap_distance"
+        }
+      ]
+    },
+    {
+      "id": "q_skill",
+      "widget": "skill_pick",
+      "prompt": "想开启一个小技能？（可选）",
+      "optional": true,
+      "tuning_path": "tuning.enabled_skills",
+      "skill_ids": ["boost", "drift_snap"],
+      "code_anchor_id": "enabled_skills"
+    }
+  ]
+}

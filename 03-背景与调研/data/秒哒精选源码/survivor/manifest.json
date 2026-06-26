@@ -1,0 +1,18 @@
+{
+  "slug": "survivor",
+  "app_id": "app-cikthp6wjz0h",
+  "started_at": "2026-06-23T08:21:28Z",
+  "status": "ok",
+  "trajectory_events": 292,
+  "files_written": 15,
+  "rebuild_stats": {
+    "add": 0,
+    "edit": 45,
+    "file_add": 14,
+    "file_part": 1,
+    "skipped": 0,
+    "failed": 14
+  },
+  "has_prd": true,
+  "finished_at": "2026-06-23T08:21:33Z"
+}

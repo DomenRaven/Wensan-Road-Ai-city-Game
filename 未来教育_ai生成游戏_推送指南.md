@@ -1,6 +1,6 @@
 # 未来教育 · AI 生成小游戏 · Gitea 推送指南 v1.0
 
-> **仓库**：`http://10.70.160.61:3002/3240103625/zwm.git`  
+> **仓库**：`http://10.70.160.61:3002/3240103625/zwm.git` · **GitHub**：https://github.com/DomenRaven/Wensan-Road-Ai-city-Game  
 > **工作目录**：`e:\文三路AI馆\2.ai生成游戏`  
 > **专用分支**：`gameforge-k12`  
 > **main 归属**：`e:\文三路AI馆\1未来隧道部分`（未来隧道部分，与本项目隔离）  
@@ -227,8 +227,49 @@ node_modules/ __pycache__/
 
 ---
 
-## 13. 修订记录
+## 13. GitHub 公开仓库（v1.0 起）
+
+| 项 | 值 |
+|----|-----|
+| 仓库 | https://github.com/DomenRaven/Wensan-Road-Ai-city-Game |
+| 远程名 | `github`（与场内 `origin` 并存，互不影响） |
+| 默认推送分支 | `gameforge-k12` → GitHub `main` |
+| 版本标签 | `v1.0`（回退锚点） |
+
+**首次添加 GitHub 远程并推送：**
+
+```powershell
+Set-Location "e:\文三路AI馆\2.ai生成游戏"
+git remote add github https://github.com/DomenRaven/Wensan-Road-Ai-city-Game.git
+git push -u github gameforge-k12:main
+git push github v1.0
+```
+
+**日常同步 GitHub（在场内 origin 推送之外）：**
+
+```powershell
+git checkout gameforge-k12
+git push origin gameforge-k12          # 场内 Gitea
+git push github gameforge-k12:main     # GitHub
+```
+
+**回退到 v1.0：**
+
+```powershell
+git fetch github --tags
+git checkout v1.0                      # 只读查看
+# 或在工作分支上：
+git branch backup-$(Get-Date -Format yyyyMMdd)
+git reset --hard v1.0
+```
+
+发新版时：更新 `VERSION`、`CHANGELOG.md`，提交后 `git tag -a v1.1 -m "..."` 并 `git push github v1.1`。
+
+---
+
+## 14. 修订记录
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
+| v1.1 | 2026-06-24 | 增加 GitHub 远程、VERSION/CHANGELOG、v1.0 标签与回退说明 |
 | v1.0 | 2026-06-13 | 初版；独立 orphan 分支 `gameforge-k12`；对齐前厅机械屏推送指南体例 |

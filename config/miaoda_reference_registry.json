@@ -1,0 +1,222 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-23",
+  "description": "秒哒成熟精选 7 项 · 优于本地 L0 · 用于源码落盘与 game_config 转译",
+  "local_output_root": "03-背景与调研/data/秒哒精选源码",
+  "user_prototype_root": "秒哒游戏原型",
+  "parallel_handbook": "开发文档/模板引擎/秒哒并行复刻_工程手册_v1.0.md",
+  "parallel_manifest": "config/miaoda_parallel_r2_manifest.json",
+  "batch_11_complete": true,
+  "batch_output": "03-背景与调研/data/秒哒11品类批次",
+  "translation_handbook": "开发文档/模板引擎/秒哒转Godot_game_config_指导手册_v1.0.md",
+  "worksheet_template": "03-背景与调研/config/miaoda_translation_worksheet.template.json",
+  "entries": [
+    {
+      "slug": "racing",
+      "display_name": "欢乐赛车",
+      "user_title": "k12竞速小游戏（欢乐赛车）v3",
+      "name_keywords": [
+        "欢乐赛车",
+        "竞速",
+        "v3",
+        "k12竞速"
+      ],
+      "priority": 3,
+      "app_id": "app-cikgdwwv35z5",
+      "preview_url": "https://app-cikgdwwv35z5.appmiaoda.com",
+      "editor_url": "https://www.miaoda.cn/projects/app-cikgdwwv35z5",
+      "match_status": "matched",
+      "candidates": [
+        {
+          "appId": "app-cikgdwwv35z5",
+          "name": "K12竞速小游戏",
+          "score": 4.0
+        }
+      ],
+      "matched_name": "K12竞速小游戏",
+      "match_score": 4.0,
+      "matched_at": "2026-06-23T09:07:35Z",
+      "user_download_path": "秒哒游戏原型/赛车小游戏/app-cikgdwwv35z5",
+      "user_download_verified": "2026-06-23"
+    },
+    {
+      "slug": "survivor",
+      "display_name": "割草幸存者",
+      "user_title": "割草生存类游戏（k12割草幸存者）v6",
+      "name_keywords": [
+        "割草幸存者",
+        "割草生存",
+        "v6",
+        "k12割草"
+      ],
+      "priority": 2,
+      "app_id": "app-cikthp6wjz0h",
+      "preview_url": "https://app-cikthp6wjz0h.appmiaoda.com",
+      "editor_url": "https://www.miaoda.cn/projects/app-cikthp6wjz0h",
+      "match_status": "matched_best",
+      "candidates": [
+        {
+          "appId": "app-cikthp6wjz0h",
+          "name": "割草生存类游戏",
+          "score": 6.0
+        },
+        {
+          "appId": "app-cijq8z29cgld",
+          "name": "K12割草幸存者游戏",
+          "score": 5.5
+        }
+      ],
+      "matched_name": "割草生存类游戏",
+      "match_score": 6.0,
+      "matched_at": "2026-06-23T09:07:35Z",
+      "user_download_path": "秒哒游戏原型/割草肉鸽/app-cikthp6wjz0h",
+      "user_download_verified": "2026-06-23"
+    },
+    {
+      "slug": "fighting",
+      "display_name": "街机格斗",
+      "user_title": "k12横版格斗小游戏（k12街机格斗）v3",
+      "name_keywords": [
+        "街机格斗",
+        "横版格斗",
+        "格斗",
+        "v3",
+        "k12格斗"
+      ],
+      "priority": 4,
+      "app_id": "app-cijahlqb7pj5",
+      "preview_url": "https://app-cijahlqb7pj5.appmiaoda.com",
+      "editor_url": "https://www.miaoda.cn/projects/app-cijahlqb7pj5",
+      "match_status": "matched_best",
+      "candidates": [
+        {
+          "appId": "app-cijahlqb7pj5",
+          "name": "K12横版格斗游戏",
+          "score": 4.0
+        },
+        {
+          "appId": "app-cikmsjmwyjnl",
+          "name": "K12横版格斗小游戏",
+          "score": 4.0
+        }
+      ],
+      "matched_name": "K12横版格斗游戏",
+      "match_score": 4.0,
+      "matched_at": "2026-06-23T09:07:35Z",
+      "user_download_path": "秒哒游戏原型/横版格斗小游戏/app-cikmsjmwyjnl",
+      "user_download_verified": "2026-06-23",
+      "user_download_note": "本地为 app-cikmsjmwyjnl；registry 主匹配为 app-cijahlqb7pj5"
+    },
+    {
+      "slug": "pingpong",
+      "display_name": "乒乓球",
+      "user_title": "乒乓球小游戏开发（k12乒乓球）v4",
+      "name_keywords": [
+        "乒乓球",
+        "k12乒乓球",
+        "v4"
+      ],
+      "priority": 5,
+      "app_id": "app-cika5uyinqip",
+      "preview_url": "https://app-cika5uyinqip.appmiaoda.com",
+      "editor_url": "https://www.miaoda.cn/projects/app-cika5uyinqip",
+      "match_status": "matched",
+      "candidates": [
+        {
+          "appId": "app-cika5uyinqip",
+          "name": "乒乓球小游戏开发",
+          "score": 7.5
+        }
+      ],
+      "matched_name": "乒乓球小游戏开发",
+      "match_score": 7.5,
+      "matched_at": "2026-06-23T09:07:35Z",
+      "user_download_path": "秒哒游戏原型/乒乓球小游戏/app-cika5uyinqip",
+      "user_download_verified": "2026-06-23"
+    },
+    {
+      "slug": "platformer",
+      "display_name": "横版闯关",
+      "user_title": "横版闯关游戏v2",
+      "name_keywords": [
+        "横版闯关",
+        "闯关",
+        "v2"
+      ],
+      "priority": 1,
+      "app_id": "app-chu2c3e6u4g1",
+      "preview_url": "https://app-chu2c3e6u4g1.appmiaoda.com",
+      "editor_url": "https://www.miaoda.cn/projects/app-chu2c3e6u4g1",
+      "match_status": "matched",
+      "candidates": [
+        {
+          "appId": "app-chu2c3e6u4g1",
+          "name": "横版闯关游戏",
+          "score": 9.5
+        }
+      ],
+      "matched_name": "横版闯关游戏",
+      "match_score": 9.5,
+      "matched_at": "2026-06-23T09:07:35Z",
+      "user_download_path": "秒哒游戏原型/横版闯关游戏/app-chu2c3e6u4g1",
+      "user_download_verified": "2026-06-23"
+    },
+    {
+      "slug": "shmup",
+      "display_name": "街机飞机",
+      "user_title": "街机飞机设计游戏v2",
+      "name_keywords": [
+        "街机飞机",
+        "飞机",
+        "雷霆",
+        "v2",
+        "shmup"
+      ],
+      "priority": 6,
+      "app_id": "app-chu7pw7h454x",
+      "preview_url": "https://app-chu7pw7h454x.appmiaoda.com",
+      "editor_url": "https://www.miaoda.cn/projects/app-chu7pw7h454x",
+      "match_status": "matched",
+      "candidates": [
+        {
+          "appId": "app-chu7pw7h454x",
+          "name": "街机飞机射击游戏",
+          "score": 5.5
+        }
+      ],
+      "matched_name": "街机飞机射击游戏",
+      "match_score": 5.5,
+      "matched_at": "2026-06-23T09:07:35Z",
+      "user_download_path": "秒哒游戏原型/街机飞机射击/app-chu7pw7h454x",
+      "user_download_verified": "2026-06-23",
+      "download_quality": "full_git_export_preferred_over_trajectory"
+    },
+    {
+      "slug": "parkour",
+      "display_name": "跑酷",
+      "user_title": "k12跑酷小游戏",
+      "name_keywords": [
+        "跑酷",
+        "k12跑酷",
+        "parkour"
+      ],
+      "priority": 7,
+      "app_id": "app-cijx9ysx61vl",
+      "preview_url": "https://app-cijx9ysx61vl.appmiaoda.com",
+      "editor_url": "https://www.miaoda.cn/projects/app-cijx9ysx61vl",
+      "match_status": "matched",
+      "candidates": [
+        {
+          "appId": "app-cijx9ysx61vl",
+          "name": "K12跑酷小游戏",
+          "score": 10.5
+        }
+      ],
+      "matched_name": "K12跑酷小游戏",
+      "match_score": 10.5,
+      "matched_at": "2026-06-23T09:07:35Z",
+      "user_download_path": "秒哒游戏原型/跑酷小游戏/app-cijx9ysx61vl",
+      "user_download_verified": "2026-06-23"
+    }
+  ]
+}

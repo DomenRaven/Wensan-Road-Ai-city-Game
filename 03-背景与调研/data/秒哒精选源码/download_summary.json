@@ -1,0 +1,23 @@
+{
+  "at": "2026-06-23T09:07:43Z",
+  "results": [
+    {
+      "slug": "shmup",
+      "app_id": "app-chu7pw7h454x",
+      "started_at": "2026-06-23T09:07:39Z",
+      "status": "ok",
+      "trajectory_events": 122,
+      "files_written": 10,
+      "rebuild_stats": {
+        "add": 0,
+        "edit": 14,
+        "file_add": 9,
+        "file_part": 1,
+        "skipped": 0,
+        "failed": 2
+      },
+      "has_prd": true,
+      "finished_at": "2026-06-23T09:07:42Z"
+    }
+  ]
+}

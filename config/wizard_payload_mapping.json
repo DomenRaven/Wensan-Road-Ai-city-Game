@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-22",
+  "description": "Wizard Session.payload 字段 → workspace/config/game_config.json 映射契约（线 B）",
+  "schema_ref": "templates/_schema/game_config.schema.json",
+  "theme_paths_ref": "assets/theme_paths.json",
+  "mappings": [
+    {
+      "wizard_step": "S0",
+      "payload_path": "meta.display_name",
+      "game_config_paths": ["meta.display_name", "theme.title"],
+      "transform": "trim_max_32"
+    },
+    {
+      "wizard_step": "S1",
+      "payload_path": "meta.genre",
+      "game_config_paths": ["meta.genre"],
+      "transform": "genre_slug_validate"
+    },
+    {
+      "wizard_step": "S2",
+      "payload_path": "meta.play_variant",
+      "game_config_paths": ["meta.play_variant"],
+      "notes": "resolve_play_variant 可能改写 meta.genre"
+    },
+    {
+      "wizard_step": "S3",
+      "payload_path": "theme.style_pack",
+      "game_config_paths": ["theme.style_pack"],
+      "preview_only_until": "B_phase_2",
+      "d10_minimal": "保留字段 · 预览文案反馈即可"
+    },
+    {
+      "wizard_step": "S3",
+      "payload_path": "theme.mood_keywords",
+      "game_config_paths": ["theme.mood_keywords"],
+      "preview_only_until": "B_phase_2"
+    },
+    {
+      "wizard_step": "S4",
+      "payload_path": "theme.character",
+      "game_config_paths": ["theme.character"],
+      "d10_minimal": "theme.title 已覆盖身份锚点；角色色可映射 theme.background_color"
+    },
+    {
+      "wizard_step": "S5",
+      "payload_path": "theme.props",
+      "game_config_paths": ["theme.props"],
+      "preview_only_until": "B_phase_2"
+    },
+    {
+      "wizard_step": "S6",
+      "payload_path": "tuning.feel_id",
+      "game_config_paths": ["tuning"],
+      "transform": "tuning_mapper_merge",
+      "feel_presets": {
+        "easy": { "player_speed_scale": 1.0, "enemy_speed_scale": 0.85, "damage_taken_scale": 0.8 },
+        "balanced": { "player_speed_scale": 1.0, "enemy_speed_scale": 1.0, "damage_taken_scale": 1.0 },
+        "challenge": { "player_speed_scale": 1.05, "enemy_speed_scale": 1.15, "damage_taken_scale": 1.2 }
+      },
+      "genre_overrides_ref": "config/tuning_feel_overrides.json"
+    },
+    {
+      "wizard_step": "S7",
+      "payload_path": "tuning.enabled_skills",
+      "game_config_paths": ["tuning.enabled_skills"],
+      "max_items": 2,
+      "catalog_ref": "config/optional_skills.json"
+    }
+  ],
+  "generate_pipeline": {
+    "steps": [
+      "validate_session_recap_confirmed",
+      "copy_dir templates/{genre}/ → workspace/{session_id}/",
+      "read_template_config workspace/.../config/game_config.json",
+      "merge_payload_via_mappings",
+      "clamp_tuning_pm30_percent",
+      "write workspace/.../config/game_config.json",
+      "set_session_phase PLAY"
+    ],
+    "api": {
+      "method": "POST",
+      "path": "/sessions/{session_id}/generate",
+      "response_fields": ["ok", "workspace_path", "config_path", "genre"]
+    }
+  },
+  "immutable_after_generate": ["core/", "scenes/", "project.godot"],
+  "mutable": ["config/game_config.json"]
+}

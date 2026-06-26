@@ -1,0 +1,54 @@
+# 百度秒哒（MIAODA）竞品调研 · 架构 / 工作流 / 技术原理
+# 运行：05-工具脚本/run_miaoda_research_crawler.py
+
+topics:
+  - id: miaoda_official
+    name: 秒哒官方文档与产品
+    queries:
+      - 百度秒哒 MIAODA 无代码 应用开发平台
+      - site:cloud.baidu.com MIAODA 多智能体
+      - site:cloud.baidu.com MIAODA 快速入门 创建应用
+      - site:cloud.baidu.com MIAODA 小游戏 搭建
+      - site:cloud.baidu.com MIAODA 源码导出 Supabase
+      - site:cloud.baidu.com MIAODA 技能 MCP
+      - site:cloud.baidu.com MIAODA 秒哒Skill OpenClaw
+      - site:cloud.baidu.com MIAODA 通用任务
+      - site:cloud.baidu.com MIAODA 企业版
+      - site:cloud.baidu.com MIAODA 生成APP
+
+  - id: miaoda_tech_workflow
+    name: 秒哒技术原理与工作流
+    queries:
+      - 秒哒 多智能体协作 A2A MCP 协议
+      - 秒哒 Context Linking 智能记忆单元
+      - 秒哒 文心大模型 代码生成 React Taro
+      - 秒哒 LUI GUI 可视化编辑 工作流
+      - 秒哒 全栈应用 前端 后端 数据库 一键部署
+      - site:infoq.cn 秒哒 无代码
+      - site:infoq.cn 秒哒 多智能体
+      - site:developer.baidu.com 秒哒
+      - 秒哒 进化式工作流 数据飞轮
+
+  - id: miaoda_game
+    name: 秒哒小游戏生成能力
+    queries:
+      - 秒哒 小游戏 生成 H5
+      - site:cloud.baidu.com MIAODA 剧情向小游戏
+      - 秒哒 飞翔的小鸟 小游戏
+      - 秒哒 视觉小说 游戏 可灵
+      - site:juejin.cn 秒哒 小游戏
+      - site:zhihu.com 秒哒 游戏
+      - site:woshipm.com 秒哒 测评
+      - 秒哒 vs Lovable 无代码 AI 开发
+
+  - id: miaoda_community
+    name: 秒哒社区体验与对比
+    queries:
+      - site:juejin.cn 秒哒 体验 教程
+      - site:juejin.cn 秒哒 一句话 应用
+      - site:csdn.net 秒哒 AI 开发平台
+      - site:zhihu.com 秒哒 3.0 Create
+      - 秒哒 应用广场 克隆 二创
+      - 秒哒 秒点 计费 免费
+      - 秒哒 APP Android 原生应用生成
+      - Manus 秒哒 对比 多智能体

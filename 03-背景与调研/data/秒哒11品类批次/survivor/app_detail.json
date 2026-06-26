@@ -1,0 +1,39 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "b854807f1841960487fc0506745585da",
+  "data": {
+    "name": "割草生存类游戏",
+    "appDesc": "K12割草幸存者是一款浏览器端生存类小游戏，玩家通过WASD控制角色移动并自动攻击敌人，收集经验宝石升级能力，在180秒内存活即可获胜，采用糖果卡通风格。",
+    "avatar": "http://miaoda-preview-img.cdn.bcebos.com/image-43476516d0ac4affbb261637ac91be46.jpeg",
+    "type": "GAME",
+    "appId": "app-cikthp6wjz0h",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T22:14:47.911+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T22:07:14.668+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cikywtcxilts",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 割草幸存者】浏览器小游戏，参考《Vampire Survivors》《Brotato》《20 Minutes Till Dawn》。\n\n## 参考要点\n- VS：WASD 移动、自动攻击、捡宝石升级、选 1/3 强化\n- Brotato：短局、数值成长清晰\n- 20MTD：敌潮环形生成\n\n## 核心玩法\n- WASD 移动（单键位模式）\n- 自动向最近敌人发射\n- 180 秒计时，存活到时间即胜利\n- 杀怪掉宝石，经验条满弹出 3 选 1 升级（攻速/伤害/移速）\n- 敌人从屏幕外环形靠近\n\n## 视觉\n- 糖果/卡通怪物，无血腥\n\n## 交付\n- 计时 HUD + 升级弹窗 + 结束界面",
+    "labelColor": {
+      "colorCode": "#EBFFE9",
+      "colorCodeSecondary": "#ABFEA0",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_3.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

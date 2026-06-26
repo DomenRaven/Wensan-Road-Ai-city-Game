@@ -1,0 +1,3588 @@
+{
+  "version": "1.0",
+  "frozen_at": "2026-06-24T14:59:51Z",
+  "genres": [
+    "racing"
+  ],
+  "display_names": {
+    "racing": "欢乐赛车"
+  },
+  "snapshot_dir": "开发文档/模板引擎/快照/frozen/6.24_racing_v1.0",
+  "policy": "未经用户显式解冻，禁止修改 manifest 内 paths；共享文件见 shared_baseline",
+  "shared_baseline": [
+    "templates/_edu/edu_action_bridge.gd",
+    "kiosk/edu/code-highlight.js",
+    "config/kiosk_edu_spec.json"
+  ],
+  "shared_association": [
+    "kiosk/edu/edu-wizard.js · getGenreHighlightFallback().racing",
+    "kiosk/edu/edu-wizard.js · renderB7DemoActionsHtml racing 分支"
+  ],
+  "files": [
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_01_2048x2048.png.import",
+      "sha256": "11b0d95e8a9b0ae7e7023aa39ed916f215a547edcf1b002fd4f0309b005ae6f1",
+      "bytes": 987
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_01_color2_2048x2048.png.import",
+      "sha256": "596175c366d49a50d32ced7d55839389ba47532b7780c0daabc26d5a1ea7c5d9",
+      "bytes": 1008
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_01_color3_2048x2048.png.import",
+      "sha256": "f5605dba02eaa5cfb94be71c7028fedd331b9e2ec1494cea0a3e85a494429f18",
+      "bytes": 1008
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_01_color4_2048x2048.png.import",
+      "sha256": "ab3bc8ffb4dd099affcf6074b7f57caec323d55fe487f3db0e8a4b61616952c9",
+      "bytes": 1007
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_02_menu_2048x2048.png.import",
+      "sha256": "d6151116a6046a280721ea056192194e03358994c620658636ec17db5bef83b3",
+      "bytes": 1001
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_03_menu_2048x2048.png.import",
+      "sha256": "b5640a5e011d28f7bdf149c9ef5cb76a2107ce8f6a93ebcbfa08b5b17ff3e450",
+      "bytes": 1001
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_04_menu_2048x2048.png.import",
+      "sha256": "e8eb57196208b4f0d2e15753477de85a7f89bf94eb584280da7453ea5525b31e",
+      "bytes": 1002
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_05_menu_2048x2048.png.import",
+      "sha256": "da7c3f6ebb0a45c8a462cf1c3f33bcae191d04aba39d245cc9bf1abc49a2bbf3",
+      "bytes": 1001
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/atlas_06_hud_512x512.png.import",
+      "sha256": "89a8efd9a36f9f82d79a60e2ffe0cb7f9287ce5033a0425045700e8656fbe249",
+      "bytes": 992
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/background_1080x1920.png.import",
+      "sha256": "c727b5ae4141b15ef9f90fef80e64e7963017b7e6e58c844ad82b7c192b322c1",
+      "bytes": 993
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/atlas/png/logo_960x360.png.import",
+      "sha256": "0a176f3808d83e07c69cb703ba30ec04733a7f1f669e311ef1178eb84a14f745",
+      "bytes": 969
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_10_440x680.png.import",
+      "sha256": "e0ef6a1ad9becb39dde82b6645a6c661697501e4aefa546c4b6c1b7ae49c4b56",
+      "bytes": 973
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_10_v2_440x680.png.import",
+      "sha256": "3cf14706a8afbebe78e8e618a3d6361dd36041ccccbb2d3e71bdf98abe649149",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_10_v3_440x680.png.import",
+      "sha256": "74f5f0d01e1df02e1a970235ece9666464e7b18cb912902e32dde42cc7f0aaa5",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_10_v4_440x680.png.import",
+      "sha256": "cd0c5a6cbb2f543315388e0b3a201b88700aec61a643c8d36597e8f7c25adbb9",
+      "bytes": 982
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_17_440x680.png.import",
+      "sha256": "375d05d9c65fcbad55e6a161d170c7a004515734fc06284fb600e2f3619aea73",
+      "bytes": 973
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_17_v2_440x680.png.import",
+      "sha256": "9d84ecc382b395806a2fb8e3bcf649ee5bf65bc3ed88b35d6c2059932843de5a",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_17_v3_440x680.png.import",
+      "sha256": "e059dd2c991a5b21ca8fb1abe534c3fe9b32bf01f863055e7d9a744030caed18",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_17_v4_440x680.png.import",
+      "sha256": "986a36c868ffc1a5f8857d68efbfcde42925df3edd6a5e410fecc7fe9d91045c",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_23_440x680.png.import",
+      "sha256": "9aa037423b9615891973b1b1af55369c40f4560d0a081298d6ae65d50d01eebd",
+      "bytes": 974
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_23_v2_440x680.png.import",
+      "sha256": "1c5738e6bdb65862b389c01017c882fbafb57d1c4f340d8a681b78c4177db5b9",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_23_v3_440x680.png.import",
+      "sha256": "b1939ea377a303878f780ca8f201bd92557a29cce623023df5f064710c6b3730",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/cars/png/car_23_v4_440x680.png.import",
+      "sha256": "c48fdf1a13207b6111dc0ec17fcc643d08afcf47609cd303a5c87fc5f47d8256",
+      "bytes": 983
+    },
+    {
+      "path": "templates/racing/assets/cars-racing/manifest.json",
+      "sha256": "492749e747522d560b8bd22be0e192a88d91b57c2a197a60ad9ffdf5a7b280a9",
+      "bytes": 4390
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_000.ogg.import",
+      "sha256": "179cd667c86513c5b9379c1339ecf3b0c7b65114c3a4a6d495f245f8019a8918",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_001.ogg.import",
+      "sha256": "8c785f5875a943e74a37371a0d020d8af8d58e67dbf785aebe95b1f313ada501",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_002.ogg.import",
+      "sha256": "cd3e98196218ed59660200aaef6cf79bfd3d187ac4f8fcdea5d11abb73f1966e",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_003.ogg.import",
+      "sha256": "78225f1e87f838f0f89129988c444dd6c024e5ea6d0b0c30c78682e6984ef98f",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_004.ogg.import",
+      "sha256": "cecd4e610cda4c7d07acefcd6c27370ca9ee8228043b563b50cf997dba02ab00",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_000.ogg.import",
+      "sha256": "cba4bc3485773378237c7d615933106b2628a5779274d852a752c10bcf55095f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_001.ogg.import",
+      "sha256": "af05b06125bf9c76987c5ac46dd3ccb7312e21c0f0a5e4133b5205e644dc5d80",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_002.ogg.import",
+      "sha256": "1c7d972450d2bfbf2445b83f5297cc71eb6a3302b83b963287e25a1e8069116a",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_003.ogg.import",
+      "sha256": "597de9ad5742bf8a5fffb9a27601120f802a4be33a8667fea46d46eed7f05b3d",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_004.ogg.import",
+      "sha256": "e5fccd4c9bc41178de741f1984b76d2c6519dca70abaff08a0f36ba2ccf0b5d9",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_000.ogg.import",
+      "sha256": "4ccda9be5638391341141fc4478e6208bbba760a5f61c40c695a65dd9f9d44d7",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_001.ogg.import",
+      "sha256": "0f31d18b09e18628102ec44dc5c4e1d3764b59291a1e8b59d55a4ad7b926f931",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_002.ogg.import",
+      "sha256": "e6ac033519db984356815551ca46b0ffa48bf336ee2111be5a3d5a51e44168bb",
+      "bytes": 443
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_003.ogg.import",
+      "sha256": "e47ddd434dfe2d16e271a98be1cb1c4ab7be82629f98895a8dd04b731e6edb8e",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_004.ogg.import",
+      "sha256": "1d719be2a7d137324058887ddd939d4260a4ea5178313533eaed443015fc019d",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_000.ogg.import",
+      "sha256": "821e4e7e25e1122697531d75682189caf5ed23c2c06471d872cbccffd19f2235",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_001.ogg.import",
+      "sha256": "1c61d353d08ada71f07121c0983c98431538d44e6dba0e3c71cba5d2a1bb6c80",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_002.ogg.import",
+      "sha256": "2daeb69b4af1558ee19baa68b222ddb64cb9b277779a84fdf521b1df5a2c4aeb",
+      "bytes": 440
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_003.ogg.import",
+      "sha256": "6ad35696e04928a89eded55c018f40bc37d47096ca48ce4d0e7863c335262278",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_004.ogg.import",
+      "sha256": "e9e04e86a90fc8f12a770db3f9242744a917d76d8fec93196e5693cb2674e9e2",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_000.ogg.import",
+      "sha256": "e2bf69f69f49839d4e65ef68367a29b18ce80ba869fe36605588e510645f38ca",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_001.ogg.import",
+      "sha256": "dadcb3966fc3c3bdce1369ec0231a048a15cdc48f9801466cde5288cc6590b3c",
+      "bytes": 440
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_002.ogg.import",
+      "sha256": "823e334b8f5ee49a32c37eb17d27676d7f081be83907e37d5c799776e84164f0",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_003.ogg.import",
+      "sha256": "cdc52dd3ebacaee8536de992fcba9e815584842c7e487c1449cc4264319d653d",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_004.ogg.import",
+      "sha256": "7d96f60203b55ca348e9eda7dd86ebd5148c82e086c441e101ac398743dfd26b",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_000.ogg.import",
+      "sha256": "22d06fa0c86905b02bf6d4f32c5e07bc06098f83f53926a8480739d699f3eb03",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_001.ogg.import",
+      "sha256": "b81bbc6cce651776c5a921902ffeb54f68eaba435b21d341f1146327553404c6",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_002.ogg.import",
+      "sha256": "fc390a486cffb9a0323349b5a6bbd4e00613bb5f9d21d8c0663fbad5627bacb0",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_003.ogg.import",
+      "sha256": "da496ffb034e25b95cfcd50356fa3d76b95924e9fb6728a0e187095ae55f6338",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_004.ogg.import",
+      "sha256": "058749d37f50c55e22b069d71af8862dbd1698ae94f2083bb08282d8a62b1667",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_000.ogg.import",
+      "sha256": "4a8f1eca98df2cefd1c3887c8f9c39714fafbbdb421dbc63521b838d373d0cfa",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_001.ogg.import",
+      "sha256": "6e5d9ddc4281834040e740d87803259857479d24057f32a87c4d6da259c5b8dc",
+      "bytes": 458
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_002.ogg.import",
+      "sha256": "654e6e7e88498b1166970981197d8620f41815b69d1588bc264359859deb8f9c",
+      "bytes": 458
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_003.ogg.import",
+      "sha256": "9be54768ca50c393cd3fa44b2c84f595c425021acee5edf531af8eb2d0b40e67",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_004.ogg.import",
+      "sha256": "e1364cb05cc008f85142c4472bbec64df04f84686c2e1612608722f2479381f6",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_000.ogg.import",
+      "sha256": "61e6ee4cbb3818e8ccba6ad5a594346e535b26938e97f47dfb23865c1586d1c5",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_001.ogg.import",
+      "sha256": "e17516446c2669633eb2a8afec970ee5cfefa5c8c7cdf5c41b1f12c73b3fc71e",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_002.ogg.import",
+      "sha256": "9a0b5f653b5494a3719580f27bed5049259e060b1a2640dd7695c1542b9fb589",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_003.ogg.import",
+      "sha256": "b41c4183c2d1aacf9f882f14f7e1bf8d590bf8342e1113f36872af8f484f7c5f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_004.ogg.import",
+      "sha256": "4537c0fc9eb5990d08186ee46688a4781b9059e7f98a7af734292f8943df8de7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_000.ogg.import",
+      "sha256": "e7bf684d39683d5fa9708d66a51bb527e7c890ff0e387b81d76eb7cdf5910de1",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_001.ogg.import",
+      "sha256": "5e7529f79939883a1b1e1146f70951eb171654158b4dd724f1cdc4ba3d3e845d",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_002.ogg.import",
+      "sha256": "aa52421f63b9a2b99baf59b7918eb8aacaf38d2e8723f795ef77f368d68c0734",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_003.ogg.import",
+      "sha256": "131a90f1dbec1e7e332f690f4c7d327b02bd1910e82f5ce7de1162689bd8cc70",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_004.ogg.import",
+      "sha256": "bc11aa891edc3fa604d8c14d7f8ce891d33950484739cf4ced2e94c3ad9da6f2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_000.ogg.import",
+      "sha256": "45165ffd55ccada7fd8cb93c2a43e403b064ca559d7374d724a5e0756235a6a8",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_001.ogg.import",
+      "sha256": "bd5c2d771e21d501dd8c37b9f321461f458acaf6da2a1fdd6200ba08e887c3cd",
+      "bytes": 454
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_002.ogg.import",
+      "sha256": "f4f4d0c933f0e4b4b9d5d492e4e6279484d6fbe80b1d511bde8d4019bf26e8b1",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_003.ogg.import",
+      "sha256": "fa71f1da37fc15afc15f622dc487ae83fd50cf699c33bae801edbbdd637e4a69",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_004.ogg.import",
+      "sha256": "116b5983a6f34afd89e3f8f03b12cddfadb1263c4cd5e9fdd51669b40eab6e68",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_000.ogg.import",
+      "sha256": "d77888005186890d07a4266b5d443e63d52f715e9dc0ba8bf857c8c37f3a3f21",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_001.ogg.import",
+      "sha256": "bc046406fdc123621acad8751e1b67483ebd324d06a70754989da89c6731f040",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_002.ogg.import",
+      "sha256": "53bb1008e64bb3794bde37108a9e77b2568017d0ff1078bed2e1652ca56f2731",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_003.ogg.import",
+      "sha256": "39b01d6245ba63ccd9baa5dd24885eb895dff73fe2acc30ad12de43de6bfbe5b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_004.ogg.import",
+      "sha256": "f0de98b4d9f291618d0329457cf9c9604db942309b12a1740084966ea0e2af47",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_000.ogg.import",
+      "sha256": "e36e05daf52ac215fc3e1d83abfb417bd896ec9295970e4e0340f345030a210b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_001.ogg.import",
+      "sha256": "57fb0e53dd5a9c6d58a3bc05d0b12f352ca636423a2d0d0d7629adf37805e464",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_002.ogg.import",
+      "sha256": "c2efdfc66110c127909f14ebadddab4d4cfcf68db9018efc485c147b7ca13b4e",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_003.ogg.import",
+      "sha256": "c7a0012a8f541cd166c77ec078709c352c50958c304579308ec48eaed66fd5f9",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_004.ogg.import",
+      "sha256": "7b7ca52f23478fadef344a118cc5ffa06122db62da4e5a51ebbbf60c9a48bc0a",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_000.ogg.import",
+      "sha256": "6ec3eab14ec49326cb5aa0eab2ad99ec12cf9ea82290b79234a438ed01470a59",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_001.ogg.import",
+      "sha256": "6d8b71489a5bf2504cf7b4d533cf7dbd1eb4ff57b898d53d05bdc8a2f8155a01",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_002.ogg.import",
+      "sha256": "aaf418238d0b5cfbc4cb066c20b0d8f4f8fa602364b9907b696e43454d22a1ab",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_003.ogg.import",
+      "sha256": "bb249c9513032fcf0409066515b1db63aa4d3d55a8a1422645b48e4d1c03dac9",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_004.ogg.import",
+      "sha256": "cbf16d731ae8f49f189e179701266915d986b43db95f7a98f4281065e64c494a",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_000.ogg.import",
+      "sha256": "6455dc5bb470078920f6418eeb161f7f77659ebb40b91001f4d8f7d821b0125c",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_001.ogg.import",
+      "sha256": "c13b038379854f99ad15acea0d2d4d0b918b27b85ef25bfa0b9d79afa87b56f4",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_002.ogg.import",
+      "sha256": "dd10c82183c9dc77e8a5334f8d3eac161a4b54d36f423179a46eb4438022d33f",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_003.ogg.import",
+      "sha256": "308f1205b2345dbda22351789a10c24e0e0286a4e11e1d9aaec8eb1417e74a44",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_004.ogg.import",
+      "sha256": "24cb722ca962eac1f8b17254fbfcf9f96d0ffc209e18fd22c467f3703e79ef29",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_000.ogg.import",
+      "sha256": "48964efb4fbc69f752d167b1c56c975e8fa3e7de06e9a8f33f92d1cbb81d1ab2",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_001.ogg.import",
+      "sha256": "b22108ec119c095dac9ac5c94dd1ab9945bff25528f9178fe82e272c8f47e789",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_002.ogg.import",
+      "sha256": "4f26c8e5e8a626cea883c6e3bec602eec1f1cb96ec2df0fb4d9da554407d0a7d",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_003.ogg.import",
+      "sha256": "df82426b00f66c7e0af71817a5f37ece0d773c4603e0ea5b68ba3ae6bbd4149c",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_004.ogg.import",
+      "sha256": "e15ec111b870128cfe0dad80e13fe9ead8985fbb280301db961a956e397d8f13",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_000.ogg.import",
+      "sha256": "30b2e7da67b4ece7d0b154e8b236f22fb5ee85e270d6e63a0eeaa7b3c5686efe",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_001.ogg.import",
+      "sha256": "5e69375fcbb9a12040aa1559d652da9a3db47e19db157aedfa9543eb1aba1c8a",
+      "bytes": 451
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_002.ogg.import",
+      "sha256": "7b39deedbb43fe2ce9c2b96c90d3ca44d5de19b231b7149a52e23c35bf6e9ea0",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_003.ogg.import",
+      "sha256": "97444af662d90156528999a38eca483bdd9ee50b8ce2caa9ceb23d69cd259eed",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_004.ogg.import",
+      "sha256": "91d654e269d3cc2b89750e41360bcbe8286e0fe561ac8b8cc589898b76a88017",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_000.ogg.import",
+      "sha256": "598390f88a905034fa797c0f0b11a9ec575dd315b02d14bbc11f4f83790b9dba",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_001.ogg.import",
+      "sha256": "8d4455b3ba5cd818af519bd8dbed926f250902b0081c0d1250e22190485ac04f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_002.ogg.import",
+      "sha256": "ab9dabcd31b2c4040c625fb8bedee556fcb45f545295c8f3d631edb0c4edc67c",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_003.ogg.import",
+      "sha256": "ea13872530c8e27a696201a47f86717793b0659108a38193056d17f6fd26a2f8",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_004.ogg.import",
+      "sha256": "754a9a62e07a6890958b6c546c3f454c680459b5848417c064534aff2aed7a72",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_000.ogg.import",
+      "sha256": "d12fcc3393bbe1ed0b4ce1eeb0c9b2736fe7a59c0bc15b648900cefd01fda6ae",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_001.ogg.import",
+      "sha256": "bc514e71e1d26ddead994feab70761815566b78b4868fc5a505b596f5af06288",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_002.ogg.import",
+      "sha256": "bdaefb8dc300036fbe66395135187c32330bb318399b231f59c241c33635729a",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_003.ogg.import",
+      "sha256": "573f93dba296f8c378693f82f3d1eca2107203425cf07b7bab81b318e7c36510",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_004.ogg.import",
+      "sha256": "9e969116c8462a42e1cf91c9b44c4c0af0b1be253b9f2dbf31f229cb3beff428",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_000.ogg.import",
+      "sha256": "a9ef365a98de810afb1310eae947c89d985007931d3d0c22fddc19a445016283",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_001.ogg.import",
+      "sha256": "59c74277eee039d3227517f67a04a8764331b36a6e0940b2a1a9284130d956f4",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_002.ogg.import",
+      "sha256": "8d9c60a06e4fe85dfd17721dd4fda1a5f8eabb5e825653ccaa5211afd2ee4167",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_003.ogg.import",
+      "sha256": "6feabd14d8328d07ace0a0dcabe3515eacb1c9be81f912be19fece1beca9ffe5",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_004.ogg.import",
+      "sha256": "7b938e16f726d589908e546730355c9f9a98c597a8cab574f6503ddb2733220b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_000.ogg.import",
+      "sha256": "3612e562d6d458270b0dbee3e9cf72ac7e86a96e4b65bda405b2b72d0b3155c4",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_001.ogg.import",
+      "sha256": "2424236aa6712aca87a1416703e291987492231819526c16a19d72b443198a84",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_002.ogg.import",
+      "sha256": "6f95c186017cfcc4b1c8141d8a3ee1fd991fb26a0f2271f2e68530752e9d2aba",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_003.ogg.import",
+      "sha256": "a28b4f752d5c6605e34873797a926b21849e262a37580b2bec424de4870b804c",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_004.ogg.import",
+      "sha256": "e6dd0567aa6ed0f1e260f92b698b24e7b62b945fd2bf4fff58bd494a34996339",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_000.ogg.import",
+      "sha256": "a34832e26528cca00cf7e4ae3fbdeca69a63c5cb21eb350ae74c06b778bbee75",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_001.ogg.import",
+      "sha256": "436f44e820737396eea97281479d223c3bd0020962af42ddc0b0b1a531ddab82",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_002.ogg.import",
+      "sha256": "0f1cb4617f08f1b099b8e0ecf5986552c18f5a7981dc577259842fcdefc835a2",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_003.ogg.import",
+      "sha256": "b85a4749a4c2f9a2bd97ae25d50d36056c5fcc86dcca0bc4fbf3e642452eb5b6",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_004.ogg.import",
+      "sha256": "47bd119078e4dc75d1e15bb34edf0d5c85f4f3f80f244435637ae0fb3d8cab1e",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_000.ogg.import",
+      "sha256": "1d466abb6b1df0ad6921e5a0dcefa2d6054b12b7c47c51aa52b5ce94ac595734",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_001.ogg.import",
+      "sha256": "92bf7827e953fff67a36bca8b910c8958ec223c382e5853f91031554300c89fd",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_002.ogg.import",
+      "sha256": "0de6d000e26e8617d9f5e5edf05da87938a4d329eacb55aabbe5a2b633571fc8",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_003.ogg.import",
+      "sha256": "be2c740a91b4386694036e17fd5ac8e419c3198e1c6ccb4408f09369616bca64",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_004.ogg.import",
+      "sha256": "df52a564cb68cbd88c1790f765b591c916baa0fe70c9e856cd4814daab54aab2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_000.ogg.import",
+      "sha256": "84f3a02595c0529befc7ab170303c309ecbe4f8aebb758ba91f9df190a79cd0a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_001.ogg.import",
+      "sha256": "fb6edf35ff7aaaa848c34b0fe0277572321ad0c1b354280e7c9a01c31e45ddac",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_002.ogg.import",
+      "sha256": "ac981ffe45e0225974eb91e6399775d2522e297bcff4d7af758976ca58c2b46a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_003.ogg.import",
+      "sha256": "21818f1f132b5ed625fe209cdd723e1c5d777cc53bc04a475f88ea4c6af2ac16",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_004.ogg.import",
+      "sha256": "b97758f4e4129baf70dad636184b40716fd5825599b4f27e8676c56e913b8b3e",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_000.ogg.import",
+      "sha256": "e8448b5d9c8d0cd1135a3efd5715d146f1f2f1739ad6c448c1c7421220e0c710",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_001.ogg.import",
+      "sha256": "e53195a84b612cc6c3db188a4cd8a2d17de81bc2461dc6ed38e4a5a4fc767627",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_002.ogg.import",
+      "sha256": "c8e199e5033b45aff54f0226513ba847728277645de83c12da7e8721002699fc",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_003.ogg.import",
+      "sha256": "a1724888b37ea9af931f24d3cc5e46079dcf18df10b32d1b92a483f7f1219a50",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_004.ogg.import",
+      "sha256": "22cae21cf0681a7553e6e0fb9ad37d0739f167e4c8f0ce91b357b661882f392f",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_000.ogg.import",
+      "sha256": "8bda6e9af004ef3495484fdb06e6856e96ba63da835670f8a4c064ec857b75b7",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_001.ogg.import",
+      "sha256": "78b7c907b2805d81020cece7b0efcbb2c6ae60e23dc0b2c28ca386315405cb9a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_002.ogg.import",
+      "sha256": "28bbc607dca5f3cc3a454b38cad15399b5480cd33ca9e62e23f7cd42d3e888c8",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_003.ogg.import",
+      "sha256": "57914b29dce631e7d2a2a1b4f58aeb16a2c87999154d04f2416cc3ef9470e43a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_004.ogg.import",
+      "sha256": "34be0fdcff5b504e191fea8bb4592734208c51f109ef3f6407b6ecadbd027dcc",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_000.ogg.import",
+      "sha256": "6fb2e140f3ed072f34fc70e892733bd524f2780ce832ed9d1678e4deaac6a4a2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_001.ogg.import",
+      "sha256": "430fe087f2ec299fa3d7df17e85577809d049eb1ecf6663fd5003c746239ada7",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_002.ogg.import",
+      "sha256": "47a8f3dbee84365137f3a030c4a0e2ae39f836a97cc47e290c73553207dbffb7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_003.ogg.import",
+      "sha256": "3b6305825cb08ce51516265779db8eb188624168de67cacaa07ccebcba56b3a7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_004.ogg.import",
+      "sha256": "5ecd01ddb85ee4f1734ba5671c862b5eb9053317561bf0512249a2a73e17ec53",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_001.ogg.import",
+      "sha256": "807582f8ccf0f5debe7739831d0c4cd8df494197c67a0f29e16d22ab338b8789",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_002.ogg.import",
+      "sha256": "2866eb209865d738c983419e7b4f275a0449bda97004d80da440f3b1ce54b8c6",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_003.ogg.import",
+      "sha256": "d15536d10c6b500aba864995e67027e6f53a0917133e2483064d214631661f13",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_004.ogg.import",
+      "sha256": "fe0a3c5b8b3d05a5f2fd72b5eca1fa8aace062bf1c98a2371b5689c35e26f06f",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/bong_001.ogg.import",
+      "sha256": "20e120b2ace1b56133250e6b1814e338b327b642875307cb71d2fc74101264ed",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_001.ogg.import",
+      "sha256": "dba5861041a80abd17d4e779c432bfa0c546162082de3508372ca5f9519bda19",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_002.ogg.import",
+      "sha256": "c9a7842e275a492d92e58eeed56dd56c31892450b7dfea50315bbae4d32e1ccf",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_003.ogg.import",
+      "sha256": "4e0c118bef2badb89e6f783eb987b00f16d1c9cee1203fa7c1aaef5240cd1ac4",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_004.ogg.import",
+      "sha256": "38c3f54c21a135585707dd14adc32a4fbeda3f6ec159ef5889287002b37cf2c0",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_005.ogg.import",
+      "sha256": "38c4fdca3875aae072a9d1df64849a518593a899f7249bbf431b37988cc561c9",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_001.ogg.import",
+      "sha256": "dcd4f9309d77564ced5997796a0cafcdfc1fa54e677057028c253efa4f059fb9",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_002.ogg.import",
+      "sha256": "2396ee0641dc16cd06735e0632a0a38360faaf31baa112a96d8e8311274bf075",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_003.ogg.import",
+      "sha256": "393133e40fbe89a2d89c7158e03eca9dd01f96004656ccca9395376205b12ddd",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_004.ogg.import",
+      "sha256": "c534ec7992e533bb5b5441bf7439336e5b134c8f6e8443068395c36f2d42db52",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_001.ogg.import",
+      "sha256": "7278eeb91c6aa63ec55d04ee6c3986bb2d3cfdf8add8b0322eab9f00427ff81f",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_002.ogg.import",
+      "sha256": "ec108335f520ae4f6728403783b4586d96f9e5becc06432d9c553d5871939233",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_003.ogg.import",
+      "sha256": "ed46827c4448e91a14b13236816af8f122d0486bbd9d32a3ede128f2e243aa8a",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_004.ogg.import",
+      "sha256": "7ebcac035f6d332330850d91c8e921c961d501435e3961619e960a8a6a8a0166",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_001.ogg.import",
+      "sha256": "46335ecea67eda888ded3f9fe7475aafb866ef2040554219dd89d0185c5d7440",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_002.ogg.import",
+      "sha256": "101b778f907305ded336f16be702f54c0cefdeba4053e3926bddfb344cec7bfb",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_003.ogg.import",
+      "sha256": "c37d03c69b2050c9b0f5b7055911f38f61cc4269c1081b9183e431c7c790c5ba",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_004.ogg.import",
+      "sha256": "477fd65853ae951ea22ad09b545f72068239c1c6587ec2c008f50ecd48ad5d84",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_001.ogg.import",
+      "sha256": "2c8e1c62ca598d20ce6395a309b6dab346b20d61d65db8b47c51aa3f4ffbe975",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_002.ogg.import",
+      "sha256": "22f1839208fea4c695c483bad4d269cbea742d76b39e6f78ceabd62d4213508d",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_003.ogg.import",
+      "sha256": "8c4e5a14749a2593485ade559b191b38f946fa502732797c7a5ad861b984e849",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_004.ogg.import",
+      "sha256": "d28a2c5d57d820d2ef7303c9da453673d2147bef4c798c4351a499376084d160",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_005.ogg.import",
+      "sha256": "18ffa89096b6297337ccc5ef7a97846724c8efe87b7027b1bb7796eb3538a8d6",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_006.ogg.import",
+      "sha256": "2741fcd1cac3a16d98081e9b86814560fb434c7724eebcac5932e7d2bade1aae",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_007.ogg.import",
+      "sha256": "5f187d3c423e83be523672756165cac5f01e3a4bd2f5af7c4e89a058291f153a",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_008.ogg.import",
+      "sha256": "7aa16442d8fb63b151a678f0d01494284041fa54b255a26e85f780baa2e2c650",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_001.ogg.import",
+      "sha256": "3f0cae4c3c3003e87bb6c7c293a9f755411efd6c4bfe6cd50dd91965d2bc3870",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_002.ogg.import",
+      "sha256": "5a4724cb74a751cea01bf8809a8c2c6ad6877e209260edf4a06f6154d970325d",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_003.ogg.import",
+      "sha256": "3fc6ceffc9de785f74fee8c8ae001b9c2d6e761246b6582d49647416f2efdf00",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_004.ogg.import",
+      "sha256": "e3db6be369a1d3a68a39e9e9c3fa9e6a1989a82564a1574ceda95cdfe86d3c5f",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_005.ogg.import",
+      "sha256": "21935d32ed40b808048cb735b12ff981e62b3d87bec98226b103ca159fc1d488",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_006.ogg.import",
+      "sha256": "34a1f9d7b49bf20ef27316980e19e4156ce3448e3a448715990e94afaff79b14",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_001.ogg.import",
+      "sha256": "cfe40f5cc54e49681096ade5b662a8796583454d8f52f97aa596f9d955242c5e",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_002.ogg.import",
+      "sha256": "83e2dfc7c3c12b62ea8312a8c13ca410b3fe783faf6a160b87960de308c2ff6f",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_003.ogg.import",
+      "sha256": "dff7f81158451b1aac11373ee652d3b06d763377d0d775d4918df686b113fc7a",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_004.ogg.import",
+      "sha256": "9957908a6221ad959f34cc06a898c68d74ebcd72af3b238acf56ee917cbc46c2",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_001.ogg.import",
+      "sha256": "35e639a124169cfac4f3934686c62b0940ec9a2e11e8cef9cb167db7199c70d6",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_002.ogg.import",
+      "sha256": "b77255f0d710fbfd0fab43af9908eee303943db730f3bf421b420daa10ed3617",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_003.ogg.import",
+      "sha256": "5a2420c2853f26d7844c9e35b6e99ec88062722b9a3b76f1d51b3210c237096b",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_004.ogg.import",
+      "sha256": "e78bf184d270b8017dbf31ad19dc882e830dcd45d6f50176846bb204cb09682f",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_005.ogg.import",
+      "sha256": "ef969bea95a43a5b54ab71dc24be0151d18da4d9d213384dfef9044a725372b9",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_006.ogg.import",
+      "sha256": "715f503d37e42a245b98513a6019cc17e2559090008daa5da655039c82d147a6",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_007.ogg.import",
+      "sha256": "55eab5f96afe04f3aec6a0479ea2e7bfa42ce0ec11165f97adfabbac9bd37a85",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_008.ogg.import",
+      "sha256": "b206af066fbac78d42d52810b32b4de4c108cf6f8fcb6c1b50de81c7760b46d7",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_009.ogg.import",
+      "sha256": "78d9387b118db4fe1fb536cf74fc3fd5ef50b02bb8b4571d014b914192439dc0",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_001.ogg.import",
+      "sha256": "af3964b0b5cf286b0970a60bb4623b77c1ae08021fe3379ce9ad7304696652db",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_002.ogg.import",
+      "sha256": "0641a716baf46315fa99b715a5d5c391311452bb4f1d8093a4b9f345a2fd5d4e",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_003.ogg.import",
+      "sha256": "4da760c35e875b127e4dcd4f2db9820f5a200449f96c43f5cf271de1d7de7bf8",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_004.ogg.import",
+      "sha256": "012ec2d1d35f43145a688e106d091fc2882d3a3518e2b24abf3344f76394a008",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_005.ogg.import",
+      "sha256": "0cda0b960b368853179255bb421f5596d149e34bd9eefd2c280c6fba16a34b6d",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_006.ogg.import",
+      "sha256": "000c286e308417648d9d9fe60216d879e3c92090ff9201780827938f76e13eed",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_007.ogg.import",
+      "sha256": "e9d451a90ace5cabe2f9bb580a1b6be1df95e5640f57bf863fbfba2807162c24",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_008.ogg.import",
+      "sha256": "9dab4d57abfca472309954244ca4886329c85e86dd83f5605ea7f57f45df61b1",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_009.ogg.import",
+      "sha256": "b2423373d02c9a86100510a290f4a5abbf03987aefc8619b472fba86c6a93da0",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_001.ogg.import",
+      "sha256": "0a39554ce082db71206c95e1a30ced6bccb76b4af4df74aa33dbf990b6027d5e",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_002.ogg.import",
+      "sha256": "5a08d1bbac5c49b5a952de78d9b2139ab103d4f5eff0c9eeb58eb254d611579f",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_003.ogg.import",
+      "sha256": "7dfdcc2f78cc82deead2c8e37fb8c1c775bc4e6b69f0b8b210bba30cdc36ef41",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_004.ogg.import",
+      "sha256": "2244667eba7e0669b4e02c7d1d514867137d431224d3b103f88cb77f5726b95e",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/pluck_001.ogg.import",
+      "sha256": "19ccd911a9f03a4cb78ba56f6878aadfb90f919ee5f9a017ca79070411886272",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/pluck_002.ogg.import",
+      "sha256": "cad9435e6ad8e7a4acda47e5aa2f36646b8a89cff1d159b3072f2a28b68a6f49",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_001.ogg.import",
+      "sha256": "faf8487e150560afff929d53a4cd17e4e9e2c5a3843107ae7e0dd332eacdc1bf",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_002.ogg.import",
+      "sha256": "2e0ee1980ed78e5a50ce53c85f0e0e458ff908fc74c7f47174272139c98249fe",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_003.ogg.import",
+      "sha256": "a003a4376747f666636af75168681a486a813b2baab70b7d9669718e0ad57e1f",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_004.ogg.import",
+      "sha256": "d65b2ca9c063859f9a220ddbd827faf63d1103d2a17b4a895ceea54c8eb44159",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_001.ogg.import",
+      "sha256": "efc7f246b82d49378d1a7d33cf636057b96cf2ff4c15d7e51cb06fb496e7f49d",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_002.ogg.import",
+      "sha256": "98a3844996e5396cc703543aae71306ea4681ff48cba36f5fa9d0d8b657a3aca",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_003.ogg.import",
+      "sha256": "28cf28d7920197817d08e851885b348ed0aca1b49c707291684d3272c479b9f5",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_004.ogg.import",
+      "sha256": "50b3cdd109903d44efe864e6b8ae599ec6bb50bd952aad81aecbd5277a656a7c",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_005.ogg.import",
+      "sha256": "e221519f88bb335e0e572cc9acb1ad55d270a12ce5678ce3fc1ee497436040a0",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_001.ogg.import",
+      "sha256": "01d837709e4cf00df71d18b07048b96e40f692f9b961a09d0cc0dcfcff59a945",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_002.ogg.import",
+      "sha256": "adbf3ea07c6c2dcb015e732f17fa6fa232bc6d7aa96457021f1ebfb5a059ced0",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_003.ogg.import",
+      "sha256": "f1d62e305bae2290abce48a55f047e5a2a6a783591a6bd400df1d882c1241780",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_004.ogg.import",
+      "sha256": "f0b9c803280d09d35a4dcf58cb1da4710bd65e9887397b0a9db70215877ee79a",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_005.ogg.import",
+      "sha256": "41259fc5aed04a4523396bbf8298e3d125aec1a3ff0f693d24aaacf9063650e8",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_001.ogg.import",
+      "sha256": "54536df204d6c25a03963993814dcc82eb8b2712152073c85dbebd9e4839d855",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_002.ogg.import",
+      "sha256": "10b490ad1bb844030c69abf11be8446037aff4e24552d93f7e304334e270cdcd",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_003.ogg.import",
+      "sha256": "ca4f1c8db18b50e52e61f821d38b2da18f9296f17ad2dbdeca2fc005d7cf3b43",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_004.ogg.import",
+      "sha256": "70354a764e952e53207183014fa8fa96adae037c6b555ec9575f90a5059d1f38",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_005.ogg.import",
+      "sha256": "c742b71f12775a7d5d188f9e4c486b5eb2cca1ca548c40a626698fca5968245b",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_006.ogg.import",
+      "sha256": "3f7d70a4b577a935748a5ca6d356109e5de7397578db4a3108c29c46a8e54ce8",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_007.ogg.import",
+      "sha256": "208e3445dd2a67c95a7fe22dbe2d85af0582ce9be2fb0ae971bda24f0b24828d",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_008.ogg.import",
+      "sha256": "d90aa3b3edc324a8fdbd8e84772a29063d5dff0a023f39898b84a49504f896c6",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_001.ogg.import",
+      "sha256": "25c6d77cecc051e917f3871f508caa0a0cdef008ec95e35d5eefbb8fd3e13da0",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_002.ogg.import",
+      "sha256": "3d6d62b13425ce204eeefd5015bc533a7e03e5c419313c77fe32972e0ba05109",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_003.ogg.import",
+      "sha256": "ef6ec0a2d6d99414aa5cea726e8c8e3fbd071f5b37983e30b2d3311199a0e9b2",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_004.ogg.import",
+      "sha256": "e2685b552f631f7621413b481447844e3f462f2c81625eb6ca09df39019e3311",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_005.ogg.import",
+      "sha256": "5c442bd18bd209a83c849d29b2351435d33e1b6b838572ee1b98cc0163f69c7e",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_006.ogg.import",
+      "sha256": "e923cfad5829af26a81f371b29e2d06527407755a1871cd6a54fbf211568805f",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_007.ogg.import",
+      "sha256": "cee5caced2b4a9bc3a3cf94f3d8eec7a16814f43a881d1d51cdaf8963c03b188",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_001.ogg.import",
+      "sha256": "9df6fdf155269e862e670dc813b22c879b963366f9041dcf5493d25178b006d0",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_002.ogg.import",
+      "sha256": "9c23ba6e64c37be23042e0d1ee41c60704379b1c9bf56cb4b9a51bf5e6ad9192",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_004.ogg.import",
+      "sha256": "67e999ec13e38e7dfb25c9db8ea8398c68ec3a598119941bd3383ab12edb02ad",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_001.ogg.import",
+      "sha256": "76eb704536848d45ab8c3fe317590bf4fe9d1aa6c44441c4a33f35b52a9710e2",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_002.ogg.import",
+      "sha256": "631a5cd526ac8f066c89bc5aa31278902f54fd730e3bb5a9ef96ebc08e36ec29",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_003.ogg.import",
+      "sha256": "9d6dd25d140ccd64ba562f38a17e91a2ca083cf99a182b7b10a2f3e231f4ee74",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_004.ogg.import",
+      "sha256": "2a31bdc744f68b8ad49397ace6fb46df0abb81679c49009d18f7b7a53ac8d204",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_1.png.import",
+      "sha256": "38147ffbd1f4c11877c4aae8953375cad30cc809049a02f6134827bac1be915b",
+      "bytes": 981
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_2.png.import",
+      "sha256": "10ed9f40f83753ccea691c0756191b0c2af020073bb28440ca099c1d109a09c8",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_3.png.import",
+      "sha256": "ebb76c1b5e8741c8cda623ad56d3949d318010461be676b0a6b9c132de3989d5",
+      "bytes": 981
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_4.png.import",
+      "sha256": "aac1a2eb29452e168211b1cc89b5ff464619bdfc4bf5c59dc05b9ffc9c164e2b",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_5.png.import",
+      "sha256": "fd6221a4e2e18bb4f4ef0f270b6aced32d32723096aa210d9a52adde6973fae7",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_small_1.png.import",
+      "sha256": "3e4f0f4081a4b27d131cbbdaf9542cde6a18b67219c653338a49e5a13e6ebc8a",
+      "bytes": 999
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_small_2.png.import",
+      "sha256": "6fc69ded3811041591ee6c6bdb6814bad0996f5913d91a3a704955ec3e7313c9",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_small_3.png.import",
+      "sha256": "5e7f82ea760f915dca5eeae4a840ec1b231bad0e50bb0d90ae8162398bc6ddb1",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_small_4.png.import",
+      "sha256": "0c28bdd56db4b9b85bb48682d5e05ff3ac7673f624b692366fc8b93951364e6f",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_black_small_5.png.import",
+      "sha256": "31b45ddb1da16e93d69cd98679502c8fd41bed258a1c60ef4a2fe5ddc56181e9",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_1.png.import",
+      "sha256": "659239036f2fb888f90eab92a0ece032cd64a8a0284cc61eb06ecd39044b684c",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_2.png.import",
+      "sha256": "7b380d3c47f26725f7034671081e190debc920920c80aecc3a17fcec037fd9ef",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_3.png.import",
+      "sha256": "c0f7bad1b198d38cf5f3dc86b0a96fea76d161d282be1ec476bfada2f149648e",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_4.png.import",
+      "sha256": "c9d9d37cd5c3c1aa7af6fbbde13ca6d9e73d4cca18334a581c82c6a1ddf954d6",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_5.png.import",
+      "sha256": "42979c46568a31b1985d8c236eea4ac9ca99b8d6ba62655fceb419abd2d64c73",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_small_1.png.import",
+      "sha256": "fb5757110a291729c4c51cd6802465ccd1bffe1ff90cd50738f93d43f0a49288",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_small_2.png.import",
+      "sha256": "6fa1fc65b071dd7c24e50184109476d84eccad38370c586ce714b135bf84605c",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_small_3.png.import",
+      "sha256": "9a821519d0a5dd59577a6b08683aff6240657a6d251c2036bf2c5cd8625d0f11",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_small_4.png.import",
+      "sha256": "e1b6565ba751ec8ee2c2f11475b72568ff17de22c3ba5e270a750867aaa97461",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_blue_small_5.png.import",
+      "sha256": "82ed41b92979ec81fa90a711e60decd884ff76518e38bac8aa3351e161440175",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_1.png.import",
+      "sha256": "bc670ca03024d4c4761a696469de469b392fb66bd8ad415ee439a46b46e64e1a",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_2.png.import",
+      "sha256": "73d6d136965f3b40497ddb97fad75b0fb292e98564c778cb1063ba5e1b18ca2c",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_3.png.import",
+      "sha256": "32c79c0b1b3dcc37475542c8e1fd51416e9b559698e624dfb7962fd81012ce6d",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_4.png.import",
+      "sha256": "b089d79fa83decc66946a673848258977ce6092bfc407d11f4e94db6b1599d7b",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_5.png.import",
+      "sha256": "253cb68a016d9729237ed08944c31b5364d496e37410f12a491811bbdbc26d50",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_small_1.png.import",
+      "sha256": "c52036c78b95f32888e8741c5380d3d5ea3b44de238c8fe9f3f25afd3b919a01",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_small_2.png.import",
+      "sha256": "a352036eb674c55c50ea284ba919ed26d10607b8eef47457c8cca3011003f461",
+      "bytes": 999
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_small_3.png.import",
+      "sha256": "512983289a869fa190b943fd3125f86b7203436a9d4fda288f4ea8de9eec946f",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_small_4.png.import",
+      "sha256": "951c3588e7e7c7d5eaa75d2bf4014084874fa4f54e37b150a12c478b5dfc5e38",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_green_small_5.png.import",
+      "sha256": "bef8c036d53070028483a8de8b756872738267ff0624c07cecd5afb095b8c663",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_1.png.import",
+      "sha256": "632e71391fe3fc11c1260c89e6a087b4ccaa7e8a02cc75a3ba79a381b904a3c2",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_2.png.import",
+      "sha256": "9d678d89ddbb708cccc58eb87a2bdf69a648456f569f75e595afc42fb1e3cf50",
+      "bytes": 975
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_3.png.import",
+      "sha256": "dd392f73f5bb7b94b7f388eea7080b89c9aebc9190352f0d3e5257f096bab9a9",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_4.png.import",
+      "sha256": "b248662833a4880beb92488d02ad1b672f213f3ebe860b7477283fc53ef831bb",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_5.png.import",
+      "sha256": "2b3d2f76153c797820161cf232d37392caf1dd6df04a43f78abcdf8cc30a1d29",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_small_1.png.import",
+      "sha256": "9b6b290f476ff4b51b1574288ee14b096d2e956d90c33d672acc6c77d9433510",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_small_2.png.import",
+      "sha256": "05d15ce1c9ce52396ef92141f5da19d36a61b1196ed5af870166fdfd107567e6",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_small_3.png.import",
+      "sha256": "0d43641652b7b52e5e0255267bf6268c885896d57d6a529ca683176cf100f1fe",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_small_4.png.import",
+      "sha256": "c19291fa7d123c3fd62fd7865d7fdcc8576c617589a1e222c85909aabdfad30c",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_red_small_5.png.import",
+      "sha256": "601356b57edb349fb52b195c903e5a51666c03a5295eb798e4dcb944bd7976af",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_1.png.import",
+      "sha256": "c6b6fdac5a0d77671372df4e40ec1a1d3cfd198d3059e0ee80ceef323f8f4719",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_2.png.import",
+      "sha256": "b246dc37639db6ffc03b078c19bc3a864935b22164028a4b1d1121aefd1f667f",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_3.png.import",
+      "sha256": "f4683ae45ab97edb5fde01ec549f23d90397b71ecdf0d07cc69ea7f516423614",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_4.png.import",
+      "sha256": "0ce52be3aeb6bdc0cb44a01e93189a99b4414105f28cc81eeac8a6a0e48b04c2",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_5.png.import",
+      "sha256": "9f0746cfaeda8ea7c9d3a672524433cf99221c66adc00d827ed5b351f9033075",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_small_1.png.import",
+      "sha256": "fe5349c6499bc3e2009f2f9504fc3c41830dd34d5d5aeda5e87a6d8f3622dc8c",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_small_2.png.import",
+      "sha256": "99f13c569fc7bd76563d0bc168da3222ce2fa9bbbcf7ceec3a1d206e2f5ba7db",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_small_3.png.import",
+      "sha256": "1df3becccd052347f5d225acf2b05e1e3cfe7628821748fc1b0455bab563b8a7",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_small_4.png.import",
+      "sha256": "6ac70bf8ce2642f386bdd294fc79eb960e70bb20e0ec70aa2540adc308ca3945",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Cars/car_yellow_small_5.png.import",
+      "sha256": "33497b45cde113dde931dbd950c121e16f33a805359ef0015ba97f7e0997bdf5",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_black_blue.png.import",
+      "sha256": "dccd3e10677f801683ad30e8e2bf5876b757bc6ed682183c1d94654c9b7f2f7c",
+      "bytes": 1015
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_black_green.png.import",
+      "sha256": "3d4bfa91f74491ca85f0040efde7b7c84899393c9dcd67a779010cbeba79aa30",
+      "bytes": 1017
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_black_red.png.import",
+      "sha256": "2bc3e15e92b3f25bbe3678eea1c59c336015e039927c80d7fb20df8e68d612b9",
+      "bytes": 1011
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_black_white.png.import",
+      "sha256": "8af1a7b73f9a5699753110965c0764fa62a17520bd56b88296d9f64ecbbcb347",
+      "bytes": 1018
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_blonde_blue.png.import",
+      "sha256": "4cc02333c54576a5b520553ea3e3aca3a5e5eb78ee939ab749d14604b4b507dc",
+      "bytes": 1018
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_blonde_green.png.import",
+      "sha256": "c081bb82deb64862d193a7faadc66bc9058f07ea1aaa898da97f59438482e864",
+      "bytes": 1021
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_blonde_red.png.import",
+      "sha256": "d76c7945c36411967d803061c91c4e2402c5046a7c240b345f2a6510f85cf373",
+      "bytes": 1015
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_blonde_white.png.import",
+      "sha256": "7202b19f3bd026180f63841adc3ae37f8f3e202e2e3e073ca6540a887bd989e3",
+      "bytes": 1021
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_brown_blue.png.import",
+      "sha256": "e0678d1d87685a26c5252914bf10505b2cd348702e87e9ddfe606f93a02e29af",
+      "bytes": 1015
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_brown_green.png.import",
+      "sha256": "d0d60958f0a3ac36a30f3e082dc75bfcfbd1d07fdc245b9dfe2b6105cb434187",
+      "bytes": 1018
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_brown_red.png.import",
+      "sha256": "6110ce26beec554b629e177dbe8f4ad2086961c2606c60c948f3f2b020d19995",
+      "bytes": 1012
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/character_brown_white.png.import",
+      "sha256": "227e7fe9880777be7649cda5c30c1620ef79e24fdfd01cd24e0fbf8209599246",
+      "bytes": 1018
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/racer_black.png.import",
+      "sha256": "2218f3c1a5665c03027b9f001d3eb139bd0a919b972a0cb3866c3a1cac8b77a2",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/racer_blue.png.import",
+      "sha256": "15a35879e7d1190403c1a941a49ee921f513ff82b5b64d100a1cb1581aa9c8f0",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/racer_green.png.import",
+      "sha256": "0c91e92c7c7a0e1dc7b7607988c1e0d753d2886dbc35bb7afcf6b9d3d026a3f0",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/racer_red.png.import",
+      "sha256": "5c176778c4b596c0e318014a5624735c45d6bfe3e6aba7fbed04a8d1fe7c97d9",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Characters/racer_yellow.png.import",
+      "sha256": "182178effacc76c9048b67d2c0ed0bc42c348a30a768c25fe7701ea0f46062ba",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Motorcycles/motorcycle_black.png.import",
+      "sha256": "f2d2d9f0704cf6a7a9f7d8258342fd4f38ae7cf01f422cf74209a69f50e337c8",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Motorcycles/motorcycle_blue.png.import",
+      "sha256": "89d0342429495f0d084bfd614e352ae8f2b7f7b8ac5539a8a7777ab711f2d260",
+      "bytes": 1001
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Motorcycles/motorcycle_green.png.import",
+      "sha256": "5d17f2a76f04be4c77276eafce17653772c7911c56367d7cada7ad0c5841707c",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Motorcycles/motorcycle_red.png.import",
+      "sha256": "31a3912b8c80aed3f43df86679b67d1c3c32fe4245eb902fd8cf19b03a2b902b",
+      "bytes": 998
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Motorcycles/motorcycle_yellow.png.import",
+      "sha256": "e6a12a1c4c5e2d5dc20be2e8b996821b3784ef75ff4682f6e2b3ed26bea1a9dc",
+      "bytes": 1006
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/arrow_white.png.import",
+      "sha256": "711bb6371f657ce2056c345cbac412ff365b4872c85a8daa3ed131f88b4b77fe",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/arrow_yellow.png.import",
+      "sha256": "f936a136e6d3fbbf11fd20197a6ea55c7b226eaa12dba34afb5b6d53394d258c",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrel_blue.png.import",
+      "sha256": "be2f8951423457bb95cbc43bc5a9ffd43735f670e27748d0f2488105db644657",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrel_blue_down.png.import",
+      "sha256": "db0e8e896d987c25287dd71f1a1fc192aba0215455d52576b9529f34eaff03e1",
+      "bytes": 999
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrel_red.png.import",
+      "sha256": "76e70696622fdf0af21a6117fa3da15973aadcf2a3f594dd1789a7c72a12ebdf",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrel_red_down.png.import",
+      "sha256": "b6671f7e79bf095a241e216d2f34c9cce9595be4166cda31279cc2d0a0cdc42d",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrier_red.png.import",
+      "sha256": "7fe7777a807e7a47f1d007424e4ed21e3f9b2e0eec750792842869d659101adc",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrier_red_race.png.import",
+      "sha256": "873d1bfc7db43e6557c46b3bff2bcb2439bbcc3fbdb501b14d3755044eed675b",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrier_white.png.import",
+      "sha256": "515d6f520ae6f276e8b7ad7b0ad0cf4c46d470adfbad288288679f7327880569",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/barrier_white_race.png.import",
+      "sha256": "3c29ab7cb35489b500512fae4ad571a5d7e8a35107949e1e57f9ce5e5a5eeffd",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/cone_down.png.import",
+      "sha256": "2c277de019830658024b240f1902ad6507eb99147cbf933183a9096e46d5751d",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/cone_straight.png.import",
+      "sha256": "dd8ad73c56a5ef00416d738d0c42b3db71d35170796a914049c2fdee86628427",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/light_white.png.import",
+      "sha256": "35936fc3c7486daa01f159d2e90ab9e5482c59ef36b4396c5614b59fa59c3263",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/light_yellow.png.import",
+      "sha256": "313a27c6f55378c4be179c0b60c4a6667627e033830b244237b403408d357503",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/lights.png.import",
+      "sha256": "bf006d86decac6e097632cdfabdeaabe2ddbe51dc7024aca2bf47a50e01319fd",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/oil.png.import",
+      "sha256": "96273f45efe66594397d45c1a9ccd67beda54c6c61805e2e51d9b808130a1365",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/rock1.png.import",
+      "sha256": "5d835e7ab0731211a4ab09f71c36c36f2b75b6425a0dd3b7cce392ce99d4c80a",
+      "bytes": 966
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/rock2.png.import",
+      "sha256": "0242a97ae907b25fa03380822b75a82527a6b74e5f52b105ecd2b8dd8b49dbe8",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/rock3.png.import",
+      "sha256": "b05e2092099837e4cd81149574bdcb780594271f2add22e6e6e0539037537eb3",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/skidmark_long_1.png.import",
+      "sha256": "5a87df096ce2d627525b47a58612ea8b8b155136346fd682ce5d61b6806e08be",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/skidmark_long_2.png.import",
+      "sha256": "3b2c8c882a5a44be87572a15556af911ca09e896c84aa68dbe9d33d99e28346a",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/skidmark_long_3.png.import",
+      "sha256": "deb9686594a370c6299057020dc22dc5564506417b9682f06d8038ed35075182",
+      "bytes": 996
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/skidmark_short_1.png.import",
+      "sha256": "fce7c8324f2d7d84b8424c5aedb1ab46e35b7a2b3fc6ea145339692c81b294f5",
+      "bytes": 999
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/skidmark_short_2.png.import",
+      "sha256": "8c4035f75ae8334407ed037e1b6e9d4a08b108d1e666e8cb2a7b9fd2437d2803",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/skidmark_short_3.png.import",
+      "sha256": "cb1d2650c5dee5fc22e12f222470b0ecf337d4968a87e3a502c165a341e0d6a1",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tent_blue.png.import",
+      "sha256": "a6d570d5910db9d4a3a49fe27ff1838c4356b305c0e9824992b65abaa29b86cd",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tent_blue_large.png.import",
+      "sha256": "216dda357a79316a45bf21f73a10a59b58d9959f5ebab1ebf1f796bf71eddd64",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tent_red.png.import",
+      "sha256": "482d1de49cd825fb24f23b2b3d4b71d3780ff11deaca004f45a53584ee51f78b",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tent_red_large.png.import",
+      "sha256": "218f13851ec681a53d61feedf75b13713b1de9533af74e47998d572d636b5466",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tires_red.png.import",
+      "sha256": "fa36a1f9a81e0a140fe84973a638e1fd6ae6037ff5216e58d6104032ce81df18",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tires_red_alt.png.import",
+      "sha256": "4a459bfd03c2178f9ab1c6725a24b6829561093b6c7b02ce8caa5a9cf3aef5a0",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tires_white.png.import",
+      "sha256": "ae1b46a571821f5bd17386fd11fd0616068536e40eb3967fdae23936b83f9dea",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tires_white_alt.png.import",
+      "sha256": "eb7576694b69667921522b4478595d188117b0c75629c276d5fffd134c32eeba",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tree_large.png.import",
+      "sha256": "cd8581d5b03fa117d5770991d36a9332b5a4f6541bef392a952e09659c26e325",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tree_small.png.import",
+      "sha256": "aa3e15d6ae624fc2d40a1f2b12d5a7dcc0b029d4ecc2f4b7e897b2da53508809",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tribune_empty.png.import",
+      "sha256": "4561ce7febf1f99deaaad4644ce9f8a7b71b045dc93293a5fb758dcbd38d234b",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tribune_full.png.import",
+      "sha256": "0a71ae06d66290c6833cb55b09e19bfb2357202da6807930b1f841661e7738bc",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tribune_overhang_red.png.import",
+      "sha256": "40120417d9ac2a33946fc621aff556663c150899542c3c79953d1e36992de1f1",
+      "bytes": 1012
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Objects/tribune_overhang_striped.png.import",
+      "sha256": "8719b06258c906f4b6a0a37d773541996d1e50c62509a553cfe9e418067c4460",
+      "bytes": 1024
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt01.png.import",
+      "sha256": "0534850e33205892b9da4512f6e504b95eced82e7e3de4a9c1008575fef8e32d",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt02.png.import",
+      "sha256": "0fb2888f25212a2171b89a8b3223a0457693f00d139de98cb78441e93cbbf6fb",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt03.png.import",
+      "sha256": "67cb38704d9d8c284a7671f03463e0da5a0992ea317b6a114ef1e13397aefcc4",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt04.png.import",
+      "sha256": "c65d602b5dc787fc2de55c63bda45a54b13289c5a561dc922db7910bd39d112f",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt05.png.import",
+      "sha256": "8e525543ec4c6bbaf1389a53f76392e8b1873c4ab6305c54267ade766ce1138a",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt06.png.import",
+      "sha256": "c027a704ccb0ac247aac9fcbab99f961c7ea457707061a902ca823d73f4c36b3",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt07.png.import",
+      "sha256": "441f6e463825b514bcf23b38d32a622203c7b0b60ba206fe942a9462bf900719",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt08.png.import",
+      "sha256": "0d6fec944caa0e3acf465fbd08e827eccd9bf0ee2453976f7daba4ca5a79d12e",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt09.png.import",
+      "sha256": "a0e5a2a82113a7e14c77614f39f60b3f433b47f1dd0921c88e495a55c52c4630",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt10.png.import",
+      "sha256": "ae71da238cd85310e12b7f40c1961a8a394b3a5056cea4fb56b6ccd1c2f734d2",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt11.png.import",
+      "sha256": "31c0a9c085d708a20c59f9170a49a68e1ba33fafe340d21b51c4e6c245e81e50",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt12.png.import",
+      "sha256": "75e46d5edcb86cff4d74d5005a86c0a638d12cf17da6d6d3212aca7e21845d5a",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt13.png.import",
+      "sha256": "84006795fc3928d23eacb2d8731d63004179c8820e72dc05ad48a0a4e81bf2d2",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt14.png.import",
+      "sha256": "3f721ded0bfe83c1981f95b123510f0a737ca6ff1918c79617be51dcefbeafb2",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt15.png.import",
+      "sha256": "35f3b7ca665843878dabe2dc2bc6921ac7ebe52c11fc26e5439a4207131b17f2",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt16.png.import",
+      "sha256": "6cef6d5ff6aaba639367f1cc2e58dae62c6ff746fa2f263e8102be361f0a1b3b",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt17.png.import",
+      "sha256": "df44842b2e4f46605cce6ddb8d1d8272020094b7a4fdf280644a010c8719921a",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt18.png.import",
+      "sha256": "baa4f7571896e45e201205771e9d932afc1a8c4d4c2112c4108c564598505245",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt19.png.import",
+      "sha256": "b09a8c1168575ebabd98b102ff71bdcc9b1e6ad09ffd787cdc8806b93192b09f",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt20.png.import",
+      "sha256": "909d7ba51e2ccc2d6c6de83c17be807f762b3b8878db360c29853f1e8227910c",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt21.png.import",
+      "sha256": "e52f1ae71a49e5531368d33281ce4184eab64693f0d4bdb83d48806faa5d54d4",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt22.png.import",
+      "sha256": "457b3afaaba3ccc135ca64f7adfcb70c7037d93ab0d536b05de646ab4162577c",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt23.png.import",
+      "sha256": "23ef9215a50d6550560eec63afadca8607fd60aa9eec3592c2b673ceeaad809a",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt24.png.import",
+      "sha256": "156d4aa0c9b39918053968f87f9275534c57b031017067ed76418148ffb4194c",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt25.png.import",
+      "sha256": "9858418b893263f42a6ec22c84333d692eff298add7399d6f05c0a4aafa58997",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt26.png.import",
+      "sha256": "bf66edb3ff8a38713da02c46480db55d44a8573597d47832b5874d8d91ab4b24",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt27.png.import",
+      "sha256": "7d8b01ccce5c54828c041010449f2214a4489f5ffb94b80aa0a9440e25782009",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt28.png.import",
+      "sha256": "34554c94aa44754445ec2ed43b044591bd2aca0bdfb42bafa7b2e9b3fe69be91",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt29.png.import",
+      "sha256": "0d45cb6fcfd35cd1eebacef4bac32aead12434289f3ec707869ba237783a4d1f",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt30.png.import",
+      "sha256": "ea480871ac69594a16c8152c77cad4caf6cc91ee56a3e509d351100daafe4248",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt31.png.import",
+      "sha256": "17a37bc4262abcc732889d5c7b3fe82f7500f35b3af5bc57b120889c49e042f3",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt32.png.import",
+      "sha256": "f54d7740f4c95a14807b81e5ede8dcbf0c6a882d593c2ef19b3dff3993d71ea5",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt33.png.import",
+      "sha256": "232c3acefc98bba76d8699227ae8955fa6e58ae23202ab800745d69391e88240",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt34.png.import",
+      "sha256": "81952e28f2adfdeb40e7c4f12108a9187bd5aecfdaf1ab6b2c8ce8078a91affb",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt35.png.import",
+      "sha256": "b0f74d42af24fdcb729ac58188ff57c73ebe925859de91004e295ac590d7e682",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt36.png.import",
+      "sha256": "73379457c5a2c8b587a01e990da53fb9bf29b4e90d339a48711fd7f772abd50d",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt37.png.import",
+      "sha256": "b47ec5ff6e44117b6f64b473115a84e02bd6ed15915e93dc90ee28ab8dbd3066",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt38.png.import",
+      "sha256": "99c2ed6bda9c6dfb9c7f9ae44e03c908b636d3af1d315166276bde8c06fd0335",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt39.png.import",
+      "sha256": "c48344d862209319e6aad24452fe0d1bc96ff0f61862da9aa0c11fe124a12a98",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt40.png.import",
+      "sha256": "cff2a7ba04fc8b23b4e214d37dbb697367f4fa13d907cf20b02ea8eabf0040e7",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt41.png.import",
+      "sha256": "22c263f07e78fd600f64770d4c4f9a71d3a5708892c2b6acb4ecd6eb01f2bff7",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt42.png.import",
+      "sha256": "87ee1481d8b6501709f82e63489ff4be160a7c81bf7a8e86be9227410dbf8041",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt43.png.import",
+      "sha256": "ac89af52880f3a420244ebac29feaf43ee4a43f39bd78509cd5d498d2477654f",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt44.png.import",
+      "sha256": "44e899a0bb2c28f063bf67b22d1ea306fcac20bf72bebfbcc992b9439a59379b",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt45.png.import",
+      "sha256": "936f1de9c3066787ec6b0c39342561bfd9c6db8b333d5ff4a261bf91b5bb6876",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt46.png.import",
+      "sha256": "b364ecf88c3e5a38818a923b5ebfaf86f40fdd4a410be9f3f917afd5f21aad03",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt47.png.import",
+      "sha256": "0e8c5cfd47c47636c495cb85fdc6092126cc2e60fd1b2d920362f0e7d96672af",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt48.png.import",
+      "sha256": "570a62d464338357b81af9cd94bd510015493b96e216202585d9f445a3ea501b",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt49.png.import",
+      "sha256": "7261fcd0d57c689c28fcffdae88281d28b26984553a0b07f459b2269d4457853",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt50.png.import",
+      "sha256": "42918215d8b0846fc06fb160e05187496b883c0b4f44452b72a85329311296ef",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt51.png.import",
+      "sha256": "973c3fcf451654aa16d07efabb17042ae8a6543100fb2e080ddaff0aa2dff922",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt52.png.import",
+      "sha256": "fe19e45a263313beacc9ccac459226997572cf0dfce222a7eaa44c75ba13e806",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt53.png.import",
+      "sha256": "16eaec251d1a888c172bac30462c2668ebafdbb0b422e8911464f969ce98dcce",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt54.png.import",
+      "sha256": "c037f391c490a4cff632daf0624640514e8baa6d3404386052788901f4333399",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt55.png.import",
+      "sha256": "e40d83791616b06aef7e63ce4f1dec89acf4f5f6e7daf1546eceaff3f9b886ad",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt56.png.import",
+      "sha256": "cd02fc4d75b6819813257c07e9993baef5abe7a916220e571a077b4c2b167c30",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt57.png.import",
+      "sha256": "a391afd24aec03c77b0dc01ea8625a47b55f18211b9482adb30b2b94e2a0ee7f",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt58.png.import",
+      "sha256": "d383fecf5a0704fd50d82d4ccbb342dea3700aa15aedaa03b1ed1a704e3bcd04",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt59.png.import",
+      "sha256": "a977f33554d1ce3d9454569f777c6080883c4bc2f7b2f6d8ebfa343da720cb22",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt60.png.import",
+      "sha256": "48b9257cbe9abf911c10c7afff5ab9c6700c2198f7c6f7aaca99969b10f2d49e",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt61.png.import",
+      "sha256": "d7ae8b4256863d1ac81ce3b34d02047f7f5d432d31a30c8572982da47dc42805",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt62.png.import",
+      "sha256": "b8d6e09b4f8253ff9512bae496aa5b86150237af8cd1df8fddf7e48f9d5e61d3",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt63.png.import",
+      "sha256": "cd45a47e005b1e12c5b374a40a54be716977551e6266e7b6b50f98532907df47",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt64.png.import",
+      "sha256": "b5f5e6f6043ca204500b328524e90a6faf9719d7479f6a190a8a9b132bcf9558",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt65.png.import",
+      "sha256": "c808177b202b47e2b919987d1ca6e2fae0b56bc2b8b254300176f86af1caad15",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt66.png.import",
+      "sha256": "8f13c8716ba705892812f47c7238ef0053c9cfe182cf25732b43680c93340cfa",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt67.png.import",
+      "sha256": "22609968a592f94f3111e4bcbca1eac752c969d0d648ae98f197a37c36099221",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt68.png.import",
+      "sha256": "572bfd391845bbec8d6477793bd2fbebc4708aef0f0b22cffe65c69d17ca7024",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt69.png.import",
+      "sha256": "22b56c19b1fba049fb8edee132a5d2191d5ba2716794756da2a0fe81354d7f81",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt70.png.import",
+      "sha256": "0742ed7ebf7c5b63fa0a129d43ff00876a43277eb3ebef41401c8361068e74bf",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt71.png.import",
+      "sha256": "2b60cc964af1374655b80651b5a9184b1ce9a0b67f222f77c8e2395929f776cd",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt72.png.import",
+      "sha256": "75eceb9dcc5673960acd58a9c15c77d707f822561467b3ac302a2ef041448f98",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt73.png.import",
+      "sha256": "23edba7ae0e3309a4143f13aaf7626e563c285dc9b5d4782115d8ba39a3ea8bb",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt74.png.import",
+      "sha256": "335a95dc47469354af498fca9cbc6ed9a5791dab51c7a57c57cd61eb2aca27ef",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt75.png.import",
+      "sha256": "3ec2ebe991bf7290733b0613c59d24d14bca9cbeeafa856b64f536dcd1204162",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt76.png.import",
+      "sha256": "ae62dd89f26199d8b55e20fd785a1ad6bd4fc7905c0414b1144048fe92186111",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt77.png.import",
+      "sha256": "2e0df63802de285f9e45c4e30c28e90277c573b6abed7b9d4b79ea410d79936c",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt78.png.import",
+      "sha256": "66c076bdf7d253363c9c0b6de4a5ed23f1d168756089e3b94a9446735d020fe6",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt79.png.import",
+      "sha256": "5484164dcbf7611eebf2e145361258c4f7a36d7a8ea1bd37887c8a62b1cce55d",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt80.png.import",
+      "sha256": "952dbe862727397f1a539ae5087f7f0d6a0a65ca70a38d4a76f6dcda8a413589",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt81.png.import",
+      "sha256": "96517c0c66d7dbfa407b27b707f17b725578faf09846c3c2943088f6ada8c302",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt82.png.import",
+      "sha256": "bd2eb8b6bd4947111838012c8669a795f3a4452114c21f909241e18a6701c1c7",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt83.png.import",
+      "sha256": "a4c29fa3a8816ad471d2e094c40cc027613e89412a143112263998e4459add76",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt84.png.import",
+      "sha256": "2fb752455e1c816972b9a7dcd0762c4f85d6585982239d67e18f8a9bef4dffb7",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt85.png.import",
+      "sha256": "40ddd52d974cfc19ee7e7adafaefec395047974995bf71797d3294f611f3fa64",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt86.png.import",
+      "sha256": "0a72f31a410891b95049ed37a061682ce35fc1d1a41ce82d0433818417839773",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt87.png.import",
+      "sha256": "283fb83c7fb535bc1fe5438c6638fab53f0a34748bd768d362079bce47f4b7bd",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt88.png.import",
+      "sha256": "adbc410add545485fd0b9d3c32d62347876dd4ac68c897689893395ce708424e",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt89.png.import",
+      "sha256": "151784d8a1f9a9be934d8c1ceacb818e82d64612b96cacaf90e8767d08d8f1c1",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Asphalt road/road_asphalt90.png.import",
+      "sha256": "d9b41491647e73b34375346c01289264e659d09ded1d0a702fa53b5339af2904",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt01.png.import",
+      "sha256": "237d58031464d1ccbf86756d60040a6c778d1f9a40741b2525640decd3ab6a11",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt02.png.import",
+      "sha256": "6592f993d7ef816c45fdf83d24259f6b66d28b47c1c218bc766a175521497713",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt03.png.import",
+      "sha256": "8083dbae1f311c70948f063da7a9ab3d878295b3fb25c47b1d0820fbcdbbeefc",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt04.png.import",
+      "sha256": "e33eb4cd349b219dae8db1fbff95db1378530f85b56bb72ce5b01f4384d882f4",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt05.png.import",
+      "sha256": "83463b5d5ceff5a8facbf7b973042d3fe6bf875cc8d2c8a0102af6beb827b6ed",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt06.png.import",
+      "sha256": "12a5cdf13a8d69afba26f49b6c741496aa0c29cd819fe1019c4b594830649be3",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt07.png.import",
+      "sha256": "1ce8ea868f5ea650aba081b6fd00c4ecb64e5b001b70b19626c3cea3790c638e",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt08.png.import",
+      "sha256": "4bb0ff36c5a54b5bf438ec446e5033fc18cff736121b3cb21f807eff53996dd6",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt09.png.import",
+      "sha256": "76bccca85cdb40dd145c46fba5c85caeaf018c0d366291cfba6a01e85a446e90",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt10.png.import",
+      "sha256": "1cf2c653ab029d9cc5728957b3ae1306bedb64ca5ba10da4c904b10d086afa7c",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt11.png.import",
+      "sha256": "e8802549c49ad41aeb0bf1e4195e2e5c72ff442bc83d8c7d1902e2f39d289eb8",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt12.png.import",
+      "sha256": "b6785b9d9cac893eb6eb08803db2d0207172d31095870f639e93e0e619d80f4b",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt13.png.import",
+      "sha256": "5d42f918a9060f39e15af9109ad24dd55a7615921c62af72a255599a052233fc",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt/land_dirt14.png.import",
+      "sha256": "df43bb74eefdeef059fcd2f4c089ca03e487945a6f1f30cce82b5858ecd5dbbe",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt01.png.import",
+      "sha256": "f23afab7c0a7dcb244459a87f5d840ced15d3798d235c90fd25dbc6175bf58a9",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt02.png.import",
+      "sha256": "99169a75d08784734dbdfddf8191258ff3d861c71a384c8b4c51a68db454fcc7",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt03.png.import",
+      "sha256": "479b9cf5cdada1f1cb07bb4d1ba838c2b021e44638e638324f8ff38f257391d8",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt04.png.import",
+      "sha256": "3963bdb94b5e50e4e9c3e870177049fce985d0ecac4bb328f47240002dd501df",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt05.png.import",
+      "sha256": "65a09f471f5393e043ed54b62563a134beb47d40e0db3eb2e9c18013d25a530f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt06.png.import",
+      "sha256": "718eebc31a27274cdbba4a970497b87e744ad4a4c564e1a503fc2dab1cee49d3",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt07.png.import",
+      "sha256": "33a21c22ba61990afdb0be738bfd2105c9e7cb8d299e210a87fb7875b2aa9de6",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt08.png.import",
+      "sha256": "2719a0bd5c024cf00161b492cc79b6ab885e16d70832283fcdd8ea9d9f479cb4",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt09.png.import",
+      "sha256": "ac643c82319c19359b2f74931ffa5a60929c0a139f32cf42146e3e930554e973",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt10.png.import",
+      "sha256": "e8cd7d4ae14f556c8ecd52a5711131328b39240a1a4b84ed39685c381bfe4f67",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt11.png.import",
+      "sha256": "99df64d05475396a209115984ef43a9a3db1dfc86f2f52a1e7dc7b9d0c9c22d4",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt12.png.import",
+      "sha256": "bbd298690a4b9a32506e14340028f56993b6d4cde30f4192fe1f550ea322b9c3",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt13.png.import",
+      "sha256": "324c53949d13f6bfcfdd8faa65fec1cf211311fd0dcf59b8626b7d7601c6563d",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt14.png.import",
+      "sha256": "87a5fa482e292891260e644a8c085a781f40a8fd8fcdf9a5ffad075fc7060e95",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt15.png.import",
+      "sha256": "dadc07d2621ba589c6a9860f63d531878c5ee171bb74bdd54f7528c536b3d429",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt16.png.import",
+      "sha256": "c27d89e3bba93c99fc4763659c9a614fbd40eba5e281c2003dedf8c8a0988695",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt17.png.import",
+      "sha256": "8e2fe42801bff434d8e7de8b76880b5cc6cea779ac7ddfa40927818b1ecce46c",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt18.png.import",
+      "sha256": "dac880e8e4d48f1a0d4663d47fc4341c7937cd00784ec56169c66e9bfb151f72",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt19.png.import",
+      "sha256": "8856aecadccef3c3fcae6d53824de916f7303d455136e2215f030c084aad0202",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt20.png.import",
+      "sha256": "5a244f372a705a2790e8f7ffdeaa6cad22584c46659f3e88f79c1debbc0a7b22",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt21.png.import",
+      "sha256": "16c057675509c694a59aeec8d7f4d27983567b6ae96c332adb38e2c7c609021c",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt22.png.import",
+      "sha256": "54a713f4547145f242c72f1a83a923f6a851c99c4ba78efebb4761d8b79d56b2",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt23.png.import",
+      "sha256": "0b0d94cbfd008ddf832ca15029ffd2865ff8447632e4d6657d6d54d9fd5d5979",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt24.png.import",
+      "sha256": "94b64e12f7e3d390620d17ac1bc9f7e1e11c5ee9adc262e2a169af08b8633a75",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt25.png.import",
+      "sha256": "d28272beb75bc79625f02b06d39c1cf4908f8233d55a6aac7e83bf014b4ca78d",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt26.png.import",
+      "sha256": "1842d49218b5886ad877cc6149c2aeb74c30e622effeeddde1d30406b25e3b4d",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt27.png.import",
+      "sha256": "2e11965e8f9027d0a4146c266eda9234f766a1f3f5373b8d5e1046d4bf7ab098",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt28.png.import",
+      "sha256": "41ab5334a86050e8a9e390f130cf09a946aeacbc734fb759e392b8aee11182cf",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt29.png.import",
+      "sha256": "be9dea093beadd73755949aae2a29e1cf01d9c026cd17c934f6cdd9892534042",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt30.png.import",
+      "sha256": "ce026995c93b61a5587cdb115e54ef6a023b781f98d21521c6cd9687a5a3b16d",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt31.png.import",
+      "sha256": "a33cfe6d2354be2fd9de33aa40ec321356198b80b2d671cd01900f0e59c348ae",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt32.png.import",
+      "sha256": "f03e4bc65def18c86e08fb889861429912c91cddc8951281a074e749c588f0e8",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt33.png.import",
+      "sha256": "e8de67eefcfbe46702523248d11bc54bde3fe07e9ca1871f1cc70c0ce7819e14",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt34.png.import",
+      "sha256": "6db6b78e2b556c8f9f8a61589f19b47a4f254bd17d221d783fb92f0e6a9292c7",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt35.png.import",
+      "sha256": "20d83683d711c98463ea6f7f94e0b66903126e397118b189ddf844d6b0197060",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt36.png.import",
+      "sha256": "5b337a10600f7766ef8c085524c0ac15ea9f1371564b3c471621bb07ad2b9084",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt37.png.import",
+      "sha256": "460ca1a27ebff2a19037032c12a64b97f24446492f1f7c7fda5567b44e6b142e",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt38.png.import",
+      "sha256": "91473607477723c475aae563e71424dc87dca9b343d7bd82d2633d1a9ccfc6f2",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt39.png.import",
+      "sha256": "8634eae92769694244b149ec6075acbb57d6919d3fa8dc7678fa9e4660ebb2a2",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt40.png.import",
+      "sha256": "bc02f3d95617bb1c0bee51f27f78882d88b252c3c6f0a4c87d8d603f5d5f9094",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt41.png.import",
+      "sha256": "e1c5994e98e4e08a96bc5159b6dbe2f808d52ed05d9c371ac7febeb9b4224dc5",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt42.png.import",
+      "sha256": "c2e2cb39fa068eb555c104dd210ab259ec23f56980e13e6e5c4d0cc277b8faa8",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt43.png.import",
+      "sha256": "bcab0f05c1244b76e3224dbf5cc517e3afd0af6b39c64a0b879f7b0afde0fd36",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt44.png.import",
+      "sha256": "353f05e81f27be784b6158877da75d313538ceda5b5b0743fe9b85f5b66373ac",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt45.png.import",
+      "sha256": "614bd30fc1477494f144849cd20e7564ac4f45b03f2b42537d4b2373b371739f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt46.png.import",
+      "sha256": "bd8ac9210bc1367d6726f128b9bb6f59fb4c64e166eec95cf6b0bc99a5d13e6c",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt47.png.import",
+      "sha256": "4b4abba54e3195d841e542a623ad1e5d7bad8a7aa1867562e699d92bb1f52eb4",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt48.png.import",
+      "sha256": "652bfeafae060c81f6fa92932724ba07cb4a3ffe63995e38b52770589f472015",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt49.png.import",
+      "sha256": "3960503db6e8aed95eb887b813070351aace71161a2c4e9bcb271f2a3b93f1dc",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt50.png.import",
+      "sha256": "3346ce302cfbc4928ba6807884f8dc8eebb73aa6b3088028dccc833eb5972473",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt51.png.import",
+      "sha256": "f4ae3990726e9684f0d36c312fad4bf0786402f7cc152ac59f3f00cc2081be67",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt52.png.import",
+      "sha256": "83f6245c06f73c2541e591099194178fbbd9d5b9fc0fa70a250a81130b2ff04b",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt53.png.import",
+      "sha256": "ac62db11e30037f6b06bfdc89b48a6b413decc55c21646af86828df5800799f5",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt54.png.import",
+      "sha256": "b7fb77a83225165abdda75e4bf71b3ef62345dd349af5fddee285964823968a1",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt55.png.import",
+      "sha256": "b4341e207a98698bae42d1c3890fb5f0c4db0dab9951cda07eb16464bf7206c4",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt56.png.import",
+      "sha256": "755c21571182dda16991050f14cc7fa5a49c5c8df9d4fc9775e44b313e30b009",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt57.png.import",
+      "sha256": "887221c6b2ed6632537a208864b1ad824133d5556de9d8bd5d9e183f0cb99531",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt58.png.import",
+      "sha256": "f071d4d04b407d15424a19928cce4683356f9f9c4b8dcddfd6bc9c21644d6795",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt59.png.import",
+      "sha256": "c2c4d7c1e2e806c86361f16fbef62703cf7ddc83d47ba11d6e1046bddde6e0e2",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt60.png.import",
+      "sha256": "30ae17c2a68a13a2dfdac1b845f24375d4a9e851a2a01bd223cfbbe639d4bbf5",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt61.png.import",
+      "sha256": "8db4fc42e4d8b1a7c96f67b8d5bcb9733ebcd74c5f6f36403a084e79926189ba",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt62.png.import",
+      "sha256": "0fa65bb6fbc319a8515ccb7b2950dd81a44b3b2a28ff296ff3eaa0052758919b",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt63.png.import",
+      "sha256": "379a522e53bdcda12b94b29f9a35c424847c46d8f6156c623b0705cb367a5809",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt64.png.import",
+      "sha256": "ed8fb5989ac36718eec746f1d395f8bbeb4b54603f5024dd6e25e92211764434",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt65.png.import",
+      "sha256": "cca60ae2bbc4d35be5c61147acef3c49802371215467496bde71db072bb886c4",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt66.png.import",
+      "sha256": "e147915c023e41d0a649f51a111169d74a4c1036ceb3d7e771ebff857f96351f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt67.png.import",
+      "sha256": "50fcedebe63bed6f9075c338df0c4bfb0874cd62993867f75ee6f36954f805f9",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt68.png.import",
+      "sha256": "77ef9106a59b1c3aa4fbb1c8541f4240133fedde9e872dd64acfd19162055344",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt69.png.import",
+      "sha256": "d7ca7dde3b36c89c92303784c9571101989499e92eba1cad1778d4c5d4ae8366",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt70.png.import",
+      "sha256": "1d5cb73ba51edc68ff1519af27987a8e3aa77285ce3f8858704c5a75ce4a12d2",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt71.png.import",
+      "sha256": "c7983dcc38f6ac4445d059b96a088583f3fc2c10463624dd200b9f03fc1f3cee",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt72.png.import",
+      "sha256": "779ac66a375183d97950ca7d84074057cc5a2d203ef22bf4ac1b73dc882fed6a",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt73.png.import",
+      "sha256": "6cfe1591b73f2f4317994d3e1a69aa364292da07405f306872ccb61275fc56ff",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt74.png.import",
+      "sha256": "6813e3c809493b5557c7259a4675a1c8b4607af09f04db22e07c2ac9f4800b83",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt75.png.import",
+      "sha256": "f2e872336419a371630731647ac3ff80fe9e8019b98296c1fa9215aba048ec98",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt76.png.import",
+      "sha256": "8082566322d19f84acf21d125c150d7b25890a4b833258c1c7b2ebaffbee79d2",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt77.png.import",
+      "sha256": "d4260ab67a8d63a875a947da580b8bbed5560341d97eee70c6f6a5a958a3ff3e",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt78.png.import",
+      "sha256": "a1593d15ba5d022869a247df861c3f4b7e75a836a9f8c89ee78a2a2b1bee695d",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt79.png.import",
+      "sha256": "54a801991d5ef5413e3a3241194fd13a8de81507623f95471dc55b654a238b0d",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt80.png.import",
+      "sha256": "a7d9b84cdf1a6d4bb08be818aa2e8de716c41f0396be7f7b7a6f7ac218518847",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt81.png.import",
+      "sha256": "5706b681bc67a89aab03eb340ff1bbdbf07ea2600ed79589e65bec321b598c03",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt82.png.import",
+      "sha256": "a3c5d8169dcf45349805c5897a8ca547cff65d93f57ce738d29d2b544ea757bc",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt83.png.import",
+      "sha256": "40ab6defe251ca64fe23c7cde58cd3ede050e322c6f5cce1aaf75238178cc374",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt84.png.import",
+      "sha256": "c6e92df399f49468365344c625c4254cfc436fe8b7db7c22ab2416a4c075fae6",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt85.png.import",
+      "sha256": "ad57a667b4d90b21cef4512d72140dbc79e8634077fb46c50a662a53b658b31f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt86.png.import",
+      "sha256": "22071de3b8697ccee6297386f98d257cbe1f06cdc3c08db7eba6526a2bc474a3",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt87.png.import",
+      "sha256": "854ed7017c51984570f93ac3c00d28354a8e324efd2862282b8c3afd68e58c5e",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt88.png.import",
+      "sha256": "b4b4b1515c96a05dd718b4109e17b3eaebb1db654dff1f15cce82a9aecd26c80",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt89.png.import",
+      "sha256": "706cdac9a4729d3f6101cd2ac726668c4c7d7cc13730abcd98a12b1e8c35bfb7",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Dirt road/road_dirt90.png.import",
+      "sha256": "0124b4da3962aec12016f8e8bc69924e38eb87b3503bf2e1fed715bf6b3bb4cf",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass01.png.import",
+      "sha256": "0a0d91fa5bafed4c2402ce6d58440951d92972e5c3157b89e2097c91955aaeaa",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass02.png.import",
+      "sha256": "f32a0d42c9e85c0f5656d04cc37e859b4f37f0a2b4fbd2e70dcca241e47f1963",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass03.png.import",
+      "sha256": "c0ce0e1af61355d00c1b03c315454a22c2703ff32a6dc750ba66a960a28d93c1",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass04.png.import",
+      "sha256": "66f0f0f6d8f6d182d80a59870f3851deb9467bd99b23e8c7a0825194567f1f57",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass05.png.import",
+      "sha256": "f4fc2ef002ee84bd5a8d6e65316d171d12f937ba5b021be4b1eeda159c4d2faa",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass06.png.import",
+      "sha256": "615dd83984516f302231bc26157355dab6103f6e1c501eeb0b268233862a725c",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass07.png.import",
+      "sha256": "7377b6e6a0f5b3eeab8ff87b12edd12ff14abf17aa8c8d76da29bb6e62e4392d",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass08.png.import",
+      "sha256": "04fdaf697f64892bdfd7bfb2df241559f511704070a70f75bb08eab706a0cd65",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass09.png.import",
+      "sha256": "8147dfe604d158f2f545aacd98a1d9fbd15d6f763ee13770bca093db490beaef",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass10.png.import",
+      "sha256": "564fdb6b3b6e9cffbe2ccd40616a3fe4ed8a1a8f732f33b608b50bbb5067cc73",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass11.png.import",
+      "sha256": "e81b9662f0acdc728de9812d62d71f954f2f9cb9af47399b6a545147b370c9b6",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass12.png.import",
+      "sha256": "57fd3ddbe9b728f2350c587ee678ca9cf2a50343818f65263ccf81346157b309",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass13.png.import",
+      "sha256": "6c9494500b8a780fedbadc44abdc8050acfa9eb887486dca13f803f9c949d801",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Grass/land_grass14.png.import",
+      "sha256": "3a0bf4f7515e036e7ad79bf1ab5ef6cdc985e79e15135543697d353dd499593a",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand01.png.import",
+      "sha256": "3bbfdf028a045da71f7764248adc9a02a11ea1dc51f4da7e8ffdbfa2c9dd4a6e",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand02.png.import",
+      "sha256": "12a700f7a63777cf45e8212e5cc3cd40dc2ac74a1bc7bc053e2707181923fb31",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand03.png.import",
+      "sha256": "8feb819403f17840d5e9ece603e5bc112dc052705e5d1e694c41a906edc4ed9d",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand04.png.import",
+      "sha256": "ca2492935377f0436d3c27abdd166d7131829dfb3a2061f9b7d95a47d47a6aa0",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand05.png.import",
+      "sha256": "b46ac6d057f51095b59daa45beb6991b78599a55f41dfa00f0f3a8a46e2b3f2a",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand06.png.import",
+      "sha256": "679eb055df3552b2ddd8dbe311261eff83b82d1198ca6f4cbf7e9059de646676",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand07.png.import",
+      "sha256": "59f57e4478a5241e7dde76995d94bdee82880363ca6cb6996537c3110de6c0cc",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand08.png.import",
+      "sha256": "90427fb92d4b31ddc0e8cf6671daf86c5ca8954897ec80affe20bcd60228d949",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand09.png.import",
+      "sha256": "fbfc6ae8367368a81b52870751d51c6b91134cd3172a12385ed0738c583684e7",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand10.png.import",
+      "sha256": "6023a76b40ae98dc2816e23c5bfbb47b05142dac6d1dde2e628ecd431abf759f",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand11.png.import",
+      "sha256": "3289ac7480ea36404cdd16a26ecb4d273ef6397fd86dc4ec2c9d9b91413fcc10",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand12.png.import",
+      "sha256": "32d898c8441a3fba792fa6a8787c582990ebe5abac623f5330c63112a6f1ced2",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand13.png.import",
+      "sha256": "ab85d30c327dac4338824c3bddd3d55d2c69c7ecad1b48a420d87b5bc5efaa62",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand/land_sand14.png.import",
+      "sha256": "d8e2ae7b8eefdbb90733a374f1bc9ce5abfbf359d9e248ee83d76841ac9af79c",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand01.png.import",
+      "sha256": "5fc382fdf3b42a5d15e917796fed3541f3f2f3cddd241368daf8978ac0004d3c",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand02.png.import",
+      "sha256": "c4cfc067e8fbd7490366c022898bfaccde75aa2b53364ada29ad90cb9a0fae58",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand03.png.import",
+      "sha256": "ba064bbc3f9570cab000625a3c8d9610285dc7faa3810bc781df719e7a13a821",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand04.png.import",
+      "sha256": "09198e6aee6aa50280027e291b98c13ad790fd51de2ac2e2973f5fb47afc8726",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand05.png.import",
+      "sha256": "37c6eb7a2b980e31ad525871e9fc05d92525c5b7e9af282ce23b6e5e3de937bd",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand06.png.import",
+      "sha256": "c6a8527b058fe13b5122f919310706827403fc44f455f21b9119b2929b52745e",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand07.png.import",
+      "sha256": "e5a43eb2bc9f3c47cb233212dd60219872f9c21563677aaa99d619aa8cb8fc2f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand08.png.import",
+      "sha256": "e7d69b9acbaa0a2b4f4484dc69a5a1586f4d1d5487943fa4f479c7b7c7645499",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand09.png.import",
+      "sha256": "4cfd177a3fbc4eec6e3775cde04a26014b96534580a058489042477881708d90",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand10.png.import",
+      "sha256": "9da002cba34759cd03e020d5e6b73cb2c3192e1fc6d7f0d47dcb29a19f678ef9",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand11.png.import",
+      "sha256": "173ba57e58dbbcdda78cc563e1fa9a6b880b8cec3ac48f1b9ad4bd308c97d614",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand12.png.import",
+      "sha256": "b1fd43bdb30c5c9c39dc3347e3295074dc799f3b445b6a97d5012ca9fa2ce379",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand13.png.import",
+      "sha256": "b4cc42dba672fea9bf28611a7bce14249c6451a9ec8bdf4949867a141a1ffeb0",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand14.png.import",
+      "sha256": "933b450aff23f8d6c46763a82edca192bda17e78cfbcfa6b8dbc210bcf53986e",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand15.png.import",
+      "sha256": "59a22523e734e18a22ddeb58e0be90b2bd221c60c2bb9dcbd5becc704c6f9558",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand16.png.import",
+      "sha256": "16dad165dfb55d0c0e0e99c8bd97647691c30bc07c33806604239e5caa3deb18",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand17.png.import",
+      "sha256": "b956b5aebce3b848b3a5c25a7271e1673fb86c7b3e8c7db5265681cc1132596e",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand18.png.import",
+      "sha256": "204c5c1e52a4ea70a6c20662c285f1441dfa36f64e4cf7ca0ab870558e709ba9",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand19.png.import",
+      "sha256": "0840fd12ea720eb21c70b9f07ca971e4e2aafaa073818e0cc0278916fd989886",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand20.png.import",
+      "sha256": "1963f71ab23caa37ee5c99bc80ed3ad7962f44335787fc9c7c2e235d29673419",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand21.png.import",
+      "sha256": "22d7897835fd4cec70785d3275c7bd0291a7d228f4d7f83269f3b4aa9374b2f2",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand22.png.import",
+      "sha256": "051544c3187e68f96f7c7630fdf12cfdefa8371fb80b7e1b8156de73fb5a6b60",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand23.png.import",
+      "sha256": "33530093625b51d9675631ba24f342f45282ea81c1a510419a53af90d9ad295f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand24.png.import",
+      "sha256": "9300b10577f924e89177cd7abdb266369175112e71f37a32b58dba913676595a",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand25.png.import",
+      "sha256": "e31e3e29168dbe566f85220dbf39eb06d3cfe85afda54508eaaa12944a36d194",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand26.png.import",
+      "sha256": "6af22655428db4d082f92e06579bc4b114afa039d6e79dec999985e3cf3ddf8a",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand27.png.import",
+      "sha256": "82dc34ce4b6b8e636e09742225f356a4d1dae364fc34ed406390848ef5f4c92e",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand28.png.import",
+      "sha256": "e4a280e625b1dc5fd288b1a2858f0d69a3ad9a47738da9f2eb133affd4aa2d5f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand29.png.import",
+      "sha256": "dbdc330be49c288beb3a7c258976c1aaf2c521b8f5253c1550017013e3104513",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand30.png.import",
+      "sha256": "85fc458d611fbc5f8f0defa2d899d61c28f8b567c3cf9025143f8b51d416959d",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand31.png.import",
+      "sha256": "c1b346bff7a871c232ee5c91ccb402ba58e8e9030a3f11db9623e46bb7a765ac",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand32.png.import",
+      "sha256": "345b2944af69d22b1eb2169bfade9b9b3501a22e06543d891a1cef874c4e6380",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand33.png.import",
+      "sha256": "a848001d4e2a4e4110e52b86d6407fc0cebb06994c55601e041890be47709d78",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand34.png.import",
+      "sha256": "fad73c0e7b927c1621aaddd936749b11cd886990418f1032028e63fc3c82238f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand35.png.import",
+      "sha256": "977b88d5fce2d6c7cbf79d676d208b55c0d3259149b4f94bd4cd81bd171869ff",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand36.png.import",
+      "sha256": "48833b98c955eeb615bcccbe896718f2b4be387a748cc7f9a43fc21a59cc627c",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand37.png.import",
+      "sha256": "a88f24f317701c600db5b157dc898b2818eff925c3de2385e05e114534bb38cb",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand38.png.import",
+      "sha256": "d986c862f6ad77625aa815c86df8ae73def9b45368b85d240deb0654c1498a13",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand39.png.import",
+      "sha256": "b0ca56d6855e95ab4c1f4ff3f107cde45c5d7b228afaf41c53b7230091a3d8f4",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand40.png.import",
+      "sha256": "7fee405616682bebd3e85408430fffad011239faba72bf8acc8cec230839ca80",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand41.png.import",
+      "sha256": "de0cd91e4a41480b3d5467791f82fb882fc86aec337f4e8166d1b5751106bd07",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand42.png.import",
+      "sha256": "ac6be34879be9db74f08b9c275b13cc41b488da9e43200725b8fec0dfcf2c416",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand43.png.import",
+      "sha256": "52fcebb1f0b92f6856f6fe26ceb89195d9e3dc1e3e5f2a2609dc24f92e60d1f1",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand44.png.import",
+      "sha256": "1e666e9aae7f2cfa90b50fe3301f8f97779392acfc4fd8d4c660facd0b050ce8",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand45.png.import",
+      "sha256": "84adf118e34741f4c2df22ebdaf7df05ec5ef308ca091d1fd4c6a0832641704d",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand46.png.import",
+      "sha256": "b278c7120947c6f3692a3dc9b141665d1386b7ed30f46fb212c7d95da7bf4870",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand47.png.import",
+      "sha256": "c1d961e08671d6e128edc05e02c5349d57325dbfd2265cb78887260bd83e156e",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand48.png.import",
+      "sha256": "45c0b72e318d2f4dce8202676096d6d1f0f54526f13b7eaea36fa40688798294",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand49.png.import",
+      "sha256": "7b73e1e8458a4f2b45a4c9376b37e11142c32256d21f6110552b2535e27d1b8b",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand50.png.import",
+      "sha256": "6a71103783cc9e480b761fccb4ee06012c25da7e3fe0fbd72684d267c7ab5ac2",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand51.png.import",
+      "sha256": "c0abf4e60154f41e9023e5dadbb5e0f78397319cc9d7f3b4cba73ea73de60609",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand52.png.import",
+      "sha256": "8d67d9a4afe72a7bcb445b59ebf69e4a3dbe44a89fa82020477c1227a2a655a4",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand53.png.import",
+      "sha256": "f1800f674213f9bbf0f84e5d520f5d7885ea3754dcc5b85a579fce2b8fa8ffa1",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand54.png.import",
+      "sha256": "1d9e3a453c9c90b892216d6b4284aab5df95dd6fd7d488b2d44a55d6d039a6e5",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand55.png.import",
+      "sha256": "a922de7afc41a32fa438eafcf959b2762e112e191d51fce74eaf4a5f23de0c4d",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand56.png.import",
+      "sha256": "ed9fe33468a2d5683cfdb7fb04857f1ec5571f4159d2dec8b2e168b03f8f900b",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand57.png.import",
+      "sha256": "1ed8d596e630a3f06624f498ed9fe14dcb15bd1cb9c1d553960c53a74d6b6d99",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand58.png.import",
+      "sha256": "ef21794c92c9accf197bebefc1b51034e5c52abd624779d5d525f0b9f014bb6b",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand59.png.import",
+      "sha256": "e90052ccc862e2094d6a3a23fdac58b2fd1d1e34498084f54a2fc68fbb8a53ec",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand60.png.import",
+      "sha256": "37e0b6d03c41dd011a96e1c8b7576a1de6de168a3442a0af4d82ebe14b488215",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand61.png.import",
+      "sha256": "326f1f04278698a045814abaa351cbebb5f4a1bd65f5d2cc1a8cf2947a041fa9",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand62.png.import",
+      "sha256": "d7bd8975e152797e7f65215c0ffca31460543d35b2ebf63d19ca86c04800f921",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand63.png.import",
+      "sha256": "77fd30c4eda85d6db7508afa70870d95eb0e61488a29005a18d826468fa95c4f",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand64.png.import",
+      "sha256": "0b05464f1c23f96367c743bf8704552d8df636e01412e48d6aa5fec538f94de6",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand65.png.import",
+      "sha256": "ed4cc2938b5afc509f30ddc81da8dc16f0bba5f2918a1c303c201184f04de4ee",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand66.png.import",
+      "sha256": "d747c9bce5ce3a825b2c808f38b9cf57b4e641ef4af5a8f2bb96aecc7df54ac6",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand67.png.import",
+      "sha256": "84f3d2262129ec5c0642feeccd4f989ed067d43849f54c3b191fb16cdd2ff0ba",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand68.png.import",
+      "sha256": "e50b5a4825376c9212c657931886c8521c0cbf23351a07a3d9ef9b839fbec2eb",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand69.png.import",
+      "sha256": "aea4dca90f7b8b657e93413b3ca2df693ae3214768daa0ab3432f39034f842ae",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand70.png.import",
+      "sha256": "972d72ce8c26a514f4c2e6aa6aa85d415e9af5ec725d47b712e94a5277212290",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand71.png.import",
+      "sha256": "1a86ab053cc5fbecbe677205372d91d18317dee427cd9d2210eff17790fbbf63",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand72.png.import",
+      "sha256": "8084b46cd53db4f7ac83a275877f640b9f2eb305ef0bc3f735f23054c1ffc697",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand73.png.import",
+      "sha256": "0795849fbab6710902b90d0da153966e641aa88a5aea57b6c847413eb9205fbb",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand74.png.import",
+      "sha256": "f46e3096ba05de455e220fffd184438e7ecc5758baa5d2a0fffa1871f9b204b9",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand75.png.import",
+      "sha256": "3f07f6ee8b45fc1b0c3cd8976f745a6a84139ee0a2745cbb1a0395897c554a01",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand76.png.import",
+      "sha256": "0237123f2d0f455bb4fb3553e22a6708ae8b6b7729bf19de679f75268905a054",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand77.png.import",
+      "sha256": "a97e4e8f505a5fc4a54734549b048fe4487f76b6815d0c6859adbc1f03696f0e",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand78.png.import",
+      "sha256": "084f1346e0417a505179fe518977a58a719f2fc53fe9b421eeee4a55711ffebf",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand79.png.import",
+      "sha256": "184539b2b88b1f3a884aa63afff11b44257c3dc9597bda9aab61eb3975610815",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand80.png.import",
+      "sha256": "83030d4d4318e4c84911b43d2248f75cd09b2a5261e7f9a3f9c80128cbbcc0de",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand81.png.import",
+      "sha256": "3092f4d00948e38e382002982cc837bcada8410e0e4177260f3c35d83b85c0f6",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand82.png.import",
+      "sha256": "0a4f23ca3812da3f250de76f5e607e952612aa99b9ef611f95df2b48d0a289ce",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand83.png.import",
+      "sha256": "8aa67cd488b7137d4131fc86face2a2d20b64ca7fa8a16c84ffb23c5ad117c11",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand84.png.import",
+      "sha256": "cf457b584258ea0d09dd250f1c61dabebe6e736185392beb2c6aafbd03b67db5",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand85.png.import",
+      "sha256": "1dc808dcd7d00da2d0d5dbf0388661c6a0c6306320d0dadf2a011b213f2738fe",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand86.png.import",
+      "sha256": "f552adef8f194c53edb4b69d14d8687491eb54964c5c36d7e4cdc647815a2dba",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand87.png.import",
+      "sha256": "dfb6507af1add1206a61a7cd5862ea3a71208f40a76ac91d3ce2aa5403e802af",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand88.png.import",
+      "sha256": "b58f4fa7fa8224cccd30405ad2061880bc8b32a8145caaa10863ccf01bfc742f",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand89.png.import",
+      "sha256": "f1d4e7a653074e982f73595c8cabd24c4f3acb59898b51c5b9bfa8f5fa7831f6",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/PNG/Tiles/Sand road/road_sand90.png.import",
+      "sha256": "62d38a6dd271f7b87cb850632d71bfda4f29257f18323d490103eb9f50bd97a2",
+      "bytes": 992
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Preview.png.import",
+      "sha256": "82c9c9e46103aa30af0453cbb0654e480cf5a04400b38a8b14dbe7a0b94d3c60",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Sample.png.import",
+      "sha256": "3cd652287417ad7752e9d318ddef8dd508ae6de0f5f2417b092afeddb6b84722",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Spritesheets/spritesheet_characters.png.import",
+      "sha256": "cbcbada9e7376477df5b8853b33a4593a0eeaf68cfa9a6b48482442e82487c34",
+      "bytes": 1018
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Spritesheets/spritesheet_objects.png.import",
+      "sha256": "ead38a1a903f1b63c123f20d368799a53d304a8ebe1f5065a6ca1f045adcfea7",
+      "bytes": 1010
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Spritesheets/spritesheet_tiles.png.import",
+      "sha256": "a35a345a92f38ef2b6106182dba18a8ba0e50676f8edbd612f2d70bc70a6330d",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Spritesheets/spritesheet_vehicles.png.import",
+      "sha256": "1cb86efa843fd0221063ea8e70c43e3f0b2e4150d1809f0e7ac9c085d33d6cb9",
+      "bytes": 1013
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Vector/vector_land.svg.import",
+      "sha256": "949104911e4864f16048819688f7185849103178924463aadaa2c3867968433a",
+      "bytes": 1077
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Vector/vector_objects.svg.import",
+      "sha256": "da95caf7480b0a3a5208f03c60c89deb9925d6395f72f1d82a37cf72bc1f0ccf",
+      "bytes": 1086
+    },
+    {
+      "path": "assets/kenney/racing-pack/extracted/Vector/vector_roads.svg.import",
+      "sha256": "97d97e498e6dba58297424cde32ae2cbe38e08158ad0aa92e9d0be13f24d9ecc",
+      "bytes": 1078
+    },
+    {
+      "path": "templates/racing/config/game_config.json",
+      "sha256": "e54dbe0878cf19fcdb4dbc576036c939638739bb04d66a23bede74b0304b0642",
+      "bytes": 2432
+    },
+    {
+      "path": "templates/racing/core/car_topdown.gd",
+      "sha256": "3a102bfbff9bf0f35c6ecdf7b338f5cb60d20cf7f4bb2ec31b045c656b7dceec",
+      "bytes": 5027
+    },
+    {
+      "path": "templates/racing/core/game_config_loader.gd",
+      "sha256": "ed38c312475ef8314ab6c1db6737336d2431bdbba3842d574656a2686beacd16",
+      "bytes": 1949
+    },
+    {
+      "path": "templates/racing/core/game_manager.gd",
+      "sha256": "56bb4314145840e26b1e4388b2b2352e9704733097112e36dba14193efc8d2ba",
+      "bytes": 6658
+    },
+    {
+      "path": "templates/racing/core/lap_counter.gd",
+      "sha256": "43f5836757c2ea073aae5afdb2d8d692d0bcd63f9dcf3328093545039541c78a",
+      "bytes": 1009
+    },
+    {
+      "path": "templates/racing/core/npc_car.gd",
+      "sha256": "631f67b44d4e6cb0638aac30ab76db9b5cb616d14c98c8121eeeca2868630cef",
+      "bytes": 2097
+    },
+    {
+      "path": "templates/racing/core/racing_viewport.gd",
+      "sha256": "16945722a2d1990a1ef3dc4ade856836b26aac8bfb9db96644e802cc9cd4b6a9",
+      "bytes": 353
+    },
+    {
+      "path": "templates/racing/core/road_obstacle.gd",
+      "sha256": "5cd35a7cce89897c69c6ea5d24d0836507723269e43afa5e507609cbde39d9d7",
+      "bytes": 1446
+    },
+    {
+      "path": "templates/racing/core/road_scroller.gd",
+      "sha256": "dbccb89eefb3902d091d978bf0a6206942119c20d85090802f715eb48bd8fecb",
+      "bytes": 1385
+    },
+    {
+      "path": "templates/racing/core/skills/boost.gd",
+      "sha256": "0d031705156b28ff11f9bf39a86907db9d659cf974cc763014b4c9636656b692",
+      "bytes": 1199
+    },
+    {
+      "path": "templates/racing/core/skills/drift_snap.gd",
+      "sha256": "006a0e9e51321ef528bf4946e5a21ac254914de03bb513f08a8bf51225f4adde",
+      "bytes": 458
+    },
+    {
+      "path": "templates/racing/core/theme_sound.gd",
+      "sha256": "0a7727fc156ed7fc238a76d0182787c831509e0e4a53c3957718863bf5608764",
+      "bytes": 1339
+    },
+    {
+      "path": "templates/racing/core/theme_sprite.gd",
+      "sha256": "49e778d676e8c85242a33ddae56cf52cc59f1b4913718e29a907a783b720fe16",
+      "bytes": 1412
+    },
+    {
+      "path": "templates/racing/core/track_runner.gd",
+      "sha256": "f9ed6c6fbc9ab1c41e2be835e0db108df8c06d68364492e4846582473a6b3ff9",
+      "bytes": 5341
+    },
+    {
+      "path": "templates/racing/core/traffic_spawner.gd",
+      "sha256": "e0b76b46a23b57b8afac869fb7d98519f6a2dd778b61adf8e1664a33b5b62694",
+      "bytes": 4084
+    },
+    {
+      "path": "templates/racing/project.godot",
+      "sha256": "999c13067cd1d84cdfeb4989ae8667aabef08d5ce38fc6087c410b8cd5bcee86",
+      "bytes": 2344
+    },
+    {
+      "path": "templates/racing/scenes/game.tscn",
+      "sha256": "a7085031a09546b7d21905efeb56870fa34bfc50bd320b7593b5844e95c266fd",
+      "bytes": 1072
+    },
+    {
+      "path": "templates/racing/scenes/main.tscn",
+      "sha256": "587a2e5634975abd400af72b7b8f56c72684abd011627bfff584bc0695b7d7b7",
+      "bytes": 9090
+    },
+    {
+      "path": "templates/racing/scenes/player.tscn",
+      "sha256": "4d260e336b0651ff82653fda166b90497be008092f6b6aa150c621a96663cada",
+      "bytes": 653
+    },
+    {
+      "path": "templates/racing/scenes/prefabs/npc_car.tscn",
+      "sha256": "7f99d02967206899377ec8d9e9b3d3a00b368a2975f2c5271cf1f04bc0a1d4bb",
+      "bytes": 593
+    },
+    {
+      "path": "templates/racing/scenes/prefabs/road_obstacle.tscn",
+      "sha256": "c9add9b9dad32285d165c0ff8bc900b2a9fb9aaaf4f9897be0d8dc9ce4f34da8",
+      "bytes": 590
+    },
+    {
+      "path": "templates/_edu/racing_hooks.gd",
+      "sha256": "885e25e244c4500f9c03c5068bf90856d6c40172e2402893ec1fc313fe332c4c",
+      "bytes": 5412
+    },
+    {
+      "path": "config/code_anchors/racing.json",
+      "sha256": "1b9c511596f89781d4dd69f32e06023cd337a6c6261d1b301ba3e32587083445",
+      "bytes": 2307
+    },
+    {
+      "path": "config/creative_templates/racing.json",
+      "sha256": "8a256a85783c901e4e53da23c244df9e5cf860382e4a1d0c79d250998dab4d4c",
+      "bytes": 2865
+    },
+    {
+      "path": "templates/_edu/edu_action_bridge.gd",
+      "sha256": "f301b136478bc4b9fd9a74769afe2ae5737f935c228012b35dcb342ed8500106",
+      "bytes": 2789
+    },
+    {
+      "path": "kiosk/edu/code-highlight.js",
+      "sha256": "c8f1a6af04be8f31ab567a632701d673d56965fe04bbd9832283289f78cc67e6",
+      "bytes": 7265
+    },
+    {
+      "path": "config/kiosk_edu_spec.json",
+      "sha256": "7f6fe416b018cd426a6b059ac2b3e76af5ffabf500eb744bdc90e6f0c15d47fa",
+      "bytes": 3578
+    }
+  ]
+}

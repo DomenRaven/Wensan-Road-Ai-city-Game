@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://sports_race_hurdle"]
+
+[ext_resource type="Script" path="res://core/hurdle.gd" id="1_hurdle"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hurdle"]
+size = Vector2(40, 36)
+
+[node name="Hurdle" type="Area2D"]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_hurdle")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -18)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -18)
+shape = SubResource("RectangleShape2D_hurdle")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

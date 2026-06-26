@@ -1,0 +1,31 @@
+{
+  "slug": "parkour",
+  "display_name": "跑酷",
+  "reference_games": [
+    "Subway Surfers",
+    "Temple Run",
+    "Canabalt"
+  ],
+  "started_at": "2026-06-22T13:23:08Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T13:23:08Z",
+      "appId": "app-cijx9ysx61vl",
+      "conversationId": "conv-cijx9ysx61vk"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T13:24:01Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T13:31:17Z",
+  "appId": "app-cijx9ysx61vl",
+  "conversationId": "conv-cijx9ysx61vk",
+  "editor_url": "https://www.miaoda.cn/projects/app-cijx9ysx61vl",
+  "preview_url": "https://app-cijx9ysx61vl.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

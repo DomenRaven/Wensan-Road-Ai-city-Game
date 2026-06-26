@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "genre": "platformer",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "星星大冒险"
+  },
+  "core_locked": true,
+  "tuning": {
+    "player": {
+      "move_speed": 240,
+      "jump_velocity": -514,
+      "max_fall_speed": 650
+    },
+    "physics": {
+      "gravity": 980
+    },
+    "level": {
+      "scene": "res://scenes/level_01.tscn"
+    },
+    "collectible": {
+      "target_count": 5
+    },
+    "enemy": {
+      "patrol_speed": 40
+    },
+    "enabled_skills": [],
+    "skills": {
+      "double_jump": {
+        "cooldown_scale": 1.0
+      },
+      "ground_pound": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "platformer-deluxe",
+    "player_sprite": "res://assets/kenney/deluxe/Player/p1_stand.png",
+    "player_walk_sprite": "res://assets/kenney/deluxe/Player/p1_walk/PNG/p1_walk01.png",
+    "enemy_sprite": "res://assets/kenney/deluxe/Enemies/slimeWalk1.png",
+    "collectible_sprite": "res://assets/kenney/deluxe/Items/star.png",
+    "platform_sprite": "res://assets/kenney/deluxe/Tiles/dirtHalf.png",
+    "background_sprite": "res://assets/kenney/deluxe/bg.png",
+    "title": "星星大冒险",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactGeneric_light_000.ogg",
+        "collect": "res://assets/kenney/impact-sounds/Audio/impactBell_heavy_000.ogg",
+        "jump": "res://assets/kenney/impact-sounds/Audio/footstep_grass_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-24",
+  "doc_ref": "开发文档/模板引擎/6.24_B1_意图匹配功能需求说明_v1.0.md",
+  "algorithm": "keyword_sum",
+  "tie_break": ["platformer", "shmup", "survivor", "pingpong", "fighting", "parkour", "racing"],
+  "genres": {
+    "platformer": {
+      "display_name": "横版闯关",
+      "keywords": [
+        "马里奥",
+        "闯关",
+        "跳",
+        "平台",
+        "踩怪",
+        "横版",
+        "跳跃",
+        "金币",
+        "管道"
+      ],
+      "weight": 1.0,
+      "reply_template": "听起来你想玩横版闯关游戏！"
+    },
+    "shmup": {
+      "display_name": "街机飞机射击",
+      "keywords": [
+        "飞机",
+        "射击",
+        "雷霆",
+        "弹幕",
+        "打飞机",
+        "飞行",
+        "太空",
+        "战机"
+      ],
+      "weight": 1.0,
+      "reply_template": "听起来你想玩飞机射击游戏！"
+    },
+    "survivor": {
+      "display_name": "割草肉鸽",
+      "keywords": [
+        "割草",
+        "生存",
+        "升级",
+        "吸血鬼",
+        "打怪变强",
+        "幸存者",
+        "肉鸽",
+        "刷怪"
+      ],
+      "weight": 1.0,
+      "reply_template": "听起来你想玩生存升级类游戏！"
+    },
+    "pingpong": {
+      "display_name": "乒乓球",
+      "keywords": [
+        "乒乓球",
+        "乒乓",
+        "弹球",
+        "球拍",
+        "桌球",
+        "对打",
+        "双人",
+        "球桌"
+      ],
+      "weight": 1.0,
+      "reply_template": "听起来你想玩乒乓球游戏！"
+    },
+    "fighting": {
+      "display_name": "横版格斗",
+      "keywords": [
+        "格斗",
+        "拳击",
+        "对战",
+        "打架",
+        "双人打",
+        "拳脚",
+        "擂台",
+        "双人"
+      ],
+      "weight": 1.0,
+      "reply_template": "听起来你想玩格斗对战游戏！"
+    },
+    "parkour": {
+      "display_name": "跑酷",
+      "keywords": [
+        "跑酷",
+        "一直跑",
+        "躲障碍",
+        "无尽跑",
+        "奔跑",
+        "障碍",
+        "滑铲",
+        "冲刺"
+      ],
+      "weight": 1.0,
+      "reply_template": "听起来你想玩跑酷游戏！"
+    },
+    "racing": {
+      "display_name": "欢乐赛车",
+      "keywords": [
+        "赛车",
+        "开车",
+        "竞速",
+        "跑道",
+        "漂移",
+        "飙车",
+        "车道",
+        "超车"
+      ],
+      "weight": 1.0,
+      "reply_template": "听起来你想玩赛车游戏！"
+    }
+  },
+  "example_chips": [
+    "马里奥闯关",
+    "我想打飞机",
+    "割草打怪",
+    "乒乓球",
+    "格斗双人",
+    "跑酷",
+    "赛车"
+  ]
+}

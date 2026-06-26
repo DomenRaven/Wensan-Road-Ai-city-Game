@@ -1,0 +1,13 @@
+export const CONSTANTS = {
+  WIDTH: 960,
+  HEIGHT: 540,
+  GRAVITY: 1500,
+  PLAYER_X: 150,
+  GROUND_Y: 480, // 地面高度
+  GAME_DURATION: 60,
+  SPEED_START: -300, // 初始地面/障碍移动速度
+  JUMP_VELOCITY: -800,
+  OBSTACLE_MIN_GAP: 2000,
+  OBSTACLE_MAX_GAP: 4000,
+  SCORE_MULTIPLIER: 1, // 每帧得分乘数
+};

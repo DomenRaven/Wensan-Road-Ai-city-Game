@@ -1,0 +1,39 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "f5c8e1dadcd32a72cef666b174a603cc",
+  "data": {
+    "name": "K12横版格斗小游戏",
+    "appDesc": "一款面向K12学生的浏览器横版2D格斗小游戏，采用Q版卡通风格，支持1v1人机对战。玩家通过简化键盘操作控制角色格斗，先清空对方HP者获胜。",
+    "avatar": "http://miaoda-preview-img.cdn.bcebos.com/image-d9775e7faf884478a2f02ecd44714c13.jpeg",
+    "type": "GAME",
+    "appId": "app-cikmsjmwyjnl",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T22:06:56.509+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T21:58:04.611+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cikt6qkq3t34",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 横版 2D 格斗】浏览器小游戏，参考《街头霸王》《拳皇》《大乱斗》但大幅简化。\n\n## 参考成功作品要点\n- 街霸：左右移动、轻/重攻击、格挡、血条 KO\n- 拳皇：出招表简化（最多 3 招+1 大招）\n- 大乱斗：卡通角色、清晰 hit 反馈\n\n## 核心玩法（必须实现）\n- 键盘 ≤3 键：← → 移动，J 轻拳，K 格挡\n- 1v1 人机对战，先清空对方 HP 者胜\n- 2 角色可选（不同颜色即可）\n- 轻拳有 startup/active/recovery 简化帧感（命中闪白+击退）\n- 格挡减伤 50%\n\n## 视觉\n- Q 版卡通擂台，无写实暴力\n\n## 禁止\n- 无血腥、无复杂 10 键出招\n\n## 交付\n- 选角色→对战→KO→再来一局 完整循环",
+    "labelColor": {
+      "colorCode": "#FEFFED",
+      "colorCodeSecondary": "#FFF2A2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

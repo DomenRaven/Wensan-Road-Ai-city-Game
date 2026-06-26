@@ -13,6 +13,9 @@ RAG_DIR = ROOT / "03-背景与调研" / "rag"
 DB_PATH = RAG_DIR / "index" / "gameforge_rag.db"
 DATA_DIR = ROOT / "03-背景与调研" / "data" / "游戏设计与AI创作调研"
 INTEGRATED = ROOT / "03-背景与调研" / "游戏设计与AI创作-调研整合.md"
+USER_SURVEY = ROOT / "03-背景与调研" / "K12用户向调研整合.md"
+USER_DATA_DIR = ROOT / "03-背景与调研" / "data" / "K12用户向调研"
+GENRE_RESEARCH = ROOT / "03-背景与调研" / "品类调研"
 DOCS = ROOT / "开发文档"
 
 NOISE_PATTERNS = [
@@ -22,6 +25,13 @@ NOISE_PATTERNS = [
 ]
 
 DOC_SOURCES = [
+    ("dev", "十天上线路线", DOCS / "AI生成小游戏_十天上线路线_v1.2.md"),
+    ("dev", "前期准备待办", DOCS / "AI生成小游戏_前期准备与待办_v1.2.md"),
+    ("dev", "项目自检对齐", DOCS / "AI生成小游戏_项目自检对齐报告_v1.0.md"),
+    ("dev", "会话交接手册", DOCS / "AI生成小游戏_会话交接手册_v1.0.md"),
+    ("dev", "历史工作足迹", DOCS / "AI生成小游戏_历史工作足迹_v1.0.md"),
+    ("dev", "Godot可行性评估", DOCS / "AI生成小游戏_Godot联调与可行性评估_v1.0.md"),
+    ("dev", "AI创作引导流程", DOCS / "模板引擎" / "AI创作引导流程_v1.0.md"),
     ("dev", "技术选型", DOCS / "AI生成小游戏_技术选型与开发计划_v1.0.md"),
     ("dev", "功能点明细", DOCS / "AI生成小游戏_功能点明细与开发计划_v1.0.md"),
     ("dev", "开发执行规范", DOCS / "AI生成小游戏_开发执行规范_v1.0.md"),
@@ -33,7 +43,14 @@ DOC_SOURCES = [
     ("dev", "架构", DOCS / "架构" / "系统架构说明_v1.0.md"),
     ("dev", "业务流程", DOCS / "架构" / "系统业务流程说明_v1.0.md"),
     ("survey", "调研整合", INTEGRATED),
+    ("survey", "用户向调研", USER_SURVEY),
 ]
+
+# 品类调研：每个 slug 下的 markdown
+for genre_md in sorted(GENRE_RESEARCH.glob("*/*.md")):
+    slug = genre_md.parent.name
+    label = f"品类调研-{slug}"
+    DOC_SOURCES.append(("genre", label, genre_md))
 
 
 def _is_noise(title: str, url: str) -> bool:
@@ -58,11 +75,54 @@ def _chunk_text(text: str, size: int = 1200, overlap: int = 150) -> list[str]:
     return chunks
 
 
-def _latest_report() -> Path:
-    reports = sorted(DATA_DIR.glob("report_*.json"), reverse=True)
+def _latest_report(data_dir: Path) -> Path:
+    reports = sorted(data_dir.glob("report_*.json"), reverse=True)
     if not reports:
-        raise FileNotFoundError("未找到 crawler 报告")
+        raise FileNotFoundError(f"未找到 crawler 报告: {data_dir}")
     return reports[0]
+
+
+def _ingest_crawl_report(
+    report_path: Path, rows: list[tuple], now: str, id_prefix: str
+) -> int:
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    web_count = 0
+    for item in report.get("items", []):
+        title = item.get("title", "")
+        url = item.get("url", "")
+        if _is_noise(title, url):
+            continue
+        score = item.get("scores", {}).get("total", 0)
+        if score < 22:
+            continue
+        topic = item.get("topic_name", "")
+        body = "\n".join(
+            filter(
+                None,
+                [
+                    item.get("summary", ""),
+                    item.get("content_preview", ""),
+                    f"分类: {item.get('category', '')}",
+                    f"检索词: {item.get('query', '')}",
+                    f"来源: {item.get('source', '')}",
+                ],
+            )
+        )
+        for i, chunk in enumerate(_chunk_text(body, 900)):
+            rows.append(
+                (
+                    "crawl",
+                    f"{id_prefix}_{web_count}",
+                    f"{title} [{i+1}]" if i else title[:200],
+                    url,
+                    topic,
+                    float(score),
+                    chunk,
+                    now,
+                )
+            )
+        web_count += 1
+    return web_count
 
 
 def build_index() -> dict:
@@ -100,44 +160,13 @@ def build_index() -> dict:
     rows: list[tuple] = []
     now = datetime.now().isoformat(timespec="seconds")
 
-    # 1) crawler 条目
-    report = json.loads(_latest_report().read_text(encoding="utf-8"))
-    web_count = 0
-    for item in report.get("items", []):
-        title = item.get("title", "")
-        url = item.get("url", "")
-        if _is_noise(title, url):
-            continue
-        score = item.get("scores", {}).get("total", 0)
-        if score < 22:
-            continue
-        topic = item.get("topic_name", "")
-        body = "\n".join(
-            filter(
-                None,
-                [
-                    item.get("summary", ""),
-                    item.get("content_preview", ""),
-                    f"分类: {item.get('category', '')}",
-                    f"检索词: {item.get('query', '')}",
-                    f"来源: {item.get('source', '')}",
-                ],
-            )
-        )
-        for i, chunk in enumerate(_chunk_text(body, 900)):
-            rows.append(
-                (
-                    "crawl",
-                    f"web_{web_count}",
-                    f"{title} [{i+1}]" if i else title[:200],
-                    url,
-                    topic,
-                    float(score),
-                    chunk,
-                    now,
-                )
-            )
-        web_count += 1
+    # 1) crawler 条目（技术向 + 用户向）
+    web_count = _ingest_crawl_report(_latest_report(DATA_DIR), rows, now, "web")
+    user_crawl = 0
+    user_reports = sorted(USER_DATA_DIR.glob("report_*.json"), reverse=True)
+    if user_reports:
+        user_crawl = _ingest_crawl_report(user_reports[0], rows, now, "user")
+    web_count += user_crawl
 
     # 2) 项目文档
     for src_type, name, path in DOC_SOURCES:
@@ -163,7 +192,9 @@ def build_index() -> dict:
         "db_path": str(DB_PATH),
         "total_chunks": len(rows),
         "crawl_items": web_count,
-        "report": _latest_report().name,
+        "report": _latest_report(DATA_DIR).name,
+        "user_report": user_reports[0].name if user_reports else None,
+        "user_crawl_items": user_crawl,
     }
     (RAG_DIR / "index" / "manifest.json").write_text(
         json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8"

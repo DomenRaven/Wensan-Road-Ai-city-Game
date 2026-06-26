@@ -1,0 +1,116 @@
+[gd_scene load_steps=2 format=3 uid="uid://life_sim_main"]
+
+[ext_resource type="Script" path="res://core/game_manager.gd" id="1_main"]
+
+[node name="Main" type="Node2D" groups=["game_manager"]]
+script = ExtResource("1_main")
+
+[node name="RoomRoot" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="InfoLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 628.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "美味小厨房  订单 0/3  金币 0"
+
+[node name="StepLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 32.0
+offset_right = 400.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(1, 0.95, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+text = "① 点击菜园收获"
+
+[node name="InventoryLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 56.0
+offset_right = 300.0
+offset_bottom = 78.0
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+text = "背包：空"
+
+[node name="WinLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -24.0
+offset_right = 220.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.3, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "胜利！"
+
+[node name="SkillPanel" type="HBoxContainer" parent="CanvasLayer/HUD"]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = 36.0
+grow_horizontal = 0
+theme_override_constants/separation = 8
+
+[node name="GrowSkillBtn" type="Button" parent="CanvasLayer/HUD/SkillPanel"]
+visible = false
+layout_mode = 2
+text = "瞬间成熟"
+
+[node name="CookSkillBtn" type="Button" parent="CanvasLayer/HUD/SkillPanel"]
+visible = false
+layout_mode = 2
+text = "快手烹饪"
+
+[node name="HelpLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -28.0
+offset_right = 240.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+text = "鼠标点击热区 · 种菜→烹饪→上菜 · 完成 3 单获胜"

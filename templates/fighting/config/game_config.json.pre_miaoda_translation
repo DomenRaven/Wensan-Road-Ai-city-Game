@@ -1,0 +1,74 @@
+{
+  "meta": {
+    "genre": "fighting",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "机器人格斗场"
+  },
+  "core_locked": true,
+  "core": {
+    "combat": {
+      "frame_rate": 60,
+      "hitbox_mode": "per_move_static",
+      "rounds": "best_of_1"
+    },
+    "ai": {
+      "mode": "reaction_timer"
+    }
+  },
+  "tuning": {
+    "player": {
+      "max_hp": 100,
+      "walk_speed": 180
+    },
+    "move": {
+      "light": {
+        "startup_frames": 6,
+        "active_frames": 3,
+        "recovery_frames": 12,
+        "damage": 12,
+        "hitstun_frames": 12,
+        "knockback": 120
+      }
+    },
+    "ai": {
+      "reaction_interval_sec": 0.45,
+      "attack_range_px": 72,
+      "attack_chance": 0.5
+    },
+    "enabled_skills": [],
+    "skills": {
+      "block_parry": {
+        "cooldown_scale": 1.0
+      },
+      "special_uppercut": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "platformer-art-deluxe",
+    "player_sprite": "res://assets/kenney/platformer/Player/p2_stand.png",
+    "enemy_sprite": "res://assets/kenney/platformer/Enemies/blockerBody.png",
+    "stage_floor_sprite": "res://assets/kenney/platformer/Tiles/brickHalf.png",
+    "bg_color": "#1a2332",
+    "title": "机器人格斗场",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactPunch_medium_000.ogg",
+        "block": "res://assets/kenney/impact-sounds/Audio/impactMetal_light_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

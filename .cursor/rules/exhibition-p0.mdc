@@ -1,0 +1,59 @@
+---
+description: 6.24 展陈 P0 展厅联调与鲁棒性约束
+globs:
+  - "kiosk/**"
+  - "backend/app/routers/sessions.py"
+  - "backend/app/routers/play.py"
+  - "backend/app/routers/bootstrap.py"
+  - "backend/app/services/workspace_guard.py"
+  - "05-工具脚本/e2e_exhibition*.py"
+  - "05-工具脚本/e2e_b_edu*.py"
+alwaysApply: false
+---
+
+# 展陈 P0 · Cursor 约束
+
+## 会话范围（必守）
+
+- **单窗单任务**：窗14 隔离 · 窗15 真代码 API+edu · 窗16 B7 launch UI · 窗17 仅 A 链 `wizard.js`
+- **禁止**修改 `templates/{slug}/core/**`
+- **禁止**为过关回改 P1 已冻结的 `creative_templates` / anchors / theater 数值
+
+## E-P0-17 · 真代码
+
+- B6/B7 有 workspace 时 **必须**读 `workspace/{id}/config/game_config.json`
+- **禁止**用 `getFallbackConfigSnippet()` 冒充已生成作品
+- API 只读；路径须经 `workspace_guard` 校验
+
+## E-P0-18 · 试玩展陈
+
+- 主路径：`POST /play/launch` → **外置 Godot 窗口**
+- 网页负责：启动状态 · 失败文案 · `code-highlight` 轮询
+- 不要求浏览器内嵌 Godot 引擎
+
+## E-P0-19 · 隔离
+
+- 写入仅限 `workspace/{session_id}/`
+- 展前 `git diff templates/` 必须为空
+- release / sendBeacon / 重新开始 须审计并补测试
+
+## D6 · 精选 7 款
+
+- slug：`platformer` `shmup` `survivor` `pingpong` `fighting` `parkour` `racing`
+- **非** 11 L0 全量验收范围
+
+## 验收回归
+
+每窗收工前至少跑：
+
+```powershell
+python 05-工具脚本\validate_creative_templates.py
+python 05-工具脚本\e2e_b_edu_batch.py http://127.0.0.1:8000
+python 05-工具脚本\e2e_b_edu_browser_smoke.py --kiosk http://127.0.0.1:8080 --api http://127.0.0.1:8000
+```
+
+窗14 另跑：`e2e_exhibition_isolation.py`
+
+## 儿童向
+
+- 触控 ≥48px · 文案口语化 · 无恐怖暴力 · 操作 ≤3 键

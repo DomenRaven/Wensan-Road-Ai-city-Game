@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://shmup_enemy"]
+
+[ext_resource type="Script" path="res://core/enemy_ship.gd" id="1_enemy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
+size = Vector2(36, 36)
+
+[node name="Enemy" type="Area2D" groups=["enemy"]]
+collision_layer = 4
+collision_mask = 9
+script = ExtResource("1_enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.55, 0.55)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_enemy")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

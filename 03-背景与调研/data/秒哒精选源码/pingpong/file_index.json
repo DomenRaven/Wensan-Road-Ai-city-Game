@@ -1,0 +1,21 @@
+{
+  "total_files": 12,
+  "paths": [
+    "src/assets/manifest.json",
+    "src/game/EventBus.ts",
+    "src/game/assets.ts",
+    "src/game/constants.ts",
+    "src/game/main.ts",
+    "src/game/model/store.ts",
+    "src/game/scenes/Boot.ts",
+    "src/game/scenes/EndScene.ts",
+    "src/game/scenes/GameScene.ts",
+    "src/game/scenes/StartScene.ts",
+    "src/vite-env.d.ts",
+    "需求文档.md"
+  ],
+  "key_files": [
+    "src/game/constants.ts",
+    "需求文档.md"
+  ]
+}

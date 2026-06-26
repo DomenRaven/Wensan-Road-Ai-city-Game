@@ -1,0 +1,41 @@
+[gd_scene load_steps=8 format=3 uid="uid://survivor_game"]
+
+[ext_resource type="Script" path="res://core/survivor_arena.gd" id="1_arena"]
+[ext_resource type="Script" path="res://core/arena_background.gd" id="1_bg"]
+[ext_resource type="Script" path="res://core/arena_camera.gd" id="1_cam"]
+[ext_resource type="PackedScene" uid="uid://survivor_player" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://core/horde_spawner.gd" id="3_spawner"]
+[ext_resource type="Script" path="res://core/level_up_ui.gd" id="4_level"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_arena")
+
+[node name="Background" type="Node2D" parent="."]
+z_index = -100
+script = ExtResource("1_bg")
+
+[node name="ProjectilePool" type="Node2D" parent="." groups=["projectile_pool"]]
+
+[node name="HostileProjectilePool" type="Node2D" parent="." groups=["hostile_projectile_pool"]]
+
+[node name="BossOrbPool" type="Node2D" parent="." groups=["boss_orb_pool"]]
+
+[node name="XpGems" type="Node2D" parent="."]
+
+[node name="HordeSpawner" type="Node2D" parent="."]
+script = ExtResource("3_spawner")
+
+[node name="Enemies" type="Node2D" parent="HordeSpawner"]
+
+[node name="BossRoot" type="Node2D" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(1500, 1500)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+script = ExtResource("1_cam")
+
+[node name="LevelUpUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 20
+script = ExtResource("4_level")

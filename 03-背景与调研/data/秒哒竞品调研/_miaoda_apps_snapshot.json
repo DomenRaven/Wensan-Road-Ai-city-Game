@@ -1,0 +1,115 @@
+﻿{
+  "msg": "",
+  "status": 0,
+  "trace": "190e0768ccbf6edb6cba3e535a3d95d5",
+  "data": {
+    "items": [
+      {
+        "name": "妯増2D鏍兼枟娓告垙",
+        "appDesc": "涓€娆惧弬鑰冩嫵鐨囥€佽闇搁鏍肩殑妯増2D鏍兼枟娓告垙锛屾敮鎸佸弻浜哄鎴樺拰浜烘満瀵规垬妯″紡锛岀帺瀹堕€氳繃閿洏鎿嶆帶瑙掕壊杩涜鍥炲悎鍒舵垬鏂楋紝浣跨敤鏅€氭敾鍑汇€佺壒娈婃妧鑳藉拰蹇呮潃鎶€鍑昏触瀵规墜銆?,
+        "type": "GAME",
+        "appId": "app-chugph9y43cx",
+        "appCreateSource": "2",
+        "appFocus": "DESIGNING",
+        "updatedAt": "2026-06-22T18:34:19.758+08:00",
+        "updatedBy": "user-chu2477r9fy8",
+        "exclusiveWeappMiniPrograms": {
+          "appId": "app-chugph9y43cx",
+          "enable": false,
+          "channelType": "WEAPP",
+          "releaseMode": "EXCLUSIVE",
+          "avatar": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/e65cdb36-96d0-40bd-b544-7d7262136dac/app-chugph9y43cx_h5_1782124472310.png",
+          "authorizerEnabled": false,
+          "trialEnabled": false,
+          "enableXp": false,
+          "ugcConfigured": false
+        },
+        "createdAt": "2026-06-22T00:28:54.651+08:00",
+        "createdBy": "user-chu2477r9fy8",
+        "versionId": "app_version-cighsu29wwzk",
+        "isReleaseSquare": false,
+        "isKeepAlive": false,
+        "offlinePlugins": [],
+        "generalType": "WEB",
+        "firstQuery": "鍒涗綔涓€涓í鐗?d鏍兼枟灏忔父鎴忋€傚弬鑰冩嫵鐨囷紝琛楅湼銆傝鑹查渶瑕佹湁瀹屽杽鐨勫嚭鎷涜〃锛屾妧鑳戒互鍙婂ぇ鎷涖€傛敮鎸佸弻浜哄鍐充笌浜烘満瀵规垬銆?,
+        "labelColor": {
+          "colorCode": "#FEFFED",
+          "colorCodeSecondary": "#FFF2A2",
+          "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+        },
+        "pinned": false
+      },
+      {
+        "name": "琛楁満椋炴満灏勫嚮娓告垙",
+        "appDesc": "涓€娆捐鏈洪鏍肩殑椋炴満灏勫嚮娓告垙锛岀帺瀹舵搷鎺ф垬鏈哄嚮姣佸绉嶆晫鏈猴紝鏀寔瑙﹀睆鎿嶄綔銆佸畬鏁撮煶鏁堢郴缁熷拰寰楀垎鎺掕锛屾彁渚涘揩鑺傚鐨勫皠鍑讳綋楠屻€?,
+        "type": "GAME",
+        "appId": "app-chu7pw7h454x",
+        "appCreateSource": "2",
+        "appFocus": "DESIGNING",
+        "updatedAt": "2026-06-22T00:19:03.287+08:00",
+        "updatedBy": "user-chu2477r9fy8",
+        "exclusiveWeappMiniPrograms": {
+          "appId": "app-chu7pw7h454x",
+          "enable": false,
+          "channelType": "WEAPP",
+          "releaseMode": "EXCLUSIVE",
+          "avatar": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/54e5b26c-313d-474f-b18d-38563962660c/app-chu7pw7h454x_h5_1782058643122.png",
+          "authorizerEnabled": false,
+          "trialEnabled": false,
+          "enableXp": false,
+          "ugcConfigured": false
+        },
+        "createdAt": "2026-06-22T00:16:36.090+08:00",
+        "createdBy": "user-chu2477r9fy8",
+        "versionId": "app_version-chu81alwdxq8",
+        "isReleaseSquare": false,
+        "isKeepAlive": false,
+        "offlinePlugins": [],
+        "generalType": "WEB",
+        "firstQuery": "璇风敓鎴愪竴涓綉椤碉紝鍐呭濡備笅锛氬府鎴戠敓鎴愪竴涓鏈洪鏍肩殑椋炴満灏勫嚮娓告垙锛屽弻鏂逛簰鐩告敾鍑伙紝鏁屾満闇€瑕佹湁澶氱椋庢牸锛屾鍣ㄥ舰鐘朵竴鑷达紝鍙﹀闇€瑕佸鍔犻煶鏁堬紝鏁翠釜娓告垙鏇存湁绱у紶鍒烘縺鐨勬劅瑙夛紝鏀寔鎵嬫満瑙﹀睆鎿嶄綔",
+        "labelColor": {
+          "colorCode": "#FEFFED",
+          "colorCodeSecondary": "#FFF2A2",
+          "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+        },
+        "pinned": false
+      },
+      {
+        "name": "妯増闂叧娓告垙",
+        "appDesc": "涓€娆惧儚绱犻鏍肩殑缁忓吀妯増闂叧娓告垙锛岀帺瀹堕€氳繃閿洏鎺у埗瑙掕壊绉诲姩璺宠穬锛岃俯韪忔晫浜恒€佹敹闆嗛噾甯併€侀伩寮€闅滅锛屽埌杈剧粓鐐瑰畬鎴愬叧鍗℃寫鎴樸€?,
+        "type": "GAME",
+        "appId": "app-chu2c3e6u4g1",
+        "appCreateSource": "2",
+        "appFocus": "DESIGNING",
+        "updatedAt": "2026-06-22T00:18:36.775+08:00",
+        "updatedBy": "user-chu2477r9fy8",
+        "exclusiveWeappMiniPrograms": {
+          "appId": "app-chu2c3e6u4g1",
+          "enable": false,
+          "channelType": "WEAPP",
+          "releaseMode": "EXCLUSIVE",
+          "avatar": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/be13eb4f-cf6e-448a-b617-404156790841/app-chu2c3e6u4g1_h5_1782058753874.png",
+          "authorizerEnabled": false,
+          "trialEnabled": false,
+          "enableXp": false,
+          "ugcConfigured": false
+        },
+        "createdAt": "2026-06-22T00:09:14.909+08:00",
+        "createdBy": "user-chu2477r9fy8",
+        "versionId": "app_version-chu93fveueps",
+        "isReleaseSquare": false,
+        "isKeepAlive": false,
+        "offlinePlugins": [],
+        "generalType": "WEB",
+        "firstQuery": "ai鐢熸垚涓€涓┈閲屽ゥ灏忔父鎴?,
+        "labelColor": {
+          "colorCode": "#F5F3FD",
+          "colorCodeSecondary": "#D6C9FB",
+          "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_1.png"
+        },
+        "pinned": false
+      }
+    ],
+    "count": 3
+  }
+}

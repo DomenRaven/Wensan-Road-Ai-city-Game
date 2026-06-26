@@ -1,0 +1,62 @@
+{"delay_ms": 0, "text": "// AI 正在写入 config/game_config.json", "highlight": false}
+{"delay_ms": 800, "text": "{", "highlight": false}
+{"delay_ms": 624, "text": "  \"tuning\": {", "highlight": false}
+{"delay_ms": 624, "text": "    \"session\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"duration_sec\": 180,", "highlight": true, "anchor_id": "session_duration"}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"player\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"speed\": 150,", "highlight": true, "anchor_id": "move"}
+{"delay_ms": 535, "text": "      \"max_hp\": 100", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"spawn\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"interval_ms\": 4000,", "highlight": true, "anchor_id": "spawn_rate"}
+{"delay_ms": 535, "text": "      \"ring_min\": 520,", "highlight": false}
+{"delay_ms": 535, "text": "      \"max_alive\": 45", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"xp\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"gem_value\": 30,", "highlight": false}
+{"delay_ms": 535, "text": "      \"magnet_range\": 64", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 980, "text": "    \"enabled_skills\": [],", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 535, "text": "    \"skills\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"magnet\": { \"cooldown_scale\": 1.0 },", "highlight": false}
+{"delay_ms": 535, "text": "      \"nova\": { \"cooldown_scale\": 1.0 }", "highlight": false}
+{"delay_ms": 535, "text": "    }", "highlight": false}
+{"delay_ms": 535, "text": "  }", "highlight": false}
+{"delay_ms": 535, "text": "}", "highlight": false}
+{"delay_ms": 1800, "text": "", "highlight": false}
+{"delay_ms": 800, "text": "# core/survivor_arena.gd", "highlight": false}
+{"delay_ms": 713, "text": "extends Node2D", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    var tuning: Dictionary = GameConfig.get_tuning()", "highlight": false}
+{"delay_ms": 713, "text": "    var session_cfg: Dictionary = tuning.get(\"session\", {})", "highlight": false}
+{"delay_ms": 980, "text": "    _session_duration = float(session_cfg.get(\"duration_sec\", 180.0))", "highlight": true, "anchor_id": "session_duration"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 800, "text": "# core/player_survivor.gd", "highlight": false}
+{"delay_ms": 624, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 713, "text": "    var player_cfg: Dictionary = tuning.get(\"player\", {})", "highlight": false}
+{"delay_ms": 980, "text": "    _speed = float(player_cfg.get(\"speed\", 150.0))", "highlight": true, "anchor_id": "move"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 800, "text": "# core/horde_spawner.gd", "highlight": false}
+{"delay_ms": 624, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 713, "text": "    var spawn_cfg: Dictionary = tuning.get(\"spawn\", {})", "highlight": false}
+{"delay_ms": 980, "text": "    _interval_ms = int(spawn_cfg.get(\"interval_ms\", 4000))", "highlight": true, "anchor_id": "spawn_rate"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 800, "text": "# core/survivor_arena.gd — 拾取经验宝石", "highlight": false}
+{"delay_ms": 980, "text": "func _on_gem_collected(value: int) -> void:", "highlight": true, "anchor_id": "pickup_xp"}
+{"delay_ms": 624, "text": "    _xp += value", "highlight": false}
+{"delay_ms": 713, "text": "    while _xp >= _xp_to_next:", "highlight": false}
+{"delay_ms": 624, "text": "        _level += 1", "highlight": false}
+{"delay_ms": 891, "text": "        _xp_to_next = int(round(float(_xp_to_next) * _xp_scale))", "highlight": false}
+{"delay_ms": 980, "text": "        if _level_up_ui.has_method(\"show_choices\"):", "highlight": true, "anchor_id": "level_up"}
+{"delay_ms": 891, "text": "            _level_up_ui.call(\"show_choices\", _level)", "highlight": true, "anchor_id": "level_up"}
+{"delay_ms": 624, "text": "            break", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 800, "text": "# 小技能开关", "highlight": false}
+{"delay_ms": 980, "text": "if GameConfig.has_skill(\"magnet\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 磁铁：自动扩大经验宝石吸取范围", "highlight": false}
+{"delay_ms": 980, "text": "if GameConfig.has_skill(\"nova\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 新星：爆发一圈清除周围敌人", "highlight": false}
+{"delay_ms": 713, "text": "", "highlight": false}
+{"delay_ms": 1400, "text": "// 你的割草肉鸽游戏配置完成！", "highlight": false}

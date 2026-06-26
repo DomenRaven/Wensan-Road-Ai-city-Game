@@ -31,11 +31,22 @@ templates/{genre}/
 
 详细参数表见：`开发文档/模板引擎/品类核心参数规格_v1.0.md`
 
-## 状态
+## 状态（2026-06-20 · 工作流 v1.0）
 
-| 品类 | 状态 |
-|------|------|
-| platformer | 🔲 W1 待建 |
-| shooter | 🔲 W2 待建 |
-| tower_defense | 🔲 W3 待建 |
-| 其余 | 🔲 W4 待建 |
+| 品类 | 状态 | MCP | 预制技能 |
+|------|------|-----|----------|
+| platformer | ✅ L0 | PASS | double_jump, ground_pound |
+| tower_defense | ✅ L0 | PASS | emergency_repair, gold_rush |
+| shmup | ✅ L0 | PASS | bomb, laser_beam |
+| shooter | ✅ L0 | PASS | dash, shield_burst, spread_shot |
+| survivor | ✅ L0 | PASS | magnet, nova |
+| fighting | ✅ L0 | PASS | block_parry, special_uppercut |
+| parkour | ✅ L0 | PASS | double_jump, slide |
+| life_sim | ✅ L0 | PASS | speed_cook, instant_grow |
+| sports_race | ✅ L0 | PASS | sprint_burst, high_jump |
+| pingpong | ✅ L0 | PASS | power_smash, curve_ball |
+| racing | ✅ L0 | PASS | boost, drift_snap |
+
+**SOP**：`开发文档/模板引擎/品类L0核心工程搭建工作流_v1.0.md`
+
+**创作向导**：S0–S9 见 `开发文档/模板引擎/AI创作引导流程_v1.0.md`

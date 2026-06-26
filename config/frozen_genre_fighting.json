@@ -1,0 +1,3074 @@
+{
+  "version": "1.0",
+  "frozen_at": "2026-06-24T14:59:49Z",
+  "genres": [
+    "fighting"
+  ],
+  "display_names": {
+    "fighting": "横版格斗"
+  },
+  "snapshot_dir": "开发文档/模板引擎/快照/frozen/6.24_fighting_v1.0",
+  "policy": "未经用户显式解冻，禁止修改 manifest 内 paths；共享文件见 shared_baseline",
+  "shared_baseline": [
+    "templates/_edu/edu_action_bridge.gd",
+    "kiosk/edu/code-highlight.js",
+    "config/kiosk_edu_spec.json"
+  ],
+  "shared_association": [
+    "kiosk/edu/edu-wizard.js · getGenreHighlightFallback().fighting",
+    "kiosk/edu/edu-wizard.js · renderB7DemoActionsHtml fighting 分支",
+    "backend/app/services/edu_workspace.py · fighting FightingTouch 注入"
+  ],
+  "files": [
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_000.ogg.import",
+      "sha256": "179cd667c86513c5b9379c1339ecf3b0c7b65114c3a4a6d495f245f8019a8918",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_001.ogg.import",
+      "sha256": "8c785f5875a943e74a37371a0d020d8af8d58e67dbf785aebe95b1f313ada501",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_002.ogg.import",
+      "sha256": "cd3e98196218ed59660200aaef6cf79bfd3d187ac4f8fcdea5d11abb73f1966e",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_003.ogg.import",
+      "sha256": "78225f1e87f838f0f89129988c444dd6c024e5ea6d0b0c30c78682e6984ef98f",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_004.ogg.import",
+      "sha256": "cecd4e610cda4c7d07acefcd6c27370ca9ee8228043b563b50cf997dba02ab00",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_000.ogg.import",
+      "sha256": "cba4bc3485773378237c7d615933106b2628a5779274d852a752c10bcf55095f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_001.ogg.import",
+      "sha256": "af05b06125bf9c76987c5ac46dd3ccb7312e21c0f0a5e4133b5205e644dc5d80",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_002.ogg.import",
+      "sha256": "1c7d972450d2bfbf2445b83f5297cc71eb6a3302b83b963287e25a1e8069116a",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_003.ogg.import",
+      "sha256": "597de9ad5742bf8a5fffb9a27601120f802a4be33a8667fea46d46eed7f05b3d",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_004.ogg.import",
+      "sha256": "e5fccd4c9bc41178de741f1984b76d2c6519dca70abaff08a0f36ba2ccf0b5d9",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_000.ogg.import",
+      "sha256": "4ccda9be5638391341141fc4478e6208bbba760a5f61c40c695a65dd9f9d44d7",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_001.ogg.import",
+      "sha256": "0f31d18b09e18628102ec44dc5c4e1d3764b59291a1e8b59d55a4ad7b926f931",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_002.ogg.import",
+      "sha256": "e6ac033519db984356815551ca46b0ffa48bf336ee2111be5a3d5a51e44168bb",
+      "bytes": 443
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_003.ogg.import",
+      "sha256": "e47ddd434dfe2d16e271a98be1cb1c4ab7be82629f98895a8dd04b731e6edb8e",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_004.ogg.import",
+      "sha256": "1d719be2a7d137324058887ddd939d4260a4ea5178313533eaed443015fc019d",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_000.ogg.import",
+      "sha256": "821e4e7e25e1122697531d75682189caf5ed23c2c06471d872cbccffd19f2235",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_001.ogg.import",
+      "sha256": "1c61d353d08ada71f07121c0983c98431538d44e6dba0e3c71cba5d2a1bb6c80",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_002.ogg.import",
+      "sha256": "2daeb69b4af1558ee19baa68b222ddb64cb9b277779a84fdf521b1df5a2c4aeb",
+      "bytes": 440
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_003.ogg.import",
+      "sha256": "6ad35696e04928a89eded55c018f40bc37d47096ca48ce4d0e7863c335262278",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_004.ogg.import",
+      "sha256": "e9e04e86a90fc8f12a770db3f9242744a917d76d8fec93196e5693cb2674e9e2",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_000.ogg.import",
+      "sha256": "e2bf69f69f49839d4e65ef68367a29b18ce80ba869fe36605588e510645f38ca",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_001.ogg.import",
+      "sha256": "dadcb3966fc3c3bdce1369ec0231a048a15cdc48f9801466cde5288cc6590b3c",
+      "bytes": 440
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_002.ogg.import",
+      "sha256": "823e334b8f5ee49a32c37eb17d27676d7f081be83907e37d5c799776e84164f0",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_003.ogg.import",
+      "sha256": "cdc52dd3ebacaee8536de992fcba9e815584842c7e487c1449cc4264319d653d",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_004.ogg.import",
+      "sha256": "7d96f60203b55ca348e9eda7dd86ebd5148c82e086c441e101ac398743dfd26b",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_000.ogg.import",
+      "sha256": "22d06fa0c86905b02bf6d4f32c5e07bc06098f83f53926a8480739d699f3eb03",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_001.ogg.import",
+      "sha256": "b81bbc6cce651776c5a921902ffeb54f68eaba435b21d341f1146327553404c6",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_002.ogg.import",
+      "sha256": "fc390a486cffb9a0323349b5a6bbd4e00613bb5f9d21d8c0663fbad5627bacb0",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_003.ogg.import",
+      "sha256": "da496ffb034e25b95cfcd50356fa3d76b95924e9fb6728a0e187095ae55f6338",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_004.ogg.import",
+      "sha256": "058749d37f50c55e22b069d71af8862dbd1698ae94f2083bb08282d8a62b1667",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_000.ogg.import",
+      "sha256": "4a8f1eca98df2cefd1c3887c8f9c39714fafbbdb421dbc63521b838d373d0cfa",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_001.ogg.import",
+      "sha256": "6e5d9ddc4281834040e740d87803259857479d24057f32a87c4d6da259c5b8dc",
+      "bytes": 458
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_002.ogg.import",
+      "sha256": "654e6e7e88498b1166970981197d8620f41815b69d1588bc264359859deb8f9c",
+      "bytes": 458
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_003.ogg.import",
+      "sha256": "9be54768ca50c393cd3fa44b2c84f595c425021acee5edf531af8eb2d0b40e67",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_004.ogg.import",
+      "sha256": "e1364cb05cc008f85142c4472bbec64df04f84686c2e1612608722f2479381f6",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_000.ogg.import",
+      "sha256": "61e6ee4cbb3818e8ccba6ad5a594346e535b26938e97f47dfb23865c1586d1c5",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_001.ogg.import",
+      "sha256": "e17516446c2669633eb2a8afec970ee5cfefa5c8c7cdf5c41b1f12c73b3fc71e",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_002.ogg.import",
+      "sha256": "9a0b5f653b5494a3719580f27bed5049259e060b1a2640dd7695c1542b9fb589",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_003.ogg.import",
+      "sha256": "b41c4183c2d1aacf9f882f14f7e1bf8d590bf8342e1113f36872af8f484f7c5f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_004.ogg.import",
+      "sha256": "4537c0fc9eb5990d08186ee46688a4781b9059e7f98a7af734292f8943df8de7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_000.ogg.import",
+      "sha256": "e7bf684d39683d5fa9708d66a51bb527e7c890ff0e387b81d76eb7cdf5910de1",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_001.ogg.import",
+      "sha256": "5e7529f79939883a1b1e1146f70951eb171654158b4dd724f1cdc4ba3d3e845d",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_002.ogg.import",
+      "sha256": "aa52421f63b9a2b99baf59b7918eb8aacaf38d2e8723f795ef77f368d68c0734",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_003.ogg.import",
+      "sha256": "131a90f1dbec1e7e332f690f4c7d327b02bd1910e82f5ce7de1162689bd8cc70",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_004.ogg.import",
+      "sha256": "bc11aa891edc3fa604d8c14d7f8ce891d33950484739cf4ced2e94c3ad9da6f2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_000.ogg.import",
+      "sha256": "45165ffd55ccada7fd8cb93c2a43e403b064ca559d7374d724a5e0756235a6a8",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_001.ogg.import",
+      "sha256": "bd5c2d771e21d501dd8c37b9f321461f458acaf6da2a1fdd6200ba08e887c3cd",
+      "bytes": 454
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_002.ogg.import",
+      "sha256": "f4f4d0c933f0e4b4b9d5d492e4e6279484d6fbe80b1d511bde8d4019bf26e8b1",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_003.ogg.import",
+      "sha256": "fa71f1da37fc15afc15f622dc487ae83fd50cf699c33bae801edbbdd637e4a69",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_004.ogg.import",
+      "sha256": "116b5983a6f34afd89e3f8f03b12cddfadb1263c4cd5e9fdd51669b40eab6e68",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_000.ogg.import",
+      "sha256": "d77888005186890d07a4266b5d443e63d52f715e9dc0ba8bf857c8c37f3a3f21",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_001.ogg.import",
+      "sha256": "bc046406fdc123621acad8751e1b67483ebd324d06a70754989da89c6731f040",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_002.ogg.import",
+      "sha256": "53bb1008e64bb3794bde37108a9e77b2568017d0ff1078bed2e1652ca56f2731",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_003.ogg.import",
+      "sha256": "39b01d6245ba63ccd9baa5dd24885eb895dff73fe2acc30ad12de43de6bfbe5b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_004.ogg.import",
+      "sha256": "f0de98b4d9f291618d0329457cf9c9604db942309b12a1740084966ea0e2af47",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_000.ogg.import",
+      "sha256": "e36e05daf52ac215fc3e1d83abfb417bd896ec9295970e4e0340f345030a210b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_001.ogg.import",
+      "sha256": "57fb0e53dd5a9c6d58a3bc05d0b12f352ca636423a2d0d0d7629adf37805e464",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_002.ogg.import",
+      "sha256": "c2efdfc66110c127909f14ebadddab4d4cfcf68db9018efc485c147b7ca13b4e",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_003.ogg.import",
+      "sha256": "c7a0012a8f541cd166c77ec078709c352c50958c304579308ec48eaed66fd5f9",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_004.ogg.import",
+      "sha256": "7b7ca52f23478fadef344a118cc5ffa06122db62da4e5a51ebbbf60c9a48bc0a",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_000.ogg.import",
+      "sha256": "6ec3eab14ec49326cb5aa0eab2ad99ec12cf9ea82290b79234a438ed01470a59",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_001.ogg.import",
+      "sha256": "6d8b71489a5bf2504cf7b4d533cf7dbd1eb4ff57b898d53d05bdc8a2f8155a01",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_002.ogg.import",
+      "sha256": "aaf418238d0b5cfbc4cb066c20b0d8f4f8fa602364b9907b696e43454d22a1ab",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_003.ogg.import",
+      "sha256": "bb249c9513032fcf0409066515b1db63aa4d3d55a8a1422645b48e4d1c03dac9",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_004.ogg.import",
+      "sha256": "cbf16d731ae8f49f189e179701266915d986b43db95f7a98f4281065e64c494a",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_000.ogg.import",
+      "sha256": "6455dc5bb470078920f6418eeb161f7f77659ebb40b91001f4d8f7d821b0125c",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_001.ogg.import",
+      "sha256": "c13b038379854f99ad15acea0d2d4d0b918b27b85ef25bfa0b9d79afa87b56f4",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_002.ogg.import",
+      "sha256": "dd10c82183c9dc77e8a5334f8d3eac161a4b54d36f423179a46eb4438022d33f",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_003.ogg.import",
+      "sha256": "308f1205b2345dbda22351789a10c24e0e0286a4e11e1d9aaec8eb1417e74a44",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_004.ogg.import",
+      "sha256": "24cb722ca962eac1f8b17254fbfcf9f96d0ffc209e18fd22c467f3703e79ef29",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_000.ogg.import",
+      "sha256": "48964efb4fbc69f752d167b1c56c975e8fa3e7de06e9a8f33f92d1cbb81d1ab2",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_001.ogg.import",
+      "sha256": "b22108ec119c095dac9ac5c94dd1ab9945bff25528f9178fe82e272c8f47e789",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_002.ogg.import",
+      "sha256": "4f26c8e5e8a626cea883c6e3bec602eec1f1cb96ec2df0fb4d9da554407d0a7d",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_003.ogg.import",
+      "sha256": "df82426b00f66c7e0af71817a5f37ece0d773c4603e0ea5b68ba3ae6bbd4149c",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_004.ogg.import",
+      "sha256": "e15ec111b870128cfe0dad80e13fe9ead8985fbb280301db961a956e397d8f13",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_000.ogg.import",
+      "sha256": "30b2e7da67b4ece7d0b154e8b236f22fb5ee85e270d6e63a0eeaa7b3c5686efe",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_001.ogg.import",
+      "sha256": "5e69375fcbb9a12040aa1559d652da9a3db47e19db157aedfa9543eb1aba1c8a",
+      "bytes": 451
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_002.ogg.import",
+      "sha256": "7b39deedbb43fe2ce9c2b96c90d3ca44d5de19b231b7149a52e23c35bf6e9ea0",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_003.ogg.import",
+      "sha256": "97444af662d90156528999a38eca483bdd9ee50b8ce2caa9ceb23d69cd259eed",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_004.ogg.import",
+      "sha256": "91d654e269d3cc2b89750e41360bcbe8286e0fe561ac8b8cc589898b76a88017",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_000.ogg.import",
+      "sha256": "598390f88a905034fa797c0f0b11a9ec575dd315b02d14bbc11f4f83790b9dba",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_001.ogg.import",
+      "sha256": "8d4455b3ba5cd818af519bd8dbed926f250902b0081c0d1250e22190485ac04f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_002.ogg.import",
+      "sha256": "ab9dabcd31b2c4040c625fb8bedee556fcb45f545295c8f3d631edb0c4edc67c",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_003.ogg.import",
+      "sha256": "ea13872530c8e27a696201a47f86717793b0659108a38193056d17f6fd26a2f8",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_004.ogg.import",
+      "sha256": "754a9a62e07a6890958b6c546c3f454c680459b5848417c064534aff2aed7a72",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_000.ogg.import",
+      "sha256": "d12fcc3393bbe1ed0b4ce1eeb0c9b2736fe7a59c0bc15b648900cefd01fda6ae",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_001.ogg.import",
+      "sha256": "bc514e71e1d26ddead994feab70761815566b78b4868fc5a505b596f5af06288",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_002.ogg.import",
+      "sha256": "bdaefb8dc300036fbe66395135187c32330bb318399b231f59c241c33635729a",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_003.ogg.import",
+      "sha256": "573f93dba296f8c378693f82f3d1eca2107203425cf07b7bab81b318e7c36510",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_004.ogg.import",
+      "sha256": "9e969116c8462a42e1cf91c9b44c4c0af0b1be253b9f2dbf31f229cb3beff428",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_000.ogg.import",
+      "sha256": "a9ef365a98de810afb1310eae947c89d985007931d3d0c22fddc19a445016283",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_001.ogg.import",
+      "sha256": "59c74277eee039d3227517f67a04a8764331b36a6e0940b2a1a9284130d956f4",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_002.ogg.import",
+      "sha256": "8d9c60a06e4fe85dfd17721dd4fda1a5f8eabb5e825653ccaa5211afd2ee4167",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_003.ogg.import",
+      "sha256": "6feabd14d8328d07ace0a0dcabe3515eacb1c9be81f912be19fece1beca9ffe5",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_004.ogg.import",
+      "sha256": "7b938e16f726d589908e546730355c9f9a98c597a8cab574f6503ddb2733220b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_000.ogg.import",
+      "sha256": "3612e562d6d458270b0dbee3e9cf72ac7e86a96e4b65bda405b2b72d0b3155c4",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_001.ogg.import",
+      "sha256": "2424236aa6712aca87a1416703e291987492231819526c16a19d72b443198a84",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_002.ogg.import",
+      "sha256": "6f95c186017cfcc4b1c8141d8a3ee1fd991fb26a0f2271f2e68530752e9d2aba",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_003.ogg.import",
+      "sha256": "a28b4f752d5c6605e34873797a926b21849e262a37580b2bec424de4870b804c",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_004.ogg.import",
+      "sha256": "e6dd0567aa6ed0f1e260f92b698b24e7b62b945fd2bf4fff58bd494a34996339",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_000.ogg.import",
+      "sha256": "a34832e26528cca00cf7e4ae3fbdeca69a63c5cb21eb350ae74c06b778bbee75",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_001.ogg.import",
+      "sha256": "436f44e820737396eea97281479d223c3bd0020962af42ddc0b0b1a531ddab82",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_002.ogg.import",
+      "sha256": "0f1cb4617f08f1b099b8e0ecf5986552c18f5a7981dc577259842fcdefc835a2",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_003.ogg.import",
+      "sha256": "b85a4749a4c2f9a2bd97ae25d50d36056c5fcc86dcca0bc4fbf3e642452eb5b6",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_004.ogg.import",
+      "sha256": "47bd119078e4dc75d1e15bb34edf0d5c85f4f3f80f244435637ae0fb3d8cab1e",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_000.ogg.import",
+      "sha256": "1d466abb6b1df0ad6921e5a0dcefa2d6054b12b7c47c51aa52b5ce94ac595734",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_001.ogg.import",
+      "sha256": "92bf7827e953fff67a36bca8b910c8958ec223c382e5853f91031554300c89fd",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_002.ogg.import",
+      "sha256": "0de6d000e26e8617d9f5e5edf05da87938a4d329eacb55aabbe5a2b633571fc8",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_003.ogg.import",
+      "sha256": "be2c740a91b4386694036e17fd5ac8e419c3198e1c6ccb4408f09369616bca64",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_004.ogg.import",
+      "sha256": "df52a564cb68cbd88c1790f765b591c916baa0fe70c9e856cd4814daab54aab2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_000.ogg.import",
+      "sha256": "84f3a02595c0529befc7ab170303c309ecbe4f8aebb758ba91f9df190a79cd0a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_001.ogg.import",
+      "sha256": "fb6edf35ff7aaaa848c34b0fe0277572321ad0c1b354280e7c9a01c31e45ddac",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_002.ogg.import",
+      "sha256": "ac981ffe45e0225974eb91e6399775d2522e297bcff4d7af758976ca58c2b46a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_003.ogg.import",
+      "sha256": "21818f1f132b5ed625fe209cdd723e1c5d777cc53bc04a475f88ea4c6af2ac16",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_004.ogg.import",
+      "sha256": "b97758f4e4129baf70dad636184b40716fd5825599b4f27e8676c56e913b8b3e",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_000.ogg.import",
+      "sha256": "e8448b5d9c8d0cd1135a3efd5715d146f1f2f1739ad6c448c1c7421220e0c710",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_001.ogg.import",
+      "sha256": "e53195a84b612cc6c3db188a4cd8a2d17de81bc2461dc6ed38e4a5a4fc767627",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_002.ogg.import",
+      "sha256": "c8e199e5033b45aff54f0226513ba847728277645de83c12da7e8721002699fc",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_003.ogg.import",
+      "sha256": "a1724888b37ea9af931f24d3cc5e46079dcf18df10b32d1b92a483f7f1219a50",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_004.ogg.import",
+      "sha256": "22cae21cf0681a7553e6e0fb9ad37d0739f167e4c8f0ce91b357b661882f392f",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_000.ogg.import",
+      "sha256": "8bda6e9af004ef3495484fdb06e6856e96ba63da835670f8a4c064ec857b75b7",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_001.ogg.import",
+      "sha256": "78b7c907b2805d81020cece7b0efcbb2c6ae60e23dc0b2c28ca386315405cb9a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_002.ogg.import",
+      "sha256": "28bbc607dca5f3cc3a454b38cad15399b5480cd33ca9e62e23f7cd42d3e888c8",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_003.ogg.import",
+      "sha256": "57914b29dce631e7d2a2a1b4f58aeb16a2c87999154d04f2416cc3ef9470e43a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_004.ogg.import",
+      "sha256": "34be0fdcff5b504e191fea8bb4592734208c51f109ef3f6407b6ecadbd027dcc",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_000.ogg.import",
+      "sha256": "6fb2e140f3ed072f34fc70e892733bd524f2780ce832ed9d1678e4deaac6a4a2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_001.ogg.import",
+      "sha256": "430fe087f2ec299fa3d7df17e85577809d049eb1ecf6663fd5003c746239ada7",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_002.ogg.import",
+      "sha256": "47a8f3dbee84365137f3a030c4a0e2ae39f836a97cc47e290c73553207dbffb7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_003.ogg.import",
+      "sha256": "3b6305825cb08ce51516265779db8eb188624168de67cacaa07ccebcba56b3a7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_004.ogg.import",
+      "sha256": "5ecd01ddb85ee4f1734ba5671c862b5eb9053317561bf0512249a2a73e17ec53",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_001.ogg.import",
+      "sha256": "807582f8ccf0f5debe7739831d0c4cd8df494197c67a0f29e16d22ab338b8789",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_002.ogg.import",
+      "sha256": "2866eb209865d738c983419e7b4f275a0449bda97004d80da440f3b1ce54b8c6",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_003.ogg.import",
+      "sha256": "d15536d10c6b500aba864995e67027e6f53a0917133e2483064d214631661f13",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_004.ogg.import",
+      "sha256": "fe0a3c5b8b3d05a5f2fd72b5eca1fa8aace062bf1c98a2371b5689c35e26f06f",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/bong_001.ogg.import",
+      "sha256": "20e120b2ace1b56133250e6b1814e338b327b642875307cb71d2fc74101264ed",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_001.ogg.import",
+      "sha256": "dba5861041a80abd17d4e779c432bfa0c546162082de3508372ca5f9519bda19",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_002.ogg.import",
+      "sha256": "c9a7842e275a492d92e58eeed56dd56c31892450b7dfea50315bbae4d32e1ccf",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_003.ogg.import",
+      "sha256": "4e0c118bef2badb89e6f783eb987b00f16d1c9cee1203fa7c1aaef5240cd1ac4",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_004.ogg.import",
+      "sha256": "38c3f54c21a135585707dd14adc32a4fbeda3f6ec159ef5889287002b37cf2c0",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_005.ogg.import",
+      "sha256": "38c4fdca3875aae072a9d1df64849a518593a899f7249bbf431b37988cc561c9",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_001.ogg.import",
+      "sha256": "dcd4f9309d77564ced5997796a0cafcdfc1fa54e677057028c253efa4f059fb9",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_002.ogg.import",
+      "sha256": "2396ee0641dc16cd06735e0632a0a38360faaf31baa112a96d8e8311274bf075",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_003.ogg.import",
+      "sha256": "393133e40fbe89a2d89c7158e03eca9dd01f96004656ccca9395376205b12ddd",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_004.ogg.import",
+      "sha256": "c534ec7992e533bb5b5441bf7439336e5b134c8f6e8443068395c36f2d42db52",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_001.ogg.import",
+      "sha256": "7278eeb91c6aa63ec55d04ee6c3986bb2d3cfdf8add8b0322eab9f00427ff81f",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_002.ogg.import",
+      "sha256": "ec108335f520ae4f6728403783b4586d96f9e5becc06432d9c553d5871939233",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_003.ogg.import",
+      "sha256": "ed46827c4448e91a14b13236816af8f122d0486bbd9d32a3ede128f2e243aa8a",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_004.ogg.import",
+      "sha256": "7ebcac035f6d332330850d91c8e921c961d501435e3961619e960a8a6a8a0166",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_001.ogg.import",
+      "sha256": "46335ecea67eda888ded3f9fe7475aafb866ef2040554219dd89d0185c5d7440",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_002.ogg.import",
+      "sha256": "101b778f907305ded336f16be702f54c0cefdeba4053e3926bddfb344cec7bfb",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_003.ogg.import",
+      "sha256": "c37d03c69b2050c9b0f5b7055911f38f61cc4269c1081b9183e431c7c790c5ba",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_004.ogg.import",
+      "sha256": "477fd65853ae951ea22ad09b545f72068239c1c6587ec2c008f50ecd48ad5d84",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_001.ogg.import",
+      "sha256": "2c8e1c62ca598d20ce6395a309b6dab346b20d61d65db8b47c51aa3f4ffbe975",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_002.ogg.import",
+      "sha256": "22f1839208fea4c695c483bad4d269cbea742d76b39e6f78ceabd62d4213508d",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_003.ogg.import",
+      "sha256": "8c4e5a14749a2593485ade559b191b38f946fa502732797c7a5ad861b984e849",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_004.ogg.import",
+      "sha256": "d28a2c5d57d820d2ef7303c9da453673d2147bef4c798c4351a499376084d160",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_005.ogg.import",
+      "sha256": "18ffa89096b6297337ccc5ef7a97846724c8efe87b7027b1bb7796eb3538a8d6",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_006.ogg.import",
+      "sha256": "2741fcd1cac3a16d98081e9b86814560fb434c7724eebcac5932e7d2bade1aae",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_007.ogg.import",
+      "sha256": "5f187d3c423e83be523672756165cac5f01e3a4bd2f5af7c4e89a058291f153a",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_008.ogg.import",
+      "sha256": "7aa16442d8fb63b151a678f0d01494284041fa54b255a26e85f780baa2e2c650",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_001.ogg.import",
+      "sha256": "3f0cae4c3c3003e87bb6c7c293a9f755411efd6c4bfe6cd50dd91965d2bc3870",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_002.ogg.import",
+      "sha256": "5a4724cb74a751cea01bf8809a8c2c6ad6877e209260edf4a06f6154d970325d",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_003.ogg.import",
+      "sha256": "3fc6ceffc9de785f74fee8c8ae001b9c2d6e761246b6582d49647416f2efdf00",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_004.ogg.import",
+      "sha256": "e3db6be369a1d3a68a39e9e9c3fa9e6a1989a82564a1574ceda95cdfe86d3c5f",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_005.ogg.import",
+      "sha256": "21935d32ed40b808048cb735b12ff981e62b3d87bec98226b103ca159fc1d488",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_006.ogg.import",
+      "sha256": "34a1f9d7b49bf20ef27316980e19e4156ce3448e3a448715990e94afaff79b14",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_001.ogg.import",
+      "sha256": "cfe40f5cc54e49681096ade5b662a8796583454d8f52f97aa596f9d955242c5e",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_002.ogg.import",
+      "sha256": "83e2dfc7c3c12b62ea8312a8c13ca410b3fe783faf6a160b87960de308c2ff6f",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_003.ogg.import",
+      "sha256": "dff7f81158451b1aac11373ee652d3b06d763377d0d775d4918df686b113fc7a",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_004.ogg.import",
+      "sha256": "9957908a6221ad959f34cc06a898c68d74ebcd72af3b238acf56ee917cbc46c2",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_001.ogg.import",
+      "sha256": "35e639a124169cfac4f3934686c62b0940ec9a2e11e8cef9cb167db7199c70d6",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_002.ogg.import",
+      "sha256": "b77255f0d710fbfd0fab43af9908eee303943db730f3bf421b420daa10ed3617",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_003.ogg.import",
+      "sha256": "5a2420c2853f26d7844c9e35b6e99ec88062722b9a3b76f1d51b3210c237096b",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_004.ogg.import",
+      "sha256": "e78bf184d270b8017dbf31ad19dc882e830dcd45d6f50176846bb204cb09682f",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_005.ogg.import",
+      "sha256": "ef969bea95a43a5b54ab71dc24be0151d18da4d9d213384dfef9044a725372b9",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_006.ogg.import",
+      "sha256": "715f503d37e42a245b98513a6019cc17e2559090008daa5da655039c82d147a6",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_007.ogg.import",
+      "sha256": "55eab5f96afe04f3aec6a0479ea2e7bfa42ce0ec11165f97adfabbac9bd37a85",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_008.ogg.import",
+      "sha256": "b206af066fbac78d42d52810b32b4de4c108cf6f8fcb6c1b50de81c7760b46d7",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_009.ogg.import",
+      "sha256": "78d9387b118db4fe1fb536cf74fc3fd5ef50b02bb8b4571d014b914192439dc0",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_001.ogg.import",
+      "sha256": "af3964b0b5cf286b0970a60bb4623b77c1ae08021fe3379ce9ad7304696652db",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_002.ogg.import",
+      "sha256": "0641a716baf46315fa99b715a5d5c391311452bb4f1d8093a4b9f345a2fd5d4e",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_003.ogg.import",
+      "sha256": "4da760c35e875b127e4dcd4f2db9820f5a200449f96c43f5cf271de1d7de7bf8",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_004.ogg.import",
+      "sha256": "012ec2d1d35f43145a688e106d091fc2882d3a3518e2b24abf3344f76394a008",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_005.ogg.import",
+      "sha256": "0cda0b960b368853179255bb421f5596d149e34bd9eefd2c280c6fba16a34b6d",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_006.ogg.import",
+      "sha256": "000c286e308417648d9d9fe60216d879e3c92090ff9201780827938f76e13eed",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_007.ogg.import",
+      "sha256": "e9d451a90ace5cabe2f9bb580a1b6be1df95e5640f57bf863fbfba2807162c24",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_008.ogg.import",
+      "sha256": "9dab4d57abfca472309954244ca4886329c85e86dd83f5605ea7f57f45df61b1",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_009.ogg.import",
+      "sha256": "b2423373d02c9a86100510a290f4a5abbf03987aefc8619b472fba86c6a93da0",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_001.ogg.import",
+      "sha256": "0a39554ce082db71206c95e1a30ced6bccb76b4af4df74aa33dbf990b6027d5e",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_002.ogg.import",
+      "sha256": "5a08d1bbac5c49b5a952de78d9b2139ab103d4f5eff0c9eeb58eb254d611579f",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_003.ogg.import",
+      "sha256": "7dfdcc2f78cc82deead2c8e37fb8c1c775bc4e6b69f0b8b210bba30cdc36ef41",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_004.ogg.import",
+      "sha256": "2244667eba7e0669b4e02c7d1d514867137d431224d3b103f88cb77f5726b95e",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/pluck_001.ogg.import",
+      "sha256": "19ccd911a9f03a4cb78ba56f6878aadfb90f919ee5f9a017ca79070411886272",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/pluck_002.ogg.import",
+      "sha256": "cad9435e6ad8e7a4acda47e5aa2f36646b8a89cff1d159b3072f2a28b68a6f49",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_001.ogg.import",
+      "sha256": "faf8487e150560afff929d53a4cd17e4e9e2c5a3843107ae7e0dd332eacdc1bf",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_002.ogg.import",
+      "sha256": "2e0ee1980ed78e5a50ce53c85f0e0e458ff908fc74c7f47174272139c98249fe",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_003.ogg.import",
+      "sha256": "a003a4376747f666636af75168681a486a813b2baab70b7d9669718e0ad57e1f",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_004.ogg.import",
+      "sha256": "d65b2ca9c063859f9a220ddbd827faf63d1103d2a17b4a895ceea54c8eb44159",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_001.ogg.import",
+      "sha256": "efc7f246b82d49378d1a7d33cf636057b96cf2ff4c15d7e51cb06fb496e7f49d",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_002.ogg.import",
+      "sha256": "98a3844996e5396cc703543aae71306ea4681ff48cba36f5fa9d0d8b657a3aca",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_003.ogg.import",
+      "sha256": "28cf28d7920197817d08e851885b348ed0aca1b49c707291684d3272c479b9f5",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_004.ogg.import",
+      "sha256": "50b3cdd109903d44efe864e6b8ae599ec6bb50bd952aad81aecbd5277a656a7c",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_005.ogg.import",
+      "sha256": "e221519f88bb335e0e572cc9acb1ad55d270a12ce5678ce3fc1ee497436040a0",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_001.ogg.import",
+      "sha256": "01d837709e4cf00df71d18b07048b96e40f692f9b961a09d0cc0dcfcff59a945",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_002.ogg.import",
+      "sha256": "adbf3ea07c6c2dcb015e732f17fa6fa232bc6d7aa96457021f1ebfb5a059ced0",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_003.ogg.import",
+      "sha256": "f1d62e305bae2290abce48a55f047e5a2a6a783591a6bd400df1d882c1241780",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_004.ogg.import",
+      "sha256": "f0b9c803280d09d35a4dcf58cb1da4710bd65e9887397b0a9db70215877ee79a",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_005.ogg.import",
+      "sha256": "41259fc5aed04a4523396bbf8298e3d125aec1a3ff0f693d24aaacf9063650e8",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_001.ogg.import",
+      "sha256": "54536df204d6c25a03963993814dcc82eb8b2712152073c85dbebd9e4839d855",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_002.ogg.import",
+      "sha256": "10b490ad1bb844030c69abf11be8446037aff4e24552d93f7e304334e270cdcd",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_003.ogg.import",
+      "sha256": "ca4f1c8db18b50e52e61f821d38b2da18f9296f17ad2dbdeca2fc005d7cf3b43",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_004.ogg.import",
+      "sha256": "70354a764e952e53207183014fa8fa96adae037c6b555ec9575f90a5059d1f38",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_005.ogg.import",
+      "sha256": "c742b71f12775a7d5d188f9e4c486b5eb2cca1ca548c40a626698fca5968245b",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_006.ogg.import",
+      "sha256": "3f7d70a4b577a935748a5ca6d356109e5de7397578db4a3108c29c46a8e54ce8",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_007.ogg.import",
+      "sha256": "208e3445dd2a67c95a7fe22dbe2d85af0582ce9be2fb0ae971bda24f0b24828d",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_008.ogg.import",
+      "sha256": "d90aa3b3edc324a8fdbd8e84772a29063d5dff0a023f39898b84a49504f896c6",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_001.ogg.import",
+      "sha256": "25c6d77cecc051e917f3871f508caa0a0cdef008ec95e35d5eefbb8fd3e13da0",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_002.ogg.import",
+      "sha256": "3d6d62b13425ce204eeefd5015bc533a7e03e5c419313c77fe32972e0ba05109",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_003.ogg.import",
+      "sha256": "ef6ec0a2d6d99414aa5cea726e8c8e3fbd071f5b37983e30b2d3311199a0e9b2",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_004.ogg.import",
+      "sha256": "e2685b552f631f7621413b481447844e3f462f2c81625eb6ca09df39019e3311",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_005.ogg.import",
+      "sha256": "5c442bd18bd209a83c849d29b2351435d33e1b6b838572ee1b98cc0163f69c7e",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_006.ogg.import",
+      "sha256": "e923cfad5829af26a81f371b29e2d06527407755a1871cd6a54fbf211568805f",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_007.ogg.import",
+      "sha256": "cee5caced2b4a9bc3a3cf94f3d8eec7a16814f43a881d1d51cdaf8963c03b188",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_001.ogg.import",
+      "sha256": "9df6fdf155269e862e670dc813b22c879b963366f9041dcf5493d25178b006d0",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_002.ogg.import",
+      "sha256": "9c23ba6e64c37be23042e0d1ee41c60704379b1c9bf56cb4b9a51bf5e6ad9192",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_004.ogg.import",
+      "sha256": "67e999ec13e38e7dfb25c9db8ea8398c68ec3a598119941bd3383ab12edb02ad",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_001.ogg.import",
+      "sha256": "76eb704536848d45ab8c3fe317590bf4fe9d1aa6c44441c4a33f35b52a9710e2",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_002.ogg.import",
+      "sha256": "631a5cd526ac8f066c89bc5aa31278902f54fd730e3bb5a9ef96ebc08e36ec29",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_003.ogg.import",
+      "sha256": "9d6dd25d140ccd64ba562f38a17e91a2ca083cf99a182b7b10a2f3e231f4ee74",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_004.ogg.import",
+      "sha256": "2a31bdc744f68b8ad49397ace6fb46df0abb81679c49009d18f7b7a53ac8d204",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/bg.png.import",
+      "sha256": "f07475e99805a3c0227f8829dc2dbe4544298845d6aa974d096e362ab472275a",
+      "bytes": 946
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/bg_castle.png.import",
+      "sha256": "2e3a04d2b50c3be17f64397871e6f8826a830a04b8e8fe32d2333b820a8a49f4",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/blockerBody.png.import",
+      "sha256": "016bb73956c7e29b63a54b64df1f3ca0be82355ef169a193b30201d6ea2a4c4c",
+      "bytes": 981
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/blockerMad.png.import",
+      "sha256": "776bf540be00535e3c0a53cb8c141453503458dcd160e5795aca3cbd4903d151",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/blockerSad.png.import",
+      "sha256": "42a2699b1017998d4d85df4a1c6b6b5824bab2a0ccadf4977de03c7bfcdb56a4",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/enemies_spritesheet.png.import",
+      "sha256": "09689e4db3be67da7700203bb5ac876750c4f6cd1e23f24a9cef6372a4a2e584",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/fishDead.png.import",
+      "sha256": "ac63c50154879e57cb9adc81c55794acd8e4cdcb35b68986afb87eff8b0b0433",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/fishSwim1.png.import",
+      "sha256": "87dc9e2232bafb7e4110fe712ccd33f05ed5bf466f60018fc0a3d71f44731a66",
+      "bytes": 975
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/fishSwim2.png.import",
+      "sha256": "d00ed6fa0bea024eaf23dfb2aad39f4879d29d8bb9f627df3e598b45c8bfb0c9",
+      "bytes": 974
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/flyDead.png.import",
+      "sha256": "3e0de7af32d032f25064a83c1b1c56d84d278e2d71ce8a838df61f3e51da9cf7",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/flyFly1.png.import",
+      "sha256": "dc61a6e89cfc616a7365079cc20f097c772b0296136a75b2be36ce8152c4ab00",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/flyFly2.png.import",
+      "sha256": "8b36ca1bc5f931a912fb36a4df7bb5d85a0c45d4d579729d8576ff47eaf77e63",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/pokerMad.png.import",
+      "sha256": "3ec4cede514f4b96fa5c9dcc32c5369ee98c5bfbdd60e00e2e80840a8407e055",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/pokerSad.png.import",
+      "sha256": "f427d995762d4f25e60a511d4c908b7035d88bd54827f7dc3447a8015f6d5534",
+      "bytes": 971
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/slimeDead.png.import",
+      "sha256": "46d74f5243d2c6630d7063553b474806831db248ee439c9d2895d3c1f4f106c5",
+      "bytes": 975
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/slimeWalk1.png.import",
+      "sha256": "73651773d8f1ec2269a161cb24110cfc4549387d92f5ef0c1bd3aa70e7cb7915",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/slimeWalk2.png.import",
+      "sha256": "ed3f59339a1f9a8ecc61c1c7d0d029bf75570390503ca314859e66bfd620a5f4",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/snailShell.png.import",
+      "sha256": "d66fc3aeea55d6723c6a1e5e185f2aa41effdb267ac70fb1bc959092aa8810a4",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/snailShell_upsidedown.png.import",
+      "sha256": "ab4323fdf7d405036f62efe3b239fa4a73ebb75fbfc9ef045daa0587b5305afb",
+      "bytes": 1009
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/snailWalk1.png.import",
+      "sha256": "35120387542c0d18ec5e25a9714608f21beb4729a66eb5596f5203f528a18ea1",
+      "bytes": 977
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Enemies/snailWalk2.png.import",
+      "sha256": "b630454634632aa930eddae04bb567008f6105eee81b8e20b86ae81d2b13bd26",
+      "bytes": 977
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_0.png.import",
+      "sha256": "79d4789238876181c7ad97956d7a001799ab58b24c581c896193d86960096973",
+      "bytes": 959
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_1.png.import",
+      "sha256": "79879cf35bdef369a1b8635f1543bb01e0bdaf9aaa9dd1589a30da2ea9609319",
+      "bytes": 959
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_2.png.import",
+      "sha256": "f8d8b190a5b1e5905200e4dcd2170ecadfcacdef1780bf342ddb61a96fb1b53e",
+      "bytes": 959
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_3.png.import",
+      "sha256": "fe254f159424fae6b9d3c2a4a6d609b3543f2af0651fa0a8528af85d6bee731c",
+      "bytes": 959
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_4.png.import",
+      "sha256": "4b1188c6f0a5e7596cef019984c4bef0b3ee156c8e7320b6f75542e9b9b0e810",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_5.png.import",
+      "sha256": "84901b944df254e0d0f6c38e960128cbcbbfe920a21e6f44537903ef3b80cfc0",
+      "bytes": 959
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_6.png.import",
+      "sha256": "b8eac638fb3bb60a80fb43ee5284629918b79c3cf1bd013e21aee236f6a046b9",
+      "bytes": 959
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_7.png.import",
+      "sha256": "714dd0df421da79d52a1cd626e1f68dccbbe5514b699f8a770ab628b2fb6dcc2",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_8.png.import",
+      "sha256": "cbbce7e867fdac4cec3169dd713cc50b0a14bffd5fc7195268f5ca7bb907068c",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_9.png.import",
+      "sha256": "3ad6d7602ad9c46f99781b19572c29ee5ee13217c02d333d8b4013d5f64abaa8",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_coins.png.import",
+      "sha256": "eae8968d28f2e7efe53356f140daa74d5f2290e4ccb7c73a5f2af9267820d263",
+      "bytes": 971
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_gem_blue.png.import",
+      "sha256": "869528465a1dd2c7c3ac9485b64ebd0eb2e2d3dcdc2af6815e53d167a7513bb9",
+      "bytes": 980
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_gem_green.png.import",
+      "sha256": "800e48caf9c385b8b8246838bd55a929a54932fe0523bb2af8d68261dd228727",
+      "bytes": 983
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_gem_red.png.import",
+      "sha256": "fb27ed8c4cc0a767b6c25e43ee55a54a645b288c982a7d06a220c85d6c46401a",
+      "bytes": 977
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_gem_yellow.png.import",
+      "sha256": "8b5dea9bb583c4cb6bb397d2fed5e747cef1ab382d1d66a7cf0cdea2c6063e7e",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_heartEmpty.png.import",
+      "sha256": "caf6e121849fe48f6bd10f60efebd6362328f05f5badb2097ea01b0e45222644",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_heartFull.png.import",
+      "sha256": "ba6601546f3e7cd14ee64a673591902c1fb377a6c453ee6510549c2c58e1d194",
+      "bytes": 983
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_heartHalf.png.import",
+      "sha256": "73bd27b3cc2ec0baca9b133532ea2c3ab2733b9c70ea053caea6c173c4f691af",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyBlue.png.import",
+      "sha256": "41223db04c220ca90420237e53f53c38d62327926937cf5de1d4c6bc533a3d33",
+      "bytes": 977
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyBlue_disabled.png.import",
+      "sha256": "7a3d0c13fd134addee0fd8bf8c4f3e5b47f70eb0eb5e9ab09d9efdcdb6734ee9",
+      "bytes": 1004
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyGreem_disabled.png.import",
+      "sha256": "c1c17eff8a2ea873d4a41c6de485a1fea9b0bd3c24b91ac2242b7b1634e8223b",
+      "bytes": 1007
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyGreen.png.import",
+      "sha256": "acf26384b5f3faaafee619cc2d95faabab8033193cebd79dba2a93814b76b1a0",
+      "bytes": 980
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyRed.png.import",
+      "sha256": "8575e61fcb0fae480850d47235df797e7aeeca50dea95eb0167962b423b5b691",
+      "bytes": 974
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyRed_disabled.png.import",
+      "sha256": "b13f4daf4d1830d7a4175992f753b3ad45d09ecb007cd1ad0c668611c10a5f3b",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyYellow.png.import",
+      "sha256": "05d1e56ea56ad14f012ab351e4cb5dbd30a9f5a1f13830b4e0ed6cf0ff61bed1",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_keyYellow_disabled.png.import",
+      "sha256": "0781ac5204f8661a30577087ed4b7f1059ca8973807749e9aca388cc0a46d1a9",
+      "bytes": 1010
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_p1.png.import",
+      "sha256": "cb3ff246a042ca99ef3d2a2c2620dcd6ec41b4d7ce46951ff5c04c6affa14b64",
+      "bytes": 962
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_p1Alt.png.import",
+      "sha256": "33daec2e3fb7eafc16352e1a4e310967f26ddb5ba97ed468b1c5017b601be8cd",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_p2.png.import",
+      "sha256": "5979baf1f5f589467c239431bbe9eadd4c88835e28b8cb35ea0bc249627678b4",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_p2Alt.png.import",
+      "sha256": "0c1e300ef801aedabe08ff934e3fc8a436825657237ba244cc57b8855d801599",
+      "bytes": 971
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_p3.png.import",
+      "sha256": "3110b5a6980b2f8dc40f2e3fe7aeff47c88d42d608b90371637122a2249b4605",
+      "bytes": 962
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_p3Alt.png.import",
+      "sha256": "465fb9f6617b3a59adb73f9e628346e811f2096c82bf9a10a7954158e8adde9c",
+      "bytes": 971
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_spritesheet.png.import",
+      "sha256": "9866889d34b52fb9a431e067c92d5203157a74c6b248b95a9ebf10c8b270f165",
+      "bytes": 989
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/HUD/hud_x.png.import",
+      "sha256": "93c6a572ea36280118346ea9c2869af19a5f341ebff004beaaed095bd468cb21",
+      "bytes": 959
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/bomb.png.import",
+      "sha256": "9490d3fd9c9eee36d376d17634e03e1336b5f7fcd16782cb8094aaa03137727a",
+      "bytes": 957
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/bombFlash.png.import",
+      "sha256": "f2f86366ae8e663440c6ab523fe66b606a8b3331c1e118fa7f812779173007a7",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/bush.png.import",
+      "sha256": "a317f06b3cf463d44adca5d30f581ed6b06f62554bb717041db50560ed7a5d28",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonBlue.png.import",
+      "sha256": "1d1a20f5eb81065f0a7da10f59afba4df09da3dc57dbfbc93f58240887de28ae",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonBlue_pressed.png.import",
+      "sha256": "89377cf65663587f2148b31ba245b39f3c73c1216a367b280010c1b1011a2d0b",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonGreen.png.import",
+      "sha256": "17b4a15cb600e6d6d1ab412611ed17df431c8a2c6891336486c0ffb7cea5654e",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonGreen_pressed.png.import",
+      "sha256": "8e0b4bfc516fc96b48c99b61b582e2ffabe169713773bc4ac6b40c1d82829ee3",
+      "bytes": 1002
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonRed.png.import",
+      "sha256": "1743d405f014207ae2424adbc7a39c993e5b4ad4e93d3e995b270d99ad94a8eb",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonRed_pressed.png.import",
+      "sha256": "2d57ce64b531785f4667344f30ffa05553ec78fa3873610aaca975b4d992de7f",
+      "bytes": 996
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonYellow.png.import",
+      "sha256": "b751d5149b32cdd5b704657744a31d6d4bdd28957e17dc4a23722d5d155852c4",
+      "bytes": 981
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/buttonYellow_pressed.png.import",
+      "sha256": "e21afd522a1207b424c3cfb743b12e2f93afa60fe231c90b27f28924481d0b94",
+      "bytes": 1005
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/cactus.png.import",
+      "sha256": "04559b2e7be8c9059fd27077f24bfdcf368d00323eee6169c34208bdcbd2b3c4",
+      "bytes": 964
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/chain.png.import",
+      "sha256": "1a891798a3ad7dfb42696f1878f9ed1813e0159cf6751dfb31e1260543d99f85",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/cloud1.png.import",
+      "sha256": "ac8be3b5de24f43d795723cd9af24d3f2fdede905bfa220440e730e629fff162",
+      "bytes": 964
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/cloud2.png.import",
+      "sha256": "52c7d6db427613c1e4aba13df3a581b2e335636c0bc5ef98734ef8b96cf834c7",
+      "bytes": 964
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/cloud3.png.import",
+      "sha256": "3122432d34d3a789307dfde1dafc6d578da472d9b258c14ec5e0d374dbbe3e66",
+      "bytes": 963
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/coinBronze.png.import",
+      "sha256": "2e7ab632e86e0b4e26a550ebbd8932954033aaa9297d568131ad54d0a60f89ea",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/coinGold.png.import",
+      "sha256": "c576c17ee44d0db72daaa13b96fbd32b84f7bba76e9a1bf1e25e976828f1c8b5",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/coinSilver.png.import",
+      "sha256": "93cbac2f5278413ee831018e6c71642cbb6d7d4f5192672f0e4dbae473018522",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/fireball.png.import",
+      "sha256": "d471e1033f373b684c365607856d99f8d289b2be8d43d21b50b792034e528bd0",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagBlue.png.import",
+      "sha256": "b36844827cb9e651700ef66aa0d3b8f493a05570deeb2b79fd758a19d13574fa",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagBlue2.png.import",
+      "sha256": "8cc73e0c9303a05f8ab1d72e27fd497d2e3fe63452c32660ddf8cbcf5a3bcbb9",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagBlueHanging.png.import",
+      "sha256": "ec40d89308116211d90694ebc2ba1e1be172afa93ed97b03e742b37766413cc3",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagGreen.png.import",
+      "sha256": "bd5b4c650944602e925ef73f1d8750e9669410212c39bbb5f5bd64290c29021e",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagGreen2.png.import",
+      "sha256": "03ed1b0e830f54a6ca97cfe8e9d46ab8da32a256b13aefe55587f34bebae7ad9",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagGreenHanging.png.import",
+      "sha256": "27bd60d01512f2f5342d00fae8ef77049e65a8e089cedbc69d56be083dc805b8",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagRed.png.import",
+      "sha256": "8f0672e4c941cd5e6d6d82fe459b1ea1047d839336605cb373c09c2bd38fd859",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagRed2.png.import",
+      "sha256": "d8a121699b90dc8529cd1db8595118f9aee2eb1e1e98c72ad89c30739186746a",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagRedHanging.png.import",
+      "sha256": "41c592133c13481d43dba2fc1ea3019590cc2c4509b1e83ad0bfe1e979391460",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagYellow.png.import",
+      "sha256": "b21702c10267140eefcc52ad547baf15caa866c11e8315ef65a58978aa912949",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagYellow2.png.import",
+      "sha256": "5d74b1e0cf2dd085078806b9356038b6540592b916ee5d331ba9144852970704",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/flagYellowHanging.png.import",
+      "sha256": "3dcb76507ce32b41a3626558184c7d5aa7fec0bc14cccfe474b78000b896a616",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/gemBlue.png.import",
+      "sha256": "45ce50289fec2ffff95f4f91e735313bb5767b169ff2ad9d9c562e4ad2c2a7a2",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/gemGreen.png.import",
+      "sha256": "0edd3f7cb169de52f4a388983fc758484ccd702672c81fe7297ab53fcc85dbe2",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/gemRed.png.import",
+      "sha256": "cb00fb1410f47b3600b84fae2da993d684563819ecc3f8f7c75642cd40c410c8",
+      "bytes": 963
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/gemYellow.png.import",
+      "sha256": "991309d7ac815c0c7f5aa745500e52cbbdc74b65f804796ae457b230687c1c2e",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/items_spritesheet.png.import",
+      "sha256": "ed2985cbb30d1304fc1cc7285cef28ee3357479f8817fcc3516d58d91ae54566",
+      "bytes": 995
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/keyBlue.png.import",
+      "sha256": "3deb4bd721d1fc7904422e87e5fa8d7412b8fee9c303793ed456d877631f0cb3",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/keyGreen.png.import",
+      "sha256": "afadc59b79565373174c1e9d36bdca6840967869241d08cf7ca89960035ec46b",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/keyRed.png.import",
+      "sha256": "8cdd2a8f196d8108de6b8c6e7d667fe66d8367fc4111783502876625f2e03f08",
+      "bytes": 963
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/keyYellow.png.import",
+      "sha256": "cab2827f4f9c0d31c4d8e411871ff5973ff9865d2f3d7d991e915665931b0da8",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/mushroomBrown.png.import",
+      "sha256": "9903fb11459356315f000ca3f28ce9948c0ae77fdf4ad07cdd166fd574db19fb",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/mushroomRed.png.import",
+      "sha256": "49784fe587a26b5e2ac24c8c94a92000813c385bfd3beae55755a241042901d9",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/particleBrick1a.png.import",
+      "sha256": "1eb87bc8191d9259d7ebb09c3d9ae56450f311f13cec8735e5eaebe8f0ff4366",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/particleBrick1b.png.import",
+      "sha256": "e67a4291bd5562de167201e0f20dc167dd49fcc8b6899035f81a92302a52a1bf",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/particleBrick2a.png.import",
+      "sha256": "e823e03b73aa09e3b57914a0736996367eca38ef792b58472c695ece1e7521bc",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/particleBrick2b.png.import",
+      "sha256": "c775290397a723fb56e00c78a5ba028619ad8e22a80e99316d96d216b9f4cfbf",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/plant.png.import",
+      "sha256": "86ed88aa6d621e9c6dfaa12870a6c5d43bfd77175994286aa7b65246c00cad73",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/plantPurple.png.import",
+      "sha256": "98309aecd0cadcd52eade42333fca8d2bd0ab51786c13be1ab3d92cb14290779",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/rock.png.import",
+      "sha256": "c8c34eb16a758ff388d930e67ff566a8e99086b016dcb46280e7c796b68b1d9f",
+      "bytes": 957
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/snowhill.png.import",
+      "sha256": "4010d352b607088eb103ba9c27726149c91b9347d93ef13e11f1c93474fc5b31",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/spikes.png.import",
+      "sha256": "af1db79e1aae690cf856a89f04ddf9e3626b739a79783ac484c172c00e60088f",
+      "bytes": 964
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/springboardDown.png.import",
+      "sha256": "28655204d372b363086440c39bdc9625696ab8cfeb38b9cc4ada3b0213b25385",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/springboardUp.png.import",
+      "sha256": "faad01b731f526d3c8ad2afbe6b144820a3ce6d324d4785fa2e7b33bd1fb6268",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/star.png.import",
+      "sha256": "98d2db4098e6e1da39e4587969abf7a35503353efc997b1bb8e849cdfa42bcee",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/switchLeft.png.import",
+      "sha256": "0b1280b3bc8a3f325a937112e3bcdccc15853c8f70bd9dbf30c73db4a45df569",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/switchMid.png.import",
+      "sha256": "b65dcd86d148719791eb48ec6737525d2789e63160a2c2eb538af770eaafa788",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/switchRight.png.import",
+      "sha256": "000925ee90c1f0aad2cea9151bfbf97be0757a96930ba0345c70c3af27e43ac0",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/weight.png.import",
+      "sha256": "b0e6e954a5effb4a60461d3cd215f49bf8252a459c420298217b65996aa551a9",
+      "bytes": 963
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Items/weightChained.png.import",
+      "sha256": "f9b856a8a162aa20ff9e6d4112dd168b76bfc3460d2eca8332e2a631370daadb",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_duck.png.import",
+      "sha256": "f06ec4050cd66797055d67709d3f73d60796d39821601d3018792fa196865e4a",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_front.png.import",
+      "sha256": "933dd6eba936c4fefb9c77ce685688fdf00a398153c552e6e84908054cf1c488",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_hurt.png.import",
+      "sha256": "467a9a9ff9c178e334aefc8797ca9570bcd41d6153a7ed6fcfdbc92e0132e162",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_jump.png.import",
+      "sha256": "53a500e8a9621b8dacd9e074104db6f90287dfa394a8859d29f80b329de32d45",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_spritesheet.png.import",
+      "sha256": "28826dcc881ac4aa28f3d325536f9590237550eb8e49cb11f06f512add696163",
+      "bytes": 989
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_stand.png.import",
+      "sha256": "8ece0a005c6a2f05cad3f27c92a325d61769661a010af82de63178f0d0c0ecac",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/p1_walk.json",
+      "sha256": "1c35a6bdfb1f8287596d45568c434f873ad0cf56f8eccc142525c9661027a1fe",
+      "bytes": 4550
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/p1_walk.png.import",
+      "sha256": "147db760350d97369d6405f022dab46fa29248085a5fd28ed29059d4551b5d90",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk01.png.import",
+      "sha256": "2f410e55379d39413e5c424e8fd100bfbaec0fc46e110c921f1634fcb95bb683",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk02.png.import",
+      "sha256": "865ebc3f94a0c7a44e6e52ad8a682f7f8017bba7a68c27b5f6ca8d1e2a7630cb",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk03.png.import",
+      "sha256": "3d71af42bb6b1ef58145400e85dcd34e820c3ce13d8c65773a51e57626de0b72",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk04.png.import",
+      "sha256": "b2d303f94ab41e9d01fc71715f8af6fc0509c6880d65c831c67bc324e3b92973",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk05.png.import",
+      "sha256": "a7705b22986e4218f277fd27b962f51d6edd019d55e5f8733c24a319a98c0da1",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk06.png.import",
+      "sha256": "16fc296137e746dc3a2c3b7aa56f4807ee3b4be6f71f46b0810d9bcebef07de0",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk07.png.import",
+      "sha256": "8a255b83d067388e0dd7111795a75803953d88f38dbb1defd2536943a993346d",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk08.png.import",
+      "sha256": "e608143f7cec64da1f4ead5869981fa19014a93cc6ffa677777a139411a101a5",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk09.png.import",
+      "sha256": "5428526ef8e1d0063511755e1524e41a3a0e8bb199343856f815995d554e89aa",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk10.png.import",
+      "sha256": "72c9daf501b83c345e9ff690488428d6e9dbda6f73eaa50f7f9962acc4492ba2",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk11.png.import",
+      "sha256": "cc8024f18c3863fe7e5a861959c6ac1b24484820c21bb73c38a672ddfc41a9ad",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_duck.png.import",
+      "sha256": "fc823e32cc42123280a47a2b94feab8bafea0dcc1657aee17b585b09ce34f079",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_front.png.import",
+      "sha256": "7248a959edb741badff39e4897e5c98fc2750cf815ca175d6118632f26dd1da8",
+      "bytes": 971
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_hurt.png.import",
+      "sha256": "b12adfc1acb72e1a139adab76f2e0d54e3a8b72021b0d00a032d5e77e83fffb6",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_jump.png.import",
+      "sha256": "d830c76b4ad52a46db30d2bb1decc245a145e8c67eed25d9cb16669f1381973e",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_spritesheet.png.import",
+      "sha256": "cef97672d608e49796d313c704a9e58c4802cd1b1725f7829ee8b45837e60051",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_stand.png.import",
+      "sha256": "3370692971c7a7109669847a314450fb7117b3b51234339eb3debbad1724eaa3",
+      "bytes": 971
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/p2_walk.json",
+      "sha256": "a3eacc5e74de65ce8759d28402876a326300bfd3a87520500ec5d811aabc38cd",
+      "bytes": 4660
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/p2_walk.png.import",
+      "sha256": "3a0473235fa1231cbde124e7ded5eac409a3911bb4d172d10f5b620b980f0d2f",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk01.png.import",
+      "sha256": "0c535a0c214382db92b98a4ba159453c947d7905c89cf809b2accd59d9a076cd",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk02.png.import",
+      "sha256": "808fe38f39abec09dc4d9338eb903ffa0fd2f1b44ee1a33383dd62f36568b3d6",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk03.png.import",
+      "sha256": "0d719e6390882cefd97275f965604040386df11df899b2f1341a688af1619beb",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk04.png.import",
+      "sha256": "7668833f5224b8ac8a8378eaff38bf8e61881d29545c2d75d1e6b846eda629d4",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk05.png.import",
+      "sha256": "40c1142181c00aa29f8d401f30c26fd3ac9089ff037a4ef2551a144520576f05",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk06.png.import",
+      "sha256": "6c4695f203ccfd16a0b6b8565aa1079320f4f56e39103a165c7ff4024f4ff4fe",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk07.png.import",
+      "sha256": "38b8cd90d58655412173d5d601815b7ffcc35c42f1373bbc61286c1941fea5d7",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk08.png.import",
+      "sha256": "cb62acaeb60c64ddbd2ac2194492358f42eda5b66c04e14b000da90379093158",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk09.png.import",
+      "sha256": "7ccc1ddacfa4b80f12395734de001696ef7b6152b26e4104e0a6f8c84305e4c4",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk10.png.import",
+      "sha256": "06a32a2178e370579a6f1fc9b5a694782b8e33e263b41a1990d3adee90edbbd8",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p2_walk/PNG/p2_walk11.png.import",
+      "sha256": "338c75334e4a80cbecf2b5c720a87066869d8844d7959df70631f2a310c3fe2f",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_duck.png.import",
+      "sha256": "7b20c9e6b628d241989bfd594f2a3955a5979e6c4042fb61d276a41a5c5edfb8",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_front.png.import",
+      "sha256": "f1254938adedb61842978f41cc43d31887b7fa045616d0424b012fff76df1f2e",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_hurt.png.import",
+      "sha256": "ce9596b0ffd94ef6db538991ee0f8d2afd56c1e9b2706e45504cfaf46dea9cb3",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_jump.png.import",
+      "sha256": "936bf225e74e62803088789f9a9022a9a23a9f8378cb55827cb48db835938d76",
+      "bytes": 968
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_spritesheet.png.import",
+      "sha256": "4e98612174528e1b9c91692a1ef60d7d522cfb26a44ffe6e171dcce0754b9791",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_stand.png.import",
+      "sha256": "db4ca0795c0efaf3b64df72b298098323fca42adae487b826f5f3ec3ebbfd3bd",
+      "bytes": 971
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/p3_walk.json",
+      "sha256": "b82f3b926b555278ee6de3403bcbc20f55dc569c954a43202f65fca63118cc19",
+      "bytes": 4704
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/p3_walk.png.import",
+      "sha256": "06659cddf2237ab5c0841bbbaa978b66535bc3898d4043ecb225e3c8a7fe693f",
+      "bytes": 975
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk01.png.import",
+      "sha256": "249c8041b5d96239278f042656c301850f8eb78b3aa51f6b757bacb40b9ae416",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk02.png.import",
+      "sha256": "56617dd788c1fe107c9b61259aac74fd69422629d9fe8c39088953a9222e2211",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk03.png.import",
+      "sha256": "763e1fa2b59d0363478d589242c03e196fb4ec5bb174cce6f4eade653e60d3c9",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk04.png.import",
+      "sha256": "39e9b5b9fb920b17fc0aae75acba7eee332dacbb0e0b237818d78a98f680b77c",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk05.png.import",
+      "sha256": "a0e8d3d9ef42ec1b551b272f878c8ec2b051adf83cbd466c105103bfbeaab0d2",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk06.png.import",
+      "sha256": "e0f85a9d73ad1985f69c9ef3572bc6af68a24395cca69bd14a0a4e9b9878d639",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk07.png.import",
+      "sha256": "528840a93d07edb2e57996060923f29526dc6bb69ccded3febc52fd1532fb9d4",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk08.png.import",
+      "sha256": "b8a6fcd28aaee21f9c7cbcf17da35d5a698be4f1178a16c5a7a63223a08192f0",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk09.png.import",
+      "sha256": "32c5ad027ffedb956ac4fceb3a3b5bb40e70fadb0784742e7d62734273662e24",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk10.png.import",
+      "sha256": "cc33ff8714a23103fe6a9c3260656776f39673c037c190aec1b7fab9fce51cf4",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Player/p3_walk/PNG/p3_walk11.png.import",
+      "sha256": "43157892fd907825ebb52fad8abd6904e0f47b9b39071c5425e53cc2498ef73c",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/preview.png.import",
+      "sha256": "23a0215498f1070a55d06fc2370d754d49722c00a830fea8f60793b9e81e383f",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/sample.png.import",
+      "sha256": "c4021c053e8fd987777dbec127ffbae1ccc14a53afd423eb4854b1fc505e4cdc",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/box.png.import",
+      "sha256": "8c4dc7f138fa539ab5c0da90ec6c8bbea837b0869d507e7b242de49fb5163450",
+      "bytes": 955
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxAlt.png.import",
+      "sha256": "581b17dc1123cdc57c18317d68fbd444434ed3c897736a2eb2cc7ccfe40635e2",
+      "bytes": 964
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxCoin.png.import",
+      "sha256": "4eb7fa60e70a57200c4274e9c677324a739a61ebfbd683f3aab1994c4ea1fd2e",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxCoin_disabled.png.import",
+      "sha256": "0a91376664c1cc45de1b142caa2eca5dfd5643ef64a6869bc247a8d78624c9a8",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxCoinAlt.png.import",
+      "sha256": "04b7bdfae9db84864a156516b034df99e55a8bffe062ac95b77266c73096583e",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxCoinAlt_disabled.png.import",
+      "sha256": "1f9ecc76c242986b2a6c5b20898e9be62bc2129547e0a5749ea19d91f8f29290",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxEmpty.png.import",
+      "sha256": "a4cf20af39c4d15caabe497420f7978ed887ef897b047264f0de296ba7e13571",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxExplosive.png.import",
+      "sha256": "01a3fbeb4640eb30dc39c704e27af1a40164b403f2a88fb57e23d8a91cf1a0e9",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxExplosive_disabled.png.import",
+      "sha256": "0a6380d14d4da4786eb386e6469136502fd5ed26c8b489930893a627fa04e04e",
+      "bytes": 1009
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxExplosiveAlt.png.import",
+      "sha256": "2521f90d57fe4bd2ef7046eec6c80843198f87b8bad64afe83bb088a8efee857",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxItem.png.import",
+      "sha256": "7fc68902034383d22b3027d3735f794ea1da5f0804082d3f73d79ee40228a4b7",
+      "bytes": 966
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxItem_disabled.png.import",
+      "sha256": "6a1eadacdfb0a6185a1ff5057f9f5b92af49e425abb7830750fcdf7dcf97894c",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxItemAlt.png.import",
+      "sha256": "ce5c23c2f8031726d8adfc3412f59e0c3d4120efa7b608aece342d58ebbe961c",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxItemAlt_disabled.png.import",
+      "sha256": "339987f0db24c07bacce38ae5be9c019c9a58c6a473cc98ee831a7e1425468e4",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/boxWarning.png.import",
+      "sha256": "3ce0732cf97342c26035493a37ee08355231eead48f5dc1bd491f1a9e0ecb322",
+      "bytes": 975
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/brickWall.png.import",
+      "sha256": "11f74140a219db72ff37b4198b4488a64e0e0784882d4f28adca6e87d10c2d16",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/bridge.png.import",
+      "sha256": "2c884338f591846343f92e29e5609b0bf8f2c78e9810f19da33d8ba59b26cab6",
+      "bytes": 964
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/bridgeLogs.png.import",
+      "sha256": "60dd0e58aed7b86d1f19a16b0b9a5c2ca18521c9509257c4a39b2537cbb05417",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castle.png.import",
+      "sha256": "b6cd4aef13fef2d74ccd0e9a06139448d5c0b51816b98f1c986bf66601e1df32",
+      "bytes": 964
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleCenter.png.import",
+      "sha256": "725d0b114e3a674d89858086183418403ade202dad2ede589071d4c1195048b5",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleCenter_rounded.png.import",
+      "sha256": "2008215dbd38c61a182858bca30e1a497888fc4c1ebb51d8a281b0aaa0b13646",
+      "bytes": 1006
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleCliffLeft.png.import",
+      "sha256": "40be29513577ee1a72d3f979d9060e19954cbffaad6cc9a09b53c5e47977038a",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleCliffLeftAlt.png.import",
+      "sha256": "c50d6a736f7eefb3354ecf267830d07c1bac2c42152018e455a28324c137c298",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleCliffRight.png.import",
+      "sha256": "4656c7edb9fb2bd227755c91538da7c889f7cba269ee1e95e18f25b384942284",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleCliffRightAlt.png.import",
+      "sha256": "49ede76564646097320d4d621a92d3390d9fb35b8487daa285016332915c3b31",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHalf.png.import",
+      "sha256": "4c703176e7aad3a22e7fa85a244561282dc56dda0cdbdc47140a4eb4790eb7b9",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHalfLeft.png.import",
+      "sha256": "aeb046af99bdfc28ff6518624f1e2c8bce3e38fefec6229308f080941dc9d856",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHalfMid.png.import",
+      "sha256": "042d524d64bcfabbba7436d8bfac0b0b0810f840598e2f9a9eeaafed56e20797",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHalfRight.png.import",
+      "sha256": "92cb32550a521e141756d765474c6857c4752370593df9392061824c74881190",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHillLeft.png.import",
+      "sha256": "2969b7a2b80feb3f53673a35f4ff720c59c030c044e721216598b530bc5359fd",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHillLeft2.png.import",
+      "sha256": "e5f079dc231bb75ec5ad658bbca9ee29c1f8192c2d6dd3aebdbe5b1babc9ee24",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHillRight.png.import",
+      "sha256": "48f61b5b3520a770240c1324d1ed71dd7ea2a02a466d6d9029e21968660473f2",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleHillRight2.png.import",
+      "sha256": "fbdaf23ee2967e6edc38ac678a28544e303aaeb7e4fa26459ecbe95be4ea6362",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleLedgeLeft.png.import",
+      "sha256": "b5cbe9a368dcc24763c570391157028bdb0bafc4b480c92ff3d2a5a253f5c16a",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleLedgeRight.png.import",
+      "sha256": "f615b115bbdee42f7f111b6e7ab1fd265287f33ed069c3f0c8b92b1ad5a41472",
+      "bytes": 994
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleLeft.png.import",
+      "sha256": "ae99fd025cd406a4af5d890a985c9573803886f40b7aaba0fddec83aee3f2e73",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleMid.png.import",
+      "sha256": "8ea7fa8ce248584ee42eb4b56b67eec7a32d278a2a5caa370a91fb9b3af14b9f",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/castleRight.png.import",
+      "sha256": "359ebf76a95960df20716c732dc81b81a38165194a03addb31532f41f5dc6ea3",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirt.png.import",
+      "sha256": "71f01d2e8b94ae877c988e9ff4fa1bc30ab39c4b0ad24f67edc6fd9c6866022e",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtCenter.png.import",
+      "sha256": "fffb9d060aa25d1854b708f58188acab8b3872cb75edc6a09a5907edf9622717",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtCenter_rounded.png.import",
+      "sha256": "6d0a05e35305616f639fda6e99007e162c08af250108a6f2ce83f7cd40b45d57",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtCliffLeft.png.import",
+      "sha256": "45eb749aef953a05f5d7235d3b69bda14ed4ccf5001d3bb4aab40522256677dc",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtCliffLeftAlt.png.import",
+      "sha256": "73a7cafb6a43e8bf3f6557d36c878c56e0a64f2422df495b32861e0ca3f5128a",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtCliffRight.png.import",
+      "sha256": "4f7f02d23d08f013a20a0ecd411e38c472d652fc76db331528be98267354606c",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtCliffRightAlt.png.import",
+      "sha256": "dfabeb0058757e69bc057bd6efeb56e48b32cb88457ce88ee14fa1e0cee17176",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHalf.png.import",
+      "sha256": "b0f342f465c840e1730cf69909f201762b912b8b5e9625fb90ab7af48f5d8832",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHalfLeft.png.import",
+      "sha256": "5fd56f6f434fc2f69cbe6f3f248a34b681027c9dc03f8c217613577a5bb3c96b",
+      "bytes": 981
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHalfMid.png.import",
+      "sha256": "312117534f4b4286e030c6906a7924e92d0d8412b867838c678096a9644370c1",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHalfRight.png.import",
+      "sha256": "140fe3005cf5e42ce45c9d963fb8ce1528bf0c6ecf744f30c9c418fa6dd6a628",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHillLeft.png.import",
+      "sha256": "9b5352e6d633fabd21aa509ce19d9c9f39f179b79f9f3f322c37dd17f67fab5e",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHillLeft2.png.import",
+      "sha256": "0b665a0ccb2cd6eef04cd031be6dd4d53481dcfb8b2a11076689cc6f57c38485",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHillRight.png.import",
+      "sha256": "46af5f3365d3485feb9d9d64b11d90ada2c90fc426bb558291cf21c093fe5525",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtHillRight2.png.import",
+      "sha256": "36818ee654f7fb730e8973eed7d59cc22f6384eaa77bedffd61a1b296b88fa17",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtLedgeLeft.png.import",
+      "sha256": "ffc78969e65e962a3bf6c80ddb239468d7d738d40aac4ec4200e0f9bda581f47",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtLedgeRight.png.import",
+      "sha256": "62a305c08be6cbf0309c3bcdcbc9eb44b525daa9db34e7639b5682125b08f104",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtLeft.png.import",
+      "sha256": "824cecff292c40106b1b25c024a75c21ccee5a1db3c03fc377b0bdfb4ed47eb1",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtMid.png.import",
+      "sha256": "a02dd13cad0213223f5094095891d51a967cfe0b48027d951c49dfe29bafc6d1",
+      "bytes": 966
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/dirtRight.png.import",
+      "sha256": "f73a9cf7672cd6b2d49781da24e7cd411671a0d9f0cb59b693be3ba49e166679",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/door_closedMid.png.import",
+      "sha256": "4bcec507c47f4be46a0378042ca5371e5b6750b593ea808916ce163768448112",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/door_closedTop.png.import",
+      "sha256": "433b3dbeb8150ad9c6987adcfba4a3b0a51d52ab1bd69cd8ccf480f20274f1ab",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/door_openMid.png.import",
+      "sha256": "e2b3aa169838f8f729f35ccaaa56d0761169544c97d470db7bf9c8c032652238",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/door_openTop.png.import",
+      "sha256": "8be467b849e7d452fc18763bded944e9f82850e5444747187cc7b8dcf553dc42",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/fence.png.import",
+      "sha256": "a00637bfd4e896139109fd6f8ffa5e1f7ecba17142c80f381e877e5ba9c3c5cf",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/fenceBroken.png.import",
+      "sha256": "78adc3ad22bc59ecd9c9c89425db486dcba2e627c45d8c13f9312f0436f1bd48",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grass.png.import",
+      "sha256": "9f7b728c61e2342398e6253eca598b41140e1b8875d7f04b056c6bd5c89b14ba",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassCenter.png.import",
+      "sha256": "b0b8629d1909ddce8bf415666e7cc747908798ba10e676edf4f4c0a5c5075355",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassCenter_rounded.png.import",
+      "sha256": "da9848f27831053d65352559645b6bfd04b10bf5f5220e69afb07c7d6e88a3ce",
+      "bytes": 1003
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassCliffLeft.png.import",
+      "sha256": "b4485d9f85505f8b47878d8b38d02283d07c650f8cd89fc228453be457defb45",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassCliffLeftAlt.png.import",
+      "sha256": "077d607741bf335cbaf2f221b5888b1e28bffbe9ce4fa515a072265a0a459c81",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassCliffRight.png.import",
+      "sha256": "c1a07682dcbe6a654ec09f28faeb74ca7ce0fd24ea61526db9e56e90f88a80a5",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassCliffRightAlt.png.import",
+      "sha256": "eafb8d02e452c635317e7e4b2fb43bb8fc4be41aed015628c9b776581054a062",
+      "bytes": 999
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHalf.png.import",
+      "sha256": "d45c2b6c0b952408a9494e1743d947b8adec2fbd4494400d6d64d5a524b198e4",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHalfLeft.png.import",
+      "sha256": "6c5a3ce96bf2756f083ef4f183962d3a21a8dc560a88e321560cb58617635fa1",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHalfMid.png.import",
+      "sha256": "83d8ae2b629626f6f5fd9b605781d715eef91cec52cfcc5e3c8d4f11e4c10052",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHalfRight.png.import",
+      "sha256": "f3975d633b9dd8f45b1ee2b4a102dfd2a0195ec4f07730a2bcfe114a0b8a0633",
+      "bytes": 986
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHillLeft.png.import",
+      "sha256": "1c11f55d8977a137e342623e2c39015e416e870f44e5a0a22e8f7f2144a72b83",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHillLeft2.png.import",
+      "sha256": "096509245f7f0bf110ed485f4c9d63a6bf65aa74276434913a4b9312dad1c952",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHillRight.png.import",
+      "sha256": "703c1f84117cd9c923fd704dc951bafa4f635caa9f5c313d8b149e6d5ebf1438",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassHillRight2.png.import",
+      "sha256": "e6d8f2e1e0dbfd61683c51f10bc86f0c5603eb52653d77c028440baf0bffaeba",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassLedgeLeft.png.import",
+      "sha256": "4b6cfbca6f4c9390cf74c00328b3f753f1b6c6b121445e994088ba2574bc6d00",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassLedgeRight.png.import",
+      "sha256": "4fe738619dce952ecd5b44e267afabf951a9591297b9b1bea55843fc87ccb0c8",
+      "bytes": 989
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassLeft.png.import",
+      "sha256": "7bee323d8ff5b3625c582f7ac2ec7b2e1da301c57fe7fb5bbd47ef31481a5d4d",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassMid.png.import",
+      "sha256": "8d9884d3dbb27d6da650fb2bb646cf8a0bbb46a54c3289ae4a20a743f7302018",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/grassRight.png.import",
+      "sha256": "3f6e80a6058a75adbabf0e0c264226768c9cc0cabb429cfc4e26ff21ecf10fc0",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/hill_large.png.import",
+      "sha256": "92a7246953ec2abf4e3fa5ee4221e30ae06ca0f281264a0940daba2f7b692d04",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/hill_largeAlt.png.import",
+      "sha256": "5cde8c7d56dd74bd041ceb62594ff97679a01203a9f8a18e3deb67bd673cee54",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/hill_small.png.import",
+      "sha256": "02f04f88111c1c203d36e1ab5b8fb604fd053fec2717f42c34c52ac3b6a8b625",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/hill_smallAlt.png.import",
+      "sha256": "0cfa5eec85f97b0bc8cd56f67c0764606c161420d82834d93b6e6a3f45f935a9",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/ladder_mid.png.import",
+      "sha256": "510773b21c5ad9bca15fc1d2bfe3242ca1e60414aa3fa677d4d6b0e297c59a3c",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/ladder_top.png.import",
+      "sha256": "0ef9edd75225c743cafda6f92d15644c60f09bfdd531054949715370244d5de5",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/liquidLava.png.import",
+      "sha256": "786bed083372d6cc2a8108c6b0416d6b43f0675ff5186615730768f49c57bf30",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/liquidLavaTop.png.import",
+      "sha256": "6834e1077578777a1ba4e64e2356d07c6c1ec73a650db97f5f6133a9d531af5e",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/liquidLavaTop_mid.png.import",
+      "sha256": "3acbd6d7b9f50d4d436baba04fa15c8dfffc5fc8514efe4ed2708f7883909149",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/liquidWater.png.import",
+      "sha256": "0bd3bc345e70d488da9148f8c03743cbd64b374183c0b6d15f211895c089a74d",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/liquidWaterTop.png.import",
+      "sha256": "aa9dd18e0fac04c92862e83320d268beac123aa469a503643b4bd8e4db7d3bb5",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/liquidWaterTop_mid.png.import",
+      "sha256": "25cb53503842312d6042a02ee5a619dcaa6bc103e0d9ea910c2bce29f19c8027",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/lock_blue.png.import",
+      "sha256": "099a3fa93f1cca915417082f5e232ca623c2a98041d95b1ba7f536791bf8a49a",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/lock_green.png.import",
+      "sha256": "0de5d6cb84d624936b1d9b85f1415b771bb252376d6fdb3e5ed5187fc397a596",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/lock_red.png.import",
+      "sha256": "bb922ffd197cf0ba838b1a385b10c6a69567176b27fb38ebe7a054c817b7b888",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/lock_yellow.png.import",
+      "sha256": "e3a23686a4ef6308eb79e7ef58d615f7e3b5916f615e690da933396d78651e4c",
+      "bytes": 978
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/rockHillLeft.png.import",
+      "sha256": "332b5becd9016a243ae0dba1184f3c27c35b1258b855f0fd878688901e16dc0b",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/rockHillRight.png.import",
+      "sha256": "c001cba423cfb2bdb500a06354338b1c9be56e2975dd2546b2026e1f0018e79d",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/ropeAttached.png.import",
+      "sha256": "a582bbbb38e3cf659f152484eb2a2c74267d088c8abe707088d7785e14fb0705",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/ropeHorizontal.png.import",
+      "sha256": "07be7e1351e87be0a3d33186d22d503ceff0163719420988a817b1871f6f095f",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/ropeVertical.png.import",
+      "sha256": "1ffbce63aa87854379bee12ba6de14df0834baff44c57e7c96db56f4b9ef81cf",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sand.png.import",
+      "sha256": "37b708263a07066745c59c46527f837a67d5b854bcbb7dc8f3617f4ec2a91641",
+      "bytes": 957
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandCenter.png.import",
+      "sha256": "8ea50ae69e946546a79c41d09cef7de07e742dea6a54b23077f50b6a9e77e755",
+      "bytes": 975
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandCenter_rounded.png.import",
+      "sha256": "bcdf607ca96994a428e37b1ecbb8f9e46fc7540e6e036315f40893c811f2699a",
+      "bytes": 1000
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandCliffLeft.png.import",
+      "sha256": "f9d9b73d758a2ed2af66db1c8e9f5c341a97c8f717f5189f247a952ca3141c69",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandCliffLeftAlt.png.import",
+      "sha256": "6d12cefcca0cbff50c3aa5ab3f18d28726cb423a863762c1f829cc88c19f1d02",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandCliffRight.png.import",
+      "sha256": "284a1a2075e89040c14ed7bb02d6985d9c1f34d8816b5fbbb7e34af10cceb14b",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandCliffRightAlt.png.import",
+      "sha256": "f5ccba119b3e5396fac10b144fcdadfedea99a946e7de84b66d6f3cca134d56b",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHalf.png.import",
+      "sha256": "47792255dae97719897b41ef5929b3e496dca7c44ab3fc6a8deb985684c035fd",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHalfLeft.png.import",
+      "sha256": "257b29d3482daf31f527d8f23f6d2c83dbc3b819186876c308499c21dea226cd",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHalfMid.png.import",
+      "sha256": "ad95c4fc81a0f00f221dc636e6e513358e19aa54fbd677333db1c1b8af413c64",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHalfRight.png.import",
+      "sha256": "75d653a6ffe7262171cc0969636052dcc7e3aea4ce7fe449942ecd47a083700c",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHillLeft.png.import",
+      "sha256": "f570689e60f7d5e6dcdf4fffe0778c280f502ceac9f09f16c1f979bd6b7f1f53",
+      "bytes": 981
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHillLeft2.png.import",
+      "sha256": "b126b4d7bae4bb23110b338d982e44693e8a5c8e1f04b2dbf0e9ef11fa134fae",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHillRight.png.import",
+      "sha256": "6ef1d28fe28c79eff0c0e50f290796cb5251245bc79054d10897e7e4c09f5b78",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandHillRight2.png.import",
+      "sha256": "3bb04a0e91b4a94b3b32a45db5f81e05a10bef801f9123929c0c29ae059cb054",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandLedgeLeft.png.import",
+      "sha256": "831e48a8cc7d22a812e3197e8ce1bf48633dfa0d6c2b254a558e21ec4ab39635",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandLedgeRight.png.import",
+      "sha256": "32eaeb45c68726ce6141e23143767dd08d6b5fbec8e9a80dc5f530af34a5d97f",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandLeft.png.import",
+      "sha256": "0b1ac3fc3412258228c439c40606fddf8cc039aa2ae510876190d77062c66ec2",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandMid.png.import",
+      "sha256": "5d30b08800ecaf36f43ab687063cd07e635ad81d8604a89b7ad3bd3f09942086",
+      "bytes": 966
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sandRight.png.import",
+      "sha256": "d4df8e392a992f5040c65eb5e53887833e9e6ecd4565ee46a9dd14099ce7c778",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/sign.png.import",
+      "sha256": "f8a194328e4e4aa3195c69fff580c514538688f5d295c6ae39dbbe819e9d79c6",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/signExit.png.import",
+      "sha256": "d13484fc9598eb0da2760d28d95b35cb05ab3f7dfb171f4178d6f893be33246a",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/signLeft.png.import",
+      "sha256": "921b1b3d7421cec47ecb21cfa70d955c7305010773a38fde844f1f342ee99745",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/signRight.png.import",
+      "sha256": "6c25c238d68cbdee4fd76ee652f2e6208aaf8a9d72f73434740a9398dee6adc3",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snow.png.import",
+      "sha256": "679e815d9757bf76e13d4fa951399da261ceae9cdd66e31eb2032c8b0bdad96b",
+      "bytes": 958
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowCenter.png.import",
+      "sha256": "999cafeaa616c1eedd510963548c8d3853c00f8fd39e012de030626a8a431ffe",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowCenter_rounded.png.import",
+      "sha256": "d1a8cd2dc55e1f1d2c9e36237553af5065df50331a54f60dbefdf925aede37c3",
+      "bytes": 999
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowCliffLeft.png.import",
+      "sha256": "acd88d78f0d1f60e6ed9ff7fad664a5d4ed3c151c63164bc2ccfce65613e2f1b",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowCliffLeftAlt.png.import",
+      "sha256": "26242da78b5039d6e1579d81a68f2a24cb2dd96dee579e4a3b4af9e899291caf",
+      "bytes": 993
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowCliffRight.png.import",
+      "sha256": "6f5dc13dea1d1161138c96130bcc9281350a46b54954a24e1389163299885ef3",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowCliffRightAlt.png.import",
+      "sha256": "ba34826ac62f61755b5ae2dfb0a08dcdf61e01402e593964844df71ee4315724",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHalf.png.import",
+      "sha256": "69e4d9122a1e3da296f9c43a2b22c61ea6c41050f7b0eaa2241f0f2d035483f0",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHalfLeft.png.import",
+      "sha256": "f7c027c2de527f6427ab5ee19b0665f6aafb5c048a020db900e6aa331292bd0a",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHalfMid.png.import",
+      "sha256": "d95cd7cae40851dc07252e7a79d510f69345c0921f04fdfe783d82091f8f7180",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHalfRight.png.import",
+      "sha256": "359a94857855f95f3517d3326f06b5cb28416c70abbcd6cc1fdd29230c8069fd",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHillLeft.png.import",
+      "sha256": "3b54b4c844e6803b66b51c29cb18ff8892cafeca3a6eeb521fcd0b44efd45a75",
+      "bytes": 981
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHillLeft2.png.import",
+      "sha256": "d169965d197c5c433df296e23583ea06964a43e8c1d5f859ab74b6cb02acecaf",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHillRight.png.import",
+      "sha256": "be1001570c45daaa7475c74d19fa44ea07cacfcb794aeb587735eff3f37de99b",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowHillRight2.png.import",
+      "sha256": "4df121ecb38f7f246361ee2dfd6ab1e2d3cf14a78904e0641109436a3cd99209",
+      "bytes": 987
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowLedgeLeft.png.import",
+      "sha256": "d8e5e1a67a8bd338bedb4b0a29b81d0323d1b5697e8f087c902c2ab23da31b31",
+      "bytes": 984
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowLedgeRight.png.import",
+      "sha256": "a55387a3a3aee34c82365279bdf2fc1312447b72ac5d6a1476fe8afb9c0d0b20",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowLeft.png.import",
+      "sha256": "5a6349a21d6312287222aad21cb3818202ab870bab4144aed0c85a6d67c39492",
+      "bytes": 969
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowMid.png.import",
+      "sha256": "66c98b88f60e0cf46f616e2216d6be3a65b4fa164f97ccb4167ee08bd5114b80",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/snowRight.png.import",
+      "sha256": "8407d868e970dc7d1b8e16b36d1e9e38b253248c4523578eea6efde43e25f936",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stone.png.import",
+      "sha256": "109d9946801e83540cf28937ac2e316f53b3643f1e82376a258066d03103d49e",
+      "bytes": 961
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneCenter.png.import",
+      "sha256": "f9f793a15b764282aaf99cc21fc95289cf66e4f1e360b0e93c6cf834b983591e",
+      "bytes": 979
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneCenter_rounded.png.import",
+      "sha256": "6d224d34a186586fa4f05101ad79d73e4aa8641ff189439f665a5d1542685d38",
+      "bytes": 1002
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneCliffLeft.png.import",
+      "sha256": "cd9199509cb6a12c932dc602fcee1ff89f4cd58d4dcbfc9e3ee94db5f05b2531",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneCliffLeftAlt.png.import",
+      "sha256": "df47d3adf82750d8e960dd708f6f97e01654134c09d642d7002a219f206f3a20",
+      "bytes": 996
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneCliffRight.png.import",
+      "sha256": "3f82f49ea5d7dfd3ad0d2b5474238ab538cd42395c5ca3aea8f507ae0e77dfce",
+      "bytes": 990
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneCliffRightAlt.png.import",
+      "sha256": "fb56b0f22e7deece52bc1b85b025dde6622444c857aee3cf2bffe0b9d86761ed",
+      "bytes": 999
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneHalf.png.import",
+      "sha256": "de37451b90400ace39089f0ad65b8ee85d6053bb6e51c2cfb592fc4d33f80ab2",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneHalfLeft.png.import",
+      "sha256": "236aff74c31534c740030e129e6a21dc5825ce5c959af1ad0cb05cb8a00b1fe0",
+      "bytes": 985
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneHalfMid.png.import",
+      "sha256": "43b12ea09df67e4b5cb75795d1d7fbd7c7d92811da78385e106e7df894925a43",
+      "bytes": 982
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneHalfRight.png.import",
+      "sha256": "7a707f9a4334b08bb4a41d31deb30094117eae98c2e0cd1a1d13d9fd0145a647",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneHillLeft2.png.import",
+      "sha256": "6a1a82d9d498d39ac0cc39bf3c9352a51ce7977847c2645538076d701843fb84",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneHillRight2.png.import",
+      "sha256": "6579db2323a047e52c99a31ac8061f3597cc82b737c47a7922f6f36acdf69f0f",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneLedgeLeft.png.import",
+      "sha256": "2b04e2f30f2c8e45e09fe61c40b2045c83c0666a20a8e86aa4962f5c62339883",
+      "bytes": 988
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneLedgeRight.png.import",
+      "sha256": "05e4410aaa838cbcecffce7fb8019ec34b157d2a45aa3d4b4627b4b8af291b6e",
+      "bytes": 991
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneLeft.png.import",
+      "sha256": "d9416d7bca7ade74725fd40084f0416300c9be56486175b2375a9a3d99056336",
+      "bytes": 973
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneMid.png.import",
+      "sha256": "9e0602c530ac291e26a168da8b63451aa5c35516b817697bc95391880574ea87",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneRight.png.import",
+      "sha256": "7d0969d28e1989942ddb66f8e9a6489a3ee8e39abd094b5f893925a3d9dd963f",
+      "bytes": 976
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/stoneWall.png.import",
+      "sha256": "f580bff6a158445837a6218af04f36f4a28e9fe7740843977a7f1f6b5ad0d848",
+      "bytes": 972
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/tiles_spritesheet.png.import",
+      "sha256": "1b1d000dd70afb754d25580076e7b64cc9208c8a9a4a8c5978a131b492ea0499",
+      "bytes": 997
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/tochLit.png.import",
+      "sha256": "0b3d2b2c3f9626d3b1bf717bea55215ba4fe393a445e740c0ba8044273150092",
+      "bytes": 967
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/tochLit2.png.import",
+      "sha256": "ac0b0516b1ba6019bd0d25391e7975f5d9d9531a80909c22bf0c67a76ae57e40",
+      "bytes": 970
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/torch.png.import",
+      "sha256": "212283a47d9e784b941fcc64d810e294fd6f564504c7a0175fe0e617e2f61df7",
+      "bytes": 960
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Tiles/window.png.import",
+      "sha256": "c0485ecc8fb8d896d6de33ca46f5fc7f004a2e300c1a963074fa530ac4769913",
+      "bytes": 963
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Vector/characters.svg.import",
+      "sha256": "23d157d95c51b11a2bd0082235b0b23d2e24bf796d87b48a32a3e335ee08eee3",
+      "bytes": 1074
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Vector/enemies.svg.import",
+      "sha256": "1cd19adde051d2065043b9b1dbfcee0f697e3017682ad7215613c562c6e7582f",
+      "bytes": 1064
+    },
+    {
+      "path": "assets/kenney/platformer-art-deluxe/extracted/Vector/tiles.svg.import",
+      "sha256": "c1f4e27c9f1d8779574d16a0bf8e4d8498d8b6a61783f3a23af87a4bb7b2db6c",
+      "bytes": 1059
+    },
+    {
+      "path": "templates/fighting/config/game_config.json",
+      "sha256": "503d841e035e0c902f280dea7cd47bb154b7429eece7bf1e9cb11c18b65485b2",
+      "bytes": 2096
+    },
+    {
+      "path": "templates/fighting/core/enemy_fighter.gd",
+      "sha256": "217bfd2d9d21b9b98d7674fcb11c0777ed06749b25fc4450eea5ffe0462215e4",
+      "bytes": 3006
+    },
+    {
+      "path": "templates/fighting/core/fight_arena.gd",
+      "sha256": "5e4bd32d7a166a5abf23481fb8e811d5d75cc24ad90f5e70036e50b87c163102",
+      "bytes": 16706
+    },
+    {
+      "path": "templates/fighting/core/fight_constants.gd",
+      "sha256": "76e9a8daa134ecd0dd8a7eecbcc52d77e35734cf42a11cd5ff3a57052915d9e0",
+      "bytes": 1021
+    },
+    {
+      "path": "templates/fighting/core/fight_input.gd",
+      "sha256": "fc44b3ce2dd8922c7421895d83098336d70f5ce9a4a607b7f996603215edd27d",
+      "bytes": 605
+    },
+    {
+      "path": "templates/fighting/core/fighter.gd",
+      "sha256": "34a25feadd0c30cbfcb1020d9920872250626b27e906004b2bb5c79340117528",
+      "bytes": 11662
+    },
+    {
+      "path": "templates/fighting/core/frame_data.gd",
+      "sha256": "de5242d08a634d268fa0ca745b6b765d59223564d1a2d83beb695949cf237275",
+      "bytes": 571
+    },
+    {
+      "path": "templates/fighting/core/game_config_loader.gd",
+      "sha256": "310265e35d94d559a311bc1422f924dde285c67d9a7706c16264cf50406b235c",
+      "bytes": 2097
+    },
+    {
+      "path": "templates/fighting/core/game_manager.gd",
+      "sha256": "cff9b04aec1bfd3ef6889276c611afc7aa7bd3ecd9c20028631c71017ab4e4ae",
+      "bytes": 7613
+    },
+    {
+      "path": "templates/fighting/core/hitbox_manager.gd",
+      "sha256": "efb5e8bfd6813951d4f9286eb45e4124893ec4f4592aeb65dd7c4f6a2c843d67",
+      "bytes": 1228
+    },
+    {
+      "path": "templates/fighting/core/player_fighter.gd",
+      "sha256": "bfe10be2792717edc9f43d91031b05e0971320b0919e1c3177a5dc19be2e22f1",
+      "bytes": 999
+    },
+    {
+      "path": "templates/fighting/core/round_manager.gd",
+      "sha256": "6af282787e3bdfd1328b2ccf90deb60aaead185c868b4114293471e920e33b17",
+      "bytes": 1593
+    },
+    {
+      "path": "templates/fighting/core/skills/block_parry.gd",
+      "sha256": "b6c0e63c75c02c5d688c8a2d37a8e6ca4088d51d521c01727a70681d425fa42b",
+      "bytes": 1060
+    },
+    {
+      "path": "templates/fighting/core/skills/special_uppercut.gd",
+      "sha256": "edffea4f2506efe88a57659a1a97c2e5c9094e2bd65e3d9db063472932bbd888",
+      "bytes": 1567
+    },
+    {
+      "path": "templates/fighting/core/theme_sound.gd",
+      "sha256": "0a7727fc156ed7fc238a76d0182787c831509e0e4a53c3957718863bf5608764",
+      "bytes": 1339
+    },
+    {
+      "path": "templates/fighting/core/theme_sprite.gd",
+      "sha256": "6eb121be661e30b87f08611f887e326982521c3bb0f9398d8fdcb6136fe5453b",
+      "bytes": 742
+    },
+    {
+      "path": "templates/fighting/core/warrior_anim_util.gd",
+      "sha256": "8e5d0fb5762369c6f064945f1538e9c075e4b6540542cde48b72b7515a56aa1c",
+      "bytes": 2319
+    },
+    {
+      "path": "templates/fighting/core/warrior_sheet.gd",
+      "sha256": "63a82d02f80a80ef15472a10b5b1a4f35d86db7121f9dd6855312f6646b8614e",
+      "bytes": 1287
+    },
+    {
+      "path": "templates/fighting/project.godot",
+      "sha256": "bcc4907e7bd3e0a962f13fc68026ff20e5d274797fa1b0729ddf68d789111462",
+      "bytes": 4821
+    },
+    {
+      "path": "templates/fighting/scenes/enemy.tscn",
+      "sha256": "2d9e7d7efee50745af13ae4dc0798e28428bfc378bca734efd8e8fa37284a240",
+      "bytes": 636
+    },
+    {
+      "path": "templates/fighting/scenes/game.tscn",
+      "sha256": "0ef85109c41c5895bda276756b06ab87666b8fc5ddbf11d3e9dfa0aed93f6e34",
+      "bytes": 1354
+    },
+    {
+      "path": "templates/fighting/scenes/main.tscn",
+      "sha256": "0339a8eeab7413dece7da363911c6104832c998d460449851d7a60ffc1942363",
+      "bytes": 11184
+    },
+    {
+      "path": "templates/fighting/scenes/player.tscn",
+      "sha256": "c851fc53b6ebdd1722579b70c258d5dbfe2c5c4777ac793bfe3af4e56b438b28",
+      "bytes": 642
+    },
+    {
+      "path": "templates/_edu/fighting_hooks.gd",
+      "sha256": "3db283eb2b370d4bca64c88d7941d664decf1de4ceaff9ce1e774836d02ed80f",
+      "bytes": 4121
+    },
+    {
+      "path": "templates/_edu/fighting_touch_overlay.gd",
+      "sha256": "aa1cc2274615ae18faea840f02d40b53bd4e40e79fa53402f08c96aa74329ea8",
+      "bytes": 2714
+    },
+    {
+      "path": "config/code_anchors/fighting.json",
+      "sha256": "4b161579b4feee8c5f72e0fa2cbd90718fc4bab4b5afb26db16d1e440a85c65c",
+      "bytes": 2053
+    },
+    {
+      "path": "config/creative_templates/fighting.json",
+      "sha256": "aaee0f49c617e648d0a3af617327642f0bc19db0fb252f39fa91e93b8d9b8e3b",
+      "bytes": 3356
+    },
+    {
+      "path": "templates/_edu/edu_action_bridge.gd",
+      "sha256": "f301b136478bc4b9fd9a74769afe2ae5737f935c228012b35dcb342ed8500106",
+      "bytes": 2789
+    },
+    {
+      "path": "kiosk/edu/code-highlight.js",
+      "sha256": "c8f1a6af04be8f31ab567a632701d673d56965fe04bbd9832283289f78cc67e6",
+      "bytes": 7265
+    },
+    {
+      "path": "config/kiosk_edu_spec.json",
+      "sha256": "7f6fe416b018cd426a6b059ac2b3e76af5ffabf500eb744bdc90e6f0c15d47fa",
+      "bytes": 3578
+    }
+  ]
+}

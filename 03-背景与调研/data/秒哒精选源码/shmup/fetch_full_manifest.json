@@ -1,0 +1,52 @@
+{
+  "slug": "shmup",
+  "title": "街机飞机设计游戏v2",
+  "app_id": "app-chu7pw7h454x",
+  "preview_url": "https://app-chu7pw7h454x.appmiaoda.com",
+  "fetched_at": "2026-06-23T09:10:08Z",
+  "method": "trajectory_code + kenney_cc0_assets",
+  "limitations": [
+    "秒哒 API trajectory 无法导出沙箱二进制；素材为 Kenney Pixel Shmup CC0 对齐包",
+    "无 package.json/vite/index.html（秒哒平台脚手架未出现在 trajectory）",
+    "预览站为 SPA，无法直接 HTTP 扒取打包后资源"
+  ],
+  "assets": {
+    "pack_id": "pixel-plane-shmup",
+    "source": "Kenney Pixel Shmup CC0 (OGA)",
+    "miaoda_aliases": {
+      "ships": "E:\\文三路AI馆\\2.ai生成游戏\\03-背景与调研\\data\\秒哒精选源码\\shmup\\src\\project\\src\\assets\\pixel-plane-shmup\\Tilemap\\ships_packed (128x192)[frames=1].png",
+      "tiles": "E:\\文三路AI馆\\2.ai生成游戏\\03-背景与调研\\data\\秒哒精选源码\\shmup\\src\\project\\src\\assets\\pixel-plane-shmup\\Tilemap\\tiles_packed (192x160)[frames=1].png",
+      "background": "E:\\文三路AI馆\\2.ai生成游戏\\03-背景与调研\\data\\秒哒精选源码\\shmup\\src\\project\\src\\assets\\pixel-plane-shmup\\Tilemap\\background.png"
+    },
+    "full_pack_dir": "src/project/src/assets/pixel-plane-shmup-kenney-full",
+    "png_files_under_pack": 3
+  },
+  "source_tree": {
+    "project_root": "src/project",
+    "code_files": 9,
+    "paths": [
+      "src/project/src/App.tsx",
+      "src/project/src/game/EventBus.ts",
+      "src/project/src/game/assets.ts",
+      "src/project/src/game/constants.ts",
+      "src/project/src/game/main.ts",
+      "src/project/src/game/scenes/Boot.ts",
+      "src/project/src/game/scenes/GameOver.ts",
+      "src/project/src/game/scenes/MainGame.ts",
+      "src/project/src/game/store.ts"
+    ]
+  },
+  "counts": {
+    "png": 408,
+    "ts_tsx": 18,
+    "total_files": 445
+  },
+  "key_paths": {
+    "prd": "docs/需求文档.md",
+    "main_game": "src/project/src/game/scenes/MainGame.ts",
+    "constants": "src/project/src/game/constants.ts",
+    "app_ui": "src/project/src/App.tsx",
+    "assets_tilemap": "assets/pixel-plane-shmup/Tilemap",
+    "kenney_full": "src/project/src/assets/pixel-plane-shmup-kenney-full"
+  }
+}

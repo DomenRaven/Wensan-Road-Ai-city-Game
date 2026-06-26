@@ -1,0 +1,80 @@
+{
+  "version": "1.0",
+  "genre": "shmup",
+  "anchors": {
+    "player_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.player.speed",
+      "line_hint": 11,
+      "caption": "飞机飞得快慢，就看这个数字！",
+      "action_id": null
+    },
+    "fire": {
+      "file": "config/game_config.json",
+      "path": "tuning.player.bullet_interval_ms",
+      "line_hint": 13,
+      "caption": "射得快慢在这里调！",
+      "action_id": null
+    },
+    "spawn_rate": {
+      "file": "config/game_config.json",
+      "path": "tuning.spawn.interval_ms",
+      "line_hint": 21,
+      "caption": "敌人多久来一波，就在这里！",
+      "action_id": null
+    },
+    "hit": {
+      "file": "config/game_config.json",
+      "path": "tuning.player.max_hp",
+      "line_hint": 12,
+      "caption": "你有几条命，看这里！",
+      "action_id": null
+    },
+    "pickup": {
+      "file": "config/game_config.json",
+      "path": "tuning.powerup.duration_sec",
+      "line_hint": 29,
+      "caption": "吃到道具会变强！",
+      "action_id": null
+    },
+    "enabled_skills": {
+      "file": "config/game_config.json",
+      "path": "tuning.enabled_skills",
+      "line_hint": 81,
+      "caption": "这里记录你开启的小技能！",
+      "action_id": null
+    },
+    "auto_shoot": {
+      "file": "core/player_ship.gd",
+      "path": null,
+      "line_hint": 102,
+      "caption": "飞机会自动开火，不用一直按！",
+      "action_id": null,
+      "snippet_gd": "func _handle_auto_shoot(delta: float) -> void:"
+    },
+    "take_hit": {
+      "file": "core/player_ship.gd",
+      "path": null,
+      "line_hint": 172,
+      "caption": "被敌人或子弹打中会掉血！",
+      "action_id": "hit",
+      "snippet_gd": "func take_hit() -> void:"
+    },
+    "apply_powerup": {
+      "file": "core/player_ship.gd",
+      "path": null,
+      "line_hint": 149,
+      "caption": "捡到道具就调用这里变强！",
+      "action_id": "pickup",
+      "snippet_gd": "func apply_powerup(powerup_name: String) -> void:"
+    },
+    "kill_enemy": {
+      "file": "core/enemy_ship.gd",
+      "path": null,
+      "line_hint": 131,
+      "caption": "打爆敌机就执行这里，加分！",
+      "action_id": "kill_enemy",
+      "snippet_gd": "destroyed.emit(self, _score_value, _drop_rate, _is_boss)"
+    }
+  }
+}

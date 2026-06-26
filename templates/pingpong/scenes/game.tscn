@@ -1,0 +1,84 @@
+[gd_scene load_steps=6 format=3 uid="uid://pingpong_game"]
+
+[ext_resource type="Script" path="res://core/match_controller.gd" id="1_match"]
+[ext_resource type="Script" path="res://core/paddle.gd" id="2_paddle"]
+[ext_resource type="Script" path="res://core/ai_paddle.gd" id="3_ai"]
+[ext_resource type="Script" path="res://core/ball.gd" id="4_ball"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_paddle"]
+size = Vector2(5, 30)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ball"]
+radius = 6.0
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_match")
+
+[node name="CourtBg" type="Sprite2D" parent="."]
+position = Vector2(320, 180)
+
+[node name="CenterLine" type="Sprite2D" parent="."]
+position = Vector2(320, 180)
+
+[node name="PlayerPaddle" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+position = Vector2(30, 200)
+script = ExtResource("2_paddle")
+
+[node name="Visual" type="ColorRect" parent="PlayerPaddle"]
+offset_left = -6.0
+offset_top = -25.0
+offset_right = 6.0
+offset_bottom = 25.0
+color = Color(0.2, 0.85, 0.35, 1)
+
+[node name="Sprite" type="Sprite2D" parent="PlayerPaddle"]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerPaddle"]
+shape = SubResource("RectangleShape2D_paddle")
+
+[node name="AIPaddle" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+position = Vector2(610, 200)
+script = ExtResource("3_ai")
+
+[node name="Visual" type="ColorRect" parent="AIPaddle"]
+offset_left = -6.0
+offset_top = -25.0
+offset_right = 6.0
+offset_bottom = 25.0
+color = Color(0.95, 0.35, 0.3, 1)
+
+[node name="Sprite" type="Sprite2D" parent="AIPaddle"]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AIPaddle"]
+shape = SubResource("RectangleShape2D_paddle")
+
+[node name="Ball" type="Area2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+position = Vector2(320, 200)
+script = ExtResource("4_ball")
+
+[node name="Shadow" type="Sprite2D" parent="Ball"]
+z_index = 0
+show_behind_parent = false
+
+[node name="Visual" type="ColorRect" parent="Ball"]
+z_index = 1
+offset_left = -9.0
+offset_top = -9.0
+offset_right = 9.0
+offset_bottom = 9.0
+color = Color(1, 1, 1, 1)
+
+[node name="Sprite" type="Sprite2D" parent="Ball"]
+z_index = 2
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
+shape = SubResource("CircleShape2D_ball")

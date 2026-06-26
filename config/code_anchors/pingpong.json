@@ -1,0 +1,58 @@
+{
+  "version": "1.0",
+  "genre": "pingpong",
+  "anchors": {
+    "ball_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.ball.base_speed",
+      "line_hint": 28,
+      "caption": "球飞得多快，就看这个数字！",
+      "action_id": null
+    },
+    "points_to_win": {
+      "file": "config/game_config.json",
+      "path": "tuning.rules.points_to_win",
+      "line_hint": 17,
+      "caption": "先打到几分就赢，在这里改！",
+      "action_id": null
+    },
+    "ai_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.ai.speed",
+      "line_hint": 43,
+      "caption": "电脑球拍移动快慢，数字越大越难打！",
+      "action_id": null
+    },
+    "enabled_skills": {
+      "file": "config/game_config.json",
+      "path": "tuning.enabled_skills",
+      "line_hint": 50,
+      "caption": "这里记录你开启的小技能！",
+      "action_id": null
+    },
+    "rally": {
+      "file": "core/ball.gd",
+      "path": null,
+      "line_hint": 254,
+      "caption": "拍子打到球就会反弹，来回击球！",
+      "action_id": "rally",
+      "snippet_gd": "func _apply_paddle_bounce(paddle: Area2D, direction: int) -> void:"
+    },
+    "score": {
+      "file": "core/match_controller.gd",
+      "path": null,
+      "line_hint": 114,
+      "caption": "球出界就得分，这里处理加分！",
+      "action_id": "score",
+      "snippet_gd": "func _on_ball_scored(side: String) -> void:"
+    },
+    "power_smash": {
+      "file": "core/skills/power_smash.gd",
+      "path": null,
+      "line_hint": 21,
+      "caption": "大力扣杀技能，下一拍打出去超快！",
+      "action_id": "power_smash",
+      "snippet_gd": "static func try_activate() -> bool:"
+    }
+  }
+}

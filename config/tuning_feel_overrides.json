@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-22",
+  "description": "feel_id 按品类映射到 game_config.tuning 具体字段 · ±30% 相对模板默认值",
+  "clamp_percent": 30,
+  "base_ref": "templates/{genre}/config/game_config.json",
+  "genres": {
+    "platformer": {
+      "easy": {
+        "player.move_speed": 1.0,
+        "player.jump_velocity": 0.92,
+        "enemy.patrol_speed": 0.85
+      },
+      "balanced": {
+        "player.move_speed": 1.0,
+        "player.jump_velocity": 1.0,
+        "enemy.patrol_speed": 1.0
+      },
+      "challenge": {
+        "player.move_speed": 1.05,
+        "player.jump_velocity": 0.95,
+        "enemy.patrol_speed": 1.15
+      }
+    },
+    "tower_defense": {
+      "easy": { "wave.enemy_hp_scale": 0.85, "economy.start_gold_scale": 1.1 },
+      "balanced": { "wave.enemy_hp_scale": 1.0, "economy.start_gold_scale": 1.0 },
+      "challenge": { "wave.enemy_hp_scale": 1.15, "economy.start_gold_scale": 0.9 }
+    },
+    "shmup": {
+      "easy": { "player.fire_rate_scale": 1.1, "enemy.bullet_density_scale": 0.85 },
+      "balanced": { "player.fire_rate_scale": 1.0, "enemy.bullet_density_scale": 1.0 },
+      "challenge": { "player.fire_rate_scale": 0.95, "enemy.bullet_density_scale": 1.15 }
+    }
+  },
+  "notes": "线 B MVP 仅 platformer 必须实现；td/shmup 为 D8 扩展"
+}

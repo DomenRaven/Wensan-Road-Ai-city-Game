@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "genre": "survivor",
+  "display_name": "割草肉鸽",
+  "name_suggestions": [
+    "糖果幸存者",
+    "怪物克星",
+    "时间大作战",
+    "升级小英雄"
+  ],
+  "tuning_defaults_ref": "templates/survivor/config/game_config.json",
+  "clamp_percent": 30,
+  "questions": [
+    {
+      "id": "q_speed",
+      "widget": "single_choice",
+      "prompt": "你希望主角移动得——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.player.speed",
+          "value": 105,
+          "code_anchor_id": "move"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.player.speed",
+          "value": 150,
+          "code_anchor_id": "move"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.player.speed",
+          "value": 195,
+          "code_anchor_id": "move"
+        }
+      ]
+    },
+    {
+      "id": "q_spawn",
+      "widget": "single_choice",
+      "prompt": "怪物出现——",
+      "options": [
+        {
+          "id": "sparse",
+          "label": "少一点",
+          "tuning_path": "tuning.spawn.interval_ms",
+          "value": 5200,
+          "code_anchor_id": "spawn_rate"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.spawn.interval_ms",
+          "value": 4000,
+          "code_anchor_id": "spawn_rate"
+        },
+        {
+          "id": "dense",
+          "label": "多一点",
+          "tuning_path": "tuning.spawn.interval_ms",
+          "value": 2800,
+          "code_anchor_id": "spawn_rate"
+        }
+      ]
+    },
+    {
+      "id": "q_duration",
+      "widget": "single_choice",
+      "prompt": "游戏时长——",
+      "options": [
+        {
+          "id": "relaxed",
+          "label": "轻松",
+          "tuning_path": "tuning.session.duration_sec",
+          "value": 234,
+          "code_anchor_id": "session_duration"
+        },
+        {
+          "id": "default",
+          "label": "标准",
+          "tuning_path": "tuning.session.duration_sec",
+          "value": 180,
+          "code_anchor_id": "session_duration"
+        },
+        {
+          "id": "intense",
+          "label": "紧张",
+          "tuning_path": "tuning.session.duration_sec",
+          "value": 126,
+          "code_anchor_id": "session_duration"
+        }
+      ]
+    },
+    {
+      "id": "q_skill",
+      "widget": "skill_pick",
+      "prompt": "想开启一个小技能？（可选）",
+      "optional": true,
+      "tuning_path": "tuning.enabled_skills",
+      "skill_ids": ["magnet", "nova"],
+      "code_anchor_id": "enabled_skills"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "bd6e3d8728f8b6b6ccf612820772eb1d",
+  "data": {
+    "name": "乒乓球小游戏开发",
+    "appDesc": "一款浏览器乒乓球对战小游戏，玩家通过方向键控制球拍与AI对战，先得5分获胜。包含开始、游戏、结束三个页面，支持动态球速、角度反弹和AI自动跟随等功能。",
+    "type": "GAME",
+    "appId": "app-cika5uyinqip",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T21:49:00.286+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T21:40:47.894+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cikg49nf4lc0",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 乒乓球】浏览器小游戏，参考经典《Pong》《Wii 乒乓球》简化规则。\n\n## 参考要点\n- Pong：挡板接球、角度反弹\n- Wii 乒乓球：上下移动挡板、节奏对打\n\n## 核心玩法\n- ↑ ↓ 移动球拍（1 键方向）\n- 玩家 vs 简单 AI\n- 先得 5 分胜\n- 球速每 3 回合略增\n- 触网/出界对方得分\n\n## 视觉\n- 俯视球桌，亮色球拍\n\n## 交付\n- 比分 HUD + 回合重置",
+    "labelColor": {
+      "colorCode": "#E5FBF9",
+      "colorCodeSecondary": "#94F7F2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_2.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

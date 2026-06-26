@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "genre": "parkour",
+  "display_name": "跑酷",
+  "name_suggestions": [
+    "无尽奔跑",
+    "障碍小子",
+    "滑铲达人",
+    "晨跑冒险"
+  ],
+  "tuning_defaults_ref": "templates/parkour/config/game_config.json",
+  "clamp_percent": 30,
+  "questions": [
+    {
+      "id": "q_run",
+      "widget": "single_choice",
+      "prompt": "跑步速度——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.runner.speed",
+          "value": 210,
+          "code_anchor_id": "run_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.runner.speed",
+          "value": 300,
+          "code_anchor_id": "run_speed"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.runner.speed",
+          "value": 390,
+          "code_anchor_id": "run_speed"
+        }
+      ]
+    },
+    {
+      "id": "q_jump",
+      "widget": "single_choice",
+      "prompt": "跳跃高度——",
+      "options": [
+        {
+          "id": "low",
+          "label": "低一点",
+          "tuning_path": "tuning.jump.velocity",
+          "value": -650,
+          "code_anchor_id": "jump"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.jump.velocity",
+          "value": -760,
+          "code_anchor_id": "jump"
+        },
+        {
+          "id": "high",
+          "label": "高一点",
+          "tuning_path": "tuning.jump.velocity",
+          "value": -870,
+          "code_anchor_id": "jump"
+        }
+      ]
+    },
+    {
+      "id": "q_obstacle",
+      "widget": "single_choice",
+      "prompt": "障碍出现——",
+      "options": [
+        {
+          "id": "sparse",
+          "label": "疏一点",
+          "tuning_path": "tuning.obstacle.min_gap_ms",
+          "value": 2800,
+          "code_anchor_id": "obstacle_gap"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.obstacle.min_gap_ms",
+          "value": 2000,
+          "code_anchor_id": "obstacle_gap"
+        },
+        {
+          "id": "dense",
+          "label": "密一点",
+          "tuning_path": "tuning.obstacle.min_gap_ms",
+          "value": 1400,
+          "code_anchor_id": "obstacle_gap"
+        }
+      ]
+    },
+    {
+      "id": "q_skill",
+      "widget": "skill_pick",
+      "prompt": "想开启一个小技能？（可选）",
+      "optional": true,
+      "tuning_path": "tuning.enabled_skills",
+      "skill_ids": ["double_jump", "slide"],
+      "code_anchor_id": "enabled_skills"
+    }
+  ]
+}

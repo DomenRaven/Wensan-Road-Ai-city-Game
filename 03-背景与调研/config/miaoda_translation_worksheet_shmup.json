@@ -1,0 +1,43 @@
+{
+  "slug": "shmup",
+  "godot_config": "templates/shmup/config/game_config.json",
+  "miaoda_source": "03-背景与调研/data/秒哒精选源码/shmup",
+  "preview_url": "https://app-chu7pw7h454x.appmiaoda.com",
+  "tuning_candidates": {
+    "player.speed": {
+      "miaoda_value": 300.0,
+      "godot_default": 260,
+      "proposed": 300,
+      "notes": "transform=direct"
+    },
+    "player.bullet_interval_ms": {
+      "miaoda_value": 200.0,
+      "godot_default": 120,
+      "proposed": 156,
+      "notes": "transform=direct; clamped"
+    },
+    "wave.enemy_count": {
+      "miaoda_value": null,
+      "godot_default": 6,
+      "proposed": null,
+      "notes": ""
+    },
+    "spawn.interval_ms": {
+      "miaoda_value": 1500.0,
+      "godot_default": 1200,
+      "proposed": 1500,
+      "notes": "transform=direct"
+    }
+  },
+  "theme_candidates": {
+    "title": {
+      "miaoda": "街机飞机射击游戏",
+      "proposed": "街机飞机射击游戏",
+      "kenney_pack": "space-shooter-redux"
+    }
+  },
+  "enabled_skills": [],
+  "ux_notes": "",
+  "verified": false,
+  "verified_at": ""
+}

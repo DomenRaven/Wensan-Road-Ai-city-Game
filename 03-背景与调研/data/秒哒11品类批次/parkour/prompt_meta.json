@@ -1,0 +1,11 @@
+{
+  "slug": "parkour",
+  "display_name": "跑酷",
+  "reference_games": [
+    "Subway Surfers",
+    "Temple Run",
+    "Canabalt"
+  ],
+  "reference_mechanics": "自动前进、跳跃/滑铲、障碍随机段、距离计分",
+  "prompt": "请制作一款【K12 无尽跑酷】浏览器小游戏，参考《Subway Surfers》《Temple Run》《Canabalt》。\n\n## 参考要点\n- Subway Surfers：三轨道、跳跃滑铲\n- Temple Run：自动跑、转弯/跳跃/下滑\n- Canabalt：单键跳跃、节奏障碍\n\n## 核心玩法\n- 自动向前跑，空格跳跃，↓ 滑铲（2 键）\n- 60 秒计时，距离越远分越高\n- 障碍：低栏（滑铲）、高栏（跳跃）\n- 碰撞结束并显示距离\n\n## 视觉\n- 明亮街景/森林侧视\n\n## 交付\n- 开始→跑→撞停→重开 循环"
+}

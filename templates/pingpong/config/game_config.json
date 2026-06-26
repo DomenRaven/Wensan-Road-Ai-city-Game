@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "genre": "pingpong",
+    "template_version": "1.1",
+    "session_id": "",
+    "display_name": "K12 乒乓球"
+  },
+  "core_locked": true,
+  "tuning": {
+    "physics": {
+      "bounce_mode": "paddle_contact",
+      "speed_fluctuation_min": 0.85,
+      "speed_fluctuation_max": 1.15,
+      "contact_angle_scale": 4.2
+    },
+    "rules": {
+      "points_to_win": 5
+    },
+    "table": {
+      "margin_x": 12,
+      "margin_top": 24,
+      "margin_bottom": 24,
+      "player_x": 30,
+      "ai_x": 610,
+      "bounds": "classic_pong"
+    },
+    "ball": {
+      "base_speed": 250,
+      "speed_increment": 25,
+      "hits_per_ramp": 3,
+      "radius": 9,
+      "hit_radius": 6,
+      "spin_fps": 12
+    },
+    "paddle": {
+      "speed": 168,
+      "width": 12,
+      "height": 50,
+      "hit_width": 5,
+      "hit_height": 30
+    },
+    "ai": {
+      "speed": 118,
+      "deadzone": 10,
+      "aim_error": 16,
+      "react_line_x": 340,
+      "far_chase_scale": 0.62,
+      "aim_refresh_sec": 0.15
+    },
+    "enabled_skills": [],
+    "skills": {
+      "power_smash": {
+        "cooldown_scale": 1.0
+      },
+      "curve_ball": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "pong-football",
+    "title": "K12 乒乓球",
+    "court_bg_sprite": "res://assets/pong-football/pong-football/assets/png/court_01.png",
+    "court_center_line_sprite": "res://assets/pong-football/pong-football/assets/png/court_center_line.png",
+    "paddle_player_sprite": "res://assets/paddles/paddle_player.png",
+    "paddle_ai_sprite": "res://assets/paddles/paddle_ai.png",
+    "ball_sprite": "res://assets/pong-football/pong-football/assets/png/ball_frames.png",
+    "ball_shadow_sprite": "res://assets/paddles/ball_shadow.png",
+    "text_win_sprite": "res://assets/pong-football/pong-football/assets/png/text_win.png",
+    "text_lose_sprite": "res://assets/pong-football/pong-football/assets/png/text_lose.png",
+    "btn_start_sprite": "res://assets/pong-football/pong-football/assets/png/btn_menu_h_start.png",
+    "btn_again_sprite": "res://assets/pong-football/pong-football/assets/png/btn_round_again.png",
+    "board_sprite": "res://assets/pong-football/pong-football/assets/png/board.png",
+    "background_color": "#1a5c32",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "rally": "res://assets/kenney/impact-sounds/Audio/impactTin_medium_000.ogg",
+        "score": "res://assets/kenney/interface-sounds/Audio/confirmation_002.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

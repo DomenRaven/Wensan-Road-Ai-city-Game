@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gameforge-k12.local/schemas/game_config.schema.json",
+  "title": "GameForge K12 game_config",
+  "description": "会话实例配置：AI 仅可改 tuning / theme / enabled_skills",
+  "type": "object",
+  "required": ["meta", "core_locked", "tuning", "theme", "content_safety"],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["genre", "template_version", "display_name"],
+      "properties": {
+        "genre": { "type": "string", "enum": [
+          "platformer", "tower_defense", "shmup", "shooter", "survivor",
+          "fighting", "parkour", "life_sim", "sports_race", "pingpong", "racing"
+        ]},
+        "template_version": { "type": "string" },
+        "session_id": { "type": "string" },
+        "display_name": { "type": "string", "minLength": 1, "maxLength": 32 }
+      }
+    },
+    "core_locked": { "type": "boolean", "const": true },
+    "tuning": {
+      "type": "object",
+      "properties": {
+        "enabled_skills": {
+          "type": "array",
+          "maxItems": 2,
+          "items": { "type": "string" }
+        },
+        "skills": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "cooldown_scale": { "type": "number", "minimum": 0.5, "maximum": 2.0 }
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "asset_pack": { "type": "string" },
+        "title": { "type": "string" },
+        "background_color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+      },
+      "additionalProperties": true
+    },
+    "content_safety": {
+      "type": "object",
+      "required": ["max_violence_level", "max_keys"],
+      "properties": {
+        "max_violence_level": { "type": "integer", "maximum": 0 },
+        "max_keys": { "type": "integer", "minimum": 1, "maximum": 3 }
+      }
+    }
+  }
+}

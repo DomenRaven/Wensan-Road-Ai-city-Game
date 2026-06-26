@@ -1,0 +1,41 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "a335393b2f6adec12fcfb445f75dd8c0",
+  "data": {
+    "name": "街机飞机射击游戏",
+    "appDesc": "一款街机风格的飞机射击游戏，玩家操控战机击毁多种敌机，支持触屏操作、完整音效系统和得分排行，提供快节奏的射击体验。",
+    "avatar": "https://miaoda-preview-img.cdn.bcebos.com/preview.png",
+    "mobileCover": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/54e5b26c-313d-474f-b18d-38563962660c/app-chu7pw7h454x_h5_1782058643122.png",
+    "type": "GAME",
+    "appId": "app-chu7pw7h454x",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T00:19:03.287+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T00:16:36.090+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-chu81alwdxq8",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请生成一个网页，内容如下：帮我生成一个街机风格的飞机射击游戏，双方互相攻击，敌机需要有多种风格，武器形状一致，另外需要增加音效，整个游戏更有紧张刺激的感觉，支持手机触屏操作",
+    "labelColor": {
+      "colorCode": "#FEFFED",
+      "colorCodeSecondary": "#FFF2A2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": false,
+    "hideWatermark": false,
+    "conversationId": "conv-chu7pw7h454w"
+  }
+}

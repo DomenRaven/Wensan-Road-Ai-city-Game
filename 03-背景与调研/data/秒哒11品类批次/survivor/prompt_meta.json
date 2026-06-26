@@ -1,0 +1,11 @@
+{
+  "slug": "survivor",
+  "display_name": "割草肉鸽",
+  "reference_games": [
+    "Vampire Survivors",
+    "Brotato",
+    "20 Minutes Till Dawn"
+  ],
+  "reference_mechanics": "自动攻击、经验宝石、升级三选一、敌潮递增",
+  "prompt": "请制作一款【K12 割草幸存者】浏览器小游戏，参考《Vampire Survivors》《Brotato》《20 Minutes Till Dawn》。\n\n## 参考要点\n- VS：WASD 移动、自动攻击、捡宝石升级、选 1/3 强化\n- Brotato：短局、数值成长清晰\n- 20MTD：敌潮环形生成\n\n## 核心玩法\n- WASD 移动（单键位模式）\n- 自动向最近敌人发射\n- 180 秒计时，存活到时间即胜利\n- 杀怪掉宝石，经验条满弹出 3 选 1 升级（攻速/伤害/移速）\n- 敌人从屏幕外环形靠近\n\n## 视觉\n- 糖果/卡通怪物，无血腥\n\n## 交付\n- 计时 HUD + 升级弹窗 + 结束界面"
+}

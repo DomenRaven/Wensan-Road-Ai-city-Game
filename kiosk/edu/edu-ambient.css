@@ -1,0 +1,604 @@
+/* 星空背景 + 品类动画预览 · 与 edu-styles.css 配套 */
+
+/* —— 全流程星空 —— */
+.edu-starry-sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #060a16;
+}
+
+.edu-starry-gradient {
+  position: absolute;
+  inset: -8%;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -8%, rgba(48, 78, 142, 0.38) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 45% at 82% 72%, rgba(72, 48, 108, 0.18) 0%, transparent 52%),
+    linear-gradient(180deg, #0a1028 0%, #060a18 42%, #03050c 100%);
+  animation: edu-bg-shift 52s ease-in-out infinite alternate;
+}
+
+.edu-starry-nebula {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(56, 189, 248, 0.06) 0%, transparent 42%),
+    radial-gradient(circle at 72% 58%, rgba(120, 100, 180, 0.05) 0%, transparent 38%);
+  animation: edu-nebula-drift 36s ease-in-out infinite alternate;
+}
+
+@keyframes edu-bg-shift {
+  0% {
+    opacity: 1;
+    filter: brightness(1) saturate(1);
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.94;
+    filter: brightness(1.04) saturate(1.06);
+    transform: translate(0.6%, -0.4%) scale(1.02);
+  }
+  100% {
+    opacity: 0.9;
+    filter: brightness(0.98) saturate(0.96);
+    transform: translate(-0.5%, 0.5%) scale(1.01);
+  }
+}
+
+@keyframes edu-nebula-drift {
+  from { transform: translate(0, 0); opacity: 0.85; }
+  to { transform: translate(1.5%, -1%); opacity: 1; }
+}
+
+.edu-star {
+  position: absolute;
+  width: var(--star-size, 2px);
+  height: var(--star-size, 2px);
+  border-radius: 50%;
+  background: #f8fafc;
+  opacity: var(--star-opacity, 0.7);
+  box-shadow: 0 0 calc(var(--star-size, 2px) * 2) rgba(186, 230, 253, 0.55);
+  animation:
+    edu-star-twinkle var(--twinkle-dur, 3s) ease-in-out infinite,
+    edu-star-drift var(--drift-dur, 55s) ease-in-out infinite alternate;
+  animation-delay: var(--twinkle-delay, 0s), var(--drift-delay, 0s);
+  will-change: transform, opacity;
+}
+
+.edu-star--bright {
+  background: #e0f2fe;
+  box-shadow: 0 0 6px rgba(125, 211, 252, 0.9);
+}
+
+@keyframes edu-star-twinkle {
+  0%, 100% { opacity: calc(var(--star-opacity, 0.7) * 0.35); }
+  50% { opacity: var(--star-opacity, 0.7); }
+}
+
+@keyframes edu-star-drift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(var(--drift-x, 12px), var(--drift-y, 8px)); }
+}
+
+/* —— B3/B4 品类动画预览 —— */
+.genre-scene {
+  position: relative;
+  width: min(100%, 440px);
+  aspect-ratio: 16 / 11;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0e1638 0%, #070d22 52%, #040812 100%);
+  border: 1px solid rgba(56, 189, 248, 0.24);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.42),
+    inset 0 0 72px rgba(56, 189, 248, 0.07);
+}
+
+.genre-scene-caption {
+  color: #cbd5e1;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+/* 场景内星点层 */
+.gs-layer.gs-stars {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.85), transparent),
+    radial-gradient(1px 1px at 34% 42%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 58% 12%, rgba(186, 230, 253, 0.9), transparent),
+    radial-gradient(1px 1px at 78% 36%, rgba(255, 255, 255, 0.65), transparent),
+    radial-gradient(1px 1px at 22% 68%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1.5px 1.5px at 88% 72%, rgba(224, 242, 254, 0.8), transparent),
+    radial-gradient(1px 1px at 46% 82%, rgba(255, 255, 255, 0.5), transparent);
+  animation: gs-stars-pulse 4s ease-in-out infinite;
+}
+
+@keyframes gs-stars-pulse {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+/* 打飞机 */
+.gs-ship {
+  position: absolute;
+}
+
+.gs-ship--player {
+  left: 50%;
+  bottom: 12%;
+  width: 38px;
+  height: 46px;
+  margin-left: -19px;
+  background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 45%, #2563eb 100%);
+  clip-path: polygon(50% 0%, 8% 88%, 38% 72%, 62% 72%, 92% 88%);
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.85));
+  animation: gs-ship-bob 2.6s ease-in-out infinite;
+}
+
+.gs-ship--enemy {
+  width: 30px;
+  height: 34px;
+  background: linear-gradient(0deg, #fecaca 0%, #f87171 55%, #b91c1c 100%);
+  clip-path: polygon(50% 100%, 10% 8%, 90% 8%);
+  filter: drop-shadow(0 0 6px rgba(248, 113, 113, 0.7));
+}
+
+.gs-ship--enemy-a { left: 20%; animation: gs-enemy-fall 5.2s linear infinite; }
+.gs-ship--enemy-b { left: 66%; animation: gs-enemy-fall 6.8s linear infinite 1.4s; }
+
+.gs-laser {
+  position: absolute;
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #fef9c3, #38bdf8);
+  box-shadow: 0 0 8px #7dd3fc;
+}
+
+.gs-laser--a { left: calc(50% - 12px); animation: gs-laser-up 1.1s ease-in infinite; }
+.gs-laser--b { left: calc(50% + 8px); animation: gs-laser-up 1.1s ease-in infinite 0.4s; }
+
+.gs-spark {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fef08a 0%, transparent 70%);
+  animation: gs-spark-pop 5.2s ease-out infinite;
+}
+
+.gs-spark--a { left: 22%; top: 72%; }
+
+@keyframes gs-ship-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes gs-enemy-fall {
+  0% { top: -14%; opacity: 0; }
+  12% { opacity: 1; }
+  100% { top: 86%; opacity: 0.2; }
+}
+
+@keyframes gs-laser-up {
+  0% { bottom: 20%; opacity: 0; }
+  12% { opacity: 1; }
+  100% { bottom: 78%; opacity: 0; }
+}
+
+@keyframes gs-spark-pop {
+  0%, 78% { opacity: 0; transform: scale(0.4); }
+  82% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+/* 横版闯关 */
+.gs-ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  background: linear-gradient(180deg, #166534 0%, #14532d 100%);
+  border-top: 3px solid #4ade80;
+}
+
+.gs-platform {
+  position: absolute;
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #a16207, #854d0e);
+  border: 2px solid #fbbf24;
+}
+
+.gs-platform--a { left: 18%; bottom: 38%; width: 28%; }
+
+.gs-hero {
+  position: absolute;
+  width: 28px;
+  height: 36px;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, #fca5a5, #ef4444);
+  border: 2px solid #fecaca;
+}
+
+.gs-hero--jump {
+  left: 14%;
+  bottom: 22%;
+  animation: gs-hero-jump 2.8s ease-in-out infinite;
+}
+
+.gs-coin {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fef08a, #eab308);
+  box-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
+  animation: gs-coin-spin 1.6s linear infinite;
+}
+
+.gs-coin--a { left: 42%; bottom: 52%; }
+.gs-coin--b { left: 62%; bottom: 24%; animation-delay: 0.5s; }
+
+.gs-enemy--slime {
+  left: 72%;
+  bottom: 22%;
+  width: 32px;
+  height: 24px;
+  border-radius: 50% 50% 12px 12px;
+  background: linear-gradient(180deg, #86efac, #22c55e);
+  animation: gs-slime-wobble 1.8s ease-in-out infinite;
+}
+
+@keyframes gs-hero-jump {
+  0%, 100% { transform: translate(0, 0); }
+  35% { transform: translate(38%, -52px); }
+  55% { transform: translate(52%, -58px); }
+  75% { transform: translate(68%, 0); }
+}
+
+@keyframes gs-coin-spin {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.35); }
+}
+
+@keyframes gs-slime-wobble {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(1.12) translateY(-2px); }
+}
+
+/* 幸存者 */
+.gs-hero--survivor {
+  left: 50%;
+  top: 50%;
+  margin: -18px 0 0 -14px;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle at 35% 30%, #93c5fd, #2563eb);
+  animation: gs-survivor-dodge 3.2s ease-in-out infinite;
+}
+
+.gs-gem {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #a78bfa;
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px rgba(167, 139, 250, 0.9);
+  animation: gs-gem-pulse 1.8s ease-in-out infinite;
+}
+
+.gs-gem--a { left: 28%; top: 32%; }
+.gs-gem--b { left: 68%; top: 28%; animation-delay: 0.4s; }
+.gs-gem--c { left: 52%; top: 68%; animation-delay: 0.8s; }
+
+.gs-mob {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fca5a5, #dc2626);
+}
+
+.gs-mob--a { left: 18%; top: 58%; animation: gs-mob-chase 3.2s ease-in-out infinite; }
+.gs-mob--b { left: 74%; top: 52%; animation: gs-mob-chase 3.2s ease-in-out infinite 0.6s; }
+.gs-mob--c { left: 44%; top: 18%; animation: gs-mob-chase 3.2s ease-in-out infinite 1.2s; }
+
+@keyframes gs-survivor-dodge {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-24px, 12px); }
+  50% { transform: translate(18px, -16px); }
+  75% { transform: translate(22px, 14px); }
+}
+
+@keyframes gs-gem-pulse {
+  0%, 100% { opacity: 0.55; transform: rotate(45deg) scale(0.9); }
+  50% { opacity: 1; transform: rotate(45deg) scale(1.15); }
+}
+
+@keyframes gs-mob-chase {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-12px, 18px); }
+}
+
+/* 乒乓球 */
+.gs-table {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 22%;
+  bottom: 18%;
+  background: linear-gradient(180deg, #1d4ed8, #1e3a8a);
+  border-radius: 12px;
+  border: 3px solid #60a5fa;
+}
+
+.gs-net {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  bottom: 18%;
+  width: 4px;
+  margin-left: -2px;
+  background: repeating-linear-gradient(
+    180deg,
+    #e2e8f0 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.gs-paddle {
+  position: absolute;
+  width: 10px;
+  height: 44px;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #f87171, #dc2626);
+  top: 50%;
+  margin-top: -22px;
+}
+
+.gs-paddle--left { left: 12%; animation: gs-paddle-left 2.2s ease-in-out infinite; }
+.gs-paddle--right { right: 12%; animation: gs-paddle-right 2.2s ease-in-out infinite; }
+
+.gs-ball--ping {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #f8fafc);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  animation: gs-ball-rally 2.2s linear infinite;
+}
+
+@keyframes gs-paddle-left {
+  0%, 100% { transform: translateY(-18px); }
+  50% { transform: translateY(22px); }
+}
+
+@keyframes gs-paddle-right {
+  0%, 100% { transform: translateY(20px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes gs-ball-rally {
+  0% { left: 18%; top: 38%; }
+  25% { left: 48%; top: 28%; }
+  50% { left: 78%; top: 58%; }
+  75% { left: 48%; top: 62%; }
+  100% { left: 18%; top: 38%; }
+}
+
+/* 格斗 */
+.gs-arena-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 18%;
+  background: linear-gradient(180deg, #475569, #334155);
+}
+
+.gs-fighter {
+  position: absolute;
+  bottom: 18%;
+  width: 32px;
+  height: 48px;
+  border-radius: 10px 10px 6px 6px;
+}
+
+.gs-fighter--p1 {
+  left: 22%;
+  background: linear-gradient(180deg, #93c5fd, #2563eb);
+  animation: gs-fighter-punch 2.4s ease-in-out infinite;
+}
+
+.gs-fighter--p2 {
+  right: 22%;
+  background: linear-gradient(180deg, #fdba74, #ea580c);
+  animation: gs-fighter-hit 2.4s ease-in-out infinite;
+}
+
+.gs-hitfx--spark {
+  left: 50%;
+  bottom: 42%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  background: radial-gradient(circle, #fef08a 0%, transparent 70%);
+  animation: gs-hitfx-flash 2.4s ease-out infinite;
+}
+
+@keyframes gs-fighter-punch {
+  0%, 100% { transform: translateX(0); }
+  40% { transform: translateX(28px) scaleX(1.05); }
+  55% { transform: translateX(32px); }
+}
+
+@keyframes gs-fighter-hit {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(-8px) rotate(-6deg); }
+  60% { transform: translateX(-4px); }
+}
+
+@keyframes gs-hitfx-flash {
+  0%, 38%, 100% { opacity: 0; transform: scale(0.5); }
+  48% { opacity: 1; transform: scale(1.4); }
+}
+
+/* 跑酷 */
+.gs-ground--scroll {
+  background: repeating-linear-gradient(
+    90deg,
+    #334155 0 24px,
+    #1e293b 24px 48px
+  );
+  animation: gs-ground-scroll 1.6s linear infinite;
+}
+
+.gs-runner {
+  position: absolute;
+  left: 22%;
+  bottom: 22%;
+  width: 26px;
+  height: 34px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #fde68a, #f59e0b);
+  animation: gs-runner-bounce 0.55s ease-in-out infinite;
+}
+
+.gs-obstacle--a {
+  position: absolute;
+  right: -20%;
+  bottom: 22%;
+  width: 22px;
+  height: 28px;
+  background: #94a3b8;
+  border-radius: 4px;
+  animation: gs-obstacle-pass 2.4s linear infinite;
+}
+
+.gs-coin--run {
+  position: absolute;
+  right: -10%;
+  bottom: 42%;
+  animation: gs-obstacle-pass 2.4s linear infinite 0.8s, gs-coin-spin 1.2s linear infinite;
+}
+
+@keyframes gs-ground-scroll {
+  from { background-position: 0 0; }
+  to { background-position: -48px 0; }
+}
+
+@keyframes gs-runner-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gs-obstacle-pass {
+  0% { transform: translateX(0); opacity: 0; }
+  8% { opacity: 1; }
+  100% { transform: translateX(-420px); opacity: 1; }
+}
+
+/* 赛车 */
+.gs-road {
+  position: absolute;
+  left: 28%;
+  right: 28%;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border-left: 4px solid #f8fafc;
+  border-right: 4px solid #f8fafc;
+}
+
+.gs-road-line {
+  position: absolute;
+  left: 50%;
+  width: 6px;
+  margin-left: -3px;
+  height: 28px;
+  background: #fef08a;
+  border-radius: 3px;
+  animation: gs-road-dash 1.1s linear infinite;
+}
+
+.gs-road-line--a { top: -28px; }
+.gs-road-line--b { top: 40%; animation-delay: 0.55s; }
+
+.gs-car {
+  position: absolute;
+  left: 50%;
+  width: 34px;
+  height: 56px;
+  margin-left: -17px;
+  border-radius: 10px 10px 6px 6px;
+}
+
+.gs-car--player {
+  bottom: 14%;
+  background: linear-gradient(180deg, #38bdf8, #1d4ed8);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
+  animation: gs-car-weave 2.8s ease-in-out infinite;
+}
+
+.gs-car--npc {
+  top: 8%;
+  background: linear-gradient(180deg, #f87171, #b91c1c);
+  animation: gs-car-npc 2.8s linear infinite;
+}
+
+@keyframes gs-road-dash {
+  from { transform: translateY(-40px); }
+  to { transform: translateY(320px); }
+}
+
+@keyframes gs-car-weave {
+  0%, 100% { transform: translateX(-18px); }
+  50% { transform: translateX(18px); }
+}
+
+@keyframes gs-car-npc {
+  0% { transform: translateY(0); opacity: 0.9; }
+  100% { transform: translateY(280px); opacity: 0.2; }
+}
+
+/* 默认 */
+.gs-orbit-icon {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  font-size: 3rem;
+  margin: -24px 0 0 -24px;
+  animation: gs-orbit-spin 6s linear infinite;
+}
+
+.gs-sparkle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #fef08a;
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: gs-sparkle-float 3s ease-in-out infinite;
+}
+
+.gs-sparkle--a { left: 24%; top: 30%; }
+.gs-sparkle--b { left: 68%; top: 24%; animation-delay: 0.7s; }
+.gs-sparkle--c { left: 52%; top: 70%; animation-delay: 1.3s; }
+
+@keyframes gs-orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes gs-sparkle-float {
+  0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.4; }
+  50% { transform: translateY(-12px) scale(1.2); opacity: 1; }
+}

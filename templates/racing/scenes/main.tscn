@@ -1,0 +1,298 @@
+[gd_scene load_steps=2 format=3 uid="uid://racing_main"]
+
+[ext_resource type="Script" path="res://core/game_manager.gd" id="1_main"]
+
+[node name="Main" type="Control" groups=["game_manager"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.529412, 0.807843, 0.921569, 1)
+
+[node name="GameHost" type="SubViewportContainer" parent="."]
+layout_mode = 0
+offset_right = 540.0
+offset_bottom = 960.0
+stretch = false
+
+[node name="GameViewport" type="SubViewport" parent="GameHost"]
+handle_input_locally = true
+size = Vector2i(540, 960)
+render_target_update_mode = 4
+
+[node name="GameRoot" type="Node2D" parent="GameHost/GameViewport"]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="GameHost/GameViewport"]
+
+[node name="HUD" type="Control" parent="GameHost/GameViewport/CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TimePanel" type="PanelContainer" parent="GameHost/GameViewport/CanvasLayer/HUD"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 120.0
+offset_bottom = 72.0
+
+[node name="VBox" type="VBoxContainer" parent="GameHost/GameViewport/CanvasLayer/HUD/TimePanel"]
+layout_mode = 2
+
+[node name="TimeTitle" type="Label" parent="GameHost/GameViewport/CanvasLayer/HUD/TimePanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "时间"
+
+[node name="TimeValue" type="Label" parent="GameHost/GameViewport/CanvasLayer/HUD/TimePanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "90s"
+
+[node name="LapPanel" type="PanelContainer" parent="GameHost/GameViewport/CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = 72.0
+grow_horizontal = 0
+
+[node name="VBox" type="VBoxContainer" parent="GameHost/GameViewport/CanvasLayer/HUD/LapPanel"]
+layout_mode = 2
+
+[node name="LapTitle" type="Label" parent="GameHost/GameViewport/CanvasLayer/HUD/LapPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 12
+text = "圈数"
+horizontal_alignment = 2
+
+[node name="LapValue" type="Label" parent="GameHost/GameViewport/CanvasLayer/HUD/LapPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 24
+text = "0"
+horizontal_alignment = 2
+
+[node name="HelpLabel" type="Label" parent="GameHost/GameViewport/CanvasLayer/HUD"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -28.0
+offset_right = 220.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+text = "← → 转向 · 空格 加速 · F11 全屏"
+
+[node name="StartScreen" type="Control" parent="GameHost/GameViewport/CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="GameHost/GameViewport/CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.529412, 0.807843, 0.921569, 0.95)
+
+[node name="TitleLabel" type="Label" parent="GameHost/GameViewport/CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.27, 0, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+text = "K12 欢乐赛车"
+
+[node name="SubtitleLabel" type="Label" parent="GameHost/GameViewport/CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -95.0
+offset_right = 180.0
+offset_bottom = -70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+text = "快乐竞速，挑战极限！"
+
+[node name="HintPanel" type="PanelContainer" parent="GameHost/GameViewport/CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -60.0
+offset_right = 160.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="GameHost/GameViewport/CanvasLayer/StartScreen/HintPanel"]
+layout_mode = 2
+
+[node name="HintTitle" type="Label" parent="GameHost/GameViewport/CanvasLayer/StartScreen/HintPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "操作说明"
+
+[node name="Hint1" type="Label" parent="GameHost/GameViewport/CanvasLayer/StartScreen/HintPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+text = "← →  左右转向"
+
+[node name="Hint2" type="Label" parent="GameHost/GameViewport/CanvasLayer/StartScreen/HintPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+text = "空格  长按加速"
+
+[node name="Hint3" type="Label" parent="GameHost/GameViewport/CanvasLayer/StartScreen/HintPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.1, 1)
+text = "目标  90秒跑出最多圈数"
+
+[node name="StartButton" type="Button" parent="GameHost/GameViewport/CanvasLayer/StartScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 60.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 18
+text = "开始游戏"
+
+[node name="GameOverScreen" type="Control" parent="GameHost/GameViewport/CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.529412, 0.807843, 0.921569, 0.92)
+
+[node name="Panel" type="PanelContainer" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -100.0
+offset_right = 160.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen/Panel"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.27, 0, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
+text = "时间到！"
+
+[node name="ScoreTitle" type="Label" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+text = "你的成绩："
+
+[node name="LapValue" type="Label" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.1, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+text = "0 圈"
+
+[node name="RetryButton" type="Button" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "再玩一次"
+
+[node name="MenuButton" type="Button" parent="GameHost/GameViewport/CanvasLayer/GameOverScreen/Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "返回菜单"

@@ -1,0 +1,38 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "d6225ae4f39ee5eeb2d8fdcbc46e7f65",
+  "data": {
+    "name": "K12跨栏竞速小游戏",
+    "appDesc": "K12田径冲刺是一款面向6-18岁学生的浏览器跨栏竞速小游戏，玩家通过键盘控制卡通运动员在60秒内跨越栏架到达终点，强调跨栏节奏与时机把握。",
+    "type": "GAME",
+    "appId": "app-cik5bsgcs7b5",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T21:40:31.172+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T21:34:10.679+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cik9x39km96o",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 田径冲刺】浏览器小游戏，参考《Mario & Sonic 奥运会》《SpeedRunners》跨栏模式与经典跨栏小游戏。\n\n## 参考要点\n- 奥运径赛：短跑计时、跨栏节奏\n- SpeedRunners：侧视加速竞争感\n- 跨栏：固定栏位间距、跳跃时机\n\n## 核心玩法\n- ← → 加速，空格跨栏（≤3 键）\n- 60 秒跑到终点，撞栏减速但不立即失败\n- 显示计时与距离\n- 到达终点显示成绩\n\n## 视觉\n- 卡通跑道与运动员\n\n## 交付\n- 开始倒计时→跑→终点成绩",
+    "labelColor": {
+      "colorCode": "#FFF2F7",
+      "colorCodeSecondary": "#FFBFD5",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_5.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

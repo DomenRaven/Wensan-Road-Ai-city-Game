@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://platformer_level01"]
+
+[ext_resource type="Script" path="res://core/level_01.gd" id="1_level"]
+[ext_resource type="PackedScene" uid="uid://platformer_player" path="res://scenes/player.tscn" id="2_player"]
+
+[node name="Level01" type="Node2D"]
+script = ExtResource("1_level")
+
+[node name="Background" type="Sprite2D" parent="."]
+
+[node name="Platforms" type="Node2D" parent="."]
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="Collectibles" type="Node2D" parent="."]
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Projectiles" type="Node2D" parent="."]
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(80, 328)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(80, 328)

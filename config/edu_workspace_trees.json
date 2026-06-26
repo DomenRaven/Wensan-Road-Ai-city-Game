@@ -1,0 +1,99 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-24",
+  "note": "B5 伪工作区文件树 · 自上而下浮现顺序 · 路径对齐 templates/{genre}/",
+  "genres": {
+    "platformer": {
+      "display_name": "平台跳跃",
+      "files": [
+        "project.godot",
+        "config/game_config.json",
+        "core/game_manager.gd",
+        "core/player_platformer.gd",
+        "core/level_01.gd",
+        "core/patrol_enemy.gd",
+        "scenes/main.tscn",
+        "scenes/level_01.tscn"
+      ]
+    },
+    "shmup": {
+      "display_name": "街机射击",
+      "files": [
+        "project.godot",
+        "config/game_config.json",
+        "core/game_manager.gd",
+        "core/game_area.gd",
+        "core/player_ship.gd",
+        "core/enemy_ship.gd",
+        "scenes/main.tscn",
+        "scenes/game.tscn"
+      ]
+    },
+    "survivor": {
+      "display_name": "割草幸存者",
+      "files": [
+        "project.godot",
+        "config/game_config.json",
+        "core/game_manager.gd",
+        "core/survivor_arena.gd",
+        "core/player_survivor.gd",
+        "core/horde_enemy.gd",
+        "core/xp_gem.gd",
+        "scenes/main.tscn",
+        "scenes/game.tscn"
+      ]
+    },
+    "pingpong": {
+      "display_name": "乒乓对决",
+      "files": [
+        "project.godot",
+        "config/game_config.json",
+        "core/game_manager.gd",
+        "core/ball.gd",
+        "core/paddle.gd",
+        "core/match_controller.gd",
+        "scenes/main.tscn",
+        "scenes/game.tscn"
+      ]
+    },
+    "fighting": {
+      "display_name": "格斗擂台",
+      "files": [
+        "project.godot",
+        "config/game_config.json",
+        "core/game_manager.gd",
+        "core/fight_arena.gd",
+        "core/player_fighter.gd",
+        "core/enemy_fighter.gd",
+        "scenes/main.tscn",
+        "scenes/game.tscn"
+      ]
+    },
+    "parkour": {
+      "display_name": "跑酷冲刺",
+      "files": [
+        "project.godot",
+        "config/game_config.json",
+        "core/game_manager.gd",
+        "core/player_runner.gd",
+        "core/auto_runner.gd",
+        "core/obstacle.gd",
+        "scenes/main.tscn",
+        "scenes/game.tscn"
+      ]
+    },
+    "racing": {
+      "display_name": "欢乐赛车",
+      "files": [
+        "project.godot",
+        "config/game_config.json",
+        "core/game_manager.gd",
+        "core/car_topdown.gd",
+        "core/track_runner.gd",
+        "core/lap_counter.gd",
+        "scenes/main.tscn",
+        "scenes/game.tscn"
+      ]
+    }
+  }
+}

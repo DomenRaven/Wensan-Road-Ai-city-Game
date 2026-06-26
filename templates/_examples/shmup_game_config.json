@@ -1,0 +1,52 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "shmup",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "雷霆小卫士"
+  },
+  "core_locked": true,
+  "tuning": {
+    "player": {
+      "speed": 260,
+      "max_hp": 3,
+      "bullet_interval_ms": 120,
+      "bullet_speed": 520
+    },
+    "enemy": {
+      "speed": 80,
+      "bullet_speed": 180,
+      "hp": 1
+    },
+    "wave": {
+      "enemy_count": 6,
+      "target_waves": 5
+    },
+    "spawn": {
+      "interval_ms": 1200
+    },
+    "win": {
+      "mode": "waves",
+      "score_target": 1200
+    },
+    "enabled_skills": [],
+    "skills": {
+      "bomb": { "cooldown_scale": 1.0 },
+      "laser_beam": { "cooldown_scale": 1.0 }
+    }
+  },
+  "theme": {
+    "asset_pack": "space-shooter-redux",
+    "player_sprite": "res://assets/kenney/space/PNG/playerShip1_blue.png",
+    "enemy_sprite": "res://assets/kenney/space/PNG/ufoBlue.png",
+    "player_bullet_sprite": "res://assets/kenney/space/PNG/Lasers/laserBlue01.png",
+    "enemy_bullet_sprite": "res://assets/kenney/space/PNG/Lasers/laserRed01.png",
+    "background_color": "#0a0a2e",
+    "title": "雷霆小卫士"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

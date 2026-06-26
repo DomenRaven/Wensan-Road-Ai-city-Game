@@ -1,0 +1,149 @@
+{
+  "version": "1.2",
+  "updated_at": "2026-06-23",
+  "doc_ref": "开发文档/模板引擎/AI创作引导流程_v1.0.md",
+  "target_audience": "K12 · 展厅触控 · 14 岁以下",
+  "implementation_tiers": {
+    "tier_0_current": {
+      "label": "开发者灰盒（现状）",
+      "files": ["kiosk/index.html", "kiosk/wizard.js"],
+      "notes": "HTML 表单 + JSON recap · 非产品 UI"
+    },
+    "tier_1_track_a_mvp": {
+      "label": "线 A · D10 保底",
+      "deadline": "2026-06-26",
+      "required_screens": ["lobby_genre_grid", "quick_name", "play_launch"]
+    },
+    "tier_2_track_b_full": {
+      "label": "线 B · 完整 S0–S9",
+      "deadline": "2026-06-27",
+      "extends": "tier_1_track_a_mvp"
+    }
+  },
+  "layout": {
+    "type": "two_column_fixed",
+    "header": {
+      "progress_dots": true,
+      "progress_format": "{current}/8",
+      "display_name_visible_from": "S0"
+    },
+    "left": "step_content_large_touch_targets",
+    "right": "live_preview_panel"
+  },
+  "touch_constraints": {
+    "min_button_height_px": 48,
+    "min_card_height_px": 72,
+    "max_text_input_length": 20,
+    "font_stack": ["Source Han Sans CN", "Segoe UI", "sans-serif"]
+  },
+  "screens": {
+    "S0": {
+      "title": "给你的游戏起个名字",
+      "required": true,
+      "preview_update": false,
+      "components": ["text_input", "suggested_names_chips"]
+    },
+    "S1": {
+      "title": "选择游戏类型",
+      "required": true,
+      "preview_update": true,
+      "preview_delay_ms_max": 3000,
+      "components": ["genre_grid_featured", "genre_preview_image"],
+      "forbidden": ["select_dropdown_only"]
+    },
+    "S2": {
+      "title": "你想怎么玩？",
+      "components": ["variant_cards_with_subtitle"]
+    },
+    "S3": {
+      "title": "选择风格",
+      "preview_update": true,
+      "components": ["style_cards", "optional_mood_keywords"]
+    },
+    "S4": {
+      "title": "创建人物",
+      "preview_update": true,
+      "components": ["character_name", "accent_color_picker"]
+    },
+    "S5": {
+      "title": "创建道具",
+      "components": ["prop_checkboxes_max_4"]
+    },
+    "S6": {
+      "title": "动作手感",
+      "preview_update": true,
+      "components": ["feel_cards_easy_balanced_challenge"]
+    },
+    "S7": {
+      "title": "小技能",
+      "components": ["skill_checkboxes_max_2"]
+    },
+    "R": {
+      "title": "你的创作配方",
+      "forbidden": ["raw_json_dump"],
+      "required": ["readable_recap_list", "work_card_thumbnail", "confirm_and_edit_buttons"]
+    },
+    "S8": {
+      "title": "AI 正在制作",
+      "forbidden": ["single_mark_button_only"],
+      "required": ["call_generate_api", "step_progress_copy", "fallback_demo_preset_hint"]
+    },
+    "S9": {
+      "title": "试玩",
+      "required": ["display_name_in_header", "launch_button", "workspace_or_l0_fallback_message"]
+    }
+  },
+  "featured_genres": {
+    "source": "config/miaoda_parity_r2_registry.json",
+    "note": "展厅 S1 仅展示用户验收通过的 A 深 R2 精选 7 款",
+    "slugs": [
+      "platformer",
+      "shmup",
+      "survivor",
+      "pingpong",
+      "fighting",
+      "parkour",
+      "racing"
+    ],
+    "display_name_overrides": {
+      "shmup": "街机飞机射击",
+      "racing": "欢乐赛车"
+    },
+    "subtitle": "点选一张卡片 · 共 7 款精选游戏（已验收）"
+  },
+  "b_chain_isolation": {
+    "templates_readonly": true,
+    "writes_only_to": "workspace/{session_id}/",
+    "session_storage_key": "gameforge_kiosk_session_id",
+    "startup_api": "GET /bootstrap",
+    "release_api": "POST /sessions/{session_id}/release",
+    "on_page_hide": "sendBeacon release · 清理 workspace 副本",
+    "user_isolation": "每 session 独立 copytree · config 仅 merge 到 workspace",
+    "orphan_cleanup": "backend 启动时清理无活跃 session 的 workspace 目录"
+  },
+  "track_a_shortcut_flow": {
+    "enabled": true,
+    "steps": ["S0_optional", "S1_required", "S9_play_l0"],
+    "skip": ["S2", "S3", "S4", "S5", "S6", "S7", "R", "S8"],
+    "launch_target": "templates/{genre}/",
+    "ui_copy": "先体验经典版 · 完整创作请走完整向导"
+  },
+  "api_base": "http://127.0.0.1:8000",
+  "static_assets": {
+    "previews": "assets/previews/{genre}.png",
+    "sfx": "assets/audio_paths.json",
+    "skills": "config/optional_skills.json"
+  },
+  "colors": {
+    "background": "#0f172a",
+    "panel": "#1e293b",
+    "accent": "#38bdf8",
+    "success": "#4ade80",
+    "danger": "#f87171"
+  },
+  "entry_modes": {
+    "a_chain": "/kiosk/",
+    "b_legacy": "/kiosk/ + btnFullWizard",
+    "edu": "/kiosk/edu/ | /kiosk/?mode=edu"
+  }
+}

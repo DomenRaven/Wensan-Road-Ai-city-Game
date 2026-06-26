@@ -1,0 +1,52 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "pingpong",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "校园乒乓赛"
+  },
+  "core_locked": true,
+  "tuning": {
+    "physics": {
+      "bounce_mode": "paddle_angle",
+      "speed_ramp": "every_4_hits"
+    },
+    "rules": {
+      "points_to_win": 5
+    },
+    "table": {
+      "margin_x": 40,
+      "margin_y": 60
+    },
+    "ball": {
+      "base_speed": 420,
+      "max_speed": 680,
+      "radius": 8
+    },
+    "paddle": {
+      "speed": 360,
+      "height": 120
+    },
+    "ai": {
+      "reaction_ms": 130
+    },
+    "enabled_skills": ["power_smash", "curve_ball"],
+    "skills": {
+      "power_smash": { "cooldown_scale": 0.9 },
+      "curve_ball": { "cooldown_scale": 1.0 }
+    }
+  },
+  "theme": {
+    "asset_pack": "sports-pack",
+    "table_sprite": "res://assets/kenney/sports-pack/Tilesheet/groundBeige_blue.png",
+    "ball_sprite": "res://assets/kenney/sports-pack/PNG/Equipment/ball_tennis1.png",
+    "paddle_sprite": "res://assets/kenney/sports-pack/PNG/Equipment/racket_wood.png",
+    "background_color": "#1a472a",
+    "title": "校园乒乓赛"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

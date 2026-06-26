@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "genre": "fighting",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "K12横版格斗"
+  },
+  "core_locked": true,
+  "core": {
+    "combat": {
+      "frame_rate": 60,
+      "hitbox_mode": "range_on_active_frames",
+      "rounds": "best_of_1"
+    },
+    "ai": {
+      "mode": "reaction_timer"
+    }
+  },
+  "tuning": {
+    "combat": {
+      "max_hp": 100,
+      "max_mp": 100,
+      "player_speed": 200,
+      "dash_speed": 600,
+      "dash_duration_ms": 200,
+      "dash_cooldown_ms": 3000,
+      "double_click_ms": 300,
+      "light_damage": 5,
+      "heavy_damage": 15,
+      "ultimate_damage": 30,
+      "mp_gain_on_hit": 15,
+      "mp_gain_on_block": 5,
+      "block_reduction_normal": 0.3,
+      "block_reduction_ultimate": 0.5,
+      "hit_range_light": 80,
+      "hit_range_ultimate": 120,
+      "knockback_light": 30,
+      "knockback_ultimate": 100,
+      "floor_surface_y": 318,
+      "fighter_body_y": 306
+    },
+    "ai": {
+      "tick_interval_sec": 0.6,
+      "attack_range_px": 80,
+      "move_speed_scale": 0.8
+    },
+    "enabled_skills": [],
+    "skills": {}
+  },
+  "theme": {
+    "asset_pack": "Free_Warrior_Pixel_Art_Sprite_Sheets",
+    "warrior_blue": "Warrior_2",
+    "warrior_red": "Warrior_3",
+    "bg_top": "#1A237E",
+    "bg_bottom": "#0D113A",
+    "floor_color": "#FF5722",
+    "title": "K12 街机格斗",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactPunch_medium_000.ogg",
+        "block": "res://assets/kenney/impact-sounds/Audio/impactMetal_light_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 8
+  }
+}

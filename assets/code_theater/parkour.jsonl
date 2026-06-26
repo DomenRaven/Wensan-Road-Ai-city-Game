@@ -1,0 +1,66 @@
+{"delay_ms": 0, "text": "// AI 正在写入 config/game_config.json", "highlight": false}
+{"delay_ms": 713, "text": "{", "highlight": false}
+{"delay_ms": 624, "text": "  \"tuning\": {", "highlight": false}
+{"delay_ms": 624, "text": "    \"runner\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"speed\": 300,", "highlight": true, "anchor_id": "run_speed"}
+{"delay_ms": 535, "text": "      \"speed_accel\": 5", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"jump\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"velocity\": -760,", "highlight": true, "anchor_id": "jump"}
+{"delay_ms": 535, "text": "      \"max_fall_speed\": 900", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"physics\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"gravity\": 1500", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"obstacle\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"min_gap_ms\": 2000,", "highlight": true, "anchor_id": "obstacle_gap"}
+{"delay_ms": 535, "text": "      \"max_gap_ms\": 4000", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"collectible\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"min_gap_ms\": 1500,", "highlight": false}
+{"delay_ms": 535, "text": "      \"max_gap_ms\": 3500", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"enabled_skills\": [],", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 535, "text": "    \"skills\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"double_jump\": { \"cooldown_scale\": 1.0 },", "highlight": false}
+{"delay_ms": 535, "text": "      \"slide\": { \"cooldown_scale\": 1.0 }", "highlight": false}
+{"delay_ms": 535, "text": "    }", "highlight": false}
+{"delay_ms": 535, "text": "  }", "highlight": false}
+{"delay_ms": 535, "text": "}", "highlight": false}
+{"delay_ms": 1426, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/player_runner.gd", "highlight": false}
+{"delay_ms": 713, "text": "extends CharacterBody2D", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    var jump_cfg = tuning.get(\"jump\", {})", "highlight": false}
+{"delay_ms": 802, "text": "    _jump_velocity = jump_cfg.get(\"velocity\", _jump_velocity)", "highlight": true, "anchor_id": "jump"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _handle_input() -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    if Input.is_action_just_pressed(\"jump\"):", "highlight": true, "anchor_id": "player_jump"}
+{"delay_ms": 891, "text": "        velocity.y = _jump_velocity", "highlight": true, "anchor_id": "jump"}
+{"delay_ms": 624, "text": "        ThemeSoundUtil.play(self, \"impact\", \"jump\")", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _start_slide() -> void:", "highlight": true, "anchor_id": "start_slide"}
+{"delay_ms": 624, "text": "    _is_sliding = true", "highlight": true, "anchor_id": "start_slide"}
+{"delay_ms": 624, "text": "    velocity = Vector2.ZERO", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/obstacle_spawner.gd — 障碍间距", "highlight": false}
+{"delay_ms": 713, "text": "func setup(scroll_speed, min_gap_ms, max_gap_ms) -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    _min_gap_ms = min_gap_ms", "highlight": true, "anchor_id": "obstacle_gap"}
+{"delay_ms": 891, "text": "    var gap_ms = randi_range(int(_min_gap_ms * scale), ...)", "highlight": true, "anchor_id": "obstacle_gap"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/auto_runner.gd — 跑步与金币", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    _runner_speed = runner_cfg.get(\"speed\", _runner_speed)", "highlight": true, "anchor_id": "run_speed"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _on_collectible_collected(kind: int) -> void:", "highlight": true, "anchor_id": "collect_coin"}
+{"delay_ms": 802, "text": "    if kind == CollectibleScript.CollectibleKind.COIN:", "highlight": true, "anchor_id": "coin_pickup"}
+{"delay_ms": 891, "text": "        _coins += amount", "highlight": true, "anchor_id": "collect_coin"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# 小技能开关", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"double_jump\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 空中再跳一次", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"slide\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 滑铲钻过低障碍", "highlight": false}
+{"delay_ms": 891, "text": "", "highlight": false}
+{"delay_ms": 1240, "text": "// 你的无尽跑酷游戏配置完成！", "highlight": false}

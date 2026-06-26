@@ -1,0 +1,49 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "parkour",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "极速跑酷"
+  },
+  "core_locked": true,
+  "tuning": {
+    "runner": {
+      "speed": 240
+    },
+    "jump": {
+      "velocity": -420,
+      "max_fall_speed": 520
+    },
+    "obstacle": {
+      "density": 0.6,
+      "min_gap_px": 180
+    },
+    "round": {
+      "duration_sec": 60
+    },
+    "prefab_weights": {
+      "single": 0.7,
+      "short": 0.3,
+      "low": 0.25
+    },
+    "enabled_skills": ["double_jump", "slide"],
+    "skills": {
+      "double_jump": { "cooldown_scale": 1.0 },
+      "slide": { "cooldown_scale": 0.9 }
+    }
+  },
+  "theme": {
+    "asset_pack": "platformer-art-deluxe",
+    "player_sprite": "res://assets/kenney/platformer-art-deluxe/Player/p1_walk/PNG/p1_walk01.png",
+    "platform_sprite": "res://assets/kenney/platformer-art-deluxe/Tiles/grassHalf.png",
+    "obstacle_sprite": "res://assets/kenney/platformer-art-deluxe/Tiles/box.png",
+    "low_obstacle_sprite": "res://assets/kenney/platformer-art-deluxe/Tiles/brickWall.png",
+    "background_color": "#6eb5ff",
+    "title": "极速跑酷"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

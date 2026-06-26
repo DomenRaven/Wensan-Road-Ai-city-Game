@@ -1,0 +1,69 @@
+{"delay_ms": 0, "text": "// AI 正在写入 config/game_config.json", "highlight": false}
+{"delay_ms": 713, "text": "{", "highlight": false}
+{"delay_ms": 624, "text": "  \"tuning\": {", "highlight": false}
+{"delay_ms": 624, "text": "    \"player\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"speed\": 300,", "highlight": true, "anchor_id": "player_speed"}
+{"delay_ms": 802, "text": "      \"max_hp\": 1,", "highlight": true, "anchor_id": "hit"}
+{"delay_ms": 891, "text": "      \"bullet_interval_ms\": 200,", "highlight": true, "anchor_id": "fire"}
+{"delay_ms": 624, "text": "      \"bullet_speed\": 500", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"enemy\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"bullet_speed\": 210,", "highlight": false}
+{"delay_ms": 535, "text": "      \"aim_cone_deg\": 120", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"spawn\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"interval_ms\": 1500,", "highlight": true, "anchor_id": "spawn_rate"}
+{"delay_ms": 535, "text": "      \"min_interval_ms\": 500", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"boss\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"first_score\": 500,", "highlight": false}
+{"delay_ms": 535, "text": "      \"score_step\": 1000", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"powerup\": {", "highlight": false}
+{"delay_ms": 891, "text": "      \"duration_sec\": 15,", "highlight": true, "anchor_id": "pickup"}
+{"delay_ms": 535, "text": "      \"fall_speed\": 100", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"enabled_skills\": [],", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 535, "text": "    \"skills\": {", "highlight": false}
+{"delay_ms": 535, "text": "      \"bomb\": { \"cooldown_scale\": 1.0 },", "highlight": false}
+{"delay_ms": 535, "text": "      \"laser_beam\": { \"cooldown_scale\": 1.0 }", "highlight": false}
+{"delay_ms": 535, "text": "    }", "highlight": false}
+{"delay_ms": 535, "text": "  }", "highlight": false}
+{"delay_ms": 535, "text": "}", "highlight": false}
+{"delay_ms": 1426, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/player_ship.gd", "highlight": false}
+{"delay_ms": 713, "text": "extends Area2D", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _apply_tuning() -> void:", "highlight": false}
+{"delay_ms": 624, "text": "    var tuning = GameConfig.get_tuning()", "highlight": false}
+{"delay_ms": 713, "text": "    var player_cfg = tuning.get(\"player\", {})", "highlight": false}
+{"delay_ms": 802, "text": "    _speed = player_cfg.get(\"speed\", _speed)", "highlight": true, "anchor_id": "player_speed"}
+{"delay_ms": 891, "text": "    _bullet_interval_ms = player_cfg.get(\"bullet_interval_ms\", 200)", "highlight": true, "anchor_id": "fire"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func _handle_auto_shoot(delta: float) -> void:", "highlight": true, "anchor_id": "auto_shoot"}
+{"delay_ms": 624, "text": "    _fire_timer += delta", "highlight": false}
+{"delay_ms": 713, "text": "    var interval_ms = _bullet_interval_ms", "highlight": true, "anchor_id": "fire"}
+{"delay_ms": 624, "text": "    if _fire_timer < interval_sec:", "highlight": false}
+{"delay_ms": 624, "text": "        return", "highlight": false}
+{"delay_ms": 713, "text": "    _fire_timer = 0.0", "highlight": false}
+{"delay_ms": 802, "text": "    _fire_bullet(0.0)", "highlight": true, "anchor_id": "auto_shoot"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func take_hit() -> void:", "highlight": true, "anchor_id": "take_hit"}
+{"delay_ms": 624, "text": "    if _invincible_timer > 0.0:", "highlight": false}
+{"delay_ms": 624, "text": "        return", "highlight": false}
+{"delay_ms": 802, "text": "    _hp -= 1", "highlight": true, "anchor_id": "hit"}
+{"delay_ms": 624, "text": "    _invincible_timer = INVINCIBLE_SEC", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func apply_powerup(powerup_name: String) -> void:", "highlight": true, "anchor_id": "apply_powerup"}
+{"delay_ms": 802, "text": "    match powerup_name:", "highlight": true, "anchor_id": "pickup"}
+{"delay_ms": 624, "text": "        \"fireRate\": _has_fire_rate_up = true", "highlight": false}
+{"delay_ms": 624, "text": "        \"doubleShot\": _is_double_shot = true", "highlight": false}
+{"delay_ms": 624, "text": "        \"shield\": _has_shield = true", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# 小技能开关", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"bomb\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 清屏炸弹", "highlight": false}
+{"delay_ms": 802, "text": "if GameConfig.has_skill(\"laser_beam\"):", "highlight": true, "anchor_id": "enabled_skills"}
+{"delay_ms": 624, "text": "    # 穿透激光", "highlight": false}
+{"delay_ms": 713, "text": "", "highlight": false}
+{"delay_ms": 879, "text": "// 你的街机飞机射击游戏配置完成！", "highlight": false}

@@ -1,0 +1,347 @@
+{
+  "updated_at": "2026-06-22T13:04:14.974950+00:00",
+  "root": "assets",
+  "entries": [
+    {
+      "id": "kenney/platformer-pack-redux",
+      "url": "https://opengameart.org/sites/default/files/Platformer%20Pack%20Redux%20%28360%20assets%29.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "platformer",
+        "parkour",
+        "fighting"
+      ],
+      "status": "skipped_exists",
+      "bytes": 4264490,
+      "extracted_to": "assets\\kenney\\platformer-pack-redux\\extracted"
+    },
+    {
+      "id": "kenney/platformer-art-deluxe",
+      "url": "https://opengameart.org/sites/default/files/platformerGraphicsDeluxe_Updated.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "platformer",
+        "parkour"
+      ],
+      "status": "skipped_exists",
+      "bytes": 2193188,
+      "extracted_to": "assets\\kenney\\platformer-art-deluxe\\extracted"
+    },
+    {
+      "id": "kenney/pixel-platformer",
+      "url": "https://opengameart.org/sites/default/files/kenney_pixel-platformer.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "platformer",
+        "life_sim"
+      ],
+      "status": "skipped_exists",
+      "bytes": 260312,
+      "extracted_to": "assets\\kenney\\pixel-platformer\\extracted"
+    },
+    {
+      "id": "kenney/space-shooter-redux",
+      "url": "https://opengameart.org/sites/default/files/SpaceShooterRedux.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "shooter",
+        "shmup"
+      ],
+      "status": "skipped_exists",
+      "bytes": 1108776,
+      "extracted_to": "assets\\kenney\\space-shooter-redux\\extracted"
+    },
+    {
+      "id": "kenney/topdown-shooter",
+      "url": "https://opengameart.org/sites/default/files/topdown-shooter.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "shooter",
+        "survivor"
+      ],
+      "status": "skipped_exists",
+      "bytes": 2626248,
+      "extracted_to": "assets\\kenney\\topdown-shooter\\extracted"
+    },
+    {
+      "id": "kenney/tower-defense-topdown",
+      "url": "https://opengameart.org/sites/default/files/Tower%20Defense%20%28top-down%29.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "tower_defense"
+      ],
+      "status": "skipped_exists",
+      "bytes": 3298551,
+      "extracted_to": "assets\\kenney\\tower-defense-topdown\\extracted"
+    },
+    {
+      "id": "kenney/tower-defense-kit-3d",
+      "url": "https://opengameart.org/sites/default/files/kenney_tower-defense-kit.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "tower_defense"
+      ],
+      "status": "skipped_exists",
+      "bytes": 5257039,
+      "extracted_to": "assets\\kenney\\tower-defense-kit-3d\\extracted"
+    },
+    {
+      "id": "kenney/racing-pack",
+      "url": "https://opengameart.org/sites/default/files/racing-pack.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "racing",
+        "sports_race"
+      ],
+      "status": "skipped_exists",
+      "bytes": 2511705,
+      "extracted_to": "assets\\kenney\\racing-pack\\extracted"
+    },
+    {
+      "id": "kenney/sports-pack",
+      "url": "https://opengameart.org/sites/default/files/kenney_sportsPack.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "pingpong",
+        "sports_race"
+      ],
+      "status": "skipped_exists",
+      "bytes": 1338106,
+      "extracted_to": "assets\\kenney\\sports-pack\\extracted"
+    },
+    {
+      "id": "kenney/micro-roguelike",
+      "url": "https://opengameart.org/sites/default/files/kenney_microroguelike_1.2.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "survivor",
+        "life_sim"
+      ],
+      "status": "skipped_exists",
+      "bytes": 216103,
+      "extracted_to": "assets\\kenney\\micro-roguelike\\extracted"
+    },
+    {
+      "id": "kenney/ui-pack",
+      "url": "https://opengameart.org/sites/default/files/kenney_ui-pack.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "all"
+      ],
+      "status": "skipped_exists",
+      "bytes": 1229750,
+      "extracted_to": "assets\\kenney\\ui-pack\\extracted"
+    },
+    {
+      "id": "kenney/platformer-art-pixel-redux",
+      "url": "https://opengameart.org/sites/default/files/Platformer%20Art%20Pixel%20Redux.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "platformer",
+        "fighting"
+      ],
+      "status": "skipped_exists",
+      "bytes": 86570,
+      "extracted_to": "assets\\kenney\\platformer-art-pixel-redux\\extracted"
+    },
+    {
+      "id": "fonts",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/release/SubsetOTF/CN/SourceHanSansCN-Regular.otf",
+      "license": "OFL (Adobe Source Han Sans)",
+      "genre_tags": [
+        "ui"
+      ],
+      "status": "skipped_exists",
+      "bytes": 8429224
+    },
+    {
+      "id": "fonts",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/release/SubsetOTF/CN/SourceHanSansCN-Bold.otf",
+      "license": "OFL (Adobe Source Han Sans)",
+      "genre_tags": [
+        "ui"
+      ],
+      "status": "skipped_exists",
+      "bytes": 8569308
+    },
+    {
+      "id": "kenney/digital-audio",
+      "url": "https://opengameart.org/sites/default/files/Digital_SFX_Set.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "shooter",
+        "shmup",
+        "all"
+      ],
+      "status": "skipped_exists",
+      "bytes": 1072810,
+      "extracted_to": "assets\\kenney\\digital-audio\\extracted"
+    },
+    {
+      "id": "kenney/rpg-sounds",
+      "url": "https://opengameart.org/sites/default/files/RPGsounds_Kenney.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "all"
+      ],
+      "status": "skipped_exists",
+      "bytes": 690952,
+      "extracted_to": "assets\\kenney\\rpg-sounds\\extracted"
+    },
+    {
+      "id": "kenney/jumper-pack",
+      "url": "https://opengameart.org/sites/default/files/JumperPack_Kenney.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "parkour",
+        "platformer"
+      ],
+      "status": "skipped_exists",
+      "bytes": 1548872,
+      "extracted_to": "assets\\kenney\\jumper-pack\\extracted"
+    },
+    {
+      "id": "kenney/food-kit",
+      "url": "https://opengameart.org/sites/default/files/kenney_food-kit.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "life_sim"
+      ],
+      "status": "skipped_exists",
+      "bytes": 4606270,
+      "extracted_to": "assets\\kenney\\food-kit\\extracted"
+    },
+    {
+      "id": "kenney/pixel-platformer-food-expansion",
+      "url": "https://opengameart.org/sites/default/files/kenney_pixel-platformer-food-expansion.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "life_sim"
+      ],
+      "status": "skipped_exists",
+      "bytes": 163245,
+      "extracted_to": "assets\\kenney\\pixel-platformer-food-expansion\\extracted"
+    },
+    {
+      "id": "kenney/pixel-platformer-farm-expansion",
+      "url": "https://opengameart.org/sites/default/files/kenney_pixelplatformerfarmexpansion.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "life_sim"
+      ],
+      "status": "skipped_exists",
+      "bytes": 182691,
+      "extracted_to": "assets\\kenney\\pixel-platformer-farm-expansion\\extracted"
+    },
+    {
+      "id": "kenney/particle-pack",
+      "url": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "shooter",
+        "shmup",
+        "survivor",
+        "all"
+      ],
+      "status": "skipped_exists",
+      "bytes": 9760286,
+      "extracted_to": "assets\\kenney\\particle-pack\\extracted"
+    },
+    {
+      "id": "kenney/interface-sounds",
+      "url": "https://opengameart.org/sites/default/files/kenney_interfaceSounds.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "all",
+        "ui"
+      ],
+      "status": "skipped_exists",
+      "bytes": 834536,
+      "extracted_to": "assets\\kenney\\interface-sounds\\extracted"
+    },
+    {
+      "id": "kenney/impact-sounds",
+      "url": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "all"
+      ],
+      "status": "skipped_exists",
+      "bytes": 800850,
+      "extracted_to": "assets\\kenney\\impact-sounds\\extracted"
+    },
+    {
+      "id": "kenney/pixel-vehicle-pack",
+      "url": "https://kenney.nl/media/pages/assets/pixel-vehicle-pack/570a4c9051-1677578609/kenney_pixel-vehicle-pack.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "racing"
+      ],
+      "status": "skipped_exists",
+      "bytes": 60319,
+      "extracted_to": "assets\\kenney\\pixel-vehicle-pack\\extracted"
+    },
+    {
+      "id": "kenney/input-prompts",
+      "url": "https://opengameart.org/sites/default/files/kenney_input-prompts.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "all",
+        "ui"
+      ],
+      "status": "skipped_exists",
+      "bytes": 1625644,
+      "extracted_to": "assets\\kenney\\input-prompts\\extracted"
+    },
+    {
+      "id": "kenney/abstract-platformer",
+      "url": "https://kenney.nl/media/pages/assets/abstract-platformer/a8f4badcb5-1677579172/kenney_abstract-platformer.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "fighting",
+        "platformer"
+      ],
+      "status": "skipped_exists",
+      "bytes": 2532432,
+      "extracted_to": "assets\\kenney\\abstract-platformer\\extracted"
+    },
+    {
+      "id": "kenney/tiny-dungeon",
+      "url": "https://opengameart.org/sites/default/files/kenney_tinydungeon.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "survivor",
+        "life_sim"
+      ],
+      "status": "skipped_exists",
+      "bytes": 98530,
+      "extracted_to": "assets\\kenney\\tiny-dungeon\\extracted"
+    },
+    {
+      "id": "kenney/roguelike-caves",
+      "url": "https://opengameart.org/sites/default/files/Roguelike%20Cave%20pack.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "survivor"
+      ],
+      "status": "skipped_exists",
+      "bytes": 188816,
+      "extracted_to": "assets\\kenney\\roguelike-caves\\extracted"
+    },
+    {
+      "id": "kenney/1-bit-pack",
+      "url": "https://opengameart.org/sites/default/files/1bitpack_kenney_1.1.zip",
+      "license": "CC0",
+      "genre_tags": [
+        "survivor",
+        "shmup",
+        "all"
+      ],
+      "status": "downloaded",
+      "bytes": 697235,
+      "extracted_to": "assets\\kenney\\1-bit-pack\\extracted"
+    }
+  ],
+  "ok": 29,
+  "failed": 0
+}

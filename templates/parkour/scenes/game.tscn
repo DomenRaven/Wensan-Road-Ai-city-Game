@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3 uid="uid://parkour_game"]
+
+[ext_resource type="Script" path="res://core/auto_runner.gd" id="1_runner"]
+[ext_resource type="PackedScene" uid="uid://parkour_player" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://core/scroll_world.gd" id="3_scroll"]
+[ext_resource type="Script" path="res://core/obstacle_spawner.gd" id="4_spawner"]
+[ext_resource type="Script" path="res://core/collectible_spawner.gd" id="5_collectibles"]
+[ext_resource type="Script" path="res://core/cloud_layer.gd" id="6_clouds"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ground"]
+size = Vector2(800, 24)
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_runner")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.529412, 0.807843, 0.921569, 1)
+
+[node name="GroundFill" type="ColorRect" parent="."]
+offset_top = 300.0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.3, 0.69, 0.31, 1)
+
+[node name="CloudLayer" type="Node2D" parent="."]
+script = ExtResource("6_clouds")
+
+[node name="Clouds" type="Node2D" parent="CloudLayer"]
+
+[node name="ScrollWorld" type="Node2D" parent="."]
+script = ExtResource("3_scroll")
+
+[node name="Tiles" type="Node2D" parent="ScrollWorld"]
+
+[node name="Ground" type="StaticBody2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+position = Vector2(320, 300)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+position = Vector2(0, 12)
+shape = SubResource("RectangleShape2D_ground")
+
+[node name="ObstacleSpawner" type="Node2D" parent="."]
+script = ExtResource("4_spawner")
+
+[node name="Obstacles" type="Node2D" parent="ObstacleSpawner"]
+
+[node name="CollectibleSpawner" type="Node2D" parent="."]
+script = ExtResource("5_collectibles")
+
+[node name="Collectibles" type="Node2D" parent="CollectibleSpawner"]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(100, 300)

@@ -1,0 +1,56 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "racing",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "校园卡丁赛"
+  },
+  "core_locked": true,
+  "tuning": {
+    "render": {
+      "mode": "topdown"
+    },
+    "physics": {
+      "mode": "arcade",
+      "collision_mode": "slow_on_wall"
+    },
+    "car": {
+      "max_speed": 340,
+      "acceleration": 200,
+      "turn_rate": 3.0,
+      "friction": 0.97,
+      "wall_slow_factor": 0.5
+    },
+    "track": {
+      "laps": 2,
+      "width_px": 400,
+      "lap_distance_px": 3000
+    },
+    "obstacle": {
+      "density": 0.55,
+      "min_gap_px": 200
+    },
+    "round": {
+      "duration_sec": 75
+    },
+    "enabled_skills": ["boost", "drift_snap"],
+    "skills": {
+      "boost": { "cooldown_scale": 0.85 },
+      "drift_snap": { "cooldown_scale": 1.0 }
+    }
+  },
+  "theme": {
+    "asset_pack": "racing-pack",
+    "player_sprite": "res://assets/kenney/racing-pack/extracted/PNG/Cars/car_red_1.png",
+    "road_sprite": "res://assets/kenney/racing-pack/extracted/PNG/Roads/road_asphalt01.png",
+    "obstacle_sprite": "res://assets/kenney/racing-pack/extracted/PNG/Objects/cone_straight.png",
+    "background_color": "#17462b",
+    "road_color": "#454545",
+    "title": "校园卡丁赛"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

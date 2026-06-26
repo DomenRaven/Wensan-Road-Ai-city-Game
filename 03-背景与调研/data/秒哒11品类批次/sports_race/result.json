@@ -1,0 +1,31 @@
+{
+  "slug": "sports_race",
+  "display_name": "体育竞速",
+  "reference_games": [
+    "Mario & Sonic 奥运会",
+    "SpeedRunners",
+    "跨栏田径小游戏"
+  ],
+  "started_at": "2026-06-22T13:34:06Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T13:34:06Z",
+      "appId": "app-cik5bsgcs7b5",
+      "conversationId": "conv-cik5bsgcs7b4"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T13:35:03Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T13:40:40Z",
+  "appId": "app-cik5bsgcs7b5",
+  "conversationId": "conv-cik5bsgcs7b4",
+  "editor_url": "https://www.miaoda.cn/projects/app-cik5bsgcs7b5",
+  "preview_url": "https://app-cik5bsgcs7b5.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

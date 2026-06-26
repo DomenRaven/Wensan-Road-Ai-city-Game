@@ -1,0 +1,72 @@
+{
+  "updated_at": "2026-06-23T13:44:16.068865+00:00",
+  "entries": [
+    {
+      "genre": "platformer",
+      "source": "templates/platformer/assets/pixel_adventure/Main Characters/Mask Dude/Idle (32x32).png",
+      "status": "copied",
+      "dest": "assets\\previews\\platformer.png"
+    },
+    {
+      "genre": "tower_defense",
+      "source": "assets/kenney/tower-defense-topdown/extracted/PNG/Default size/towerDefense_tile010.png",
+      "status": "copied",
+      "dest": "assets\\previews\\tower_defense.png"
+    },
+    {
+      "genre": "shmup",
+      "source": "assets/kenney/space-shooter-redux/extracted/PNG/playerShip1_blue.png",
+      "status": "copied",
+      "dest": "assets\\previews\\shmup.png"
+    },
+    {
+      "genre": "shooter",
+      "source": "assets/kenney/topdown-shooter/extracted/PNG/Survivor 1/survivor1_stand.png",
+      "status": "copied",
+      "dest": "assets\\previews\\shooter.png"
+    },
+    {
+      "genre": "survivor",
+      "source": "assets/kenney/topdown-shooter/extracted/PNG/Survivor 1/survivor1_stand.png",
+      "status": "copied",
+      "dest": "assets\\previews\\survivor.png"
+    },
+    {
+      "genre": "fighting",
+      "source": "assets/kenney/abstract-platformer/extracted/PNG/Players/Player Blue/playerBlue_stand.png",
+      "status": "copied",
+      "dest": "assets\\previews\\fighting.png"
+    },
+    {
+      "genre": "parkour",
+      "source": "assets/kenney/platformer-art-deluxe/extracted/Player/p1_walk/PNG/p1_walk01.png",
+      "status": "copied",
+      "dest": "assets\\previews\\parkour.png"
+    },
+    {
+      "genre": "life_sim",
+      "source": "assets/kenney/pixel-platformer-farm-expansion/extracted/Tiles/tile_0024.png",
+      "status": "copied",
+      "dest": "assets\\previews\\life_sim.png"
+    },
+    {
+      "genre": "sports_race",
+      "source": "assets/kenney/sports-pack/extracted/PNG/Blue/characterBlue (1).png",
+      "status": "copied",
+      "dest": "assets\\previews\\sports_race.png"
+    },
+    {
+      "genre": "pingpong",
+      "source": "assets/kenney/sports-pack/extracted/PNG/Equipment/ball_tennis1.png",
+      "status": "copied",
+      "dest": "assets\\previews\\pingpong.png"
+    },
+    {
+      "genre": "racing",
+      "source": "assets/kenney/pixel-vehicle-pack/extracted/PNG/Cars/sports_red.png",
+      "status": "copied",
+      "dest": "assets\\previews\\racing.png"
+    }
+  ],
+  "ok": 11
+}

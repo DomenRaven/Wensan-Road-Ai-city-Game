@@ -1,0 +1,43 @@
+{
+  "slug": "parkour",
+  "godot_config": "templates/parkour/config/game_config.json",
+  "miaoda_source": "03-背景与调研/data/秒哒精选源码/parkour",
+  "preview_url": "https://app-cijx9ysx61vl.appmiaoda.com",
+  "tuning_candidates": {
+    "runner.speed": {
+      "miaoda_value": -300.0,
+      "godot_default": 240,
+      "proposed": 300,
+      "notes": "transform=abs"
+    },
+    "jump.velocity": {
+      "miaoda_value": -800.0,
+      "godot_default": -420,
+      "proposed": -546,
+      "notes": "transform=direct; clamped"
+    },
+    "obstacle.density": {
+      "miaoda_value": null,
+      "godot_default": 0.55,
+      "proposed": null,
+      "notes": ""
+    },
+    "round.duration_sec": {
+      "miaoda_value": 60.0,
+      "godot_default": 60,
+      "proposed": 60,
+      "notes": "transform=direct"
+    }
+  },
+  "theme_candidates": {
+    "title": {
+      "miaoda": "",
+      "proposed": "",
+      "kenney_pack": "jumper-pack"
+    }
+  },
+  "enabled_skills": [],
+  "ux_notes": "",
+  "verified": false,
+  "verified_at": ""
+}

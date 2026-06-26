@@ -1,0 +1,1441 @@
+{
+  "version": "1.0",
+  "frozen_at": "2026-06-24T14:59:50Z",
+  "genres": [
+    "shmup",
+    "pingpong"
+  ],
+  "display_names": {
+    "shmup": "街机飞机射击",
+    "pingpong": "乒乓球"
+  },
+  "snapshot_dir": "开发文档/模板引擎/快照/frozen/6.24_pingpong_shmup_v1.0",
+  "policy": "未经用户显式解冻，禁止修改 manifest 内 paths；共享文件见 shared_baseline",
+  "shared_baseline": [
+    "templates/_edu/edu_action_bridge.gd",
+    "kiosk/edu/code-highlight.js",
+    "config/kiosk_edu_spec.json"
+  ],
+  "files": [
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_000.ogg.import",
+      "sha256": "179cd667c86513c5b9379c1339ecf3b0c7b65114c3a4a6d495f245f8019a8918",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_001.ogg.import",
+      "sha256": "8c785f5875a943e74a37371a0d020d8af8d58e67dbf785aebe95b1f313ada501",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_002.ogg.import",
+      "sha256": "cd3e98196218ed59660200aaef6cf79bfd3d187ac4f8fcdea5d11abb73f1966e",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_003.ogg.import",
+      "sha256": "78225f1e87f838f0f89129988c444dd6c024e5ea6d0b0c30c78682e6984ef98f",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_carpet_004.ogg.import",
+      "sha256": "cecd4e610cda4c7d07acefcd6c27370ca9ee8228043b563b50cf997dba02ab00",
+      "bytes": 447
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_000.ogg.import",
+      "sha256": "cba4bc3485773378237c7d615933106b2628a5779274d852a752c10bcf55095f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_001.ogg.import",
+      "sha256": "af05b06125bf9c76987c5ac46dd3ccb7312e21c0f0a5e4133b5205e644dc5d80",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_002.ogg.import",
+      "sha256": "1c7d972450d2bfbf2445b83f5297cc71eb6a3302b83b963287e25a1e8069116a",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_003.ogg.import",
+      "sha256": "597de9ad5742bf8a5fffb9a27601120f802a4be33a8667fea46d46eed7f05b3d",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_concrete_004.ogg.import",
+      "sha256": "e5fccd4c9bc41178de741f1984b76d2c6519dca70abaff08a0f36ba2ccf0b5d9",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_000.ogg.import",
+      "sha256": "4ccda9be5638391341141fc4478e6208bbba760a5f61c40c695a65dd9f9d44d7",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_001.ogg.import",
+      "sha256": "0f31d18b09e18628102ec44dc5c4e1d3764b59291a1e8b59d55a4ad7b926f931",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_002.ogg.import",
+      "sha256": "e6ac033519db984356815551ca46b0ffa48bf336ee2111be5a3d5a51e44168bb",
+      "bytes": 443
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_003.ogg.import",
+      "sha256": "e47ddd434dfe2d16e271a98be1cb1c4ab7be82629f98895a8dd04b731e6edb8e",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_grass_004.ogg.import",
+      "sha256": "1d719be2a7d137324058887ddd939d4260a4ea5178313533eaed443015fc019d",
+      "bytes": 444
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_000.ogg.import",
+      "sha256": "821e4e7e25e1122697531d75682189caf5ed23c2c06471d872cbccffd19f2235",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_001.ogg.import",
+      "sha256": "1c61d353d08ada71f07121c0983c98431538d44e6dba0e3c71cba5d2a1bb6c80",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_002.ogg.import",
+      "sha256": "2daeb69b4af1558ee19baa68b222ddb64cb9b277779a84fdf521b1df5a2c4aeb",
+      "bytes": 440
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_003.ogg.import",
+      "sha256": "6ad35696e04928a89eded55c018f40bc37d47096ca48ce4d0e7863c335262278",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_snow_004.ogg.import",
+      "sha256": "e9e04e86a90fc8f12a770db3f9242744a917d76d8fec93196e5693cb2674e9e2",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_000.ogg.import",
+      "sha256": "e2bf69f69f49839d4e65ef68367a29b18ce80ba869fe36605588e510645f38ca",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_001.ogg.import",
+      "sha256": "dadcb3966fc3c3bdce1369ec0231a048a15cdc48f9801466cde5288cc6590b3c",
+      "bytes": 440
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_002.ogg.import",
+      "sha256": "823e334b8f5ee49a32c37eb17d27676d7f081be83907e37d5c799776e84164f0",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_003.ogg.import",
+      "sha256": "cdc52dd3ebacaee8536de992fcba9e815584842c7e487c1449cc4264319d653d",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/footstep_wood_004.ogg.import",
+      "sha256": "7d96f60203b55ca348e9eda7dd86ebd5148c82e086c441e101ac398743dfd26b",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_000.ogg.import",
+      "sha256": "22d06fa0c86905b02bf6d4f32c5e07bc06098f83f53926a8480739d699f3eb03",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_001.ogg.import",
+      "sha256": "b81bbc6cce651776c5a921902ffeb54f68eaba435b21d341f1146327553404c6",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_002.ogg.import",
+      "sha256": "fc390a486cffb9a0323349b5a6bbd4e00613bb5f9d21d8c0663fbad5627bacb0",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_003.ogg.import",
+      "sha256": "da496ffb034e25b95cfcd50356fa3d76b95924e9fb6728a0e187095ae55f6338",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactBell_heavy_004.ogg.import",
+      "sha256": "058749d37f50c55e22b069d71af8862dbd1698ae94f2083bb08282d8a62b1667",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_000.ogg.import",
+      "sha256": "4a8f1eca98df2cefd1c3887c8f9c39714fafbbdb421dbc63521b838d373d0cfa",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_001.ogg.import",
+      "sha256": "6e5d9ddc4281834040e740d87803259857479d24057f32a87c4d6da259c5b8dc",
+      "bytes": 458
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_002.ogg.import",
+      "sha256": "654e6e7e88498b1166970981197d8620f41815b69d1588bc264359859deb8f9c",
+      "bytes": 458
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_003.ogg.import",
+      "sha256": "9be54768ca50c393cd3fa44b2c84f595c425021acee5edf531af8eb2d0b40e67",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGeneric_light_004.ogg.import",
+      "sha256": "e1364cb05cc008f85142c4472bbec64df04f84686c2e1612608722f2479381f6",
+      "bytes": 459
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_000.ogg.import",
+      "sha256": "61e6ee4cbb3818e8ccba6ad5a594346e535b26938e97f47dfb23865c1586d1c5",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_001.ogg.import",
+      "sha256": "e17516446c2669633eb2a8afec970ee5cfefa5c8c7cdf5c41b1f12c73b3fc71e",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_002.ogg.import",
+      "sha256": "9a0b5f653b5494a3719580f27bed5049259e060b1a2640dd7695c1542b9fb589",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_003.ogg.import",
+      "sha256": "b41c4183c2d1aacf9f882f14f7e1bf8d590bf8342e1113f36872af8f484f7c5f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_heavy_004.ogg.import",
+      "sha256": "4537c0fc9eb5990d08186ee46688a4781b9059e7f98a7af734292f8943df8de7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_000.ogg.import",
+      "sha256": "e7bf684d39683d5fa9708d66a51bb527e7c890ff0e387b81d76eb7cdf5910de1",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_001.ogg.import",
+      "sha256": "5e7529f79939883a1b1e1146f70951eb171654158b4dd724f1cdc4ba3d3e845d",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_002.ogg.import",
+      "sha256": "aa52421f63b9a2b99baf59b7918eb8aacaf38d2e8723f795ef77f368d68c0734",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_003.ogg.import",
+      "sha256": "131a90f1dbec1e7e332f690f4c7d327b02bd1910e82f5ce7de1162689bd8cc70",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_light_004.ogg.import",
+      "sha256": "bc11aa891edc3fa604d8c14d7f8ce891d33950484739cf4ced2e94c3ad9da6f2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_000.ogg.import",
+      "sha256": "45165ffd55ccada7fd8cb93c2a43e403b064ca559d7374d724a5e0756235a6a8",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_001.ogg.import",
+      "sha256": "bd5c2d771e21d501dd8c37b9f321461f458acaf6da2a1fdd6200ba08e887c3cd",
+      "bytes": 454
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_002.ogg.import",
+      "sha256": "f4f4d0c933f0e4b4b9d5d492e4e6279484d6fbe80b1d511bde8d4019bf26e8b1",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_003.ogg.import",
+      "sha256": "fa71f1da37fc15afc15f622dc487ae83fd50cf699c33bae801edbbdd637e4a69",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactGlass_medium_004.ogg.import",
+      "sha256": "116b5983a6f34afd89e3f8f03b12cddfadb1263c4cd5e9fdd51669b40eab6e68",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_000.ogg.import",
+      "sha256": "d77888005186890d07a4266b5d443e63d52f715e9dc0ba8bf857c8c37f3a3f21",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_001.ogg.import",
+      "sha256": "bc046406fdc123621acad8751e1b67483ebd324d06a70754989da89c6731f040",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_002.ogg.import",
+      "sha256": "53bb1008e64bb3794bde37108a9e77b2568017d0ff1078bed2e1652ca56f2731",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_003.ogg.import",
+      "sha256": "39b01d6245ba63ccd9baa5dd24885eb895dff73fe2acc30ad12de43de6bfbe5b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_heavy_004.ogg.import",
+      "sha256": "f0de98b4d9f291618d0329457cf9c9604db942309b12a1740084966ea0e2af47",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_000.ogg.import",
+      "sha256": "e36e05daf52ac215fc3e1d83abfb417bd896ec9295970e4e0340f345030a210b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_001.ogg.import",
+      "sha256": "57fb0e53dd5a9c6d58a3bc05d0b12f352ca636423a2d0d0d7629adf37805e464",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_002.ogg.import",
+      "sha256": "c2efdfc66110c127909f14ebadddab4d4cfcf68db9018efc485c147b7ca13b4e",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_003.ogg.import",
+      "sha256": "c7a0012a8f541cd166c77ec078709c352c50958c304579308ec48eaed66fd5f9",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_light_004.ogg.import",
+      "sha256": "7b7ca52f23478fadef344a118cc5ffa06122db62da4e5a51ebbbf60c9a48bc0a",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_000.ogg.import",
+      "sha256": "6ec3eab14ec49326cb5aa0eab2ad99ec12cf9ea82290b79234a438ed01470a59",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_001.ogg.import",
+      "sha256": "6d8b71489a5bf2504cf7b4d533cf7dbd1eb4ff57b898d53d05bdc8a2f8155a01",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_002.ogg.import",
+      "sha256": "aaf418238d0b5cfbc4cb066c20b0d8f4f8fa602364b9907b696e43454d22a1ab",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_003.ogg.import",
+      "sha256": "bb249c9513032fcf0409066515b1db63aa4d3d55a8a1422645b48e4d1c03dac9",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMetal_medium_004.ogg.import",
+      "sha256": "cbf16d731ae8f49f189e179701266915d986b43db95f7a98f4281065e64c494a",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_000.ogg.import",
+      "sha256": "6455dc5bb470078920f6418eeb161f7f77659ebb40b91001f4d8f7d821b0125c",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_001.ogg.import",
+      "sha256": "c13b038379854f99ad15acea0d2d4d0b918b27b85ef25bfa0b9d79afa87b56f4",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_002.ogg.import",
+      "sha256": "dd10c82183c9dc77e8a5334f8d3eac161a4b54d36f423179a46eb4438022d33f",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_003.ogg.import",
+      "sha256": "308f1205b2345dbda22351789a10c24e0e0286a4e11e1d9aaec8eb1417e74a44",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactMining_004.ogg.import",
+      "sha256": "24cb722ca962eac1f8b17254fbfcf9f96d0ffc209e18fd22c467f3703e79ef29",
+      "bytes": 438
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_000.ogg.import",
+      "sha256": "48964efb4fbc69f752d167b1c56c975e8fa3e7de06e9a8f33f92d1cbb81d1ab2",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_001.ogg.import",
+      "sha256": "b22108ec119c095dac9ac5c94dd1ab9945bff25528f9178fe82e272c8f47e789",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_002.ogg.import",
+      "sha256": "4f26c8e5e8a626cea883c6e3bec602eec1f1cb96ec2df0fb4d9da554407d0a7d",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_003.ogg.import",
+      "sha256": "df82426b00f66c7e0af71817a5f37ece0d773c4603e0ea5b68ba3ae6bbd4149c",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlank_medium_004.ogg.import",
+      "sha256": "e15ec111b870128cfe0dad80e13fe9ead8985fbb280301db961a956e397d8f13",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_000.ogg.import",
+      "sha256": "30b2e7da67b4ece7d0b154e8b236f22fb5ee85e270d6e63a0eeaa7b3c5686efe",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_001.ogg.import",
+      "sha256": "5e69375fcbb9a12040aa1559d652da9a3db47e19db157aedfa9543eb1aba1c8a",
+      "bytes": 451
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_002.ogg.import",
+      "sha256": "7b39deedbb43fe2ce9c2b96c90d3ca44d5de19b231b7149a52e23c35bf6e9ea0",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_003.ogg.import",
+      "sha256": "97444af662d90156528999a38eca483bdd9ee50b8ce2caa9ceb23d69cd259eed",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_heavy_004.ogg.import",
+      "sha256": "91d654e269d3cc2b89750e41360bcbe8286e0fe561ac8b8cc589898b76a88017",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_000.ogg.import",
+      "sha256": "598390f88a905034fa797c0f0b11a9ec575dd315b02d14bbc11f4f83790b9dba",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_001.ogg.import",
+      "sha256": "8d4455b3ba5cd818af519bd8dbed926f250902b0081c0d1250e22190485ac04f",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_002.ogg.import",
+      "sha256": "ab9dabcd31b2c4040c625fb8bedee556fcb45f545295c8f3d631edb0c4edc67c",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_003.ogg.import",
+      "sha256": "ea13872530c8e27a696201a47f86717793b0659108a38193056d17f6fd26a2f8",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_light_004.ogg.import",
+      "sha256": "754a9a62e07a6890958b6c546c3f454c680459b5848417c064534aff2aed7a72",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_000.ogg.import",
+      "sha256": "d12fcc3393bbe1ed0b4ce1eeb0c9b2736fe7a59c0bc15b648900cefd01fda6ae",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_001.ogg.import",
+      "sha256": "bc514e71e1d26ddead994feab70761815566b78b4868fc5a505b596f5af06288",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_002.ogg.import",
+      "sha256": "bdaefb8dc300036fbe66395135187c32330bb318399b231f59c241c33635729a",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_003.ogg.import",
+      "sha256": "573f93dba296f8c378693f82f3d1eca2107203425cf07b7bab81b318e7c36510",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPlate_medium_004.ogg.import",
+      "sha256": "9e969116c8462a42e1cf91c9b44c4c0af0b1be253b9f2dbf31f229cb3beff428",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_000.ogg.import",
+      "sha256": "a9ef365a98de810afb1310eae947c89d985007931d3d0c22fddc19a445016283",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_001.ogg.import",
+      "sha256": "59c74277eee039d3227517f67a04a8764331b36a6e0940b2a1a9284130d956f4",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_002.ogg.import",
+      "sha256": "8d9c60a06e4fe85dfd17721dd4fda1a5f8eabb5e825653ccaa5211afd2ee4167",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_003.ogg.import",
+      "sha256": "6feabd14d8328d07ace0a0dcabe3515eacb1c9be81f912be19fece1beca9ffe5",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_heavy_004.ogg.import",
+      "sha256": "7b938e16f726d589908e546730355c9f9a98c597a8cab574f6503ddb2733220b",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_000.ogg.import",
+      "sha256": "3612e562d6d458270b0dbee3e9cf72ac7e86a96e4b65bda405b2b72d0b3155c4",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_001.ogg.import",
+      "sha256": "2424236aa6712aca87a1416703e291987492231819526c16a19d72b443198a84",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_002.ogg.import",
+      "sha256": "6f95c186017cfcc4b1c8141d8a3ee1fd991fb26a0f2271f2e68530752e9d2aba",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_003.ogg.import",
+      "sha256": "a28b4f752d5c6605e34873797a926b21849e262a37580b2bec424de4870b804c",
+      "bytes": 456
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactPunch_medium_004.ogg.import",
+      "sha256": "e6dd0567aa6ed0f1e260f92b698b24e7b62b945fd2bf4fff58bd494a34996339",
+      "bytes": 455
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_000.ogg.import",
+      "sha256": "a34832e26528cca00cf7e4ae3fbdeca69a63c5cb21eb350ae74c06b778bbee75",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_001.ogg.import",
+      "sha256": "436f44e820737396eea97281479d223c3bd0020962af42ddc0b0b1a531ddab82",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_002.ogg.import",
+      "sha256": "0f1cb4617f08f1b099b8e0ecf5986552c18f5a7981dc577259842fcdefc835a2",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_003.ogg.import",
+      "sha256": "b85a4749a4c2f9a2bd97ae25d50d36056c5fcc86dcca0bc4fbf3e642452eb5b6",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_heavy_004.ogg.import",
+      "sha256": "47bd119078e4dc75d1e15bb34edf0d5c85f4f3f80f244435637ae0fb3d8cab1e",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_000.ogg.import",
+      "sha256": "1d466abb6b1df0ad6921e5a0dcefa2d6054b12b7c47c51aa52b5ce94ac595734",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_001.ogg.import",
+      "sha256": "92bf7827e953fff67a36bca8b910c8958ec223c382e5853f91031554300c89fd",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_002.ogg.import",
+      "sha256": "0de6d000e26e8617d9f5e5edf05da87938a4d329eacb55aabbe5a2b633571fc8",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_003.ogg.import",
+      "sha256": "be2c740a91b4386694036e17fd5ac8e419c3198e1c6ccb4408f09369616bca64",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactSoft_medium_004.ogg.import",
+      "sha256": "df52a564cb68cbd88c1790f765b591c916baa0fe70c9e856cd4814daab54aab2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_000.ogg.import",
+      "sha256": "84f3a02595c0529befc7ab170303c309ecbe4f8aebb758ba91f9df190a79cd0a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_001.ogg.import",
+      "sha256": "fb6edf35ff7aaaa848c34b0fe0277572321ad0c1b354280e7c9a01c31e45ddac",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_002.ogg.import",
+      "sha256": "ac981ffe45e0225974eb91e6399775d2522e297bcff4d7af758976ca58c2b46a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_003.ogg.import",
+      "sha256": "21818f1f132b5ed625fe209cdd723e1c5d777cc53bc04a475f88ea4c6af2ac16",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactTin_medium_004.ogg.import",
+      "sha256": "b97758f4e4129baf70dad636184b40716fd5825599b4f27e8676c56e913b8b3e",
+      "bytes": 449
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_000.ogg.import",
+      "sha256": "e8448b5d9c8d0cd1135a3efd5715d146f1f2f1739ad6c448c1c7421220e0c710",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_001.ogg.import",
+      "sha256": "e53195a84b612cc6c3db188a4cd8a2d17de81bc2461dc6ed38e4a5a4fc767627",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_002.ogg.import",
+      "sha256": "c8e199e5033b45aff54f0226513ba847728277645de83c12da7e8721002699fc",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_003.ogg.import",
+      "sha256": "a1724888b37ea9af931f24d3cc5e46079dcf18df10b32d1b92a483f7f1219a50",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_heavy_004.ogg.import",
+      "sha256": "22cae21cf0681a7553e6e0fb9ad37d0739f167e4c8f0ce91b357b661882f392f",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_000.ogg.import",
+      "sha256": "8bda6e9af004ef3495484fdb06e6856e96ba63da835670f8a4c064ec857b75b7",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_001.ogg.import",
+      "sha256": "78b7c907b2805d81020cece7b0efcbb2c6ae60e23dc0b2c28ca386315405cb9a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_002.ogg.import",
+      "sha256": "28bbc607dca5f3cc3a454b38cad15399b5480cd33ca9e62e23f7cd42d3e888c8",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_003.ogg.import",
+      "sha256": "57914b29dce631e7d2a2a1b4f58aeb16a2c87999154d04f2416cc3ef9470e43a",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_light_004.ogg.import",
+      "sha256": "34be0fdcff5b504e191fea8bb4592734208c51f109ef3f6407b6ecadbd027dcc",
+      "bytes": 450
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_000.ogg.import",
+      "sha256": "6fb2e140f3ed072f34fc70e892733bd524f2780ce832ed9d1678e4deaac6a4a2",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_001.ogg.import",
+      "sha256": "430fe087f2ec299fa3d7df17e85577809d049eb1ecf6663fd5003c746239ada7",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_002.ogg.import",
+      "sha256": "47a8f3dbee84365137f3a030c4a0e2ae39f836a97cc47e290c73553207dbffb7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_003.ogg.import",
+      "sha256": "3b6305825cb08ce51516265779db8eb188624168de67cacaa07ccebcba56b3a7",
+      "bytes": 453
+    },
+    {
+      "path": "assets/kenney/impact-sounds/extracted/Audio/impactWood_medium_004.ogg.import",
+      "sha256": "5ecd01ddb85ee4f1734ba5671c862b5eb9053317561bf0512249a2a73e17ec53",
+      "bytes": 452
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_001.ogg.import",
+      "sha256": "807582f8ccf0f5debe7739831d0c4cd8df494197c67a0f29e16d22ab338b8789",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_002.ogg.import",
+      "sha256": "2866eb209865d738c983419e7b4f275a0449bda97004d80da440f3b1ce54b8c6",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_003.ogg.import",
+      "sha256": "d15536d10c6b500aba864995e67027e6f53a0917133e2483064d214631661f13",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/back_004.ogg.import",
+      "sha256": "fe0a3c5b8b3d05a5f2fd72b5eca1fa8aace062bf1c98a2371b5689c35e26f06f",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/bong_001.ogg.import",
+      "sha256": "20e120b2ace1b56133250e6b1814e338b327b642875307cb71d2fc74101264ed",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_001.ogg.import",
+      "sha256": "dba5861041a80abd17d4e779c432bfa0c546162082de3508372ca5f9519bda19",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_002.ogg.import",
+      "sha256": "c9a7842e275a492d92e58eeed56dd56c31892450b7dfea50315bbae4d32e1ccf",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_003.ogg.import",
+      "sha256": "4e0c118bef2badb89e6f783eb987b00f16d1c9cee1203fa7c1aaef5240cd1ac4",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_004.ogg.import",
+      "sha256": "38c3f54c21a135585707dd14adc32a4fbeda3f6ec159ef5889287002b37cf2c0",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/click_005.ogg.import",
+      "sha256": "38c4fdca3875aae072a9d1df64849a518593a899f7249bbf431b37988cc561c9",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_001.ogg.import",
+      "sha256": "dcd4f9309d77564ced5997796a0cafcdfc1fa54e677057028c253efa4f059fb9",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_002.ogg.import",
+      "sha256": "2396ee0641dc16cd06735e0632a0a38360faaf31baa112a96d8e8311274bf075",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_003.ogg.import",
+      "sha256": "393133e40fbe89a2d89c7158e03eca9dd01f96004656ccca9395376205b12ddd",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/close_004.ogg.import",
+      "sha256": "c534ec7992e533bb5b5441bf7439336e5b134c8f6e8443068395c36f2d42db52",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_001.ogg.import",
+      "sha256": "7278eeb91c6aa63ec55d04ee6c3986bb2d3cfdf8add8b0322eab9f00427ff81f",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_002.ogg.import",
+      "sha256": "ec108335f520ae4f6728403783b4586d96f9e5becc06432d9c553d5871939233",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_003.ogg.import",
+      "sha256": "ed46827c4448e91a14b13236816af8f122d0486bbd9d32a3ede128f2e243aa8a",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/confirmation_004.ogg.import",
+      "sha256": "7ebcac035f6d332330850d91c8e921c961d501435e3961619e960a8a6a8a0166",
+      "bytes": 441
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_001.ogg.import",
+      "sha256": "46335ecea67eda888ded3f9fe7475aafb866ef2040554219dd89d0185c5d7440",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_002.ogg.import",
+      "sha256": "101b778f907305ded336f16be702f54c0cefdeba4053e3926bddfb344cec7bfb",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_003.ogg.import",
+      "sha256": "c37d03c69b2050c9b0f5b7055911f38f61cc4269c1081b9183e431c7c790c5ba",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/drop_004.ogg.import",
+      "sha256": "477fd65853ae951ea22ad09b545f72068239c1c6587ec2c008f50ecd48ad5d84",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_001.ogg.import",
+      "sha256": "2c8e1c62ca598d20ce6395a309b6dab346b20d61d65db8b47c51aa3f4ffbe975",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_002.ogg.import",
+      "sha256": "22f1839208fea4c695c483bad4d269cbea742d76b39e6f78ceabd62d4213508d",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_003.ogg.import",
+      "sha256": "8c4e5a14749a2593485ade559b191b38f946fa502732797c7a5ad861b984e849",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_004.ogg.import",
+      "sha256": "d28a2c5d57d820d2ef7303c9da453673d2147bef4c798c4351a499376084d160",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_005.ogg.import",
+      "sha256": "18ffa89096b6297337ccc5ef7a97846724c8efe87b7027b1bb7796eb3538a8d6",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_006.ogg.import",
+      "sha256": "2741fcd1cac3a16d98081e9b86814560fb434c7724eebcac5932e7d2bade1aae",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_007.ogg.import",
+      "sha256": "5f187d3c423e83be523672756165cac5f01e3a4bd2f5af7c4e89a058291f153a",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/error_008.ogg.import",
+      "sha256": "7aa16442d8fb63b151a678f0d01494284041fa54b255a26e85f780baa2e2c650",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_001.ogg.import",
+      "sha256": "3f0cae4c3c3003e87bb6c7c293a9f755411efd6c4bfe6cd50dd91965d2bc3870",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_002.ogg.import",
+      "sha256": "5a4724cb74a751cea01bf8809a8c2c6ad6877e209260edf4a06f6154d970325d",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_003.ogg.import",
+      "sha256": "3fc6ceffc9de785f74fee8c8ae001b9c2d6e761246b6582d49647416f2efdf00",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_004.ogg.import",
+      "sha256": "e3db6be369a1d3a68a39e9e9c3fa9e6a1989a82564a1574ceda95cdfe86d3c5f",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_005.ogg.import",
+      "sha256": "21935d32ed40b808048cb735b12ff981e62b3d87bec98226b103ca159fc1d488",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glass_006.ogg.import",
+      "sha256": "34a1f9d7b49bf20ef27316980e19e4156ce3448e3a448715990e94afaff79b14",
+      "bytes": 419
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_001.ogg.import",
+      "sha256": "cfe40f5cc54e49681096ade5b662a8796583454d8f52f97aa596f9d955242c5e",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_002.ogg.import",
+      "sha256": "83e2dfc7c3c12b62ea8312a8c13ca410b3fe783faf6a160b87960de308c2ff6f",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_003.ogg.import",
+      "sha256": "dff7f81158451b1aac11373ee652d3b06d763377d0d775d4918df686b113fc7a",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/glitch_004.ogg.import",
+      "sha256": "9957908a6221ad959f34cc06a898c68d74ebcd72af3b238acf56ee917cbc46c2",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_001.ogg.import",
+      "sha256": "35e639a124169cfac4f3934686c62b0940ec9a2e11e8cef9cb167db7199c70d6",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_002.ogg.import",
+      "sha256": "b77255f0d710fbfd0fab43af9908eee303943db730f3bf421b420daa10ed3617",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_003.ogg.import",
+      "sha256": "5a2420c2853f26d7844c9e35b6e99ec88062722b9a3b76f1d51b3210c237096b",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_004.ogg.import",
+      "sha256": "e78bf184d270b8017dbf31ad19dc882e830dcd45d6f50176846bb204cb09682f",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_005.ogg.import",
+      "sha256": "ef969bea95a43a5b54ab71dc24be0151d18da4d9d213384dfef9044a725372b9",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_006.ogg.import",
+      "sha256": "715f503d37e42a245b98513a6019cc17e2559090008daa5da655039c82d147a6",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_007.ogg.import",
+      "sha256": "55eab5f96afe04f3aec6a0479ea2e7bfa42ce0ec11165f97adfabbac9bd37a85",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_008.ogg.import",
+      "sha256": "b206af066fbac78d42d52810b32b4de4c108cf6f8fcb6c1b50de81c7760b46d7",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/maximize_009.ogg.import",
+      "sha256": "78d9387b118db4fe1fb536cf74fc3fd5ef50b02bb8b4571d014b914192439dc0",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_001.ogg.import",
+      "sha256": "af3964b0b5cf286b0970a60bb4623b77c1ae08021fe3379ce9ad7304696652db",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_002.ogg.import",
+      "sha256": "0641a716baf46315fa99b715a5d5c391311452bb4f1d8093a4b9f345a2fd5d4e",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_003.ogg.import",
+      "sha256": "4da760c35e875b127e4dcd4f2db9820f5a200449f96c43f5cf271de1d7de7bf8",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_004.ogg.import",
+      "sha256": "012ec2d1d35f43145a688e106d091fc2882d3a3518e2b24abf3344f76394a008",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_005.ogg.import",
+      "sha256": "0cda0b960b368853179255bb421f5596d149e34bd9eefd2c280c6fba16a34b6d",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_006.ogg.import",
+      "sha256": "000c286e308417648d9d9fe60216d879e3c92090ff9201780827938f76e13eed",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_007.ogg.import",
+      "sha256": "e9d451a90ace5cabe2f9bb580a1b6be1df95e5640f57bf863fbfba2807162c24",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_008.ogg.import",
+      "sha256": "9dab4d57abfca472309954244ca4886329c85e86dd83f5605ea7f57f45df61b1",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/minimize_009.ogg.import",
+      "sha256": "b2423373d02c9a86100510a290f4a5abbf03987aefc8619b472fba86c6a93da0",
+      "bytes": 428
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_001.ogg.import",
+      "sha256": "0a39554ce082db71206c95e1a30ced6bccb76b4af4df74aa33dbf990b6027d5e",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_002.ogg.import",
+      "sha256": "5a08d1bbac5c49b5a952de78d9b2139ab103d4f5eff0c9eeb58eb254d611579f",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_003.ogg.import",
+      "sha256": "7dfdcc2f78cc82deead2c8e37fb8c1c775bc4e6b69f0b8b210bba30cdc36ef41",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/open_004.ogg.import",
+      "sha256": "2244667eba7e0669b4e02c7d1d514867137d431224d3b103f88cb77f5726b95e",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/pluck_001.ogg.import",
+      "sha256": "19ccd911a9f03a4cb78ba56f6878aadfb90f919ee5f9a017ca79070411886272",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/pluck_002.ogg.import",
+      "sha256": "cad9435e6ad8e7a4acda47e5aa2f36646b8a89cff1d159b3072f2a28b68a6f49",
+      "bytes": 420
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_001.ogg.import",
+      "sha256": "faf8487e150560afff929d53a4cd17e4e9e2c5a3843107ae7e0dd332eacdc1bf",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_002.ogg.import",
+      "sha256": "2e0ee1980ed78e5a50ce53c85f0e0e458ff908fc74c7f47174272139c98249fe",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_003.ogg.import",
+      "sha256": "a003a4376747f666636af75168681a486a813b2baab70b7d9669718e0ad57e1f",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/question_004.ogg.import",
+      "sha256": "d65b2ca9c063859f9a220ddbd827faf63d1103d2a17b4a895ceea54c8eb44159",
+      "bytes": 429
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_001.ogg.import",
+      "sha256": "efc7f246b82d49378d1a7d33cf636057b96cf2ff4c15d7e51cb06fb496e7f49d",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_002.ogg.import",
+      "sha256": "98a3844996e5396cc703543aae71306ea4681ff48cba36f5fa9d0d8b657a3aca",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_003.ogg.import",
+      "sha256": "28cf28d7920197817d08e851885b348ed0aca1b49c707291684d3272c479b9f5",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_004.ogg.import",
+      "sha256": "50b3cdd109903d44efe864e6b8ae599ec6bb50bd952aad81aecbd5277a656a7c",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scratch_005.ogg.import",
+      "sha256": "e221519f88bb335e0e572cc9acb1ad55d270a12ce5678ce3fc1ee497436040a0",
+      "bytes": 426
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_001.ogg.import",
+      "sha256": "01d837709e4cf00df71d18b07048b96e40f692f9b961a09d0cc0dcfcff59a945",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_002.ogg.import",
+      "sha256": "adbf3ea07c6c2dcb015e732f17fa6fa232bc6d7aa96457021f1ebfb5a059ced0",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_003.ogg.import",
+      "sha256": "f1d62e305bae2290abce48a55f047e5a2a6a783591a6bd400df1d882c1241780",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_004.ogg.import",
+      "sha256": "f0b9c803280d09d35a4dcf58cb1da4710bd65e9887397b0a9db70215877ee79a",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/scroll_005.ogg.import",
+      "sha256": "41259fc5aed04a4523396bbf8298e3d125aec1a3ff0f693d24aaacf9063650e8",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_001.ogg.import",
+      "sha256": "54536df204d6c25a03963993814dcc82eb8b2712152073c85dbebd9e4839d855",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_002.ogg.import",
+      "sha256": "10b490ad1bb844030c69abf11be8446037aff4e24552d93f7e304334e270cdcd",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_003.ogg.import",
+      "sha256": "ca4f1c8db18b50e52e61f821d38b2da18f9296f17ad2dbdeca2fc005d7cf3b43",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_004.ogg.import",
+      "sha256": "70354a764e952e53207183014fa8fa96adae037c6b555ec9575f90a5059d1f38",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_005.ogg.import",
+      "sha256": "c742b71f12775a7d5d188f9e4c486b5eb2cca1ca548c40a626698fca5968245b",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_006.ogg.import",
+      "sha256": "3f7d70a4b577a935748a5ca6d356109e5de7397578db4a3108c29c46a8e54ce8",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_007.ogg.import",
+      "sha256": "208e3445dd2a67c95a7fe22dbe2d85af0582ce9be2fb0ae971bda24f0b24828d",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/select_008.ogg.import",
+      "sha256": "d90aa3b3edc324a8fdbd8e84772a29063d5dff0a023f39898b84a49504f896c6",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_001.ogg.import",
+      "sha256": "25c6d77cecc051e917f3871f508caa0a0cdef008ec95e35d5eefbb8fd3e13da0",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_002.ogg.import",
+      "sha256": "3d6d62b13425ce204eeefd5015bc533a7e03e5c419313c77fe32972e0ba05109",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_003.ogg.import",
+      "sha256": "ef6ec0a2d6d99414aa5cea726e8c8e3fbd071f5b37983e30b2d3311199a0e9b2",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_004.ogg.import",
+      "sha256": "e2685b552f631f7621413b481447844e3f462f2c81625eb6ca09df39019e3311",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_005.ogg.import",
+      "sha256": "5c442bd18bd209a83c849d29b2351435d33e1b6b838572ee1b98cc0163f69c7e",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_006.ogg.import",
+      "sha256": "e923cfad5829af26a81f371b29e2d06527407755a1871cd6a54fbf211568805f",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/switch_007.ogg.import",
+      "sha256": "cee5caced2b4a9bc3a3cf94f3d8eec7a16814f43a881d1d51cdaf8963c03b188",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_001.ogg.import",
+      "sha256": "9df6fdf155269e862e670dc813b22c879b963366f9041dcf5493d25178b006d0",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_002.ogg.import",
+      "sha256": "9c23ba6e64c37be23042e0d1ee41c60704379b1c9bf56cb4b9a51bf5e6ad9192",
+      "bytes": 416
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/tick_004.ogg.import",
+      "sha256": "67e999ec13e38e7dfb25c9db8ea8398c68ec3a598119941bd3383ab12edb02ad",
+      "bytes": 417
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_001.ogg.import",
+      "sha256": "76eb704536848d45ab8c3fe317590bf4fe9d1aa6c44441c4a33f35b52a9710e2",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_002.ogg.import",
+      "sha256": "631a5cd526ac8f066c89bc5aa31278902f54fd730e3bb5a9ef96ebc08e36ec29",
+      "bytes": 423
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_003.ogg.import",
+      "sha256": "9d6dd25d140ccd64ba562f38a17e91a2ca083cf99a182b7b10a2f3e231f4ee74",
+      "bytes": 422
+    },
+    {
+      "path": "assets/kenney/interface-sounds/extracted/Audio/toggle_004.ogg.import",
+      "sha256": "2a31bdc744f68b8ad49397ace6fb46df0abb81679c49009d18f7b7a53ac8d204",
+      "bytes": 423
+    },
+    {
+      "path": "templates/shmup/assets/pixel-plane-shmup/manifest.json",
+      "sha256": "76a905a111150596982d2d33d866482a3f84c3cd74d24fa1314eae191e48e393",
+      "bytes": 29058
+    },
+    {
+      "path": "templates/shmup/config/game_config.json",
+      "sha256": "aacafc30cfd6a76d2a078beb9417dbfd1c8c40ffdcdb3f662ed3389cc6bd1d2e",
+      "bytes": 3088
+    },
+    {
+      "path": "templates/shmup/core/atlas_util.gd",
+      "sha256": "90ad9fbe9937c41b2747c8fea86ebd3c5185db04a19a2e4fac7050e47e77c982",
+      "bytes": 554
+    },
+    {
+      "path": "templates/shmup/core/bullet.gd",
+      "sha256": "3581b2b7e342c138f67a46c4eefe9ee3aa577b1f89e0736ac8d6d3128c0fc16e",
+      "bytes": 2392
+    },
+    {
+      "path": "templates/shmup/core/bullet_pool.gd",
+      "sha256": "f4b7bfd77cac1465c256d3f1b1cb7c04198a7de2468bf478d597b51cec4261ef",
+      "bytes": 1981
+    },
+    {
+      "path": "templates/shmup/core/enemy_ship.gd",
+      "sha256": "f9f7b0781e2ab7f93be8bf5dfa1e7948891f0886f6aa025cf0c44d1a2754c79b",
+      "bytes": 5852
+    },
+    {
+      "path": "templates/shmup/core/enemy_spawner.gd",
+      "sha256": "d0bfa06b096b8a1ff24c51b1024155fa87e9ab2a230249550595416b1cdbe5af",
+      "bytes": 4501
+    },
+    {
+      "path": "templates/shmup/core/enemy_wave.gd",
+      "sha256": "8dfe837c925084d8ff8db1e9922246e46085a37eb3ab27949b69ed31cc979eb2",
+      "bytes": 2006
+    },
+    {
+      "path": "templates/shmup/core/explosion_fx.gd",
+      "sha256": "af7943a290406eb0766e091760c09831e90acfb272563946d7fc58d5b55219d9",
+      "bytes": 739
+    },
+    {
+      "path": "templates/shmup/core/game_area.gd",
+      "sha256": "777875b3e8e5251fadcbaad988db31cd1125d3081a0fd871afb15c54e445d42f",
+      "bytes": 3915
+    },
+    {
+      "path": "templates/shmup/core/game_config_loader.gd",
+      "sha256": "be0ad11d75ac4c1a7683dffa2fffa84b08646aff1676c73f0d28d7c443e32e2f",
+      "bytes": 1952
+    },
+    {
+      "path": "templates/shmup/core/game_manager.gd",
+      "sha256": "8a6554c3f25fb2151fcaf7246dab0ef9fd971b11d7b02e89835bb478339adcb9",
+      "bytes": 4661
+    },
+    {
+      "path": "templates/shmup/core/player_ship.gd",
+      "sha256": "85160906d055d5ba1c763f47a774a27fb15b095dec843c077cd551eb0b81f8a6",
+      "bytes": 5842
+    },
+    {
+      "path": "templates/shmup/core/powerup_pickup.gd",
+      "sha256": "01ef2c396e5c14ed07e516fd2099b0c3332a7f5b3b1d80cf3e08dec1121b37c8",
+      "bytes": 828
+    },
+    {
+      "path": "templates/shmup/core/scroll_background.gd",
+      "sha256": "69f57687b31bf796b6f46f38e4fb76da1935d91442ce4adf9825c6d6d78456ab",
+      "bytes": 864
+    },
+    {
+      "path": "templates/shmup/core/shmup_sheet.gd",
+      "sha256": "97208c0699d80f0cc50993195e89f501ce574fc2b479972e8af30850e6a73011",
+      "bytes": 3267
+    },
+    {
+      "path": "templates/shmup/core/skills/bomb.gd",
+      "sha256": "9de7a5e7a0a24ed041191fb2b754276b1b73724a9025913f6b7be49051b7f050",
+      "bytes": 702
+    },
+    {
+      "path": "templates/shmup/core/skills/laser_beam.gd",
+      "sha256": "a9e411056647426a106e537ed98c82c5deb8436a147f0add5ea5a9d5012291b7",
+      "bytes": 1019
+    },
+    {
+      "path": "templates/shmup/core/theme_sound.gd",
+      "sha256": "705b721a0ac5d616a7ac93d162c00564821f97df1fbb5497ff084fee86432d8c",
+      "bytes": 1580
+    },
+    {
+      "path": "templates/shmup/project.godot",
+      "sha256": "3d311ff3320b2d7ac67aeb06f2b52a9f80d43dcbcd1a0ab3d7c66fe62a5276de",
+      "bytes": 4079
+    },
+    {
+      "path": "templates/shmup/scenes/bullet.tscn",
+      "sha256": "cde6aacaf3bd2610c209f2f66785f57939c5002af2a36057f861d48744d312b2",
+      "bytes": 633
+    },
+    {
+      "path": "templates/shmup/scenes/enemy.tscn",
+      "sha256": "f30b8e2c650a6135d4f249007be757b7e14fb09a075bc56e197a03acb061eaea",
+      "bytes": 633
+    },
+    {
+      "path": "templates/shmup/scenes/explosion_fx.tscn",
+      "sha256": "ed72026defac0d0155846dc0c22e0338aefe86f5b0945b04d0c2e5ada3a15167",
+      "bytes": 264
+    },
+    {
+      "path": "templates/shmup/scenes/game.tscn",
+      "sha256": "88759e4753df24809d5e9a891ee87eb260db66f0c2c0a3bc854b68440b4b2fbd",
+      "bytes": 1299
+    },
+    {
+      "path": "templates/shmup/scenes/main.tscn",
+      "sha256": "4d10342d8dcb58d64d3c0bb825382cc3569cad8ae4eab691f59665f40b34a9ca",
+      "bytes": 6448
+    },
+    {
+      "path": "templates/shmup/scenes/player.tscn",
+      "sha256": "e4e9217fb32913a027c28fff47ed6c56438d16dbdc22a6918a8b9508c1cd53a2",
+      "bytes": 712
+    },
+    {
+      "path": "templates/shmup/scenes/powerup.tscn",
+      "sha256": "445f6ff1aa87cd87a7a91922edcb4420afaee249abdf9f2f9b164963bf163e1b",
+      "bytes": 603
+    },
+    {
+      "path": "templates/pingpong/assets/miaoda/pong-football/manifest.json",
+      "sha256": "67c7cb6d39d027cdd01a96d865dc17f2980c755cab5387bb77effa11a6a90504",
+      "bytes": 3982
+    },
+    {
+      "path": "templates/pingpong/assets/pong-football/pong-football/manifest.json",
+      "sha256": "67c7cb6d39d027cdd01a96d865dc17f2980c755cab5387bb77effa11a6a90504",
+      "bytes": 3982
+    },
+    {
+      "path": "templates/pingpong/config/game_config.json",
+      "sha256": "68a1924f3f1fe2431025ea2421c0c862e3c8a84877d679ac2064b93288f61f94",
+      "bytes": 3073
+    },
+    {
+      "path": "templates/pingpong/core/ai_paddle.gd",
+      "sha256": "11afa58fb123130b8b762b3552f774b7ed6d2d71d393f976eb359f1ff4478c3c",
+      "bytes": 2614
+    },
+    {
+      "path": "templates/pingpong/core/ball.gd",
+      "sha256": "ce08776ce2115f5aadeee076f80ba5cc16d0b42129808eea1111c65218d54e92",
+      "bytes": 9225
+    },
+    {
+      "path": "templates/pingpong/core/game_config_loader.gd",
+      "sha256": "81d4282538b683470bcbca514375b2254aa08006f152a9eda6d03933c1114a25",
+      "bytes": 1949
+    },
+    {
+      "path": "templates/pingpong/core/game_manager.gd",
+      "sha256": "ec131de8406128466ce303b9aa67afc4a90eacca04349b587f9afd0d62d4ec91",
+      "bytes": 11498
+    },
+    {
+      "path": "templates/pingpong/core/match_controller.gd",
+      "sha256": "d86cbdf376290a45877c99cf3b0a6cfd71a79b09243479fd7006e9b58861f504",
+      "bytes": 5371
+    },
+    {
+      "path": "templates/pingpong/core/paddle.gd",
+      "sha256": "449f1faf0e83f58d71d4eceecdd3d6ce3c449fe207ec195eff57381c2a80f20e",
+      "bytes": 3603
+    },
+    {
+      "path": "templates/pingpong/core/pong_sheet.gd",
+      "sha256": "0335e7fa801a372121bf5fd0b22a63c401fb1ce804911aff328c3466f597903f",
+      "bytes": 2346
+    },
+    {
+      "path": "templates/pingpong/core/score_manager.gd",
+      "sha256": "46a1e49949a8d9a0573c7172b796863f0e842712e81c3d665ce606f24d411e17",
+      "bytes": 876
+    },
+    {
+      "path": "templates/pingpong/core/skills/curve_ball.gd",
+      "sha256": "acbfaa79659e6d4f33228ca0e6fefab28b043bf0bb9702d737f6619b163f4c45",
+      "bytes": 1190
+    },
+    {
+      "path": "templates/pingpong/core/skills/power_smash.gd",
+      "sha256": "3191fc63874ed6781307221772bac687c778dcb9f8b87e5b6741f57ca6fe6219",
+      "bytes": 1187
+    },
+    {
+      "path": "templates/pingpong/core/theme_sound.gd",
+      "sha256": "0a7727fc156ed7fc238a76d0182787c831509e0e4a53c3957718863bf5608764",
+      "bytes": 1339
+    },
+    {
+      "path": "templates/pingpong/core/theme_sprite.gd",
+      "sha256": "33e53d3b9cdc7fb3186da75a333c889bea7e0aa9ef242be3e9201600fb17a6e2",
+      "bytes": 1074
+    },
+    {
+      "path": "templates/pingpong/project.godot",
+      "sha256": "d4f29b6cf6a775acc4add4b0c134b0909496ce80457ffe18d07811b55877bcd7",
+      "bytes": 2665
+    },
+    {
+      "path": "templates/pingpong/scenes/game.tscn",
+      "sha256": "c5dfa99d78f12e0b57d3880eba5a8fd573962108bb99da42dfff405624246fcf",
+      "bytes": 2453
+    },
+    {
+      "path": "templates/pingpong/scenes/main.tscn",
+      "sha256": "3f4caa752cbfb85caaa16bbe9a731ab402dad8e65da5db860b8ffaae42218637",
+      "bytes": 6364
+    },
+    {
+      "path": "templates/_edu/shmup_hooks.gd",
+      "sha256": "d24b3814cfac601e6a1715beb17805e5c1f22cbd01d6c1ab74c7926d9561c9e2",
+      "bytes": 6539
+    },
+    {
+      "path": "templates/_edu/pingpong_hooks.gd",
+      "sha256": "e5c25cf58ec7a29b264af469deef7dff3799bca7089aeb9f648d17432603e829",
+      "bytes": 3134
+    },
+    {
+      "path": "config/code_anchors/shmup.json",
+      "sha256": "04ac7627b499124011d1d78d351a17c7e1d3dad803d4f62f89b62a64b65c36e5",
+      "bytes": 2445
+    },
+    {
+      "path": "config/code_anchors/pingpong.json",
+      "sha256": "6ebeb016370f0db06c323ea37e8d9b7a34ea51d3b24c58b1f75b934e06d7326c",
+      "bytes": 1813
+    },
+    {
+      "path": "config/creative_templates/shmup.json",
+      "sha256": "f1f7875172bc36520e9d8436fae5475b66f5634583633594bb4bb4edee0a3b5a",
+      "bytes": 2878
+    },
+    {
+      "path": "config/creative_templates/pingpong.json",
+      "sha256": "eb006029c1c4c00d6589743979d6e1d0f0a08cb09be9089c17690183500d4b6d",
+      "bytes": 2808
+    },
+    {
+      "path": "templates/_edu/edu_action_bridge.gd",
+      "sha256": "f301b136478bc4b9fd9a74769afe2ae5737f935c228012b35dcb342ed8500106",
+      "bytes": 2789
+    },
+    {
+      "path": "kiosk/edu/code-highlight.js",
+      "sha256": "c8f1a6af04be8f31ab567a632701d673d56965fe04bbd9832283289f78cc67e6",
+      "bytes": 7265
+    },
+    {
+      "path": "config/kiosk_edu_spec.json",
+      "sha256": "7f6fe416b018cd426a6b059ac2b3e76af5ffabf500eb744bdc90e6f0c15d47fa",
+      "bytes": 3578
+    }
+  ]
+}

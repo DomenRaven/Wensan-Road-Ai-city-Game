@@ -1,0 +1,31 @@
+{
+  "slug": "survivor",
+  "display_name": "割草肉鸽",
+  "reference_games": [
+    "Vampire Survivors",
+    "Brotato",
+    "20 Minutes Till Dawn"
+  ],
+  "started_at": "2026-06-22T14:07:12Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T14:07:12Z",
+      "appId": "app-cikthp6wjz0h",
+      "conversationId": "conv-cikthp6wjz0g"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T14:08:13Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T14:14:57Z",
+  "appId": "app-cikthp6wjz0h",
+  "conversationId": "conv-cikthp6wjz0g",
+  "editor_url": "https://www.miaoda.cn/projects/app-cikthp6wjz0h",
+  "preview_url": "https://app-cikthp6wjz0h.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

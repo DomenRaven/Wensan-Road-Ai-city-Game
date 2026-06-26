@@ -1,0 +1,18 @@
+{
+  "slug": "racing",
+  "app_id": "app-cikgdwwv35z5",
+  "started_at": "2026-06-23T08:18:38Z",
+  "status": "ok",
+  "trajectory_events": 140,
+  "files_written": 11,
+  "rebuild_stats": {
+    "add": 0,
+    "edit": 11,
+    "file_add": 11,
+    "file_part": 1,
+    "skipped": 0,
+    "failed": 5
+  },
+  "has_prd": true,
+  "finished_at": "2026-06-23T08:18:42Z"
+}

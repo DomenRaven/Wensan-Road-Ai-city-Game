@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://racing_game"]
+
+[ext_resource type="Script" path="res://core/track_runner.gd" id="1_runner"]
+[ext_resource type="PackedScene" uid="uid://racing_player" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" path="res://core/road_scroller.gd" id="3_road"]
+[ext_resource type="Script" path="res://core/traffic_spawner.gd" id="4_spawner"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_runner")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 540.0
+offset_bottom = 960.0
+color = Color(0.529412, 0.807843, 0.921569, 1)
+
+[node name="RoadScroller" type="Node2D" parent="."]
+script = ExtResource("3_road")
+
+[node name="LayerA" type="Sprite2D" parent="RoadScroller"]
+
+[node name="LayerB" type="Sprite2D" parent="RoadScroller"]
+
+[node name="TrafficSpawner" type="Node2D" parent="."]
+script = ExtResource("4_spawner")
+
+[node name="Entities" type="Node2D" parent="TrafficSpawner"]
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+z_index = 10
+position = Vector2(270, 810)

@@ -1,0 +1,52 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "life_sim",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "美味小厨房"
+  },
+  "core_locked": true,
+  "task": {
+    "chain_steps": 3
+  },
+  "interaction": {
+    "mode": "click_hotspot"
+  },
+  "economy": {
+    "mode": "order_based"
+  },
+  "fail": {
+    "mode": "forgiving"
+  },
+  "tuning": {
+    "crop": {
+      "grow_time_sec": 8
+    },
+    "cook": {
+      "time_sec": 5
+    },
+    "order": {
+      "count_to_win": 3,
+      "patience_sec": 30
+    },
+    "reward": {
+      "coins_per_order": 10
+    },
+    "items": {
+      "crop_id": "生菜",
+      "dish_id": "田园沙拉"
+    }
+  },
+  "theme": {
+    "asset_pack": "pixel-platformer",
+    "farm_sprite": "res://assets/kenney/platformer-art-deluxe/Items/plant.png",
+    "stove_sprite": "res://assets/kenney/platformer-art-deluxe/Tiles/box.png",
+    "customer_sprite": "res://assets/kenney/platformer-art-deluxe/Player/p2_stand.png",
+    "title": "美味小厨房"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

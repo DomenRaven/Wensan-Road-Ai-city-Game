@@ -1,0 +1,41 @@
+﻿{
+  "msg": "",
+  "status": 0,
+  "trace": "58705626bf09be2e893ad80afc614d44",
+  "data": {
+    "name": "妯増2D鏍兼枟娓告垙",
+    "appDesc": "涓€娆惧弬鑰冩嫵鐨囥€佽闇搁鏍肩殑妯増2D鏍兼枟娓告垙锛屾敮鎸佸弻浜哄鎴樺拰浜烘満瀵规垬妯″紡锛岀帺瀹堕€氳繃閿洏鎿嶆帶瑙掕壊杩涜鍥炲悎鍒舵垬鏂楋紝浣跨敤鏅€氭敾鍑汇€佺壒娈婃妧鑳藉拰蹇呮潃鎶€鍑昏触瀵规墜銆?,
+    "avatar": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/c51faffe-de9a-40a7-842a-c9386f1d350a/app-chugph9y43cx_web_1782124472302.png",
+    "mobileCover": "https://job-manager-artifacts-online.cdn.bcebos.com/prod/artifacts/e65cdb36-96d0-40bd-b544-7d7262136dac/app-chugph9y43cx_h5_1782124472310.png",
+    "type": "GAME",
+    "appId": "app-chugph9y43cx",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T18:34:19.758+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T00:28:54.651+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cighsu29wwzk",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "鍒涗綔涓€涓í鐗?d鏍兼枟灏忔父鎴忋€傚弬鑰冩嫵鐨囷紝琛楅湼銆傝鑹查渶瑕佹湁瀹屽杽鐨勫嚭鎷涜〃锛屾妧鑳戒互鍙婂ぇ鎷涖€傛敮鎸佸弻浜哄鍐充笌浜烘満瀵规垬銆?,
+    "labelColor": {
+      "colorCode": "#FEFFED",
+      "colorCodeSecondary": "#FFF2A2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_4.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": false,
+    "hideWatermark": false,
+    "conversationId": "conv-chugph9y43cw"
+  }
+}

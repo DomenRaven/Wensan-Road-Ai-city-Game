@@ -1,0 +1,31 @@
+{
+  "slug": "shooter",
+  "display_name": "射击",
+  "reference_games": [
+    "Enter the Gungeon",
+    "Nuclear Throne",
+    "小行星"
+  ],
+  "started_at": "2026-06-22T13:03:51Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T13:03:51Z",
+      "appId": "app-cijj73r3iyv5",
+      "conversationId": "conv-cijj73r3iyv4"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T13:06:14Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T13:13:26Z",
+  "appId": "app-cijj73r3iyv5",
+  "conversationId": "conv-cijj73r3iyv4",
+  "editor_url": "https://www.miaoda.cn/projects/app-cijj73r3iyv5",
+  "preview_url": "https://app-cijj73r3iyv5.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

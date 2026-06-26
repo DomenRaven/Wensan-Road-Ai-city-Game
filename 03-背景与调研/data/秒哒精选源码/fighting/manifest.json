@@ -1,0 +1,18 @@
+{
+  "slug": "fighting",
+  "app_id": "app-cijahlqb7pj5",
+  "started_at": "2026-06-23T08:18:48Z",
+  "status": "ok",
+  "trajectory_events": 140,
+  "files_written": 8,
+  "rebuild_stats": {
+    "add": 0,
+    "edit": 2,
+    "file_add": 7,
+    "file_part": 1,
+    "skipped": 0,
+    "failed": 11
+  },
+  "has_prd": true,
+  "finished_at": "2026-06-23T08:18:53Z"
+}

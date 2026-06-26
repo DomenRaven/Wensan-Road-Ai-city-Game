@@ -1,9 +1,20 @@
 stateDiagram-v2
     [*] --> IDLE
-    IDLE --> INTENT: 点击开始
-    INTENT --> CREATE: 确认生成
-    CREATE --> PLAY: 生成成功
-    CREATE --> RESET: 超时失败
-    PLAY --> DONE: 试玩结束
-    DONE --> RESET: 交付完成
-    RESET --> IDLE: 清理完成
+    IDLE --> INTENT: S0 欢迎·起名
+    INTENT --> INTENT: S1-S7 向导+实时预览
+    INTENT --> CREATE: ★R 配方确认
+    CREATE --> PLAY: S8 分步生成成功
+    CREATE --> RESET: 超时/失败
+    PLAY --> DONE: S9 试玩结束
+    DONE --> RESET: 作品卡/可选QR
+    RESET --> IDLE: 清理
+
+    note right of INTENT
+        右侧预览区随步骤更新
+        进度 0/8
+    end note
+
+    note right of CREATE
+        文案绑定用户配方
+        Agent 只改 config
+    end note

@@ -1,0 +1,57 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-20",
+  "description": "预制小技能目录：core 实现逻辑，CREATE 阶段用户通过 tuning.enabled_skills 勾选启用",
+  "rules": {
+    "max_skills_per_session": 2,
+    "implementation": "core/skills/{skill_id}.gd 预制，config 仅开关与 cooldown 倍率",
+    "ai_may_only_set": ["enabled_skills", "tuning.skills.{id}.cooldown_scale"]
+  },
+  "catalog": {
+    "shooter": [
+      { "id": "dash", "label": "冲刺闪避", "desc": "短距离冲刺躲开子弹", "default_cooldown_ms": 2000 },
+      { "id": "shield_burst", "label": "能量护盾", "desc": "2 秒无敌", "default_cooldown_ms": 8000 },
+      { "id": "spread_shot", "label": "散射", "desc": "一次打出三发", "default_cooldown_ms": 3000 }
+    ],
+    "platformer": [
+      { "id": "double_jump", "label": "二段跳", "desc": "空中再跳一次", "default_cooldown_ms": 0 },
+      { "id": "ground_pound", "label": "下砸", "desc": "空中按下砸破障碍", "default_cooldown_ms": 1500 }
+    ],
+    "survivor": [
+      { "id": "magnet", "label": "吸经验", "desc": "扩大拾取范围", "default_cooldown_ms": 0 },
+      { "id": "nova", "label": "环形爆发", "desc": "清屏一圈敌人", "default_cooldown_ms": 12000 }
+    ],
+    "fighting": [
+      { "id": "block_parry", "label": "格挡", "desc": "减伤并反击", "default_cooldown_ms": 1000 },
+      { "id": "special_uppercut", "label": "上勾拳", "desc": "击飞对手", "default_cooldown_ms": 4000 }
+    ],
+    "tower_defense": [
+      { "id": "emergency_repair", "label": "紧急维修", "desc": "塔回满血一次", "default_cooldown_ms": 30000 },
+      { "id": "gold_rush", "label": "金币加成", "desc": "下一波金币翻倍", "default_cooldown_ms": 45000 }
+    ],
+    "shmup": [
+      { "id": "bomb", "label": "清屏炸弹", "desc": "清除屏幕子弹", "default_cooldown_ms": 15000 },
+      { "id": "laser_beam", "label": "激光", "desc": "穿透激光 3 秒", "default_cooldown_ms": 6000 }
+    ],
+    "racing": [
+      { "id": "boost", "label": "氮气加速", "desc": "短时极速", "default_cooldown_ms": 5000 },
+      { "id": "drift_snap", "label": "漂移", "desc": "弯道保速", "default_cooldown_ms": 0 }
+    ],
+    "parkour": [
+      { "id": "double_jump", "label": "二段跳", "desc": "空中再跳", "default_cooldown_ms": 0 },
+      { "id": "slide", "label": "滑铲", "desc": "钻过低障碍", "default_cooldown_ms": 2000 }
+    ],
+    "life_sim": [
+      { "id": "speed_cook", "label": "快手烹饪", "desc": "烹饪时间减半一次", "default_cooldown_ms": 20000 },
+      { "id": "instant_grow", "label": "瞬间成熟", "desc": "作物立刻收获", "default_cooldown_ms": 25000 }
+    ],
+    "pingpong": [
+      { "id": "power_smash", "label": "大力扣杀", "desc": "球速暴增一球", "default_cooldown_ms": 8000 },
+      { "id": "curve_ball", "label": "旋转球", "desc": "大角度变向", "default_cooldown_ms": 6000 }
+    ],
+    "sports_race": [
+      { "id": "sprint_burst", "label": "冲刺", "desc": "5 秒加速", "default_cooldown_ms": 10000 },
+      { "id": "high_jump", "label": "超级跳", "desc": "跳更高越障碍", "default_cooldown_ms": 0 }
+    ]
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "genre": "shmup",
+  "display_name": "街机飞机射击",
+  "name_suggestions": [
+    "雷霆小队",
+    "星空守护者",
+    "小小飞行员",
+    "弹幕闪避"
+  ],
+  "tuning_defaults_ref": "templates/shmup/config/game_config.json",
+  "clamp_percent": 30,
+  "questions": [
+    {
+      "id": "q_speed",
+      "widget": "single_choice",
+      "prompt": "你的飞机移动得——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.player.speed",
+          "value": 210,
+          "code_anchor_id": "player_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.player.speed",
+          "value": 300,
+          "code_anchor_id": "player_speed"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.player.speed",
+          "value": 390,
+          "code_anchor_id": "player_speed"
+        }
+      ]
+    },
+    {
+      "id": "q_fire_rate",
+      "widget": "single_choice",
+      "prompt": "子弹射出——",
+      "options": [
+        {
+          "id": "sparse",
+          "label": "稀一点",
+          "tuning_path": "tuning.player.bullet_interval_ms",
+          "value": 260,
+          "code_anchor_id": "fire"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.player.bullet_interval_ms",
+          "value": 200,
+          "code_anchor_id": "fire"
+        },
+        {
+          "id": "dense",
+          "label": "密一点",
+          "tuning_path": "tuning.player.bullet_interval_ms",
+          "value": 140,
+          "code_anchor_id": "fire"
+        }
+      ]
+    },
+    {
+      "id": "q_spawn",
+      "widget": "single_choice",
+      "prompt": "敌人出现——",
+      "options": [
+        {
+          "id": "sparse",
+          "label": "疏一点",
+          "tuning_path": "tuning.spawn.interval_ms",
+          "value": 1950,
+          "code_anchor_id": "spawn_rate"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.spawn.interval_ms",
+          "value": 1500,
+          "code_anchor_id": "spawn_rate"
+        },
+        {
+          "id": "dense",
+          "label": "密一点",
+          "tuning_path": "tuning.spawn.interval_ms",
+          "value": 1050,
+          "code_anchor_id": "spawn_rate"
+        }
+      ]
+    },
+    {
+      "id": "q_skill",
+      "widget": "skill_pick",
+      "prompt": "想开启一个小技能？（可选）",
+      "optional": true,
+      "tuning_path": "tuning.enabled_skills",
+      "skill_ids": ["bomb", "laser_beam"],
+      "code_anchor_id": "enabled_skills"
+    }
+  ]
+}

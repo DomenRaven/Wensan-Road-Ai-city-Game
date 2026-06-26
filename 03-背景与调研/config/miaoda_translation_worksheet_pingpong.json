@@ -1,0 +1,43 @@
+{
+  "slug": "pingpong",
+  "godot_config": "templates/pingpong/config/game_config.json",
+  "miaoda_source": "03-背景与调研/data/秒哒精选源码/pingpong",
+  "preview_url": "https://app-cika5uyinqip.appmiaoda.com",
+  "tuning_candidates": {
+    "ball.base_speed": {
+      "miaoda_value": 500.0,
+      "godot_default": 380,
+      "proposed": 494,
+      "notes": "transform=direct; clamped"
+    },
+    "paddle.speed": {
+      "miaoda_value": 400.0,
+      "godot_default": 360,
+      "proposed": 400,
+      "notes": "transform=direct"
+    },
+    "ai.reaction_ms": {
+      "miaoda_value": 350.0,
+      "godot_default": 175,
+      "proposed": 180,
+      "notes": "transform=inverse_ratio; clamped"
+    },
+    "rules.points_to_win": {
+      "miaoda_value": 5.0,
+      "godot_default": 5,
+      "proposed": 5,
+      "notes": "transform=direct"
+    }
+  },
+  "theme_candidates": {
+    "title": {
+      "miaoda": "",
+      "proposed": "",
+      "kenney_pack": "sports-pack"
+    }
+  },
+  "enabled_skills": [],
+  "ux_notes": "",
+  "verified": false,
+  "verified_at": ""
+}

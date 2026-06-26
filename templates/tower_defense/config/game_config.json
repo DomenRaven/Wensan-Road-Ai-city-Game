@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "genre": "tower_defense",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "花园守卫战"
+  },
+  "core_locked": true,
+  "tuning": {
+    "economy": {
+      "start_gold": 120,
+      "kill_reward": 10
+    },
+    "tower": {
+      "basic": {
+        "damage": 15,
+        "range": 3,
+        "cost": 50,
+        "fire_interval_ms": 600
+      }
+    },
+    "enemy": {
+      "basic": {
+        "hp": 40,
+        "speed": 60,
+        "defense": 0
+      }
+    },
+    "wave": {
+      "count": 5,
+      "spawn_interval_ms": 800,
+      "enemies_per_wave_base": 3
+    },
+    "lives": {
+      "max_leaks": 5
+    },
+    "level": {
+      "scene": "res://scenes/td_level.tscn"
+    },
+    "enabled_skills": [],
+    "skills": {
+      "emergency_repair": {
+        "cooldown_scale": 1.0
+      },
+      "gold_rush": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "garden",
+    "tower_sprite": "res://assets/kenney/td/PNG/Default size/towerDefense_tile010.png",
+    "enemy_sprite": "res://assets/kenney/td/PNG/Default size/towerDefense_tile020.png",
+    "map_tileset": "res://assets/kenney/td/PNG/Default size/towerDefense_tile001.png",
+    "path_tileset": "res://assets/kenney/td/PNG/Default size/towerDefense_tile024.png",
+    "background_sprite": "res://assets/kenney/td/Sample.png",
+    "title": "花园守卫战",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "shoot": "res://assets/kenney/impact-sounds/Audio/impactTin_medium_000.ogg",
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactGeneric_light_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

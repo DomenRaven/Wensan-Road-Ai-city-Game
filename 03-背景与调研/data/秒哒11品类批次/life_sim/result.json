@@ -1,0 +1,31 @@
+{
+  "slug": "life_sim",
+  "display_name": "生活模拟",
+  "reference_games": [
+    "美食烹饪家",
+    "Township",
+    "Cooking Fever"
+  ],
+  "started_at": "2026-06-22T14:15:02Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T14:15:02Z",
+      "appId": "app-cikz7rz45fy9",
+      "conversationId": "conv-cikz7rz45fy8"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T14:15:58Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T14:23:46Z",
+  "appId": "app-cikz7rz45fy9",
+  "conversationId": "conv-cikz7rz45fy8",
+  "editor_url": "https://www.miaoda.cn/projects/app-cikz7rz45fy9",
+  "preview_url": "https://app-cikz7rz45fy9.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

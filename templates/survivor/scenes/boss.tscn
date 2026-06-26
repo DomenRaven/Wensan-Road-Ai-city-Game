@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://survivor_boss"]
+
+[ext_resource type="Script" path="res://core/survivor_boss.gd" id="1_boss"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_boss"]
+radius = 28.0
+
+[node name="Boss" type="Area2D" groups=["enemy", "boss"]]
+collision_layer = 4
+collision_mask = 1
+script = ExtResource("1_boss")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_boss")
+
+[node name="LaserLine" type="Line2D" parent="."]
+width = 2.0
+default_color = Color(1, 0, 0, 0.5)
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

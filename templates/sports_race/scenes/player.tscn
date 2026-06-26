@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://sports_race_player"]
+
+[ext_resource type="Script" path="res://core/player_racer.gd" id="1_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(28, 36)
+
+[node name="Player" type="CharacterBody2D" groups=["player"]]
+collision_layer = 1
+collision_mask = 2
+floor_snap_length = 6.0
+script = ExtResource("1_player")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -18)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -18)
+shape = SubResource("RectangleShape2D_player")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(200, -40)
+limit_left = 0
+limit_top = 0
+limit_right = 640
+limit_bottom = 360

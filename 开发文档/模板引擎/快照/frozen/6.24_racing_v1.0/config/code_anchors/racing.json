@@ -1,0 +1,74 @@
+{
+  "version": "1.0",
+  "genre": "racing",
+  "anchors": {
+    "car_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.car.max_speed",
+      "line_hint": 20,
+      "caption": "最高速度：数字越大，车跑得越快！",
+      "action_id": null
+    },
+    "turn_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.car.turn_speed",
+      "line_hint": 23,
+      "caption": "转弯灵敏度：越大越容易拐弯！",
+      "action_id": null
+    },
+    "lap_distance": {
+      "file": "config/game_config.json",
+      "path": "tuning.track.lap_distance_px",
+      "line_hint": 31,
+      "caption": "一圈多长：越小越容易刷圈数！",
+      "action_id": null
+    },
+    "enabled_skills": {
+      "file": "config/game_config.json",
+      "path": "tuning.enabled_skills",
+      "line_hint": 49,
+      "caption": "这里记录你开启的小技能！",
+      "action_id": null
+    },
+    "steer": {
+      "file": "core/car_topdown.gd",
+      "path": null,
+      "line_hint": 126,
+      "caption": "按左右键，车子就会转向！",
+      "action_id": "steer",
+      "snippet_gd": "if Input.is_action_pressed(\"steer_left\"):"
+    },
+    "boost": {
+      "file": "core/car_topdown.gd",
+      "path": null,
+      "line_hint": 119,
+      "caption": "长按空格加速，冲起来！",
+      "action_id": "boost",
+      "snippet_gd": "if Input.is_action_pressed(\"skill\"):"
+    },
+    "lap_complete": {
+      "file": "core/track_runner.gd",
+      "path": null,
+      "line_hint": 142,
+      "caption": "跑够一圈就会记一次圈数！",
+      "action_id": "lap_complete",
+      "snippet_gd": "func _on_lap_completed(lap_index: int) -> void:"
+    },
+    "hit_npc": {
+      "file": "core/car_topdown.gd",
+      "path": null,
+      "line_hint": 149,
+      "caption": "撞上别的车会减速，就是这里！",
+      "action_id": "hit_npc",
+      "snippet_gd": "if area.is_in_group(\"npc_car\"):"
+    },
+    "hit_trap": {
+      "file": "core/car_topdown.gd",
+      "path": null,
+      "line_hint": 151,
+      "caption": "碰到路障会打滑，看这段代码！",
+      "action_id": "hit_trap",
+      "snippet_gd": "elif area.is_in_group(\"road_obstacle\"):"
+    }
+  }
+}

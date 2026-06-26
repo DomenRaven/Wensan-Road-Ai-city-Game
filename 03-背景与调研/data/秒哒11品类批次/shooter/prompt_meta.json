@@ -1,0 +1,11 @@
+{
+  "slug": "shooter",
+  "display_name": "射击",
+  "reference_games": [
+    "Enter the Gungeon",
+    "Nuclear Throne",
+    "小行星"
+  ],
+  "reference_mechanics": "俯视角八向移动、射击、波次敌人生成、命中反馈",
+  "prompt": "请制作一款【K12 俯视角射击】浏览器小游戏，参考《Enter the Gungeon》《Nuclear Throne》《小行星》的简化版。\n\n## 参考要点\n- Gungeon：俯视角、弹幕 dodge、房间清敌\n- Nuclear Throne：快节奏、命中反馈、波次\n- 小行星：屏幕边缘穿越、递增难度\n\n## 核心玩法\n- WASD 移动 + 空格射击（或方向键移动+空格，≤3 键组合）\n- 自动瞄准最近敌人或八向射击\n- 3 波敌人，清完胜利\n- 命中：敌人闪白+短停顿+音效\n- 玩家 3 条命\n\n## 视觉\n- 太空/卡通机器人主题，无写实枪械血腥\n\n## 交付\n- 完整可玩 3 波流程+计分"
+}

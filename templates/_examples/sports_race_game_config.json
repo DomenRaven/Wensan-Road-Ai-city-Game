@@ -1,0 +1,48 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "sports_race",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "田径冲刺"
+  },
+  "core_locked": true,
+  "tuning": {
+    "runner": {
+      "speed": 260,
+      "boost_multiplier": 1.5,
+      "accel_rate": 4.5
+    },
+    "jump": {
+      "velocity": -440,
+      "max_fall_speed": 520
+    },
+    "track": {
+      "length_px": 3500
+    },
+    "obstacle": {
+      "density": 0.45,
+      "min_gap_px": 190
+    },
+    "round": {
+      "duration_sec": 60
+    },
+    "enabled_skills": ["sprint_burst", "high_jump"],
+    "skills": {
+      "sprint_burst": { "cooldown_scale": 0.9 },
+      "high_jump": { "cooldown_scale": 1.0 }
+    }
+  },
+  "theme": {
+    "asset_pack": "sports-pack",
+    "player_sprite": "res://assets/kenney/sports-pack/PNG/Blue/player_blue_1.png",
+    "track_sprite": "res://assets/kenney/sports-pack/PNG/Ground/groundGrass.png",
+    "hurdle_sprite": "res://assets/kenney/sports-pack/PNG/Elements/hurdle.png",
+    "background_color": "#6eb5ff",
+    "title": "校园田径赛"
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

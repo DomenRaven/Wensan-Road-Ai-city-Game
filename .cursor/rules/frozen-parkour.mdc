@@ -1,0 +1,47 @@
+---
+description: 跑酷品类冻结 — B7 验收基线，禁止无意修改
+globs:
+  - "templates/parkour/**"
+  - "templates/_edu/parkour_hooks.gd"
+  - "config/code_anchors/parkour.json"
+  - "config/creative_templates/parkour.json"
+  - "config/frozen_genre_parkour.json"
+  - "开发文档/模板引擎/快照/frozen/6.24_parkour_v1.0/**"
+alwaysApply: false
+---
+
+# 跑酷（parkour）· 冻结约束（2026-06-24 v1.0）
+
+## 适用范围
+
+编辑 **parkour（跑酷）** 相关路径时生效。
+
+## 禁止（默认）
+
+- **禁止**修改 `templates/parkour/**`（含 `core/`、`config/`、`scenes/`）
+- **禁止**修改 `templates/_edu/parkour_hooks.gd`
+- **禁止**修改 `config/code_anchors/parkour.json`、`config/creative_templates/parkour.json`
+- **禁止**为修其它品类回改跑酷锚点、hooks、B7 动作映射
+
+## 共享依赖（慎改）
+
+改动以下文件可能影响跑酷 B7，须**显式解冻**并回归跑酷验收：
+
+- `templates/_edu/edu_action_bridge.gd`
+- `kiosk/edu/code-highlight.js`
+- `config/kiosk_edu_spec.json`（`code_highlight` 段）
+- `kiosk/edu/edu-wizard.js` 内 **parkour** 分支（`getGenreHighlightFallback` · B7 演示钮）
+
+## 解冻流程
+
+1. 用户确认解冻范围
+2. 修改后执行：
+   ```powershell
+   python 05-工具脚本\freeze_parkour_snapshot.py write
+   ```
+3. 回归：B7「跳跃」「滑铲」「捡金币」「吃道具」· Godot 真机试玩 · `freeze_parkour_snapshot.py verify`
+
+## 权威文档
+
+- [`6.24_跑酷_冻结快照_v1.0.md`](开发文档/模板引擎/快照/6.24_跑酷_冻结快照_v1.0.md)
+- 清单：`config/frozen_genre_parkour.json`

@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "genre": "platformer",
+  "anchors": {
+    "move": {
+      "file": "config/game_config.json",
+      "path": "tuning.player.move_speed",
+      "line_hint": 11,
+      "caption": "移动速度：你选得越快，主角跑得越猛！",
+      "action_id": null
+    },
+    "jump": {
+      "file": "config/game_config.json",
+      "path": "tuning.player.jump_velocity",
+      "line_hint": 12,
+      "caption": "跳跃力度：你选得越高，跳得越猛！",
+      "action_id": null
+    },
+    "enemy_patrol": {
+      "file": "config/game_config.json",
+      "path": "tuning.enemy.patrol_speed",
+      "line_hint": 34,
+      "caption": "敌人巡逻速度：越快越难躲！",
+      "action_id": null
+    },
+    "collect_coin": {
+      "file": "config/game_config.json",
+      "path": "tuning.scoring.coin",
+      "line_hint": 29,
+      "caption": "每枚金币加分就在这里设定！",
+      "action_id": null
+    },
+    "enabled_skills": {
+      "file": "config/game_config.json",
+      "path": "tuning.enabled_skills",
+      "line_hint": 53,
+      "caption": "这里记录你开启的小技能！",
+      "action_id": null
+    },
+    "stomp_enemy": {
+      "file": "core/player_platformer.gd",
+      "path": null,
+      "line_hint": 264,
+      "caption": "从上方踩到敌人就能消灭它！",
+      "action_id": "stomp_enemy",
+      "snippet_gd": "func _try_stomp_enemy(enemy: CharacterBody2D, player_bottom: float) -> bool:"
+    },
+    "player_jump": {
+      "file": "core/player_platformer.gd",
+      "path": null,
+      "line_hint": 160,
+      "caption": "按跳跃键起跳，就是这里！",
+      "action_id": "jump",
+      "snippet_gd": "velocity.y = _jump_velocity"
+    },
+    "coin_collected": {
+      "file": "core/collectible.gd",
+      "path": null,
+      "line_hint": 31,
+      "caption": "碰到金币会执行这里，加分！",
+      "action_id": "collect_coin",
+      "snippet_gd": "collected.emit()"
+    }
+  }
+}

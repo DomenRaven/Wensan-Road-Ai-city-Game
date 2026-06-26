@@ -9,7 +9,8 @@ alwaysApply: true
 - 使用 Godot 4.6 Standard + GDScript，**全部函数强类型**
 - 单次会话只改 **一个品类模板** 目录
 - **禁止修改 `core/` 目录**（移动、命中、公式、调度逻辑已预制）
-- 用户创作时**只改 `config/game_config.json`** 的 `tuning` 与 `theme` 字段
+- 用户创作时**只改 `config/game_config.json`** 的 `tuning`、`theme`、`tuning.enabled_skills`
+- **小技能**逻辑在 `core/skills/` 预制；CREATE 仅开关，见 `config/optional_skills.json`
 - 生成前执行 `python 05-工具脚本/query_rag.py "{主题}" -k 5` 获取依据
 - `tuning` 数值调整须在规格文档范围内（±30%），不得越界
 - 禁止新建：联机、存档、内购、广告、商城系统

@@ -1,0 +1,59 @@
+{"delay_ms": 0, "text": "// AI 正在写入 config/game_config.json", "highlight": false}
+{"delay_ms": 713, "text": "{", "highlight": false}
+{"delay_ms": 624, "text": "  \"tuning\": {", "highlight": false}
+{"delay_ms": 624, "text": "    \"combat\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"player_speed\": 200,", "highlight": true, "anchor_id": "player_speed"}
+{"delay_ms": 980, "text": "      \"light_damage\": 5,", "highlight": true, "anchor_id": "light_damage"}
+{"delay_ms": 980, "text": "      \"heavy_damage\": 15,", "highlight": true, "anchor_id": "heavy_damage"}
+{"delay_ms": 624, "text": "      \"ultimate_damage\": 30,", "highlight": false}
+{"delay_ms": 535, "text": "      \"max_hp\": 100,", "highlight": false}
+{"delay_ms": 535, "text": "      \"max_mp\": 100", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"ai\": {", "highlight": false}
+{"delay_ms": 980, "text": "      \"move_speed_scale\": 0.8,", "highlight": true, "anchor_id": "ai_speed"}
+{"delay_ms": 535, "text": "      \"tick_interval_sec\": 0.6,", "highlight": false}
+{"delay_ms": 535, "text": "      \"attack_range_px\": 80", "highlight": false}
+{"delay_ms": 535, "text": "    },", "highlight": false}
+{"delay_ms": 624, "text": "    \"enabled_skills\": [],", "highlight": false}
+{"delay_ms": 535, "text": "    \"skills\": {}", "highlight": false}
+{"delay_ms": 535, "text": "  }", "highlight": false}
+{"delay_ms": 535, "text": "}", "highlight": false}
+{"delay_ms": 2200, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/fighter.gd — 战斗动作", "highlight": false}
+{"delay_ms": 713, "text": "extends CharacterBody2D", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "func try_move(direction: float) -> void:", "highlight": false}
+{"delay_ms": 980, "text": "    var speed = FightConstants.float_val(\"player_speed\", 200)", "highlight": true, "anchor_id": "player_speed"}
+{"delay_ms": 624, "text": "    velocity.x = direction * speed", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 980, "text": "func try_light_attack() -> bool:", "highlight": true, "anchor_id": "light_punch"}
+{"delay_ms": 624, "text": "    return _try_attack(ActionState.ATTACK1)", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 980, "text": "func try_block() -> void:", "highlight": true, "anchor_id": "block"}
+{"delay_ms": 624, "text": "    _set_state(ActionState.BLOCK)", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 980, "text": "func try_ultimate() -> bool:", "highlight": true, "anchor_id": "special"}
+{"delay_ms": 624, "text": "    return arena.call(\"request_ultimate\", self)", "highlight": false}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/fight_arena.gd — 结算伤害", "highlight": false}
+{"delay_ms": 713, "text": "func resolve_hit(attacker, defender, move_id: String) -> void:", "highlight": false}
+{"delay_ms": 802, "text": "    var raw_damage = combat.get(\"light_damage\", 5)", "highlight": true, "anchor_id": "light_damage"}
+{"delay_ms": 713, "text": "    if move_id == \"heavy\":", "highlight": false}
+{"delay_ms": 802, "text": "        raw_damage = combat.get(\"heavy_damage\", 15)", "highlight": true, "anchor_id": "heavy_damage"}
+{"delay_ms": 624, "text": "    if defender_blocking:", "highlight": false}
+{"delay_ms": 713, "text": "        final_damage = int(floor(raw_damage * reduction))", "highlight": true, "anchor_id": "block"}
+{"delay_ms": 624, "text": "", "highlight": false}
+{"delay_ms": 713, "text": "# core/player_fighter.gd — 输入映射", "highlight": false}
+{"delay_ms": 713, "text": "func handle_input(..., just_light, just_heavy, block_held, just_ultimate):", "highlight": false}
+{"delay_ms": 624, "text": "    if block_held:", "highlight": false}
+{"delay_ms": 802, "text": "        try_block()", "highlight": true, "anchor_id": "block"}
+{"delay_ms": 624, "text": "    if just_ultimate:", "highlight": false}
+{"delay_ms": 802, "text": "        try_ultimate()", "highlight": true, "anchor_id": "special"}
+{"delay_ms": 624, "text": "    if just_light:", "highlight": false}
+{"delay_ms": 802, "text": "        try_light_attack()", "highlight": true, "anchor_id": "light_punch"}
+{"delay_ms": 891, "text": "", "highlight": false}
+{"delay_ms": 891, "text": "# core/enemy_fighter.gd — AI 移动", "highlight": false}
+{"delay_ms": 980, "text": "    speed *= ai_cfg.get(\"move_speed_scale\", 0.8)", "highlight": true, "anchor_id": "ai_speed"}
+{"delay_ms": 891, "text": "", "highlight": false}
+{"delay_ms": 1240, "text": "# 攒满能量条就能放大招！", "highlight": true, "anchor_id": "special"}
+{"delay_ms": 1780, "text": "// 你的横版格斗游戏配置完成！", "highlight": false}

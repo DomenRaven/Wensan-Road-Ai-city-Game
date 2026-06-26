@@ -1,0 +1,4 @@
+{"eventId": 6, "role": "user", "type": "message", "content": "请生成一个网页，内容如下：帮我生成一个街机风格的飞机射击游戏，双方互相攻击，敌机需要有多种风格，武器形状一致，另外需要增加音效，整个游戏更有紧张刺激的感觉，支持手机触屏操作"}
+{"eventId": 51, "role": "agent", "type": "file", "content": "[file: 需求文档.md]"}
+{"eventId": 64, "role": "user", "type": "message", "content": "立即创作"}
+{"eventId": 153, "role": "system", "type": "status", "content": "state=canceled"}

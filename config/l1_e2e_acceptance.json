@@ -1,0 +1,422 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-06-24",
+  "description": "L1 个性化端到端验收用例 · 线 B 首条必须通过 · 6.24 教育版 E2E-B-EDU-001 · E2E-B-EDU-BROWSER",
+  "pilot_genre": "platformer",
+  "cases": [
+    {
+      "id": "E2E-B-001",
+      "name": "platformer · 起名 + 挑战手感 + 技能",
+      "track": "B",
+      "priority": "P0",
+      "status": "pass_a1_a6",
+      "preconditions": [
+        "Redis 或 memory backend 运行",
+        "backend :8000 · Kiosk :8080/kiosk/",
+        "POST /sessions/{id}/generate 已实现"
+      ],
+      "wizard_input": {
+        "S0": { "display_name": "小明的星星冒险" },
+        "S1": { "genre": "platformer" },
+        "S2": { "play_variant_id": "default" },
+        "S3": { "style_pack": "default", "mood_keywords": ["冒险"] },
+        "S4": { "character": { "name": "小明", "color": "#ff6b6b" } },
+        "S5": { "props": ["star", "coin"] },
+        "S6": { "feel_id": "challenge" },
+        "S7": { "enabled_skills": ["double_jump"] },
+        "R": {},
+        "S8": {}
+      },
+      "assertions": [
+        {
+          "id": "A1",
+          "type": "filesystem",
+          "check": "workspace/{session_id}/config/game_config.json exists"
+        },
+        {
+          "id": "A2",
+          "type": "json_path",
+          "path": "meta.display_name",
+          "equals": "小明的星星冒险"
+        },
+        {
+          "id": "A3",
+          "type": "json_path",
+          "path": "theme.title",
+          "equals": "小明的星星冒险"
+        },
+        {
+          "id": "A4",
+          "type": "json_path",
+          "path": "tuning.enabled_skills",
+          "contains": "double_jump"
+        },
+        {
+          "id": "A5",
+          "type": "tuning_delta",
+          "feel_id": "challenge",
+          "genre": "platformer",
+          "field": "player.move_speed",
+          "direction": "harder_or_faster_vs_balanced"
+        },
+        {
+          "id": "A6",
+          "type": "api",
+          "method": "POST",
+          "path": "/sessions/{session_id}/play/launch",
+          "expect": { "ok": true, "project_path_contains": "workspace" }
+        },
+        {
+          "id": "A7",
+          "type": "manual_play",
+          "duration_sec_min": 120,
+          "checks": [
+            "游戏标题或 HUD 出现「小明的星星冒险」或等价作品名",
+            "双跳技能可触发（若已启用）",
+            "手感明显难于默认 balanced preset"
+          ]
+        },
+        {
+          "id": "A8",
+          "type": "mcp",
+          "command": "run_project",
+          "path": "workspace/{session_id}",
+          "expect_errors_empty": true
+        }
+      ],
+      "rollback": "DELETE /sessions/{session_id} · 清理 workspace/{session_id}/"
+    },
+    {
+      "id": "E2E-B-EDU-001",
+      "name": "platformer · B 链教育版 match-genre → generate/v2 + edu 桥",
+      "track": "B-edu",
+      "priority": "P0",
+      "status": "pass_e0_e16",
+      "preconditions": [
+        "backend :8000 · Kiosk :8080/kiosk/edu/",
+        "templates/_edu/edu_action_bridge.gd 存在",
+        "POST /sessions/{id}/generate/v2 已注入 edu_workspace"
+      ],
+      "edu_flow": {
+        "B0": "GET /bootstrap",
+        "B1": "POST /intent/match-genre",
+        "B2": "POST /sessions/{id}/wizard/S0 display_name",
+        "B4": "POST /sessions/{id}/creative/answers",
+        "B5": "POST /sessions/{id}/analyze-requirements",
+        "B6": "POST /sessions/{id}/generate/v2",
+        "B7": "POST /play/launch + GET /play/actions"
+      },
+      "creative_answers": {
+        "q_move": "fast",
+        "q_jump": "high",
+        "q_enemy": "hard",
+        "q_skill": ["double_jump"]
+      },
+      "assertions": [
+        {
+          "id": "E8",
+          "type": "filesystem",
+          "check": "workspace/{session_id}/config/game_config.json exists"
+        },
+        {
+          "id": "E9",
+          "type": "filesystem",
+          "check": "workspace/{session_id}/core/edu_action_bridge.gd exists"
+        },
+        {
+          "id": "E10",
+          "type": "json_path",
+          "checks": [
+            { "path": "tuning.player.move_speed", "equals": 240 },
+            { "path": "tuning.player.jump_velocity", "equals": -440 },
+            { "path": "tuning.enemy.patrol_speed", "equals": 65 },
+            { "path": "tuning.enabled_skills", "contains": "double_jump" }
+          ]
+        },
+        {
+          "id": "E11",
+          "type": "session_payload",
+          "path": "edu_bridge_applied",
+          "equals": true
+        },
+        {
+          "id": "E12",
+          "type": "filesystem_text",
+          "path": "workspace/{session_id}/project.godot",
+          "contains": "EduActionBridge="
+        },
+        {
+          "id": "E13",
+          "type": "api_response",
+          "method": "POST",
+          "path": "/sessions/{session_id}/generate/v2",
+          "expect": { "ok": true, "code_map_contains": "jump" }
+        },
+        {
+          "id": "E14",
+          "type": "api",
+          "method": "POST",
+          "path": "/sessions/{session_id}/play/launch",
+          "expect": { "ok": true, "project_path_contains": "workspace" }
+        },
+        {
+          "id": "E15",
+          "type": "api",
+          "method": "GET",
+          "path": "/sessions/{session_id}/play/actions",
+          "expect": { "actions_is_array": true }
+        },
+        {
+          "id": "E16",
+          "type": "mcp",
+          "command": "run_project",
+          "path": "workspace/{session_id}",
+          "expect_errors_empty": true
+        },
+        {
+          "id": "E17",
+          "type": "manual_play",
+          "duration_sec_min": 120,
+          "checks": [
+            "B7 跳跃/踩怪各触发左侧代码高亮 ≥1 次",
+            "GET /play/actions 轮询与 Godot .edu_actions.jsonl 一致"
+          ]
+        }
+      ],
+      "script": "05-工具脚本/e2e_b_edu_platformer.py",
+      "rollback": "DELETE /sessions/{session_id} · 清理 workspace/{session_id}/"
+    },
+    {
+      "id": "E2E-B-EDU-BATCH",
+      "name": "六款品类 · B 链教育版 match-genre → generate/v2 + edu 桥",
+      "track": "B-edu",
+      "priority": "P1",
+      "status": "pass_b8_b16",
+      "preconditions": [
+        "backend :8000 · run_backend.ps1 常驻",
+        "窗1–7 六款 creative_templates + hooks 已集成",
+        "POST /sessions/{id}/generate/v2 已注入 edu_workspace"
+      ],
+      "slugs": ["shmup", "survivor", "pingpong", "fighting", "parkour", "racing"],
+      "slug_cases": {
+        "E2E-B-EDU-002": "shmup",
+        "E2E-B-EDU-003": "survivor",
+        "E2E-B-EDU-004": "pingpong",
+        "E2E-B-EDU-005": "fighting",
+        "E2E-B-EDU-006": "parkour",
+        "E2E-B-EDU-007": "racing"
+      },
+      "edu_flow": {
+        "B0": "GET /bootstrap",
+        "B1": "POST /intent/match-genre",
+        "B2": "POST /sessions/{id}/wizard/S0 display_name",
+        "B4": "POST /sessions/{id}/creative/answers",
+        "B5": "POST /sessions/{id}/analyze-requirements",
+        "B6": "POST /sessions/{id}/generate/v2",
+        "B7": "POST /play/launch + GET /play/actions"
+      },
+      "assertions": [
+        {
+          "id": "B8",
+          "type": "filesystem",
+          "check": "workspace/{session_id}/config/game_config.json exists"
+        },
+        {
+          "id": "B9",
+          "type": "filesystem",
+          "check": "workspace/{session_id}/core/edu_action_bridge.gd + {genre}_hooks.gd"
+        },
+        {
+          "id": "B10",
+          "type": "json_path",
+          "check": "creative_answers 对应 tuning 值已合并"
+        },
+        {
+          "id": "B11",
+          "type": "session_payload",
+          "path": "edu_bridge_applied",
+          "equals": true
+        },
+        {
+          "id": "B12",
+          "type": "filesystem_text",
+          "path": "workspace/{session_id}/project.godot",
+          "contains": "EduActionBridge="
+        },
+        {
+          "id": "B13",
+          "type": "api_response",
+          "method": "POST",
+          "path": "/sessions/{session_id}/generate/v2",
+          "expect": { "ok": true, "code_map_nonempty": true }
+        },
+        {
+          "id": "B14",
+          "type": "api",
+          "method": "POST",
+          "path": "/sessions/{session_id}/play/launch",
+          "expect": { "ok": true, "project_path_contains": "workspace" }
+        },
+        {
+          "id": "B15",
+          "type": "api",
+          "method": "GET",
+          "path": "/sessions/{session_id}/play/actions",
+          "expect": { "actions_is_array": true }
+        },
+        {
+          "id": "B16",
+          "type": "mcp",
+          "command": "run_project",
+          "path": "workspace/{session_id}",
+          "expect_errors_empty": true,
+          "spot_check_slugs": ["shmup", "racing"]
+        }
+      ],
+      "script": "05-工具脚本/e2e_b_edu_batch.py",
+      "rollback": "DELETE /sessions/{session_id} · 清理 workspace/{session_id}/"
+    },
+    {
+      "id": "E2E-B-EDU-BROWSER",
+      "name": "七款品类 · B 链教育版浏览器冒烟 B0–B6（Playwright）",
+      "track": "B-edu",
+      "priority": "P1",
+      "status": "pass_browser_7_7",
+      "preconditions": [
+        "backend :8000 · run_backend.ps1 常驻",
+        "python -m http.server 8080 · Kiosk /kiosk/edu/",
+        "playwright + chromium 已安装（降级可走 HTTP 链）"
+      ],
+      "slugs": [
+        "platformer",
+        "shmup",
+        "survivor",
+        "pingpong",
+        "fighting",
+        "parkour",
+        "racing"
+      ],
+      "slug_cases": {
+        "E2E-B-EDU-001": "platformer",
+        "E2E-B-EDU-002": "shmup",
+        "E2E-B-EDU-003": "survivor",
+        "E2E-B-EDU-004": "pingpong",
+        "E2E-B-EDU-005": "fighting",
+        "E2E-B-EDU-006": "parkour",
+        "E2E-B-EDU-007": "racing"
+      },
+      "edu_flow": {
+        "B0": "GET /bootstrap · kiosk/edu/",
+        "B1": "example_chip 或 intent → match-genre",
+        "B2": "name chip → display_name",
+        "B4": "single_choice + skill_pick（fighting 无 skill）",
+        "B6": "POST generate/v2 ok · #workName 含作品名"
+      },
+      "assertions": [
+        {
+          "id": "BR1",
+          "type": "browser",
+          "check": "platformer 首条 ?mode=edu → location.replace edu/"
+        },
+        {
+          "id": "BR2",
+          "type": "browser",
+          "check": "B1→B2→B4→generate 七款点通"
+        },
+        {
+          "id": "BR3",
+          "type": "api_response",
+          "method": "POST",
+          "path": "/sessions/{session_id}/generate/v2",
+          "expect": { "ok": true }
+        },
+        {
+          "id": "BR4",
+          "type": "dom",
+          "check": "#workName contains display_name"
+        },
+        {
+          "id": "BR5",
+          "type": "browser",
+          "check": "fighting B4 仅 4×single_choice · 无 skill_chip"
+        }
+      ],
+      "script": "05-工具脚本/e2e_b_edu_browser_smoke.py",
+      "notes": "复用 e2e_b_edu_batch.SLUG_CASES · platformer 见 E2E-B-EDU-001",
+      "rollback": "DELETE /sessions/{session_id} · 清理 workspace/{session_id}/"
+    },
+    {
+      "id": "E2E-A-001",
+      "name": "L0 快速通道 · 选 platformer 直玩",
+      "track": "A",
+      "priority": "P0",
+      "status": "not_run",
+      "wizard_input": {
+        "S1": { "genre": "platformer" },
+        "S9": { "launch": true }
+      },
+      "assertions": [
+        {
+          "id": "A1",
+          "type": "api",
+          "method": "POST",
+          "path": "/sessions/{session_id}/play/launch",
+          "expect": { "project_path_contains": "templates/platformer" }
+        },
+        {
+          "id": "A2",
+          "type": "manual_play",
+          "duration_sec_min": 60,
+          "checks": ["可移动跳跃", "无阻塞 ERROR 弹窗"]
+        }
+      ]
+    },
+    {
+      "id": "E2E-EXHIBITION-ISOLATION",
+      "name": "展陈 P0 · 3 用户 workspace 隔离 · release · bootstrap 孤儿清理",
+      "track": "B",
+      "priority": "P0",
+      "status": "automated",
+      "script": "05-工具脚本/e2e_exhibition_isolation.py",
+      "preconditions": [
+        "backend :8000 运行",
+        "workspace/ 可写",
+        "templates/ 无未提交改动"
+      ],
+      "assertions": [
+        {
+          "id": "I1",
+          "type": "filesystem",
+          "check": "git diff templates/ 为空"
+        },
+        {
+          "id": "I2",
+          "type": "api",
+          "method": "POST",
+          "path": "/sessions/{session_a}/release",
+          "expect": { "workspace_removed": true }
+        },
+        {
+          "id": "I3",
+          "type": "api",
+          "method": "POST",
+          "path": "/bootstrap/refresh",
+          "expect": { "orphan_workspaces_removed": "non_empty_when_orphan_exists" }
+        },
+        {
+          "id": "I4",
+          "type": "isolation",
+          "check": "用户 B 不得读到用户 A 的 display_name / tuning / workspace"
+        },
+        {
+          "id": "I5",
+          "type": "isolation",
+          "check": "用户 C workspace 路径与用户 A/B 隔离"
+        }
+      ]
+    }
+  ],
+  "gate_mapping": {
+    "G5_degrade": "generate 失败时 launch 回退 templates/{genre}/ · UI 提示「正在加载经典版」"
+  }
+}

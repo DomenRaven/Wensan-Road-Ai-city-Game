@@ -1,0 +1,31 @@
+{
+  "slug": "platformer",
+  "display_name": "横版闯关",
+  "reference_games": [
+    "超级马里奥兄弟",
+    "Celeste",
+    "索尼克"
+  ],
+  "started_at": "2026-06-22T12:43:19Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T12:43:19Z",
+      "appId": "app-cij488f80bup",
+      "conversationId": "conv-cij488f80buo"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T12:44:29Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T12:51:33Z",
+  "appId": "app-cij488f80bup",
+  "conversationId": "conv-cij488f80buo",
+  "editor_url": "https://www.miaoda.cn/projects/app-cij488f80bup",
+  "preview_url": "https://app-cij488f80bup.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

@@ -1,0 +1,425 @@
+[gd_scene load_steps=2 format=3 uid="uid://fighting_main"]
+
+[ext_resource type="Script" path="res://core/game_manager.gd" id="1_main"]
+
+[node name="Main" type="Node2D" groups=["game_manager"]]
+script = ExtResource("1_main")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.0509804, 0.0666667, 0.227451, 1)
+
+[node name="GameRoot" type="Node2D" parent="."]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ModeScreen" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="CanvasLayer/ModeScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/ModeScreen"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -220.0
+offset_top = 48.0
+offset_right = 220.0
+offset_bottom = 108.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(1, 0.341176, 0.133333, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 42
+text = "K12 街机格斗"
+horizontal_alignment = 1
+
+[node name="PveButton" type="Button" parent="CanvasLayer/ModeScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -20.0
+offset_right = -20.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "人机对战"
+
+[node name="PvpButton" type="Button" parent="CanvasLayer/ModeScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = -20.0
+offset_right = 220.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "双人对战"
+
+[node name="HelpPanel" type="VBoxContainer" parent="CanvasLayer/ModeScreen"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -112.0
+offset_right = -20.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="P1Help" type="Label" parent="CanvasLayer/ModeScreen/HelpPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.231373, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "P1：A D 移动（双击冲刺）  J 轻拳  K 重拳  L 格挡  U 大招"
+autowrap_mode = 2
+
+[node name="P2Help" type="Label" parent="CanvasLayer/ModeScreen/HelpPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.9, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "P2：← → 移动（双击冲刺）  小键盘 1轻拳 2重拳 3格挡 4大招"
+autowrap_mode = 2
+
+[node name="TipHelp" type="Label" parent="CanvasLayer/ModeScreen/HelpPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 12
+text = "攒满能量条后可释放大招 · 先清空对方 HP 获胜"
+horizontal_alignment = 1
+
+[node name="RoleScreen" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="CanvasLayer/RoleScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="RoleTitle" type="Label" parent="CanvasLayer/RoleScreen"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 36.0
+offset_right = 180.0
+offset_bottom = 76.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "选择角色"
+horizontal_alignment = 1
+
+[node name="W2Frame" type="PanelContainer" parent="CanvasLayer/RoleScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -56.0
+offset_right = -20.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="W2Preview" type="TextureRect" parent="CanvasLayer/RoleScreen/W2Frame"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="W2Button" type="Button" parent="CanvasLayer/RoleScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = 48.0
+offset_right = -20.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+theme_override_font_sizes/font_size = 20
+text = "蓝色战士"
+
+[node name="W3Frame" type="PanelContainer" parent="CanvasLayer/RoleScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = -56.0
+offset_right = 220.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="W3Preview" type="TextureRect" parent="CanvasLayer/RoleScreen/W3Frame"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="W3Button" type="Button" parent="CanvasLayer/RoleScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 20.0
+offset_top = 48.0
+offset_right = 220.0
+offset_bottom = 104.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+theme_override_font_sizes/font_size = 20
+text = "红色战士"
+
+[node name="BattleHUD" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="P1Panel" type="Control" parent="CanvasLayer/BattleHUD"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 216.0
+offset_bottom = 72.0
+
+[node name="Name" type="Label" parent="CanvasLayer/BattleHUD/P1Panel"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 16
+text = "PLAYER 1"
+
+[node name="HpBar" type="Control" parent="CanvasLayer/BattleHUD/P1Panel"]
+layout_mode = 0
+offset_top = 22.0
+offset_right = 200.0
+offset_bottom = 46.0
+
+[node name="Bg" type="ColorRect" parent="CanvasLayer/BattleHUD/P1Panel/HpBar"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 24.0
+color = Color(0.0509804, 0.0666667, 0.227451, 1)
+
+[node name="Fill" type="ColorRect" parent="CanvasLayer/BattleHUD/P1Panel/HpBar"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 24.0
+color = Color(1, 0.341176, 0.133333, 1)
+
+[node name="MpBar" type="Control" parent="CanvasLayer/BattleHUD/P1Panel"]
+layout_mode = 0
+offset_top = 50.0
+offset_right = 150.0
+offset_bottom = 62.0
+
+[node name="Bg" type="ColorRect" parent="CanvasLayer/BattleHUD/P1Panel/MpBar"]
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 12.0
+color = Color(0.0509804, 0.0666667, 0.227451, 1)
+
+[node name="Fill" type="ColorRect" parent="CanvasLayer/BattleHUD/P1Panel/MpBar"]
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 12.0
+color = Color(0.2, 0.45, 1, 1)
+
+[node name="VsLabel" type="Label" parent="CanvasLayer/BattleHUD"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -24.0
+offset_top = 20.0
+offset_right = 24.0
+offset_bottom = 56.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.231373, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "VS"
+horizontal_alignment = 1
+
+[node name="P2Panel" type="Control" parent="CanvasLayer/BattleHUD"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -216.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = 72.0
+grow_horizontal = 0
+
+[node name="Name" type="Label" parent="CanvasLayer/BattleHUD/P2Panel"]
+layout_mode = 0
+offset_left = 80.0
+offset_right = 200.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 16
+text = "COM"
+horizontal_alignment = 2
+
+[node name="HpBar" type="Control" parent="CanvasLayer/BattleHUD/P2Panel"]
+layout_mode = 0
+offset_top = 22.0
+offset_right = 200.0
+offset_bottom = 46.0
+
+[node name="Bg" type="ColorRect" parent="CanvasLayer/BattleHUD/P2Panel/HpBar"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 24.0
+color = Color(0.0509804, 0.0666667, 0.227451, 1)
+
+[node name="Fill" type="ColorRect" parent="CanvasLayer/BattleHUD/P2Panel/HpBar"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_bottom = 24.0
+grow_horizontal = 0
+color = Color(1, 0.341176, 0.133333, 1)
+
+[node name="MpBar" type="Control" parent="CanvasLayer/BattleHUD/P2Panel"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 62.0
+
+[node name="Bg" type="ColorRect" parent="CanvasLayer/BattleHUD/P2Panel/MpBar"]
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 12.0
+color = Color(0.0509804, 0.0666667, 0.227451, 1)
+
+[node name="Fill" type="ColorRect" parent="CanvasLayer/BattleHUD/P2Panel/MpBar"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_bottom = 12.0
+grow_horizontal = 0
+color = Color(0.2, 0.45, 1, 1)
+
+[node name="GameOverScreen" type="Control" parent="CanvasLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="ResultLabel" type="Label" parent="CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -80.0
+offset_right = 200.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.921569, 0.231373, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "YOU WIN"
+horizontal_alignment = 1
+
+[node name="AgainButton" type="Button" parent="CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 20.0
+offset_right = 100.0
+offset_bottom = 68.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 22
+text = "再来一局"

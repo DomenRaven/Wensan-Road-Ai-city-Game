@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "genre": "platformer",
+  "display_name": "横版闯关",
+  "name_suggestions": [
+    "星星大冒险",
+    "跳跳小子",
+    "管道奇遇",
+    "金币猎人"
+  ],
+  "tuning_defaults_ref": "templates/platformer/config/game_config.json",
+  "clamp_percent": 30,
+  "questions": [
+    {
+      "id": "q_move",
+      "widget": "single_choice",
+      "prompt": "你希望主角移动得——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.player.move_speed",
+          "value": 170,
+          "code_anchor_id": "move"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.player.move_speed",
+          "value": 200,
+          "code_anchor_id": "move"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.player.move_speed",
+          "value": 240,
+          "code_anchor_id": "move"
+        }
+      ]
+    },
+    {
+      "id": "q_jump",
+      "widget": "single_choice",
+      "prompt": "跳跃高度——",
+      "options": [
+        {
+          "id": "low",
+          "label": "低一点",
+          "tuning_path": "tuning.player.jump_velocity",
+          "value": -360,
+          "code_anchor_id": "jump"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.player.jump_velocity",
+          "value": -400,
+          "code_anchor_id": "jump"
+        },
+        {
+          "id": "high",
+          "label": "高一点",
+          "tuning_path": "tuning.player.jump_velocity",
+          "value": -440,
+          "code_anchor_id": "jump"
+        }
+      ]
+    },
+    {
+      "id": "q_enemy",
+      "widget": "single_choice",
+      "prompt": "敌人——",
+      "options": [
+        {
+          "id": "easy",
+          "label": "少而慢",
+          "tuning_path": "tuning.enemy.patrol_speed",
+          "value": 40,
+          "code_anchor_id": "enemy_patrol"
+        },
+        {
+          "id": "default",
+          "label": "默认",
+          "tuning_path": "tuning.enemy.patrol_speed",
+          "value": 50,
+          "code_anchor_id": "enemy_patrol"
+        },
+        {
+          "id": "hard",
+          "label": "多而快",
+          "tuning_path": "tuning.enemy.patrol_speed",
+          "value": 65,
+          "code_anchor_id": "enemy_patrol"
+        }
+      ]
+    },
+    {
+      "id": "q_skill",
+      "widget": "skill_pick",
+      "prompt": "想开启一个小技能？（可选）",
+      "optional": true,
+      "tuning_path": "tuning.enabled_skills",
+      "skill_ids": ["double_jump", "ground_pound"],
+      "code_anchor_id": "enabled_skills"
+    }
+  ]
+}

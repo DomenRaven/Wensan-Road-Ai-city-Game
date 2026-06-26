@@ -1,0 +1,38 @@
+{
+  "msg": "",
+  "status": 0,
+  "trace": "ce52072ace284108cd2e2b36e7386b3c",
+  "data": {
+    "name": "K12跑酷小游戏",
+    "appDesc": "K12无尽跑酷是一款浏览器横版跑酷游戏，玩家控制角色在60秒内通过跳跃和滑铲躲避障碍物，跑得越远得分越高，碰撞障碍或时间结束游戏。",
+    "type": "GAME",
+    "appId": "app-cijx9ysx61vl",
+    "appCreateSource": "2",
+    "appFocus": "DESIGNING",
+    "updatedAt": "2026-06-22T21:31:03.889+08:00",
+    "updatedBy": "user-chu2477r9fy8",
+    "customDomains": [],
+    "createdAt": "2026-06-22T21:23:09.847+08:00",
+    "createdBy": "user-chu2477r9fy8",
+    "versionId": "app_version-cik30x5mj668",
+    "supabaseState": {
+      "hasSupabase": false,
+      "hasProdSupabase": false,
+      "hasDevSupabase": false
+    },
+    "isKeepAlive": false,
+    "ownerType": "PERSONAL",
+    "generalType": "WEB",
+    "firstQuery": "请制作一款【K12 无尽跑酷】浏览器小游戏，参考《Subway Surfers》《Temple Run》《Canabalt》。\n\n## 参考要点\n- Subway Surfers：三轨道、跳跃滑铲\n- Temple Run：自动跑、转弯/跳跃/下滑\n- Canabalt：单键跳跃、节奏障碍\n\n## 核心玩法\n- 自动向前跑，空格跳跃，↓ 滑铲（2 键）\n- 60 秒计时，距离越远分越高\n- 障碍：低栏（滑铲）、高栏（跳跃）\n- 碰撞结束并显示距离\n\n## 视觉\n- 明亮街景/森林侧视\n\n## 交付\n- 开始→跑→撞停→重开 循环",
+    "labelColor": {
+      "colorCode": "#E5FBF9",
+      "colorCodeSecondary": "#94F7F2",
+      "mobileCoverUrl": "https://resource-static.cdn.bcebos.com/img/labelcolor/color_2.png"
+    },
+    "tagType": "CREATED_BY_ME",
+    "appVersion": "v1",
+    "versionCount": 1,
+    "canRemoveWatermark": true,
+    "hideWatermark": false
+  }
+}

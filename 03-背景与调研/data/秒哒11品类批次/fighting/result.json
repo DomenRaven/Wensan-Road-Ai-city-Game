@@ -1,0 +1,31 @@
+{
+  "slug": "fighting",
+  "display_name": "横版格斗",
+  "reference_games": [
+    "街头霸王",
+    "拳皇",
+    "任天堂明星大乱斗（简化版）"
+  ],
+  "started_at": "2026-06-22T13:58:02Z",
+  "steps": [
+    {
+      "step": "chat_initial",
+      "at": "2026-06-22T13:58:02Z",
+      "appId": "app-cikmsjmwyjnl",
+      "conversationId": "conv-cikmsjmwyjnk"
+    },
+    {
+      "step": "generate_confirm",
+      "at": "2026-06-22T13:58:56Z",
+      "needGenerateApp": true,
+      "submitted": true
+    }
+  ],
+  "finished_at": "2026-06-22T14:07:07Z",
+  "appId": "app-cikmsjmwyjnl",
+  "conversationId": "conv-cikmsjmwyjnk",
+  "editor_url": "https://www.miaoda.cn/projects/app-cikmsjmwyjnl",
+  "preview_url": "https://app-cikmsjmwyjnl.appmiaoda.com",
+  "appFocus": "DESIGNING",
+  "status": "ok"
+}

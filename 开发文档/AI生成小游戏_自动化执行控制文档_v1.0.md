@@ -1,10 +1,10 @@
-# AI 小游戏创作工坊 · 自动化执行控制文档 v1.1
+# AI 小游戏创作工坊 · 自动化执行控制文档 v1.2
 
 > **文档类型**：Agent / CI 全流程执行手册  
 > **读者**：Cursor Agent、Claude Code、GPT-5 Coding Agent  
-> **人类读者**：项目负责人（Wave 验收 · 解锁下一波次）  
-> **生效条件**：开发执行规范 v1.1 + 技术选型 v1.1 已建立 ✅  
-> **v1.1 变更**：Wave 重排为本地制作核优先；FastAPI/React 推迟 Phase 3；新增 G-RAG 门控
+> **人类读者**：项目负责人（D 日验收 · 解锁下一日）  
+> **生效条件**：开发执行规范 v1.2 + 十天上线路线 v1.2 已建立 ✅  
+> **v1.2 变更**：**D10 硬性上线** · **10 并发** · **11 品类 L0** · FastAPI+Redis **D1 必做**（取消 Phase 3 推迟）
 
 ---
 
@@ -12,11 +12,11 @@
 
 ### 0.1 使命
 
-将已审核通过的规范文档 **转化为可运行的 Godot 模板与配置驱动生成链路**，维持文档↔代码双向同步，**按 Wave 执行、Wave 间人工 Review**。展陈 Kiosk/FastAPI 在 Wave 4+ 按需追加。
+将已审核规范 **转化为 11 类 Godot preset + 展厅服务器编排链路**，维持文档↔代码双向同步，**按 D1–D10 日历执行、关键 Gate 人工 Review**。
 
 ### 0.2 一句话约束
 
-**产品 = 「AI 教育区 · 10 分钟小游戏创作工坊」** — 所有产出必须能回答：这能让一个 10 岁孩子在 10 分钟内试玩到自己主题的游戏吗？
+**产品 = 「AI 教育区 · 展厅 11 类单机小游戏 · 10 人同时试玩」** — D10 必答：11 品类 preset 能否在终端 **≤3min 开玩**？
 
 ### 0.3 每次会话启动序列（强制）
 
@@ -24,16 +24,17 @@
 0. RESOLVE  §3.1 repo_root
 0b. RAG     复杂任务前先 `query_rag.py "{主题}" -k 5`
 1. READ    本文档 §1 + §3.1
-2. READ    {docs}/AI生成小游戏_开发执行规范_v1.0.md
-3. LOAD    §12 快照 — 确认 wave_unlock
-4. VERIFY  godot-mcp: get_godot_version → 4.6.3.stable
-5. SCAN    templates/ workspace/ .cursor/mcp.json
-6. LOAD    §4 — 仅当前 Wave pending 任务
-7. CHECK   §2 门控
-8. EXEC    单任务；§0.6 文件上限
-9. VERIFY  §7 shell 命令 exit 0 或 MCP 工具成功
-10. UPDATE §12 任务 status
-11. REPORT §9 模板
+2. READ    {docs}/AI生成小游戏_十天上线路线_v1.2.md
+3. READ    {docs}/AI生成小游戏_开发执行规范_v1.0.md
+4. LOAD    §12 快照 — 确认 day_unlock
+5. VERIFY  godot-mcp: get_godot_version → 4.6.3.stable
+6. SCAN    templates/ backend/ workspace/ genre_registry.json
+7. LOAD    §3 — 仅当前 Day pending 任务
+8. CHECK   §2 门控
+9. EXEC    单任务；§0.6 文件上限
+10. VERIFY §6 shell 命令 exit 0 或 MCP 工具成功
+11. UPDATE §12 任务 status
+12. REPORT §8 模板
 ```
 
 ### 0.4 全局禁止
@@ -48,21 +49,22 @@
 | F-06 | GDScript 无类型注解 |
 | F-07 | 引入暴力/恐怖/赌博素材或逻辑 |
 | F-08 | 跳过 MCP run_project 验证即标记 done |
-| F-09 | 未经 wave_unlock 执行下一 Wave |
+| F-09 | 未经 day_unlock 执行下一 Day |
 | F-10 | verify 失败超过 2 次仍继续（须 §11.1 blocked） |
 | F-11 | 重构超出当前 task scope 的文件 |
 
-### 0.5 技术栈锁定（按 Phase）
+### 0.5 技术栈锁定（v1.2 · D1 起全栈）
 
-| 层 | Phase 1（当前） | Phase 3（展陈） | 不可替换为 |
-|----|-----------------|-----------------|------------|
-| 游戏引擎 | Godot 4.6 Standard + GDScript | 同左 | Unity / Unreal / C# Godot |
-| AI 编码 | Cursor Agent + godot-mcp + **RAG** | 同左 | 纯网页 Chat |
-| 配置契约 | `game_config.json` core/tuning/theme | 同左 | 全量改 .gd |
-| 前端 Kiosk | **Godot menu.tscn**（过渡） | React 18 + Vite 5 + TS | Vue |
-| 后端 | 本地脚本 / 无服务 | FastAPI 0.111 + Redis | Flask |
-| 素材 | Kenney CC0 + assets/ | 同左 | 随机网络图源 |
-| 导出 | Godot run > Windows .exe > Web | 同左 | Web 优先 |
+| 层 | v1.2 | 不可替换为 |
+|----|------|------------|
+| 游戏引擎 | Godot 4.6 Standard + GDScript | Unity / Unreal / C# Godot |
+| AI 编码 | Cursor Agent + godot-mcp + **RAG** | 纯网页 Chat |
+| 配置契约 | `game_config.json` core/tuning/theme | 全量改 .gd |
+| 终端 | 浏览器/Kiosk `/lobby` `/play` | 裸 exe 无编排 |
+| 后端 | **FastAPI 0.111 + Redis**（Session≤10） | Flask |
+| 反代 | nginx | 裸端口暴露 |
+| 素材 | Kenney CC0 + assets/ | 随机网络图源 |
+| 导出 | Godot run > Windows .exe | Web 优先 |
 
 ### 0.6 单任务修改上限
 
@@ -79,6 +81,7 @@ single_task_limits:
 
 | 优先级 | 路径变量 | 用途 |
 |--------|----------|------|
+| P0 | `{docs}/AI生成小游戏_十天上线路线_v1.2.md` | **D10 主排期** |
 | P0 | `{docs}/AI生成小游戏_自动化执行控制文档_v1.0.md` | 本文件 |
 | P0 | `{docs}/AI生成小游戏_开发执行规范_v1.0.md` | 总索引 |
 | P1 | `{docs}/AI生成小游戏_技术选型与开发计划_v1.0.md` | 硬件+模块 |
@@ -97,6 +100,8 @@ repo_root: "E:\\文三路AI馆\\2.ai生成游戏"
 docs: "{repo_root}/开发文档"
 godot_path: "F:\\Godot\\Godot_v4.6.3-stable_win64.exe\\Godot_v4.6.3-stable_win64_console.exe"
 templates: "{repo_root}/templates"
+backend: "{repo_root}/backend"
+genre_registry: "{repo_root}/config/genre_registry.json"
 workspace: "{repo_root}/workspace"
 exports: "{repo_root}/exports"
 ```
@@ -107,68 +112,83 @@ exports: "{repo_root}/exports"
 
 | Gate ID | PASS 条件 | 阻塞 |
 |---------|-----------|------|
-| **G-RAG** | `query_rag.py` 有命中 | W1 生成任务 |
+| **G-RAG** | `query_rag.py` 有命中 | D3+ 模板任务 |
 | **G-DOC** | P0 文档存在 | 全部 |
-| **G-MCP** | get_godot_version + list_projects 成功 | W1 代码任务 |
-| **G-TPL-1** | platformer 模板 MCP run 无 ERROR | W2 多品类 |
-| **G-TPL-3** | shooter + tower_defense run PASS | W3 导出 |
-| **G-PROMPT** | ≥3 品类 prompts + RAG 联调 | W2 E2E |
-| **G-SLA** | 连续 5 次 E2E **P90≤10min**（仅改 config） | W4 展陈 |
-| **G-SCAFFOLD** | FastAPI + React 灰盒（**Phase 3 可选**） | 展陈联调 |
-| **G-WAVE-N** | 人类 Review Wave N | Wave N+1 |
+| **G-MCP** | get_godot_version + list_projects 成功 | D3 代码任务 |
+| **G-BE-1** | FastAPI `/health` + Redis ping | D3 模板 |
+| **G-TPL-A** | platformer + tower_defense + shmup L0 | D4 批次 B |
+| **G-TPL-11** | **11/11** 品类 MCP run 无 ERROR | D6 联调 |
+| **G-CONC-10** | 10 Session 创建 + **≥8 同时 PLAY** 30min | D8 AI L1 |
+| **G-LAUNCH-10** | D10 验收清单全绿 | 正式上线 |
+| **G-DAY-N** | 人类 Review Day N | Day N+1 |
 
 ---
 
-## §3 Wave 任务编排
+## §3 十天任务编排（D1–D10）
 
-### Wave 0 · 文档与环境（当前 ~90%）
+> 详表见 [`AI生成小游戏_十天上线路线_v1.2.md`](./AI生成小游戏_十天上线路线_v1.2.md) §四。
+
+### Day 0 · 文档与环境（已完成 ~95%）
 
 | Task | 描述 | Verify | Status |
 |------|------|--------|--------|
-| W0-T1 | 文档体系 v1.1 | 文件存在 | ✅ |
-| W0-T2 | mcp.json GODOT_PATH | MCP 4.6.3.stable | ✅ |
-| W0-T3 | .cursor/rules | core_locked | ✅ |
-| W0-T4 | 调研 + RAG | 882 chunks query | ✅ |
-| W0-T5 | 独立评审 | 评审文档 | ✅ |
-| W0-T6 | templates/platformer 骨架 | MCP run_project | 🔲 |
+| D0-T1 | 文档体系 v1.2 | 十天上线路线 + 同步 | ✅ |
+| D0-T2 | mcp.json GODOT_PATH | MCP 4.6.3.stable | ✅ |
+| D0-T3 | .cursor/rules | core_locked | ✅ |
+| D0-T4 | 调研 + RAG | **1348** chunks | ✅ |
+| D0-T5 | genre_registry.json | 11 品类注册 | 🔲 |
 
-### Wave 1 · 制作核 E2E（单品类）
-
-| Task | 描述 | Verify |
-|------|------|--------|
-| W1-T1 | platformer 可玩 demo（core 预制） | run_project 无 ERROR |
-| W1-T2 | prompts/platformer.md + RAG 引用 | 人工可读 |
-| W1-T3 | workspace 复制脚本 | `workspace/{id}` 隔离 |
-| W1-T4 | **人工计时** Prompt→仅改 config→运行 | ≤10min 记录 |
-
-### Wave 2 · 三品类 MVP
+### Day 1 · 服务器骨架
 
 | Task | 描述 | Verify |
 |------|------|--------|
-| W2-T1 | shooter + tower_defense 模板 | 各 run PASS |
-| W2-T2 | 三品类 demo_preset | 回退包可运行 |
-| W2-T3 | tuning_mapper 脚本 | 「快点」可映射 |
-| W2-T4 | 三品类各 1 次 E2E 计时 | 记录表 |
+| D1-T1 | `backend/` FastAPI 脚手架 | `curl /health` 200 |
+| D1-T2 | Redis Session 模型 max=10 | redis-cli ping |
+| D1-T3 | `config/genre_registry.json` | 11 slug 可读 |
+| D1-T4 | 部署脚本草案 | docker-compose 或 ps1 |
 
-### Wave 3 · 导出与 Godot 菜单
-
-| Task | 描述 | Verify |
-|------|------|--------|
-| W3-T1 | Windows export 脚本 | exports/*.exe |
-| W3-T2 | Godot menu.tscn 选品类 | 本地选主题可生成 |
-| W3-T3 | 20 场压测记录 | 成功率 ≥85% |
-| W3-T4 | Phase 2 品类排期文档 | 4 类 backlog |
-
-### Wave 4 · 展陈集成（Phase 3 栈 · 按需）
+### Day 2 · 并发底座
 
 | Task | 描述 | Verify |
 |------|------|--------|
-| W4-T1 | FastAPI Session + Redis | curl 200 |
-| W4-T2 | React Kiosk 灰盒 | npm run dev |
-| W4-T3 | Socket 过程可视化 | 双屏同步 |
-| W4-T4 | 硬件安装 + 讲解员 SOP | 现场验收 |
+| D2-T1 | Session 创建/销毁/心跳 API | 10 连接无崩溃 |
+| D2-T2 | 排队 + 容量拒绝 | 第 11 连接 429 |
+| D2-T3 | nginx 反代 | 局域网可访问 |
 
-> W4 中双 Session、敏感词、MinIO+QR、20 场压测为展陈全量验收项，与 W3 本地压测互补。
+### Day 3 · 模板批次 A
+
+| Task | 描述 | Verify |
+|------|------|--------|
+| D3-T1 | `platformer` L0 demo_preset | run_project 无 ERROR |
+| D3-T2 | `tower_defense` L0 | 同上 |
+| D3-T3 | `shmup` L0 | 同上 |
+
+### Day 4 · 模板批次 B
+
+| Task | 描述 | Verify |
+|------|------|--------|
+| D4-T1 | `shooter`（TPS/FPS tuning） | run PASS |
+| D4-T2 | `survivor` · `fighting` · `parkour` | 各 run PASS |
+
+### Day 5 · 模板批次 C → 11/11
+
+| Task | 描述 | Verify |
+|------|------|--------|
+| D5-T1 | `life_sim` · `sports_race` | run PASS |
+| D5-T2 | `pingpong` · `racing` | run PASS |
+| D5-T3 | **G-TPL-11** 回归 | 11/11 preset |
+
+### Day 6–10 · 联调 / 压测 / 上线
+
+| Day | 焦点 | Gate |
+|-----|------|------|
+| D6 | 终端选品类→开玩；复位 SOP | 单终端 E2E ≤3min |
+| D7 | 10 并发 soak 30min | **G-CONC-10** |
+| D8 | L1 AI：5 类仅改 config | 每类 1 次换主题 |
+| D9 | 彩排 3 轮 · 讲解员手册 | 降级链可用 |
+| D10 | **展厅部署** | **G-LAUNCH-10** |
+
+~~v1.1 Wave 0–4~~ 已合并入上表。
 
 ---
 
@@ -223,13 +243,10 @@ python "E:\文三路AI馆\2.ai生成游戏\05-工具脚本\query_rag.py" "platfo
 # V1 — Godot CLI
 & "F:\Godot\Godot_v4.6.3-stable_win64.exe\Godot_v4.6.3-stable_win64_console.exe" --path "E:\文三路AI馆\2.ai生成游戏\templates\platformer" --quit-after 3
 
-# V2 — 前端（Wave 2+）
-cd "E:\文三路AI馆\2.ai生成游戏\frontend"
-npm run build
-
-# V3 — 后端（Wave 2+）
+# V3 — 后端（D1+）
 cd "E:\文三路AI馆\2.ai生成游戏\backend"
 python -m pytest tests/ -q
+curl http://localhost:8000/health
 ```
 
 ---
@@ -249,7 +266,7 @@ python -m pytest tests/ -q
 ## §8 报告模板
 
 ```markdown
-## Wave {N} 任务 {ID} 报告
+## Day {N} 任务 {ID} 报告
 - 状态：done / blocked
 - 修改文件：{list}
 - verify：{commands + exit codes}
@@ -263,23 +280,25 @@ python -m pytest tests/ -q
 ## §9 §12 快照（Agent 写回）
 
 ```yaml
-wave_unlock: 0
-current_wave: W0
+day_unlock: 0
+current_day: D0
 gates:
   G-DOC: PASS
   G-MCP: PASS
   G-RAG: PASS
-  G-TPL-1: PENDING
-  G-SCAFFOLD: DEFERRED_PHASE3
+  G-BE-1: PENDING
+  G-TPL-11: PENDING
+  G-CONC-10: PENDING
+  G-LAUNCH-10: PENDING
 tasks:
-  W0-T1: done
-  W0-T2: done
-  W0-T3: done
-  W0-T4: done
-  W0-T5: done
-  W0-T6: pending
+  D0-T1: done
+  D0-T2: done
+  D0-T3: done
+  D0-T4: done
+  D0-T5: done
+  D1-T1: pending
 ```
 
 ---
 
-*v1.1 · 2026-06-13 · 对齐技术选型/功能点 v1.1*
+*v1.2 · 2026-06-19 · D10 上线 · 11 品类 · 10 并发*

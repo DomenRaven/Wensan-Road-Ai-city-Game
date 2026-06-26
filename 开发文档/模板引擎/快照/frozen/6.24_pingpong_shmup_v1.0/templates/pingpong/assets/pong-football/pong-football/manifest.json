@@ -1,0 +1,148 @@
+{
+  "__file_desc": "pong-football 素材包 manifest",
+  "version": "1.0.0",
+  "pack_id": "pong-football",
+  "pack_path": "assets/pong-football",
+  "format": "individual_pngs",
+  "description": "Pongoal足球乒乓游戏预览截图包，含横竖版游戏场景、菜单、暂停、结算等界面截图",
+  "png_dir": "previews",
+  "assets": [
+    {
+      "id": "screen_1",
+      "file": "previews/screen_1.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "足球乒乓横版游戏主场景"
+    },
+    {
+      "id": "screen_1_v",
+      "file": "previews/screen_1_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "足球乒乓竖版游戏主场景"
+    },
+    {
+      "id": "screen_2_goal",
+      "file": "previews/screen_2_goal.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "横版GOAL进球得分弹窗"
+    },
+    {
+      "id": "screen_2_goal_v",
+      "file": "previews/screen_2_goal_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "竖版GOAL进球得分弹窗"
+    },
+    {
+      "id": "screen_3_menu",
+      "file": "previews/screen_3_menu.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "横版Pongoal游戏主菜单界面"
+    },
+    {
+      "id": "screen_3_menu_v",
+      "file": "previews/screen_3_menu_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "竖版Pongoal游戏主菜单界面"
+    },
+    {
+      "id": "screen_4_pause",
+      "file": "previews/screen_4_pause.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "横版Pause暂停弹窗界面"
+    },
+    {
+      "id": "screen_4_pause_v",
+      "file": "previews/screen_4_pause_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "竖版Pause暂停弹窗界面"
+    },
+    {
+      "id": "screen_5_options",
+      "file": "previews/screen_5_options.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "横版Options设置选项弹窗"
+    },
+    {
+      "id": "screen_5_options_v",
+      "file": "previews/screen_5_options_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "竖版Options设置选项弹窗"
+    },
+    {
+      "id": "screen_6_sure",
+      "file": "previews/screen_6_sure.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "横版Sure?新游戏确认弹窗"
+    },
+    {
+      "id": "screen_6_sure_v",
+      "file": "previews/screen_6_sure_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "竖版Sure?新游戏确认弹窗"
+    },
+    {
+      "id": "screen_7_you_lose",
+      "file": "previews/screen_7_you_lose.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "横版YOU LOSE失败结算界面"
+    },
+    {
+      "id": "screen_7_you_lose_v",
+      "file": "previews/screen_7_you_lose_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "竖版YOU LOSE失败结算界面"
+    },
+    {
+      "id": "screen_7_you_win",
+      "file": "previews/screen_7_you_win.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "横版YOU WIN胜利结算界面"
+    },
+    {
+      "id": "screen_7_you_win_v",
+      "file": "previews/screen_7_you_win_v.png",
+      "type": "screen",
+      "frames": 1,
+      "description": "竖版YOU WIN胜利结算界面"
+    }
+  ],
+  "categories": {
+    "screen": [
+      "screen_1",
+      "screen_1_v",
+      "screen_2_goal",
+      "screen_2_goal_v",
+      "screen_3_menu",
+      "screen_3_menu_v",
+      "screen_4_pause",
+      "screen_4_pause_v",
+      "screen_5_options",
+      "screen_5_options_v",
+      "screen_6_sure",
+      "screen_6_sure_v",
+      "screen_7_you_lose",
+      "screen_7_you_lose_v",
+      "screen_7_you_win",
+      "screen_7_you_win_v"
+    ]
+  },
+  "phaser_config": {
+    "load_method": "image",
+    "load_code_template": "this.load.image(KEY, 'assets/pong-football/' + FILE);",
+    "usage_template": "this.add.image(x, y, KEY);"
+  }
+}

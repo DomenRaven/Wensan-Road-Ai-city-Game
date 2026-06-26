@@ -1,0 +1,254 @@
+{
+  "generated_at": "2026-06-21T13:52:02.477676+00:00",
+  "godot": "F:\\Godot\\Godot_v4.6.3-stable_win64.exe\\Godot_v4.6.3-stable_win64_console.exe",
+  "results": [
+    {
+      "genre": "platformer",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "星星大冒险",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "collect",
+        "hit",
+        "jump"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "tower_defense",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "花园守卫战",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "hit",
+        "shoot"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "shmup",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "雷霆小卫士",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "explode",
+        "hit",
+        "shoot"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "shooter",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "小行星守卫战",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "hit",
+        "hurt",
+        "shoot"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "survivor",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "糖果幸存者",
+      "max_keys": 2,
+      "impact_sound_keys": [
+        "collect",
+        "hit",
+        "shoot"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "fighting",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "机器人格斗场",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "block",
+        "hit"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "parkour",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "极速跑酷",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "hit",
+        "jump"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "life_sim",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "美味小厨房",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "cook",
+        "harvest",
+        "serve"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "sports_race",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "田径冲刺",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "hit",
+        "jump",
+        "land"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "pingpong",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "快乐乒乓",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "rally",
+        "score"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    },
+    {
+      "genre": "racing",
+      "h1_mcp_errors": "PASS",
+      "error_count": 0,
+      "error_samples": [],
+      "h4_max_keys": "PASS",
+      "h5_audio_junction": "PASS",
+      "display_name": "欢乐赛车",
+      "max_keys": 3,
+      "impact_sound_keys": [
+        "crash",
+        "pass"
+      ],
+      "interface_sound_keys": [
+        "back",
+        "click",
+        "confirm",
+        "error",
+        "select"
+      ],
+      "has_theme_sounds": true
+    }
+  ]
+}

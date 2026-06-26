@@ -1,0 +1,52 @@
+---
+description: 乒乓球 + 飞机品类冻结 — 展陈彩排基线，禁止无意修改
+globs:
+  - "templates/shmup/**"
+  - "templates/pingpong/**"
+  - "templates/_edu/shmup_hooks.gd"
+  - "templates/_edu/pingpong_hooks.gd"
+  - "config/code_anchors/shmup.json"
+  - "config/code_anchors/pingpong.json"
+  - "config/creative_templates/shmup.json"
+  - "config/creative_templates/pingpong.json"
+  - "config/frozen_genres_pingpong_shmup.json"
+  - "开发文档/模板引擎/快照/frozen/6.24_pingpong_shmup_v1.0/**"
+alwaysApply: false
+---
+
+# 乒乓球 + 飞机 · 冻结约束（2026-06-24 v1.0）
+
+## 适用范围
+
+本规则在编辑 **shmup（街机飞机）** 或 **pingpong（乒乓球）** 相关路径时生效。
+
+## 禁止（默认）
+
+- **禁止**修改 `templates/shmup/**`、`templates/pingpong/**` 下任何文件（含 `core/`、`config/`、`scenes/`）
+- **禁止**修改 `templates/_edu/shmup_hooks.gd`、`pingpong_hooks.gd`
+- **禁止**修改 `config/code_anchors/{shmup,pingpong}.json` 与 `config/creative_templates/{shmup,pingpong}.json`
+- **禁止**为修其它品类而回改上述文件中的锚点、hooks、默认 tuning
+
+## 共享依赖（慎改）
+
+以下文件影响多品类 B7 高亮，改动 **pingpong/shmup** 前须跑冻结校验：
+
+- `templates/_edu/edu_action_bridge.gd`
+- `kiosk/edu/code-highlight.js`
+- `config/kiosk_edu_spec.json`（`code_highlight` 段）
+
+若必须修改，须同步更新 `config/frozen_genres_pingpong_shmup.json` 并征得用户**显式解冻**。
+
+## 解冻流程
+
+1. 用户口头/书面确认解冻范围（单品类或含共享文件）
+2. 修改完成后执行：
+   ```powershell
+   python 05-工具脚本\freeze_genre_snapshot.py write
+   ```
+3. 回归：飞机 B7「打敌机」· 乒乓球 B7 击球高亮 · `freeze_genre_snapshot.py verify`
+
+## 权威文档
+
+- [`6.24_乒乓球与飞机_冻结快照_v1.0.md`](开发文档/模板引擎/快照/6.24_乒乓球与飞机_冻结快照_v1.0.md)
+- 清单：`config/frozen_genres_pingpong_shmup.json`（284 文件 SHA256）

@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "genre": "parkour",
+  "anchors": {
+    "run_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.runner.speed",
+      "line_hint": 11,
+      "caption": "跑得越快，世界飞得越快！",
+      "action_id": null
+    },
+    "jump": {
+      "file": "config/game_config.json",
+      "path": "tuning.jump.velocity",
+      "line_hint": 15,
+      "caption": "跳跃力度：你选得越高，跳得越猛！",
+      "action_id": null
+    },
+    "obstacle_gap": {
+      "file": "config/game_config.json",
+      "path": "tuning.obstacle.min_gap_ms",
+      "line_hint": 22,
+      "caption": "数字越小，障碍来得越密！",
+      "action_id": null
+    },
+    "collect_coin": {
+      "file": "core/auto_runner.gd",
+      "path": null,
+      "line_hint": 174,
+      "caption": "吃到金币，分数就在这里加！",
+      "action_id": "collect_coin",
+      "snippet_gd": "func _on_collectible_collected(kind: int) -> void:"
+    },
+    "enabled_skills": {
+      "file": "config/game_config.json",
+      "path": "tuning.enabled_skills",
+      "line_hint": 43,
+      "caption": "这里记录你开启的小技能！",
+      "action_id": null
+    },
+    "player_jump": {
+      "file": "core/player_runner.gd",
+      "path": null,
+      "line_hint": 134,
+      "caption": "按空格起跳，就是这里！",
+      "action_id": "jump",
+      "snippet_gd": "if Input.is_action_just_pressed(\"jump\"):"
+    },
+    "start_slide": {
+      "file": "core/player_runner.gd",
+      "path": null,
+      "line_hint": 141,
+      "caption": "按下技能键，身体压低滑过去！",
+      "action_id": "slide",
+      "snippet_gd": "func _start_slide() -> void:"
+    },
+    "coin_pickup": {
+      "file": "core/auto_runner.gd",
+      "path": null,
+      "line_hint": 172,
+      "caption": "捡到金币会加到这里！",
+      "action_id": "collect_coin",
+      "snippet_gd": "if kind == CollectibleScript.CollectibleKind.COIN:"
+    },
+    "pickup_invincible": {
+      "file": "core/auto_runner.gd",
+      "path": null,
+      "line_hint": 175,
+      "caption": "吃到护盾道具，短时间无敌！",
+      "action_id": "pickup_powerup",
+      "snippet_gd": "elif kind == CollectibleScript.CollectibleKind.INVINCIBLE:"
+    },
+    "pickup_double_coin": {
+      "file": "core/auto_runner.gd",
+      "path": null,
+      "line_hint": 179,
+      "caption": "双倍金币道具，一段时间内金币翻倍！",
+      "action_id": "pickup_powerup",
+      "snippet_gd": "elif kind == CollectibleScript.CollectibleKind.DOUBLE_COIN:"
+    }
+  }
+}

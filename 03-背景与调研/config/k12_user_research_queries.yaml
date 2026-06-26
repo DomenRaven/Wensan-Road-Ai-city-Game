@@ -1,0 +1,72 @@
+# AI 小游戏创作工坊 · 用户向调研检索主题（Survey-02）
+# 对齐：设计思维「需求理解/问题定义」· K12 展陈 · 亲子/研学/讲解员
+topics:
+  - id: k12_user_persona
+    name: K12用户画像与亲子研学需求
+    queries:
+      - 亲子 博物馆 互动体验 儿童 需求 痛点
+      - 研学团 科技馆 游戏编程 体验 设计
+      - K12 人工智能 教育区 展陈 用户画像
+      - 6-15岁 孩子 AI 创作 体验 期望
+      - site:zhihu.com 少儿 编程 博物馆 体验
+      - site:bilibili.com 亲子 科技馆 AI 体验
+      - 小小游戏设计师 儿童 创作 教育
+
+  - id: museum_children_ux
+    name: 博物馆儿童互动展项UX
+    queries:
+      - museum interactive exhibit children UX design principles
+      - game-based learning exhibit museum low barrier entry
+      - 儿童 博物馆 互动展项 设计 原则
+      - 科技馆 互动 低门槛 短循环 体验设计
+      - teamLab 儿童 互动 排队 体验
+      - 展项 放弃率 用户 困惑 博物馆
+
+  - id: ai_edu_exhibition
+    name: AI教育体验馆对标
+    queries:
+      - AI体验馆 亲子 研学 互动 反馈
+      - 青少年 人工智能体验馆 参观 体验
+      - 腾讯 AI编程第一课 小学生 体验 设计
+      - AI创作工坊 儿童 手势 绘画 展陈
+      - site:bilibili.com AI乐园 人工智能体验馆
+      - 梁溪区 青少年 人工智能体验馆
+
+  - id: scratch_game_creation
+    name: 少儿游戏创作用户痛点
+    queries:
+      - Scratch 少儿 游戏创作 40分钟 课堂 设计
+      - 儿童 编程 独立做项目 家长 期望
+      - 少儿编程 模仿 还是 创造 痛点
+      - 图形化编程 游戏化 儿童 注意力 时长
+      - site:zhihu.com 少儿编程 值得学吗 家长
+      - Game Jam 儿童 快速 原型 体验
+
+  - id: exhibition_operations
+    name: 展陈运营与讲解员SOP
+    queries:
+      - 博物馆 互动展项 复位 讲解员 操作 SOP
+      - interactive installation reset procedure museum staff
+      - 展馆 双工位 排队 并发 体验设计
+      - 研学 批量 体验 时间管理 讲解员
+      - museum exhibit drop-off queue throughput design
+      - 展陈 graceful degradation 降级 预案
+
+  - id: creation_transparency
+    name: 创作透明化与AI搭档认知
+    queries:
+      - AI 是创作伙伴 不是代写 儿童 教育
+      - 过程可视化 AI 创作 儿童 理解
+      - black box AI vs transparent AI education children
+      - 儿童 看见 AI 写代码 学习 效果
+      - 科技向善 设计向善 K12 AI 教育
+
+  - id: benchmark_products
+    name: 对标产品与案例
+    queries:
+      - Roblox 儿童 创作 教育 博物馆
+      - MakeCode arcade 课堂 时长 体验
+      - Keeper of Paintings National Gallery children app
+      - 蓝印花布 博物馆 AR 严肃游戏 儿童
+      - Hour of Code 儿童 游戏 制作 体验时长
+      - Nintendo Labo 儿童 创作 体验 设计

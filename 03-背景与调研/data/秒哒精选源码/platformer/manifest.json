@@ -1,0 +1,18 @@
+{
+  "slug": "platformer",
+  "app_id": "app-chu2c3e6u4g1",
+  "started_at": "2026-06-23T08:19:05Z",
+  "status": "ok",
+  "trajectory_events": 126,
+  "files_written": 10,
+  "rebuild_stats": {
+    "add": 0,
+    "edit": 14,
+    "file_add": 9,
+    "file_part": 1,
+    "skipped": 0,
+    "failed": 3
+  },
+  "has_prd": true,
+  "finished_at": "2026-06-23T08:19:10Z"
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "../_schema/game_config.schema.json",
+  "meta": {
+    "genre": "shooter",
+    "template_version": "1.0",
+    "session_id": "",
+    "display_name": "小行星守卫战"
+  },
+  "core_locked": true,
+  "tuning": {
+    "player": {
+      "speed": 280,
+      "max_hp": 3
+    },
+    "bullet": {
+      "speed": 520,
+      "interval_ms": 180
+    },
+    "enemy": {
+      "speed": 120,
+      "hp": 1
+    },
+    "wave": {
+      "count": 3,
+      "enemies_per_wave": 8
+    },
+    "enabled_skills": [],
+    "skills": {
+      "dash": {
+        "cooldown_scale": 1.0
+      },
+      "shield_burst": {
+        "cooldown_scale": 1.0
+      },
+      "spread_shot": {
+        "cooldown_scale": 1.0
+      }
+    }
+  },
+  "theme": {
+    "asset_pack": "space",
+    "player_sprite": "res://assets/kenney/space/PNG/playerShip1_blue.png",
+    "enemy_sprite": "res://assets/kenney/space/PNG/ufoBlue.png",
+    "bullet_sprite": "res://assets/kenney/space/PNG/Lasers/laserBlue01.png",
+    "bg_color": "#0a1628",
+    "title": "小行星守卫战",
+    "sounds": {
+      "interface": {
+        "click": "res://assets/kenney/interface-sounds/Audio/click_001.ogg",
+        "confirm": "res://assets/kenney/interface-sounds/Audio/confirmation_001.ogg",
+        "back": "res://assets/kenney/interface-sounds/Audio/back_001.ogg",
+        "error": "res://assets/kenney/interface-sounds/Audio/error_001.ogg",
+        "select": "res://assets/kenney/interface-sounds/Audio/select_001.ogg"
+      },
+      "impact": {
+        "shoot": "res://assets/kenney/impact-sounds/Audio/impactMining_000.ogg",
+        "hit": "res://assets/kenney/impact-sounds/Audio/impactMetal_light_000.ogg",
+        "hurt": "res://assets/kenney/impact-sounds/Audio/impactGeneric_light_000.ogg"
+      }
+    }
+  },
+  "content_safety": {
+    "max_violence_level": 0,
+    "max_keys": 3
+  }
+}

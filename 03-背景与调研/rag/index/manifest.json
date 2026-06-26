@@ -1,7 +1,9 @@
 {
-  "built_at": "2026-06-13T20:12:09",
+  "built_at": "2026-06-20T18:59:32",
   "db_path": "E:\\文三路AI馆\\2.ai生成游戏\\03-背景与调研\\rag\\index\\gameforge_rag.db",
-  "total_chunks": 905,
-  "crawl_items": 796,
-  "report": "report_20260613_195217.json"
+  "total_chunks": 1401,
+  "crawl_items": 1229,
+  "report": "report_20260613_195217.json",
+  "user_report": "report_20260619_154656.json",
+  "user_crawl_items": 433
 }

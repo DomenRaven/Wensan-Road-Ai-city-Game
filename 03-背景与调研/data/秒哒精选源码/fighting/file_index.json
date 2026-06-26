@@ -1,0 +1,17 @@
+{
+  "total_files": 8,
+  "paths": [
+    "src/game/EventBus.ts",
+    "src/game/assets.ts",
+    "src/game/constants.ts",
+    "src/game/main.ts",
+    "src/game/scenes/Battle.ts",
+    "src/game/scenes/Boot.ts",
+    "src/game/store.ts",
+    "需求文档.md"
+  ],
+  "key_files": [
+    "src/game/constants.ts",
+    "需求文档.md"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "slug": "platformer",
+  "godot_config": "templates/platformer/config/game_config.json",
+  "miaoda_source": "03-背景与调研/data/秒哒精选源码/platformer",
+  "preview_url": "https://app-chu2c3e6u4g1.appmiaoda.com",
+  "tuning_candidates": {
+    "player.move_speed": {
+      "miaoda_value": 200.0,
+      "godot_default": 200,
+      "proposed": 200,
+      "notes": "transform=direct"
+    },
+    "player.jump_velocity": {
+      "miaoda_value": -400.0,
+      "godot_default": -400,
+      "proposed": -400,
+      "notes": "transform=direct"
+    },
+    "physics.gravity": {
+      "miaoda_value": 800.0,
+      "godot_default": 800,
+      "proposed": 800,
+      "notes": "transform=direct"
+    },
+    "enemy.patrol_speed": {
+      "miaoda_value": 50.0,
+      "godot_default": 50,
+      "proposed": 50,
+      "notes": "transform=direct"
+    },
+    "collectible.target_count": {
+      "miaoda_value": null,
+      "godot_default": 5,
+      "proposed": null,
+      "notes": ""
+    }
+  },
+  "theme_candidates": {
+    "title": {
+      "miaoda": "马里奥风格横版闯关游戏",
+      "proposed": "马里奥风格横版闯关游戏",
+      "kenney_pack": "platformer-deluxe"
+    },
+    "player_sprite": {
+      "miaoda": "",
+      "proposed": "",
+      "notes": "Kenney Player 系列"
+    },
+    "background_color": {
+      "miaoda": "",
+      "proposed": ""
+    }
+  },
+  "enabled_skills": [],
+  "ux_notes": "",
+  "verified": false,
+  "verified_at": ""
+}

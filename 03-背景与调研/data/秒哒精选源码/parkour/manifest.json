@@ -1,0 +1,18 @@
+{
+  "slug": "parkour",
+  "app_id": "app-cijx9ysx61vl",
+  "started_at": "2026-06-23T08:19:16Z",
+  "status": "ok",
+  "trajectory_events": 74,
+  "files_written": 9,
+  "rebuild_stats": {
+    "add": 0,
+    "edit": 4,
+    "file_add": 8,
+    "file_part": 1,
+    "skipped": 0,
+    "failed": 3
+  },
+  "has_prd": true,
+  "finished_at": "2026-06-23T08:19:20Z"
+}
