@@ -62,7 +62,7 @@
           "id": "long",
           "label": "7 分",
           "tuning_path": "tuning.rules.points_to_win",
-          "value": 7,
+          "value": 6,
           "code_anchor_id": "points_to_win"
         }
       ]
@@ -96,13 +96,60 @@
       ]
     },
     {
-      "id": "q_skill",
-      "widget": "skill_pick",
-      "prompt": "想开启一个小技能？（可选）",
-      "optional": true,
-      "tuning_path": "tuning.enabled_skills",
-      "skill_ids": ["power_smash", "curve_ball"],
-      "code_anchor_id": "enabled_skills"
+      "id": "q_paddle",
+      "widget": "single_choice",
+      "prompt": "球拍移动——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.paddle.speed",
+          "value": 118,
+          "code_anchor_id": "paddle_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.paddle.speed",
+          "value": 168,
+          "code_anchor_id": "paddle_speed"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.paddle.speed",
+          "value": 218,
+          "code_anchor_id": "paddle_speed"
+        }
+      ]
+    },
+    {
+      "id": "q_angle",
+      "widget": "single_choice",
+      "prompt": "击球角度变化——",
+      "options": [
+        {
+          "id": "low",
+          "label": "小一点",
+          "tuning_path": "tuning.physics.contact_angle_scale",
+          "value": 3.0,
+          "code_anchor_id": "ball_angle"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.physics.contact_angle_scale",
+          "value": 4.2,
+          "code_anchor_id": "ball_angle"
+        },
+        {
+          "id": "high",
+          "label": "大一点",
+          "tuning_path": "tuning.physics.contact_angle_scale",
+          "value": 5.46,
+          "code_anchor_id": "ball_angle"
+        }
+      ]
     }
   ]
 }

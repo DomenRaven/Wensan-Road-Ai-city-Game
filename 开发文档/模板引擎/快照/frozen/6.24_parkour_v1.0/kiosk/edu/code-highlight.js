@@ -22,15 +22,18 @@
     debounce_ms: 500,
     highlight_duration_ms: 2000,
     caption_duration_ms: 3000,
-    suppress_actions: ["fire", "boost"],
+    suppress_actions: ["fire", "boost", "move"],
     action_priority: {
       steer: 1,
       fire: 1,
       boost: 2,
+      move: 1,
       jump: 9,
       slide: 9,
       hit: 7,
-      pickup: 9,
+      pickup: 10,
+      pickup_xp: 10,
+      level_up: 10,
       pickup_powerup: 9,
       collect_coin: 9,
       stomp_enemy: 9,
@@ -38,7 +41,7 @@
       heavy_punch: 9,
       block: 9,
       special: 9,
-      kill_enemy: 9,
+      kill_enemy: 10,
       hit_npc: 9,
       hit_trap: 9,
       lap_complete: 8,
@@ -49,10 +52,13 @@
     steer: 1,
     fire: 1,
     boost: 2,
+    move: 1,
     jump: 9,
     slide: 9,
     hit: 7,
-    pickup: 9,
+    pickup: 10,
+    pickup_xp: 10,
+    level_up: 10,
     pickup_powerup: 9,
     collect_coin: 9,
     stomp_enemy: 9,
@@ -60,7 +66,7 @@
     heavy_punch: 9,
     block: 9,
     special: 9,
-    kill_enemy: 9,
+    kill_enemy: 10,
     hit_npc: 9,
     hit_trap: 9,
     lap_complete: 8,
@@ -121,6 +127,11 @@
       if ((config.suppress_actions || []).includes(actionId)) return;
 
       const now = Date.now();
+      if (now >= presentationLockUntil) {
+        presentationLockUntil = 0;
+        presentationLockPriority = 0;
+      }
+
       const priority = actionPriority(actionId);
 
       if (priority < presentationLockPriority && now < presentationLockUntil) return;

@@ -34,6 +34,8 @@ const DEBOUNCE_MS_BY_ACTION: Dictionary = {
 	"heavy_punch": 420,
 	"block": 450,
 	"special": 900,
+	"pickup_xp": 400,
+	"level_up": 1200,
 }
 
 var _last_emit_ms: Dictionary = {}

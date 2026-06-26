@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "frozen_at": "2026-06-26T10:22:45Z",
+  "frozen_at": "2026-06-26T15:52:47Z",
   "genres": [
     "shmup",
     "pingpong"
@@ -1404,23 +1404,23 @@
     },
     {
       "path": "config/code_anchors/shmup.json",
-      "sha256": "04ac7627b499124011d1d78d351a17c7e1d3dad803d4f62f89b62a64b65c36e5",
-      "bytes": 2445
+      "sha256": "ad7ae623995fc160c4c0f971860c75b372eeee6e25eb43361fd4f7662b9aec6c",
+      "bytes": 2675
     },
     {
       "path": "config/code_anchors/pingpong.json",
-      "sha256": "6ebeb016370f0db06c323ea37e8d9b7a34ea51d3b24c58b1f75b934e06d7326c",
-      "bytes": 1813
+      "sha256": "1b793bfa5666e9d0ec76d26e7798c9f792af88ba9d50d3fd896707eb0290848a",
+      "bytes": 2055
     },
     {
       "path": "config/creative_templates/shmup.json",
-      "sha256": "f1f7875172bc36520e9d8436fae5475b66f5634583633594bb4bb4edee0a3b5a",
-      "bytes": 2878
+      "sha256": "5c785d18ecaf321d007e72ac00c5c31913edeee6e528dde354624b48ebdf0073",
+      "bytes": 4103
     },
     {
       "path": "config/creative_templates/pingpong.json",
-      "sha256": "eb006029c1c4c00d6589743979d6e1d0f0a08cb09be9089c17690183500d4b6d",
-      "bytes": 2808
+      "sha256": "5faa0cbd0976435fbb9d51cbd70a4838f9900dc286198c69c27e209587d8f1f9",
+      "bytes": 4039
     },
     {
       "path": "templates/_edu/edu_action_bridge.gd",
@@ -1434,8 +1434,8 @@
     },
     {
       "path": "config/kiosk_edu_spec.json",
-      "sha256": "89285ddf227344224ca57eb2d1adb3eb7a79dd4a05b47337f3067b6afb98e430",
-      "bytes": 3953
+      "sha256": "6ae1a1a115896f203114eb84cb90785e83bef9e9670c7aab9d74e14c5f950e32",
+      "bytes": 4198
     }
   ]
 }

@@ -96,13 +96,60 @@
       ]
     },
     {
-      "id": "q_skill",
-      "widget": "skill_pick",
-      "prompt": "想开启一个小技能？（可选）",
-      "optional": true,
-      "tuning_path": "tuning.enabled_skills",
-      "skill_ids": ["bomb", "laser_beam"],
-      "code_anchor_id": "enabled_skills"
+      "id": "q_hp",
+      "widget": "single_choice",
+      "prompt": "你有几条命？",
+      "options": [
+        {
+          "id": "low",
+          "label": "少一点",
+          "tuning_path": "tuning.player.max_hp",
+          "value": 2,
+          "code_anchor_id": "player_hp"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.player.max_hp",
+          "value": 3,
+          "code_anchor_id": "player_hp"
+        },
+        {
+          "id": "high",
+          "label": "多一点",
+          "tuning_path": "tuning.player.max_hp",
+          "value": 4,
+          "code_anchor_id": "player_hp"
+        }
+      ]
+    },
+    {
+      "id": "q_enemy_bullet",
+      "widget": "single_choice",
+      "prompt": "敌弹飞得快慢——",
+      "options": [
+        {
+          "id": "slow",
+          "label": "慢一点",
+          "tuning_path": "tuning.enemy.bullet_speed",
+          "value": 147,
+          "code_anchor_id": "enemy_bullet_speed"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.enemy.bullet_speed",
+          "value": 210,
+          "code_anchor_id": "enemy_bullet_speed"
+        },
+        {
+          "id": "fast",
+          "label": "快一点",
+          "tuning_path": "tuning.enemy.bullet_speed",
+          "value": 273,
+          "code_anchor_id": "enemy_bullet_speed"
+        }
+      ]
     }
   ]
 }

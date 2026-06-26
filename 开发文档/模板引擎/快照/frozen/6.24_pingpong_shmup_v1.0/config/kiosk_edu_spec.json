@@ -118,6 +118,13 @@
     "parkour": "跑酷",
     "racing": "欢乐赛车"
   },
+  "certificate": {
+    "title": "AI 小游戏创作工坊 · 作品登记证书",
+    "footer": "GameForge K12 · 文三路 AI 馆",
+    "btn_print": "打印证书",
+    "btn_continue": "继续试玩",
+    "btn_view": "查看证书"
+  },
   "b_chain_isolation": {
     "startup_api": "GET /bootstrap",
     "release_api": "POST /sessions/{session_id}/release",

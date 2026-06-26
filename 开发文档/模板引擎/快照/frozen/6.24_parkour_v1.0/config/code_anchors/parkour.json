@@ -23,6 +23,20 @@
       "caption": "数字越小，障碍来得越密！",
       "action_id": null
     },
+    "gravity": {
+      "file": "config/game_config.json",
+      "path": "tuning.physics.gravity",
+      "line_hint": 19,
+      "caption": "重力越大，下落越快！",
+      "action_id": null
+    },
+    "coin_gap": {
+      "file": "config/game_config.json",
+      "path": "tuning.collectible.min_gap_ms",
+      "line_hint": 26,
+      "caption": "数字越小，金币出现越密！",
+      "action_id": null
+    },
     "collect_coin": {
       "file": "core/auto_runner.gd",
       "path": null,
@@ -30,13 +44,6 @@
       "caption": "吃到金币，分数就在这里加！",
       "action_id": "collect_coin",
       "snippet_gd": "func _on_collectible_collected(kind: int) -> void:"
-    },
-    "enabled_skills": {
-      "file": "config/game_config.json",
-      "path": "tuning.enabled_skills",
-      "line_hint": 43,
-      "caption": "这里记录你开启的小技能！",
-      "action_id": null
     },
     "player_jump": {
       "file": "core/player_runner.gd",

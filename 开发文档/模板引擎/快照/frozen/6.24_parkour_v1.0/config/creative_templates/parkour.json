@@ -96,13 +96,60 @@
       ]
     },
     {
-      "id": "q_skill",
-      "widget": "skill_pick",
-      "prompt": "想开启一个小技能？（可选）",
-      "optional": true,
-      "tuning_path": "tuning.enabled_skills",
-      "skill_ids": ["double_jump", "slide"],
-      "code_anchor_id": "enabled_skills"
+      "id": "q_gravity",
+      "widget": "single_choice",
+      "prompt": "重力大小——",
+      "options": [
+        {
+          "id": "light",
+          "label": "轻一点",
+          "tuning_path": "tuning.physics.gravity",
+          "value": 1050,
+          "code_anchor_id": "gravity"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.physics.gravity",
+          "value": 1500,
+          "code_anchor_id": "gravity"
+        },
+        {
+          "id": "heavy",
+          "label": "重一点",
+          "tuning_path": "tuning.physics.gravity",
+          "value": 1950,
+          "code_anchor_id": "gravity"
+        }
+      ]
+    },
+    {
+      "id": "q_coin_gap",
+      "widget": "single_choice",
+      "prompt": "金币出现——",
+      "options": [
+        {
+          "id": "sparse",
+          "label": "疏一点",
+          "tuning_path": "tuning.collectible.min_gap_ms",
+          "value": 2100,
+          "code_anchor_id": "coin_gap"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.collectible.min_gap_ms",
+          "value": 1500,
+          "code_anchor_id": "coin_gap"
+        },
+        {
+          "id": "dense",
+          "label": "密一点",
+          "tuning_path": "tuning.collectible.min_gap_ms",
+          "value": 1050,
+          "code_anchor_id": "coin_gap"
+        }
+      ]
     }
   ]
 }

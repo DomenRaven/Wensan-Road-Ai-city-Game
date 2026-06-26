@@ -1,0 +1,57 @@
+---
+description: RECIPE 配方问卷与作品证书冻结 — 2026-06-26 验收基线
+globs:
+  - "config/creative_templates/**"
+  - "config/code_anchors/**"
+  - "config/kiosk_edu_spec.json"
+  - "config/l1_e2e_acceptance.json"
+  - "config/frozen_recipe_v1.json"
+  - "kiosk/edu/certificate.js"
+  - "kiosk/edu/edu-wizard.js"
+  - "kiosk/edu/edu-styles.css"
+  - "kiosk/edu/code-viewer.js"
+  - "kiosk/edu/index.html"
+  - "kiosk/edu/layout/dual-pane.js"
+  - "05-工具脚本/check_recipe_alignment.py"
+  - "05-工具脚本/e2e_recipe_a_certificate.py"
+  - "05-工具脚本/e2e_b_edu_*.py"
+  - "开发文档/模板引擎/快照/frozen/6.26_recipe_v1.0/**"
+alwaysApply: false
+---
+
+# RECIPE · 冻结约束（2026-06-26 v1.0）
+
+## 适用范围
+
+编辑 **RECIPE（配方问卷 + 作品证书）** 相关路径时生效。
+
+## 禁止（默认）
+
+- **禁止**修改七款 `creative_templates` / `code_anchors`（删 skill 题 · tuning 增补已验收）
+- **禁止**修改 `certificate.js` · 证书 B6/B7 集成 · 霓虹样式与打印规则
+- **禁止**修改 `code-viewer.js` 滚动策略（禁自动横滚 · 允许纵滚）
+- **禁止**为修 P3-3 / 其它品类回改 RECIPE 问卷或证书逻辑
+
+## 共享依赖（慎改）
+
+改动以下文件可能影响 RECIPE 验收，须**显式解冻**并全链回归：
+
+- `config/kiosk_edu_spec.json`（`certificate` · layout 段）
+- `kiosk/edu/edu-wizard.js` 内 B4–B7 流程
+- `backend/app/services/creative/loader.py`（config 加载）
+
+## 解冻流程
+
+1. 用户确认解冻范围
+2. 修改后执行：
+   ```powershell
+   python 05-工具脚本\freeze_recipe_snapshot.py write
+   python 05-工具脚本\freeze_recipe_snapshot.py verify
+   ```
+3. 若改问卷/锚点，同步对应品类 `freeze_*_snapshot.py write`
+4. 回归：batch 6/6 · browser smoke 7/7 · 证书 E2E 横/竖屏
+
+## 权威文档
+
+- [`6.26_RECIPE_冻结快照_v1.0.md`](开发文档/模板引擎/快照/6.26_RECIPE_冻结快照_v1.0.md)
+- 清单：`config/frozen_recipe_v1.json`

@@ -23,11 +23,18 @@
       "caption": "电脑球拍移动快慢，数字越大越难打！",
       "action_id": null
     },
-    "enabled_skills": {
+    "paddle_speed": {
       "file": "config/game_config.json",
-      "path": "tuning.enabled_skills",
-      "line_hint": 50,
-      "caption": "这里记录你开启的小技能！",
+      "path": "tuning.paddle.speed",
+      "line_hint": 36,
+      "caption": "你的球拍移动快慢，就在这里！",
+      "action_id": null
+    },
+    "ball_angle": {
+      "file": "config/game_config.json",
+      "path": "tuning.physics.contact_angle_scale",
+      "line_hint": 14,
+      "caption": "击球角度变化越大，球路越刁钻！",
       "action_id": null
     },
     "rally": {

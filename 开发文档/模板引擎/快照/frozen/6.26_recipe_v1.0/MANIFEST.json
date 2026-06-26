@@ -1,0 +1,123 @@
+{
+  "name": "recipe_v1",
+  "label": "RECIPE 配方问卷 + 作品证书",
+  "frozen_at": "2026-06-26T15:52:46Z",
+  "files": [
+    {
+      "path": "05-工具脚本/check_recipe_alignment.py",
+      "sha256": "ae7c13b4fe2eb02f070c4cefad267e68a2de37ddb8a1f1fa3c62e69d73f9f932"
+    },
+    {
+      "path": "05-工具脚本/e2e_b_edu_batch.py",
+      "sha256": "1dfa06a5fff2a470056b083a3ad574bf1e948056a418946ba8703ad7e44baa96"
+    },
+    {
+      "path": "05-工具脚本/e2e_b_edu_browser_smoke.py",
+      "sha256": "ece8e60567bb56291bbb23dd6df6d77fcb2ad207ec1fedb76d587c524f8b4aae"
+    },
+    {
+      "path": "05-工具脚本/e2e_b_edu_platformer.py",
+      "sha256": "fe2bb0f9f795d4e69df9adc5b2efcbc0bbd82af9283fb594d8df2c847e19b4db"
+    },
+    {
+      "path": "05-工具脚本/e2e_recipe_a_certificate.py",
+      "sha256": "fb4970e63836fd0478469bef9a5ba8ddfadb9406cc2509bd05072c005013f2b8"
+    },
+    {
+      "path": "backend/app/services/creative/loader.py",
+      "sha256": "126653a7492b937d5aa0d12383817bf20ba436fa3d2f635ce8181fa5a373a04f"
+    },
+    {
+      "path": "backend/tests/run_regression_api.py",
+      "sha256": "dcde5ed87206567184cba7838db2fc52f78b46f80598ebb762a81f30c53c8f31"
+    },
+    {
+      "path": "config/code_anchors/fighting.json",
+      "sha256": "4b161579b4feee8c5f72e0fa2cbd90718fc4bab4b5afb26db16d1e440a85c65c"
+    },
+    {
+      "path": "config/code_anchors/parkour.json",
+      "sha256": "9d14519c548f4bb506869b3aaecb881e606a6c931cf13dafeb0b6922c07bb14f"
+    },
+    {
+      "path": "config/code_anchors/pingpong.json",
+      "sha256": "1b793bfa5666e9d0ec76d26e7798c9f792af88ba9d50d3fd896707eb0290848a"
+    },
+    {
+      "path": "config/code_anchors/platformer.json",
+      "sha256": "52c51f40005004ab1b82974d46b46bea3eebbb61117676df7e457fed44188981"
+    },
+    {
+      "path": "config/code_anchors/racing.json",
+      "sha256": "ff0cee8cb5c8ddaaaaf44f6e379ee7b269cc4c8d63a59c9e2395e0f253518791"
+    },
+    {
+      "path": "config/code_anchors/shmup.json",
+      "sha256": "ad7ae623995fc160c4c0f971860c75b372eeee6e25eb43361fd4f7662b9aec6c"
+    },
+    {
+      "path": "config/code_anchors/survivor.json",
+      "sha256": "082550eee7e5eeb178010755dbc3a8a5ebddce9c842b3089de1bf2460b0acfb0"
+    },
+    {
+      "path": "config/creative_templates/fighting.json",
+      "sha256": "aaee0f49c617e648d0a3af617327642f0bc19db0fb252f39fa91e93b8d9b8e3b"
+    },
+    {
+      "path": "config/creative_templates/parkour.json",
+      "sha256": "f42eb7e9b783dc42535a1bebc7ffa4f2de3bf7f3dbf67e176261ed64793aac78"
+    },
+    {
+      "path": "config/creative_templates/pingpong.json",
+      "sha256": "5faa0cbd0976435fbb9d51cbd70a4838f9900dc286198c69c27e209587d8f1f9"
+    },
+    {
+      "path": "config/creative_templates/platformer.json",
+      "sha256": "8527117189dee141d243b3717f601e9b063def713c022bd9c0575a65d0786e61"
+    },
+    {
+      "path": "config/creative_templates/racing.json",
+      "sha256": "76b3625c2d8af51a4e06b4d643cdc8f115065e18ba6af2d941a674c621f24c75"
+    },
+    {
+      "path": "config/creative_templates/shmup.json",
+      "sha256": "5c785d18ecaf321d007e72ac00c5c31913edeee6e528dde354624b48ebdf0073"
+    },
+    {
+      "path": "config/creative_templates/survivor.json",
+      "sha256": "5e555f07387ace1a8b694deceb593822fc094fd9f12c6ef2f968d02d07ae2bf9"
+    },
+    {
+      "path": "config/kiosk_edu_spec.json",
+      "sha256": "6ae1a1a115896f203114eb84cb90785e83bef9e9670c7aab9d74e14c5f950e32"
+    },
+    {
+      "path": "config/l1_e2e_acceptance.json",
+      "sha256": "9aed9ec37a0a7b94ba78ee6f539741d050fee09d38d0c16dbda64745bc3e8183"
+    },
+    {
+      "path": "kiosk/edu/certificate.js",
+      "sha256": "9f7dda89f11a72e4a7f948629d4d86e9f6a5465649d9e7c792569ca42c1133a2"
+    },
+    {
+      "path": "kiosk/edu/code-viewer.js",
+      "sha256": "6787875ee7f33570cb4ceee44cf6390dcba6c761d29f9da494b9fa29091faaf8"
+    },
+    {
+      "path": "kiosk/edu/edu-styles.css",
+      "sha256": "52e6f5244feedb5aa0a719108a60dd90dbc69da41caea372965364507133181c"
+    },
+    {
+      "path": "kiosk/edu/edu-wizard.js",
+      "sha256": "87776e3c94dd73422c4b20cc52d60057437066d844617995ba7ef45339058c56"
+    },
+    {
+      "path": "kiosk/edu/index.html",
+      "sha256": "0e58da376039572aec7c82fa8e51803764dd3c2a1884f82c015cceaede901fa0"
+    },
+    {
+      "path": "kiosk/edu/layout/dual-pane.js",
+      "sha256": "922152b8a17162dee0e862da4c9ebdbdb2765332f82aadf2a8cfc12b2db1f2f4"
+    }
+  ]
+}

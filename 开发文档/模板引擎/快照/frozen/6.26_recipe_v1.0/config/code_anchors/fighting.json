@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "genre": "fighting",
+  "anchors": {
+    "player_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.combat.player_speed",
+      "line_hint": 23,
+      "caption": "移动速度：你选得越快，战士跑得越猛！",
+      "action_id": null
+    },
+    "light_damage": {
+      "file": "config/game_config.json",
+      "path": "tuning.combat.light_damage",
+      "line_hint": 28,
+      "caption": "轻拳打一下掉多少血，就在这里调！",
+      "action_id": null
+    },
+    "heavy_damage": {
+      "file": "config/game_config.json",
+      "path": "tuning.combat.heavy_damage",
+      "line_hint": 29,
+      "caption": "重拳威力比轻拳大，数字越大越疼！",
+      "action_id": null
+    },
+    "ai_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.ai.move_speed_scale",
+      "line_hint": 45,
+      "caption": "电脑对手移动快慢，越大越难打！",
+      "action_id": null
+    },
+    "light_punch": {
+      "file": "core/fighter.gd",
+      "path": "tuning.combat.light_damage",
+      "line_hint": 290,
+      "caption": "按 J 出轻拳，快攻就靠它！",
+      "action_id": "light_punch",
+      "snippet_gd": "func try_light_attack() -> bool:"
+    },
+    "block": {
+      "file": "core/fighter.gd",
+      "path": null,
+      "line_hint": 283,
+      "caption": "按住 L 格挡，能挡住不少伤害！",
+      "action_id": "block",
+      "snippet_gd": "func try_block() -> void:"
+    },
+    "special": {
+      "file": "core/fighter.gd",
+      "path": null,
+      "line_hint": 298,
+      "caption": "能量满了按 U 放大招，超帅！",
+      "action_id": "special",
+      "snippet_gd": "func try_ultimate() -> bool:"
+    },
+    "heavy_punch": {
+      "file": "core/fighter.gd",
+      "path": null,
+      "line_hint": 294,
+      "caption": "按 K 出重拳，威力更大！",
+      "action_id": "heavy_punch",
+      "snippet_gd": "func try_heavy_attack() -> bool:"
+    }
+  }
+}

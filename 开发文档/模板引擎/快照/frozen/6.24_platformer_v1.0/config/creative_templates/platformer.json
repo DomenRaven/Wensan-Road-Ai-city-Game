@@ -96,13 +96,60 @@
       ]
     },
     {
-      "id": "q_skill",
-      "widget": "skill_pick",
-      "prompt": "想开启一个小技能？（可选）",
-      "optional": true,
-      "tuning_path": "tuning.enabled_skills",
-      "skill_ids": ["double_jump", "ground_pound"],
-      "code_anchor_id": "enabled_skills"
+      "id": "q_lives",
+      "widget": "single_choice",
+      "prompt": "你有几条命？",
+      "options": [
+        {
+          "id": "low",
+          "label": "少一点",
+          "tuning_path": "tuning.lives.max",
+          "value": 2,
+          "code_anchor_id": "lives_max"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.lives.max",
+          "value": 3,
+          "code_anchor_id": "lives_max"
+        },
+        {
+          "id": "high",
+          "label": "多一点",
+          "tuning_path": "tuning.lives.max",
+          "value": 4,
+          "code_anchor_id": "lives_max"
+        }
+      ]
+    },
+    {
+      "id": "q_coin",
+      "widget": "single_choice",
+      "prompt": "一枚金币值多少分？",
+      "options": [
+        {
+          "id": "low",
+          "label": "少一点",
+          "tuning_path": "tuning.scoring.coin",
+          "value": 7,
+          "code_anchor_id": "coin_score"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.scoring.coin",
+          "value": 10,
+          "code_anchor_id": "coin_score"
+        },
+        {
+          "id": "high",
+          "label": "多一点",
+          "tuning_path": "tuning.scoring.coin",
+          "value": 13,
+          "code_anchor_id": "coin_score"
+        }
+      ]
     }
   ]
 }

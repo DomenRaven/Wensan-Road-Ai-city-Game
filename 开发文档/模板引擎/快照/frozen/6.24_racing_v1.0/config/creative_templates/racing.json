@@ -96,13 +96,60 @@
       ]
     },
     {
-      "id": "q_skill",
-      "widget": "skill_pick",
-      "prompt": "想开启一个小技能？（可选）",
-      "optional": true,
-      "tuning_path": "tuning.enabled_skills",
-      "skill_ids": ["boost", "drift_snap"],
-      "code_anchor_id": "enabled_skills"
+      "id": "q_time",
+      "widget": "single_choice",
+      "prompt": "比赛时间——",
+      "options": [
+        {
+          "id": "short",
+          "label": "短一点",
+          "tuning_path": "tuning.round.duration_sec",
+          "value": 63,
+          "code_anchor_id": "round_duration"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.round.duration_sec",
+          "value": 90,
+          "code_anchor_id": "round_duration"
+        },
+        {
+          "id": "long",
+          "label": "长一点",
+          "tuning_path": "tuning.round.duration_sec",
+          "value": 117,
+          "code_anchor_id": "round_duration"
+        }
+      ]
+    },
+    {
+      "id": "q_traffic",
+      "widget": "single_choice",
+      "prompt": "路上车辆——",
+      "options": [
+        {
+          "id": "sparse",
+          "label": "疏一点",
+          "tuning_path": "tuning.spawn.base_delay_ms",
+          "value": 2600,
+          "code_anchor_id": "traffic_density"
+        },
+        {
+          "id": "default",
+          "label": "刚刚好",
+          "tuning_path": "tuning.spawn.base_delay_ms",
+          "value": 2000,
+          "code_anchor_id": "traffic_density"
+        },
+        {
+          "id": "dense",
+          "label": "密一点",
+          "tuning_path": "tuning.spawn.base_delay_ms",
+          "value": 1400,
+          "code_anchor_id": "traffic_density"
+        }
+      ]
     }
   ]
 }

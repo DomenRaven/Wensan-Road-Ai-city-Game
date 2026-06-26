@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "frozen_at": "2026-06-24T14:59:51Z",
+  "frozen_at": "2026-06-26T15:52:56Z",
   "genres": [
     "racing"
   ],
@@ -3561,28 +3561,28 @@
     },
     {
       "path": "config/code_anchors/racing.json",
-      "sha256": "1b9c511596f89781d4dd69f32e06023cd337a6c6261d1b301ba3e32587083445",
-      "bytes": 2307
+      "sha256": "ff0cee8cb5c8ddaaaaf44f6e379ee7b269cc4c8d63a59c9e2395e0f253518791",
+      "bytes": 2536
     },
     {
       "path": "config/creative_templates/racing.json",
-      "sha256": "8a256a85783c901e4e53da23c244df9e5cf860382e4a1d0c79d250998dab4d4c",
-      "bytes": 2865
+      "sha256": "76b3625c2d8af51a4e06b4d643cdc8f115065e18ba6af2d941a674c621f24c75",
+      "bytes": 4116
     },
     {
       "path": "templates/_edu/edu_action_bridge.gd",
-      "sha256": "f301b136478bc4b9fd9a74769afe2ae5737f935c228012b35dcb342ed8500106",
-      "bytes": 2789
+      "sha256": "26e17d439e66afa47d43f985d3baf567d8b0148e1f31aef8493e8a5b286331d8",
+      "bytes": 2829
     },
     {
       "path": "kiosk/edu/code-highlight.js",
-      "sha256": "c8f1a6af04be8f31ab567a632701d673d56965fe04bbd9832283289f78cc67e6",
-      "bytes": 7265
+      "sha256": "3c962930f6eaf735f5b01722ebf227ed68da705676932f29faeb31a950899e05",
+      "bytes": 7760
     },
     {
       "path": "config/kiosk_edu_spec.json",
-      "sha256": "7f6fe416b018cd426a6b059ac2b3e76af5ffabf500eb744bdc90e6f0c15d47fa",
-      "bytes": 3578
+      "sha256": "6ae1a1a115896f203114eb84cb90785e83bef9e9670c7aab9d74e14c5f950e32",
+      "bytes": 4198
     }
   ]
 }

@@ -30,18 +30,25 @@
       "caption": "你有几条命，看这里！",
       "action_id": null
     },
+    "player_hp": {
+      "file": "config/game_config.json",
+      "path": "tuning.player.max_hp",
+      "line_hint": 12,
+      "caption": "你有几条命，就看这个数字！",
+      "action_id": null
+    },
+    "enemy_bullet_speed": {
+      "file": "config/game_config.json",
+      "path": "tuning.enemy.bullet_speed",
+      "line_hint": 17,
+      "caption": "敌弹飞得多快，就在这里调！",
+      "action_id": null
+    },
     "pickup": {
       "file": "config/game_config.json",
       "path": "tuning.powerup.duration_sec",
       "line_hint": 29,
       "caption": "吃到道具会变强！",
-      "action_id": null
-    },
-    "enabled_skills": {
-      "file": "config/game_config.json",
-      "path": "tuning.enabled_skills",
-      "line_hint": 81,
-      "caption": "这里记录你开启的小技能！",
       "action_id": null
     },
     "auto_shoot": {

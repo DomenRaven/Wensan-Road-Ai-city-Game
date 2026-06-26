@@ -23,11 +23,18 @@
       "caption": "一圈多长：越小越容易刷圈数！",
       "action_id": null
     },
-    "enabled_skills": {
+    "round_duration": {
       "file": "config/game_config.json",
-      "path": "tuning.enabled_skills",
-      "line_hint": 49,
-      "caption": "这里记录你开启的小技能！",
+      "path": "tuning.round.duration_sec",
+      "line_hint": 47,
+      "caption": "比赛时间长短，就在这里！",
+      "action_id": null
+    },
+    "traffic_density": {
+      "file": "config/game_config.json",
+      "path": "tuning.spawn.base_delay_ms",
+      "line_hint": 36,
+      "caption": "数字越小，路上车越多！",
       "action_id": null
     },
     "steer": {

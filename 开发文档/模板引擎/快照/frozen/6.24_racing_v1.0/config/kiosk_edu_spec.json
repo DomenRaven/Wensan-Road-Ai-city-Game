@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "updated_at": "2026-06-24",
+  "version": "1.1",
+  "updated_at": "2026-06-26",
   "doc_ref": "开发文档/模板引擎/6.24_B链教育版用户旅程与需求规格_v1.0.md",
   "target_audience": "K12 · 展厅触控 · 14 岁以下",
   "api_base": "http://127.0.0.1:8000",
@@ -9,20 +9,29 @@
   "assets_base": "../../assets",
   "layout": {
     "left_min_width_pct": 45,
+    "orientation_breakpoint_px": 900,
     "code_font_size_px": 14,
     "code_line_height": 1.6,
-    "preview_aspect": "540/960"
+    "preview_aspect": "540/960",
+    "godot_zone": {
+      "landscape": { "anchor": "right", "width_pct": 50 },
+      "portrait": { "anchor": "bottom", "height_pct": 50 }
+    }
   },
   "colors": {
-    "background": "#1e1e2e",
-    "code_bg": "#282a36",
+    "background": "#f0f7ff",
+    "surface": "#ffffff",
+    "code_bg": "#f8fafc",
     "highlight": "#fef08a",
-    "accent": "#38bdf8",
-    "keyword": "#ff79c6",
-    "string": "#f1fa8c",
-    "text": "#e2e8f0",
-    "muted": "#94a3b8",
-    "panel_border": "#334155"
+    "accent": "#2563eb",
+    "accent_light": "#dbeafe",
+    "keyword": "#1d4ed8",
+    "string": "#b45309",
+    "text": "#0f172a",
+    "muted": "#64748b",
+    "panel_border": "#bfdbfe",
+    "success": "#16a34a",
+    "danger": "#dc2626"
   },
   "phases": {
     "create": { "label": "创作", "steps": ["B1", "B2", "B3", "B4"] },
@@ -37,9 +46,9 @@
   "theater": {
     "theater_total_ms": 45000,
     "line_scroll_speed": "linear",
-    "background": "#282a36",
-    "keyword_color": "#ff79c6",
-    "string_color": "#f1fa8c",
+    "background": "#f8fafc",
+    "keyword_color": "#1d4ed8",
+    "string_color": "#b45309",
     "sound_typing": false,
     "assets_path": "../../assets/code_theater/{slug}.jsonl",
     "workspace_trees_path": "../../config/edu_workspace_trees.json",
@@ -50,15 +59,18 @@
     "debounce_ms": 500,
     "highlight_duration_ms": 2000,
     "caption_duration_ms": 3000,
-    "suppress_actions": ["fire", "boost"],
+    "suppress_actions": ["fire", "boost", "move"],
     "action_priority": {
       "steer": 1,
       "fire": 1,
       "boost": 2,
+      "move": 1,
       "jump": 9,
       "slide": 9,
       "hit": 7,
-      "pickup": 9,
+      "pickup": 10,
+      "pickup_xp": 10,
+      "level_up": 10,
       "pickup_powerup": 9,
       "collect_coin": 9,
       "stomp_enemy": 9,
@@ -66,7 +78,7 @@
       "heavy_punch": 9,
       "block": 9,
       "special": 9,
-      "kill_enemy": 9,
+      "kill_enemy": 10,
       "hit_npc": 9,
       "hit_trap": 9,
       "lap_complete": 8
@@ -105,6 +117,13 @@
     "fighting": "格斗对战",
     "parkour": "跑酷",
     "racing": "欢乐赛车"
+  },
+  "certificate": {
+    "title": "AI 小游戏创作工坊 · 作品登记证书",
+    "footer": "GameForge K12 · 文三路 AI 馆",
+    "btn_print": "打印证书",
+    "btn_continue": "继续试玩",
+    "btn_view": "查看证书"
   },
   "b_chain_isolation": {
     "startup_api": "GET /bootstrap",

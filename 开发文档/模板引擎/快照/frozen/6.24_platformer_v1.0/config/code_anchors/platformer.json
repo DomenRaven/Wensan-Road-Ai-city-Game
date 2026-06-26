@@ -30,11 +30,18 @@
       "caption": "每枚金币加分就在这里设定！",
       "action_id": null
     },
-    "enabled_skills": {
+    "lives_max": {
       "file": "config/game_config.json",
-      "path": "tuning.enabled_skills",
-      "line_hint": 53,
-      "caption": "这里记录你开启的小技能！",
+      "path": "tuning.lives.max",
+      "line_hint": 25,
+      "caption": "你有几条命，就看这里！",
+      "action_id": null
+    },
+    "coin_score": {
+      "file": "config/game_config.json",
+      "path": "tuning.scoring.coin",
+      "line_hint": 29,
+      "caption": "一枚金币值多少分，在这里改！",
       "action_id": null
     },
     "stomp_enemy": {
