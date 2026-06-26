@@ -1,19 +1,27 @@
-/* GameForge K12 · Kiosk 产品 UI v1 · 线 A 展陈 L0 */
+/* GameForge K12 · Kiosk 产品 UI v1 · 线 A 展陈 L0 · 蓝白与 B 链 accent 同步 */
 :root {
-  --bg: #0f172a;
-  --panel: #1e293b;
-  --panel-border: #334155;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --accent: #38bdf8;
-  --success: #4ade80;
-  --danger: #f87171;
-  --warning: #fbbf24;
+  --bg: #f0f7ff;
+  --panel: #ffffff;
+  --panel-border: #bfdbfe;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #d97706;
   font-family: "Source Han Sans CN", "Segoe UI", sans-serif;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
 }
 
 body.kiosk-blocked .panel-left {
@@ -62,7 +70,7 @@ body.kiosk-blocked #btnReset {
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #ffffff;
   background: var(--accent);
   letter-spacing: 0.02em;
 }
@@ -161,8 +169,8 @@ body.kiosk-blocked #btnReset {
 }
 
 .hint-banner {
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: var(--accent-light);
+  border: 1px solid var(--panel-border);
   border-radius: 10px;
   padding: 10px 14px;
   font-size: 0.88rem;
@@ -191,18 +199,21 @@ body.kiosk-blocked #btnReset {
 }
 
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 1;
+  background: #94a3b8;
+  color: #ffffff;
   cursor: not-allowed;
 }
 
 .btn-primary {
   background: var(--accent);
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .btn-secondary {
-  background: #475569;
-  color: #f8fafc;
+  background: var(--panel);
+  color: var(--accent);
+  border: 2px solid var(--accent);
 }
 
 .btn-success {
@@ -232,7 +243,7 @@ body.kiosk-blocked #btnReset {
   padding: 12px 14px;
   border-radius: 10px;
   border: 2px solid var(--panel-border);
-  background: var(--bg);
+  background: var(--panel);
   color: var(--text);
   font-size: 1.05rem;
 }
@@ -254,7 +265,7 @@ body.kiosk-blocked #btnReset {
   padding: 10px 16px;
   border-radius: 999px;
   border: 2px solid var(--panel-border);
-  background: var(--bg);
+  background: var(--panel);
   color: var(--text);
   font-size: 0.95rem;
   cursor: pointer;
@@ -264,7 +275,7 @@ body.kiosk-blocked #btnReset {
 .chip:hover,
 .chip.selected {
   border-color: var(--accent);
-  background: rgba(56, 189, 248, 0.12);
+  background: var(--accent-light);
 }
 
 /* Genre grid */
@@ -284,7 +295,7 @@ body.kiosk-blocked #btnReset {
   padding: 12px 10px;
   border: 2px solid var(--panel-border);
   border-radius: 14px;
-  background: var(--bg);
+  background: var(--panel);
   color: var(--text);
   cursor: pointer;
   touch-action: manipulation;
@@ -292,12 +303,13 @@ body.kiosk-blocked #btnReset {
 }
 
 .genre-card:hover {
-  border-color: #64748b;
+  border-color: var(--accent);
 }
 
 .genre-card.selected {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+  background: var(--accent-light);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 .genre-card img {
@@ -332,14 +344,14 @@ body.kiosk-blocked #btnReset {
   padding: 14px 16px;
   border: 2px solid var(--panel-border);
   border-radius: 12px;
-  background: var(--bg);
+  background: var(--panel);
   cursor: pointer;
   touch-action: manipulation;
 }
 
 .option-card.selected {
   border-color: var(--accent);
-  background: rgba(56, 189, 248, 0.08);
+  background: var(--accent-light);
 }
 
 .option-card input {
@@ -406,7 +418,7 @@ body.kiosk-blocked #btnReset {
 .recap-list {
   text-align: left;
   width: 100%;
-  background: var(--bg);
+  background: var(--panel);
   border-radius: 12px;
   padding: 16px;
   list-style: none;
@@ -449,7 +461,8 @@ body.kiosk-blocked #btnReset {
 
 .status-log {
   margin-top: 16px;
-  background: #020617;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
   border-radius: 10px;
   padding: 12px;
   min-height: 80px;
@@ -479,13 +492,13 @@ body.kiosk-blocked #btnReset {
   font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
-  border: 2px solid rgba(56, 189, 248, 0.4);
+  border: 2px solid var(--panel-border);
   border-radius: 10px;
   touch-action: manipulation;
 }
 
 .edu-entry-link:hover {
-  background: rgba(56, 189, 248, 0.1);
+  background: var(--accent-light);
 }
 
 .footer-link button {
@@ -552,7 +565,7 @@ body.kiosk-blocked #btnReset {
 }
 
 .s8-steps li.active {
-  background: rgba(56, 189, 248, 0.15);
+  background: var(--accent-light);
   color: var(--accent);
   font-weight: 600;
 }

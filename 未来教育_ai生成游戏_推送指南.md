@@ -234,7 +234,9 @@ node_modules/ __pycache__/
 | 仓库 | https://github.com/DomenRaven/Wensan-Road-Ai-city-Game |
 | 远程名 | `github`（与场内 `origin` 并存，互不影响） |
 | 默认推送分支 | `gameforge-k12` → GitHub `main` |
-| 版本标签 | `v1.0`（回退锚点） |
+| 版本标签 | `v1.0` @ `f7f36cc`（回退锚点） |
+| 推送状态 | ✅ **2026-06-24** 首推完成 · `main` HEAD `7425914` |
+| 一键脚本 | `05-工具脚本/push_github.ps1` |
 
 **首次添加 GitHub 远程并推送：**
 
@@ -272,4 +274,5 @@ git reset --hard v1.0
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | v1.1 | 2026-06-24 | 增加 GitHub 远程、VERSION/CHANGELOG、v1.0 标签与回退说明 |
+| v1.1 | 2026-06-24 | GitHub 首推完成 · 文档状态同步 · `6.24_v1.0_GitHub收工状态快照` |
 | v1.0 | 2026-06-13 | 初版；独立 orphan 分支 `gameforge-k12`；对齐前厅机械屏推送指南体例 |

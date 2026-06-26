@@ -101,10 +101,12 @@
       const pack = SCENES[slug] || DEFAULT_SCENE;
       const title = label ? `${label}` : slug;
       container.innerHTML = `
-        <div class="genre-scene genre-scene--${slug}" role="img" aria-label="${title} 动画预览">
-          ${pack.scene}
+        <div class="pane-right-preview-stage">
+          <div class="genre-scene genre-scene--${slug}" role="img" aria-label="${title} 动画预览">
+            ${pack.scene}
+          </div>
+          <p class="preview-placeholder genre-scene-caption">${pack.caption}</p>
         </div>
-        <p class="preview-placeholder genre-scene-caption">${pack.caption}</p>
       `;
     },
   };

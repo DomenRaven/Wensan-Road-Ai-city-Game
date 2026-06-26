@@ -1,0 +1,48 @@
+﻿---
+description: 6.26 P3 甲方 UI 蓝白 · 横竖屏 · Godot 窗口分区
+globs:
+  - "kiosk/**"
+  - "config/kiosk_edu_spec.json"
+  - "config/kiosk_ui_spec.json"
+  - "backend/app/routers/play.py"
+  - "backend/app/services/godot_launcher.py"
+  - "backend/app/services/godot_window_layout.py"
+alwaysApply: false
+---
+
+# 6.26 P3 · Cursor 约束
+
+## 会话范围（必守）
+
+- **单窗单任务**：P3-1 蓝白 · P3-2 响应式 · P3-3 Godot 归位 · P3-4 回归收工
+- **禁止**修改 `templates/{slug}/core/**`
+- **禁止**本阶段接入 LLM（`intent.py` / `llm_patch.py` 属 P2）
+- **禁止**浏览器内嵌 Godot WASM
+
+## P3-UI-01 · 蓝白
+
+- 色板单一真相：`config/kiosk_edu_spec.json` → `colors`
+- 触控 ≥48px · 对比度 WCAG AA
+
+## P3-UI-02 · 响应式
+
+- `body[data-orientation]` 仅由 `layout/orientation.js` 写入
+- landscape：双列；portrait：双行
+
+## P3-UI-03 · Godot 分区
+
+- `POST /play/launch` 可扩展 `client_viewport`；无字段时保持 v1.0 行为
+- Win32 归位失败须降级，不阻塞 launch
+
+## 验证
+
+```powershell
+node --check kiosk/edu/layout/orientation.js
+node --check kiosk/edu/edu-wizard.js
+python -m pytest backend/tests/test_play_action.py -q
+```
+
+## 文档
+
+- `开发文档/模板引擎/6.26_P3_附录A_完整窗口提示词_v1.0.md`
+- `开发文档/模板引擎/6.26_技术与执行规范_v1.0.md`

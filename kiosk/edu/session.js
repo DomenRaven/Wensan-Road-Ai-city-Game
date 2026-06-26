@@ -78,10 +78,36 @@
     /**
      * @param {Record<string, unknown>} spec
      */
+    applyThemeFromSpec(spec) {
+      const colors = /** @type {Record<string, string>} */ (spec.colors || {});
+      const theater = /** @type {Record<string, string>} */ (spec.theater || {});
+      const root = document.documentElement;
+      const map = {
+        "--bg": colors.background,
+        "--surface": colors.surface,
+        "--code-bg": colors.code_bg || theater.background,
+        "--panel-border": colors.panel_border,
+        "--text": colors.text,
+        "--muted": colors.muted,
+        "--accent": colors.accent,
+        "--accent-light": colors.accent_light,
+        "--highlight": colors.highlight,
+        "--keyword": colors.keyword || theater.keyword_color,
+        "--string": colors.string || theater.string_color,
+        "--success": colors.success,
+        "--danger": colors.danger,
+        "--theater-bg": theater.background || colors.code_bg,
+      };
+      for (const [key, val] of Object.entries(map)) {
+        if (val) root.style.setProperty(key, String(val));
+      }
+    },
+
     configure(spec) {
       this.spec = spec;
       if (spec.api_base) this.apiBase = String(spec.api_base);
       if (spec.session_storage_key) this.storageKey = String(spec.session_storage_key);
+      this.applyThemeFromSpec(spec);
     },
 
     async loadSpec() {
@@ -132,7 +158,7 @@
       } catch (err) {
         this.ready = false;
         this.log(`✗ B0 失败: ${err.message}`);
-        this.log("TODO: 启动 backend (uvicorn) 后刷新 · GET /bootstrap");
+        this.log("TODO: 启动 backend 后刷新 · 运行 .\\05-工具脚本\\run_backend.ps1 · GET /bootstrap");
         this.log("⚠ 演示模式：可逐步切换 UI · API 调用将 fallback");
         this.sessionId = "demo-" + Date.now().toString(36);
         this.rememberSessionId(this.sessionId);

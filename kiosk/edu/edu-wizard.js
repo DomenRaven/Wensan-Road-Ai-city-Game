@@ -13,7 +13,7 @@
     B3: { title: "工作区就绪", subtitle: "左边是代码工作区，右边是游戏预览", phase: "create" },
     B4: { title: "创作配方", subtitle: "回答几个问题，定制你的游戏", phase: "create" },
     B5: { title: "AI 正在制作", subtitle: "看！代码正在一行行写出来", phase: "build" },
-    B6: { title: "制作完成", subtitle: "这就是 AI 根据你的选择生成的游戏！", phase: "play" },
+    B6: { title: "制作完成", subtitle: "点右边大按钮开始试玩", phase: "play" },
     B7: { title: "试玩", subtitle: "玩游戏时，左边会亮起对应代码", phase: "play" },
   };
 
@@ -99,6 +99,8 @@
     welcomePanel.hidden = mode !== "welcome";
     stepPanel.hidden = mode !== "step";
     dualPaneRoot.hidden = mode !== "dual";
+    const ambientMode = mode === "step" ? "step" : mode === "dual" ? "dual" : "off";
+    window.EduCreateAmbient?.setMode(ambientMode);
   }
 
   function updatePhaseBar() {
@@ -364,15 +366,21 @@
       survivor: {
         kill_enemy: {
           file: "core/horde_enemy.gd",
-          line: 80,
-          caption: "消灭敌人就在这里处理！",
+          line: 46,
+          caption: "子弹打中怪物，血量归零就会被击败！",
           action_id: "kill_enemy",
         },
-        pickup: {
-          file: "core/xp_gem.gd",
-          line: 40,
-          caption: "捡到经验宝石会升级！",
+        pickup_xp: {
+          file: "core/survivor_arena.gd",
+          line: 142,
+          caption: "吸收经验宝石就在这里，攒够就能升级！",
           action_id: "pickup_xp",
+        },
+        level_up: {
+          file: "core/survivor_arena.gd",
+          line: 152,
+          caption: "升级啦！选一个增益技能吧！",
+          action_id: "level_up",
         },
       },
       racing: {
@@ -483,7 +491,15 @@
 
   function getMergedCodeMap() {
     const fallback = getGenreHighlightFallback(genre);
-    return { ...fallback, ...codeMap };
+    const merged = { ...fallback };
+    Object.entries(codeMap || {}).forEach(([key, entry]) => {
+      merged[key] = entry;
+      const actionId = entry.action_id;
+      if (typeof actionId === "string" && actionId.length > 0) {
+        merged[actionId] = entry;
+      }
+    });
+    return merged;
   }
 
   async function fetchWorkspaceConfig() {
@@ -603,31 +619,27 @@
    * @returns {string}
    */
   function renderLaunchStatusPanel(data) {
-    if (!data) {
-      return `
-        <div class="launch-status-card">
-          <p class="launch-status warn" id="launchStatus">请先点击「开始试玩」启动游戏</p>
-        </div>
-      `;
-    }
+    if (!data) return "";
     if (data.waiting) {
       return `
-        <div class="launch-status-card">
-          <p class="launch-status" id="launchStatus">正在启动游戏…</p>
+        <div class="launch-status-inline launch-status-inline--waiting">
+          <span class="launch-inline-spinner" aria-hidden="true"></span>
+          <span id="launchStatus">正在启动游戏窗口…</span>
         </div>
       `;
     }
     if (data.ok) {
       const mainMsg = data.already_running
-        ? "游戏已在运行 · 请到旁边游戏窗口继续试玩"
+        ? "游戏已在运行 · 请到旁边窗口继续"
         : "Godot 已启动 · 请到游戏窗口试玩";
       const pid = data.pid != null ? String(data.pid) : "—";
       const path = data.project_path || "—";
       return `
-        <div class="launch-status-card">
-          <p class="launch-status ok" id="launchStatus">${mainMsg}</p>
-          <details class="launch-details">
-            <summary>技术信息（默认折叠）</summary>
+        <div class="launch-status-inline launch-status-inline--ok">
+          <span class="launch-inline-icon" aria-hidden="true">✓</span>
+          <span class="launch-status ok" id="launchStatus">${mainMsg}</span>
+          <details class="launch-details launch-details--compact">
+            <summary>技术信息</summary>
             <p class="launch-meta">进程 PID：${pid}</p>
             <p class="launch-meta">项目路径：${path}</p>
           </details>
@@ -637,9 +649,136 @@
     }
     const errMsg = data.message || "游戏暂时无法启动，请讲解员协助";
     return `
-      <div class="launch-status-card">
+      <div class="launch-status-inline launch-status-inline--err">
+        <span class="launch-inline-icon" aria-hidden="true">!</span>
         <p class="launch-status err" id="launchStatus">${errMsg}</p>
         <p class="hint">可点「加载经典版」重试，或先进入演示模式看左侧高亮</p>
+      </div>
+    `;
+  }
+
+  /** @typedef {{ actionId: string, label: string, icon: string, ariaLabel: string }} GenreDemoAction */
+
+  /** @type {Record<string, GenreDemoAction[]>} */
+  const GENRE_DEMO_ACTIONS = {
+    platformer: [
+      { actionId: "jump", label: "跳！", icon: "⬆️", ariaLabel: "讲解员演示用：模拟跳跃" },
+      { actionId: "stomp_enemy", label: "踩怪", icon: "👾", ariaLabel: "讲解员演示用：模拟踩怪" },
+      { actionId: "collect_coin", label: "捡金币", icon: "🪙", ariaLabel: "讲解员演示用：模拟捡金币" },
+    ],
+    pingpong: [
+      { actionId: "rally", label: "击球", icon: "🏓", ariaLabel: "讲解员演示用：模拟击球" },
+      { actionId: "score", label: "得分", icon: "⭐", ariaLabel: "讲解员演示用：模拟得分" },
+    ],
+    shmup: [
+      { actionId: "kill_enemy", label: "打敌机", icon: "✈️", ariaLabel: "讲解员演示用：模拟击毁敌机" },
+      { actionId: "pickup", label: "吃道具", icon: "🎁", ariaLabel: "讲解员演示用：模拟吃道具" },
+    ],
+    survivor: [
+      { actionId: "kill_enemy", label: "消灭", icon: "👾", ariaLabel: "讲解员演示用：模拟消灭敌人" },
+      { actionId: "pickup_xp", label: "吸经验", icon: "✨", ariaLabel: "讲解员演示用：模拟吸收经验" },
+      { actionId: "level_up", label: "升级", icon: "⬆️", ariaLabel: "讲解员演示用：模拟升级" },
+    ],
+    fighting: [
+      { actionId: "light_punch", label: "轻拳", icon: "👊", ariaLabel: "讲解员演示用：模拟轻拳" },
+      { actionId: "heavy_punch", label: "重拳", icon: "💪", ariaLabel: "讲解员演示用：模拟重拳" },
+      { actionId: "block", label: "格挡", icon: "🛡️", ariaLabel: "讲解员演示用：模拟格挡" },
+      { actionId: "special", label: "大招", icon: "⚡", ariaLabel: "讲解员演示用：模拟大招" },
+    ],
+    parkour: [
+      { actionId: "jump", label: "跳跃", icon: "⬆️", ariaLabel: "讲解员演示用：模拟跳跃" },
+      { actionId: "slide", label: "滑铲", icon: "⤵️", ariaLabel: "讲解员演示用：模拟滑铲" },
+      { actionId: "collect_coin", label: "捡金币", icon: "🪙", ariaLabel: "讲解员演示用：模拟捡金币" },
+      { actionId: "pickup_powerup", label: "吃道具", icon: "🎁", ariaLabel: "讲解员演示用：模拟吃道具" },
+    ],
+    racing: [
+      { actionId: "hit_npc", label: "撞车", icon: "🚗", ariaLabel: "讲解员演示用：模拟撞车" },
+      { actionId: "hit_trap", label: "撞路障", icon: "🚧", ariaLabel: "讲解员演示用：模拟撞路障" },
+      { actionId: "lap_complete", label: "完圈", icon: "🏁", ariaLabel: "讲解员演示用：模拟完圈" },
+    ],
+  };
+
+  /**
+   * @param {string} genreSlug
+   * @param {{ launched?: boolean }} [opts]
+   * @returns {GenreDemoAction[]}
+   */
+  function getGenreDemoActions(genreSlug, opts = {}) {
+    const launched = !!opts.launched;
+    const actions = GENRE_DEMO_ACTIONS[genreSlug] || GENRE_DEMO_ACTIONS.platformer;
+    if (genreSlug === "shmup" && launched) {
+      return actions.filter((a) => a.actionId !== "hit");
+    }
+    return actions;
+  }
+
+  /**
+   * @param {string} genreSlug
+   * @param {{ compact?: boolean, launched?: boolean }} [opts]
+   * @returns {string}
+   */
+  function renderGenreDemoActionsHtml(genreSlug, opts = {}) {
+    const compact = !!opts.compact;
+    const actions = getGenreDemoActions(genreSlug, opts);
+    return actions.map((action) => {
+      const iconHtml = compact
+        ? ""
+        : `<span class="btn-demo-action__icon" aria-hidden="true">${action.icon}</span>`;
+      return `
+        <button type="button" class="btn-demo-action" data-demo-action="${action.actionId}" aria-label="${action.ariaLabel}">
+          ${iconHtml}
+          <span>${action.label}</span>
+        </button>
+      `;
+    }).join("");
+  }
+
+  /**
+   * @param {string} genreSlug
+   * @param {{ launched?: boolean }} [opts]
+   */
+  function bindGenreDemoActions(genreSlug, opts = {}) {
+    const actions = getGenreDemoActions(genreSlug, opts);
+    const root = document.getElementById("paneRightInner");
+    if (!root) return;
+    actions.forEach((action) => {
+      const btn = root.querySelector(`[data-demo-action="${action.actionId}"]`);
+      btn?.addEventListener("click", () => {
+        window.EduCodeHighlight.simulateAction(action.actionId);
+      });
+    });
+  }
+
+  /**
+   * @param {string} [genreEmoji]
+   * @returns {string}
+   */
+  function renderPlayReadyPanel(genreEmoji) {
+    const icon = genreEmoji || "🎮";
+    return `
+      <div class="pane-right-stack">
+        <div class="play-ready-hero">
+          <div class="play-ready-badge" aria-hidden="true">✨ 制作完成</div>
+          <div class="play-ready-icon-wrap">
+            <span class="play-ready-icon-ring"></span>
+            <span class="play-ready-icon">${icon}</span>
+          </div>
+          <h3 class="play-ready-title">你的游戏做好啦！</h3>
+          <p class="play-ready-sub">点下面的大按钮，在旁边的 Godot 窗口里试玩</p>
+          <button type="button" id="btnLaunch" class="btn-play-launch">
+            <span class="btn-play-launch__shine" aria-hidden="true"></span>
+            <span class="btn-play-launch__icon" aria-hidden="true">▶</span>
+            <span class="btn-play-launch__text">开始试玩</span>
+          </button>
+          <div id="launchStatusWrap" class="play-ready-status">${renderLaunchStatusPanel(launchState)}</div>
+        </div>
+        <div class="demo-panel-card">
+          <p class="demo-panel-label">🎤 讲解员演示区</p>
+          <p class="demo-panel-hint">点击下方按钮，左边代码会亮起对应行</p>
+          <div class="demo-panel-actions demo-panel-actions--wrap">
+            ${renderGenreDemoActionsHtml(genre, { compact: false, launched: false })}
+          </div>
+        </div>
       </div>
     `;
   }
@@ -713,22 +852,12 @@
       window.EduCodeHighlight.setCodeMap(getGenreHighlightFallback(genre));
     }
 
-    window.EduDualPane.setRightContent(`
-      <p class="preview-placeholder" style="margin-bottom:20px">这就是 AI 根据你的选择生成的游戏！</p>
-      <button type="button" id="btnLaunch" class="btn btn-success">开始试玩</button>
-      <div id="launchStatusWrap">${renderLaunchStatusPanel(launchState)}</div>
-      <p class="hint" style="margin-top:16px">讲解员演示：点击下方按钮模拟「跳跃」高亮</p>
-      <button type="button" id="btnSimJump" class="btn btn-ghost" aria-label="讲解员演示用：模拟跳跃">模拟跳跃 → 高亮代码</button>
-      <button type="button" id="btnSimStomp" class="btn btn-ghost" aria-label="讲解员演示用：模拟踩怪">模拟踩怪 → 高亮代码</button>
-    `);
+    window.EduDualPane.setRightContent(
+      renderPlayReadyPanel(window.EduB1Intent?.emoji(genre))
+    );
 
     document.getElementById("btnLaunch")?.addEventListener("click", launchGame);
-    document.getElementById("btnSimJump")?.addEventListener("click", () => {
-      window.EduCodeHighlight.simulateAction("jump");
-    });
-    document.getElementById("btnSimStomp")?.addEventListener("click", () => {
-      window.EduCodeHighlight.simulateAction("stomp_enemy");
-    });
+    bindGenreDemoActions(genre, { launched: false });
 
     window.EduDualPane.setToolbar(true, `
       <button type="button" id="btnDualPrev" class="btn btn-secondary" disabled>上一步</button>
@@ -774,110 +903,6 @@
     }
   }
 
-  function renderB7DemoActionsHtml() {
-    if (genre === "shmup") {
-      return `
-        <button type="button" id="btnSimKill" class="btn btn-primary" aria-label="讲解员演示用：模拟击毁敌机">打敌机</button>
-        <button type="button" id="btnSimPickup" class="btn btn-secondary" aria-label="讲解员演示用：模拟吃道具">吃道具</button>
-        <button type="button" id="btnSimHit" class="btn btn-secondary" aria-label="讲解员演示用：模拟受伤">受伤</button>
-      `;
-    }
-    if (genre === "racing") {
-      return `
-        <button type="button" id="btnSimNpc" class="btn btn-primary" aria-label="讲解员演示用：模拟撞车">撞车</button>
-        <button type="button" id="btnSimTrap" class="btn btn-secondary" aria-label="讲解员演示用：模拟撞路障">撞路障</button>
-        <button type="button" id="btnSimLap" class="btn btn-secondary" aria-label="讲解员演示用：模拟完圈">完圈</button>
-      `;
-    }
-    if (genre === "parkour") {
-      return `
-        <button type="button" id="btnSimJump" class="btn btn-primary" aria-label="讲解员演示用：模拟跳跃">跳跃</button>
-        <button type="button" id="btnSimSlide" class="btn btn-secondary" aria-label="讲解员演示用：模拟滑铲">滑铲</button>
-        <button type="button" id="btnSimCoin" class="btn btn-secondary" aria-label="讲解员演示用：模拟捡金币">捡金币</button>
-        <button type="button" id="btnSimPickup" class="btn btn-secondary" aria-label="讲解员演示用：模拟吃道具">吃道具</button>
-      `;
-    }
-    if (genre === "fighting") {
-      return `
-        <button type="button" id="btnSimLight" class="btn btn-primary" aria-label="讲解员演示用：模拟轻拳">轻拳</button>
-        <button type="button" id="btnSimHeavy" class="btn btn-secondary" aria-label="讲解员演示用：模拟重拳">重拳</button>
-        <button type="button" id="btnSimBlock" class="btn btn-secondary" aria-label="讲解员演示用：模拟格挡">格挡</button>
-        <button type="button" id="btnSimUlt" class="btn btn-secondary" aria-label="讲解员演示用：模拟大招">大招</button>
-      `;
-    }
-    return `
-      <button type="button" id="btnSimJump" class="btn btn-primary" aria-label="讲解员演示用：模拟跳跃">跳！</button>
-      <button type="button" id="btnSimStomp" class="btn btn-secondary" aria-label="讲解员演示用：模拟踩怪">踩怪</button>
-      <button type="button" id="btnSimCoin" class="btn btn-secondary" aria-label="讲解员演示用：模拟捡金币">捡金币</button>
-    `;
-  }
-
-  function bindB7DemoActions() {
-    if (genre === "shmup") {
-      document.getElementById("btnSimKill")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("kill_enemy");
-      });
-      document.getElementById("btnSimPickup")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("pickup");
-      });
-      document.getElementById("btnSimHit")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("hit");
-      });
-      return;
-    }
-    if (genre === "racing") {
-      document.getElementById("btnSimNpc")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("hit_npc");
-      });
-      document.getElementById("btnSimTrap")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("hit_trap");
-      });
-      document.getElementById("btnSimLap")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("lap_complete");
-      });
-      return;
-    }
-    if (genre === "parkour") {
-      document.getElementById("btnSimJump")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("jump");
-      });
-      document.getElementById("btnSimSlide")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("slide");
-      });
-      document.getElementById("btnSimCoin")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("collect_coin");
-      });
-      document.getElementById("btnSimPickup")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("pickup_powerup");
-      });
-      return;
-    }
-    if (genre === "fighting") {
-      document.getElementById("btnSimLight")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("light_punch");
-      });
-      document.getElementById("btnSimHeavy")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("heavy_punch");
-      });
-      document.getElementById("btnSimBlock")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("block");
-      });
-      document.getElementById("btnSimUlt")?.addEventListener("click", () => {
-        window.EduCodeHighlight.simulateAction("special");
-      });
-      return;
-    }
-    document.getElementById("btnSimJump")?.addEventListener("click", () => {
-      window.EduCodeHighlight.simulateAction("jump");
-    });
-    document.getElementById("btnSimStomp")?.addEventListener("click", () => {
-      window.EduCodeHighlight.simulateAction("stomp_enemy");
-    });
-    document.getElementById("btnSimCoin")?.addEventListener("click", () => {
-      window.EduCodeHighlight.simulateAction("collect_coin");
-    });
-  }
-
   async function renderB7Play() {
     mountDualPaneIfNeeded();
     window.EduDualPane.setPhase("play");
@@ -900,20 +925,25 @@
     }
 
     window.EduDualPane.setRightContent(`
-      <div class="godot-frame-wrap">
-        ${renderLaunchStatusPanel(launched ? launchState : null)}
-        <div class="play-window-hint">
-          <p class="play-window-title">🎮 游戏在外置窗口中运行</p>
-          <p class="hint">请看讲解员指向的大屏旁 Godot 游戏窗口（不在此网页内）</p>
+      <div class="pane-right-stack">
+        <div class="godot-frame-wrap play-active-wrap">
+          ${launched ? renderLaunchStatusPanel(launchState) : ""}
+          <div class="play-window-hint play-window-hint--active">
+            <span class="play-window-icon" aria-hidden="true">🎮</span>
+            <p class="play-window-title">游戏在外置窗口中运行</p>
+            <p class="hint">请看讲解员指向的大屏旁 Godot 游戏窗口</p>
+          </div>
         </div>
-      </div>
-      <p class="hint demo-hint">以下按钮仅供讲解员演示 · 真机试玩请操作 Godot 窗口</p>
-      <div class="demo-actions" style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-        ${renderB7DemoActionsHtml()}
+        <div class="demo-panel-card demo-panel-card--compact">
+          <p class="demo-panel-label">🎤 讲解员演示</p>
+          <div class="demo-panel-actions demo-panel-actions--wrap">
+            ${renderGenreDemoActionsHtml(genre, { compact: true, launched })}
+          </div>
+        </div>
       </div>
     `);
 
-    bindB7DemoActions();
+    bindGenreDemoActions(genre, { launched });
 
     window.EduDualPane.setToolbar(true, `
       <button type="button" id="btnLoadClassic" class="btn btn-ghost">加载经典版</button>

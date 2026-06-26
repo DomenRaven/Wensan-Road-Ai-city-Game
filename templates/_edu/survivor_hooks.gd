@@ -3,25 +3,23 @@ extends Node
 ## B7 survivor 操作钩子（workspace 专用，不改 templates/survivor/core 原件）
 ##
 ## 自动上报 action_id（与 config/code_anchors/survivor.json 对齐）：
-## - move：玩家 WASD/方向键移动（首次输入）
 ## - kill_enemy：怪物被击败（horde_enemy.destroyed）
 ## - pickup_xp：拾取经验宝石（xp_gem.collected）
 ## - level_up：升级选项 UI 出现（LevelUpUI 变为可见）
+##
+## move 不上报：持续移动会占线 B7 高亮（见 kiosk_edu_spec suppress_actions）
 
-const ACTION_MOVE: String = "move"
 const ACTION_KILL_ENEMY: String = "kill_enemy"
 const ACTION_PICKUP_XP: String = "pickup_xp"
 const ACTION_LEVEL_UP: String = "level_up"
 
-const MOVE_INPUT_THRESHOLD: float = 0.05
-
 var _game_root: Node2D = null
 var _gems_root: Node2D = null
 var _level_up_ui: CanvasLayer = null
-var _player: Area2D = null
 var _wired_gems: Dictionary = {}
 var _wired_enemies: Dictionary = {}
 var _ui_was_visible: bool = false
+var _rescan_scheduled: bool = false
 
 
 func _ready() -> void:
@@ -32,6 +30,7 @@ func _ready() -> void:
 			if not _game_root.is_connected("child_entered_tree", _on_game_root_child):
 				_game_root.child_entered_tree.connect(_on_game_root_child)
 	call_deferred("_scan_arena")
+	call_deferred("_schedule_rescans")
 
 
 func _on_game_root_child(_child: Node) -> void:
@@ -41,13 +40,19 @@ func _on_game_root_child(_child: Node) -> void:
 func _physics_process(_delta: float) -> void:
 	if _gems_root == null or not is_instance_valid(_gems_root):
 		_scan_arena()
-	_detect_player_move()
+
+
+func _schedule_rescans() -> void:
+	if _rescan_scheduled:
+		return
+	_rescan_scheduled = true
+	for delay_sec: float in [0.4, 1.0, 2.5]:
+		get_tree().create_timer(delay_sec).timeout.connect(_scan_arena)
 
 
 func _scan_arena() -> void:
 	_wire_gems_root()
 	_wire_level_up_ui()
-	_wire_player()
 	_wire_enemies()
 
 
@@ -62,6 +67,8 @@ func _wire_gems_root() -> void:
 			_gems_root.child_entered_tree.connect(_on_gems_child_entered)
 	for child: Node in _gems_root.get_children():
 		_wire_gem(child)
+	for node: Node in get_tree().get_nodes_in_group("xp_gem"):
+		_wire_gem(node)
 
 
 func _on_gems_child_entered(child: Node) -> void:
@@ -93,18 +100,6 @@ func _wire_level_up_ui() -> void:
 		_level_up_ui.visibility_changed.connect(_on_level_up_visibility_changed)
 
 
-func _wire_player() -> void:
-	var players: Array[Node] = get_tree().get_nodes_in_group("player")
-	if players.is_empty():
-		_player = null
-		return
-	var candidate: Node = players[0]
-	if candidate is Area2D:
-		_player = candidate as Area2D
-	else:
-		_player = null
-
-
 func _wire_enemies() -> void:
 	var enemies_root: Node = get_tree().root.find_child("Enemies", true, false)
 	if enemies_root == null:
@@ -128,16 +123,6 @@ func _wire_enemy(node: Node) -> void:
 	if not node.is_connected("destroyed", _on_enemy_destroyed):
 		node.connect("destroyed", _on_enemy_destroyed)
 	_wired_enemies[id] = true
-
-
-func _detect_player_move() -> void:
-	var input_dir: Vector2 = Vector2(
-		Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
-		Input.get_action_strength("move_down") - Input.get_action_strength("move_up")
-	)
-	if input_dir.length_squared() <= MOVE_INPUT_THRESHOLD * MOVE_INPUT_THRESHOLD:
-		return
-	_emit_action(ACTION_MOVE)
 
 
 func _on_gem_collected(_value: int) -> void:

@@ -120,6 +120,36 @@
 
       } catch (err) {
 
+        window.EduSession.log(
+
+          `GET /creative/templates/${genre} API 不可用 · 尝试 config 静态 fallback · ${err.message}`
+
+        );
+
+        try {
+
+          const res = await fetch(`../../config/creative_templates/${encodeURIComponent(genre)}.json`);
+
+          if (res.ok) {
+
+            const data = await res.json();
+
+            if (data.questions?.length) {
+
+              window.EduSession.log(`✓ 已加载静态创作模板 · ${genre}`);
+
+              return data;
+
+            }
+
+          }
+
+        } catch (_) {
+
+          /* static fallback failed */
+
+        }
+
         const msg = `无法加载创作模板 · GET /creative/templates/${genre} · ${err.message}`;
 
         this.loadError = msg;

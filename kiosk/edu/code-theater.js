@@ -80,6 +80,15 @@
       const theaterBudgetMs = Math.floor(this.totalMs * 0.58);
       const msPerFile = Math.max(2800, Math.floor(theaterBudgetMs / Math.max(1, files.length)));
 
+      const theater = /** @type {Record<string, unknown>} */ (spec.theater || {});
+      const colors = /** @type {Record<string, unknown>} */ (spec.colors || {});
+      const theaterBg = String(theater.background || colors.code_bg || "");
+      if (theaterBg) {
+        codeContainer.style.setProperty("--theater-bg", theaterBg);
+        const scroll = codeContainer.querySelector(".code-scroll");
+        if (scroll instanceof HTMLElement) scroll.style.background = theaterBg;
+      }
+
       if (window.EduCodeViewer) window.EduCodeViewer.mount(codeContainer);
       window.EduFileTree?.clear();
       const treeHost = document.getElementById("fileTree");

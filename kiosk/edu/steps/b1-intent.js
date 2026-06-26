@@ -180,21 +180,27 @@
 
       formEl.innerHTML = `
 
-        <div class="hint-banner">试试说：「我想玩马里奥闯关」「我想打飞机」</div>
+        <div class="intent-form-card">
 
-        <label for="intentInput">今天你想玩什么游戏呢？</label>
+          <div class="hint-banner intent-hint">💡 试试说：「我想玩马里奥闯关」「我想打飞机」</div>
 
-        <textarea id="intentInput" class="text-input textarea" maxlength="80"
+          <textarea id="intentInput" class="text-input textarea intent-textarea" maxlength="80"
 
-          placeholder="用一句话告诉我…">${state.intentRaw || ""}</textarea>
+            aria-label="描述你想玩的游戏"
 
-        <div class="chip-row" id="intentExamples" style="overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px">
+            placeholder="在这里输入…">${state.intentRaw || ""}</textarea>
 
-          ${chipHtml}
+          <p class="intent-chip-label">或点一下快捷示例：</p>
+
+          <div class="chip-row intent-chip-row" id="intentExamples">
+
+            ${chipHtml}
+
+          </div>
+
+          <p class="hint intent-reply" id="intentReply">${state.replyText || ""}</p>
 
         </div>
-
-        <p class="hint" id="intentReply">${state.replyText || ""}</p>
 
       `;
 
