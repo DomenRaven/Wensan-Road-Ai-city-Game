@@ -9,9 +9,14 @@
   "assets_base": "../../assets",
   "layout": {
     "left_min_width_pct": 45,
+    "orientation_breakpoint_px": 900,
     "code_font_size_px": 14,
     "code_line_height": 1.6,
-    "preview_aspect": "540/960"
+    "preview_aspect": "540/960",
+    "godot_zone": {
+      "landscape": { "anchor": "right", "width_pct": 50 },
+      "portrait": { "anchor": "bottom", "height_pct": 50 }
+    }
   },
   "colors": {
     "background": "#f0f7ff",
@@ -63,7 +68,7 @@
       "jump": 9,
       "slide": 9,
       "hit": 7,
-      "pickup": 9,
+      "pickup": 10,
       "pickup_xp": 10,
       "level_up": 10,
       "pickup_powerup": 9,

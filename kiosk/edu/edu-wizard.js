@@ -489,14 +489,53 @@
     };
   }
 
+  /** B7 gameplay action_id keys that must prefer core/*.gd over config tuning rows */
+  const B7_GAMEPLAY_ACTION_IDS = new Set([
+    "pickup",
+    "kill_enemy",
+    "hit",
+    "jump",
+    "slide",
+    "collect_coin",
+    "pickup_powerup",
+    "pickup_xp",
+    "level_up",
+    "light_punch",
+    "heavy_punch",
+    "block",
+    "special",
+    "steer",
+    "hit_npc",
+    "hit_trap",
+    "lap_complete",
+    "stomp_enemy",
+  ]);
+
+  /**
+   * @param {string} key
+   * @param {{file?:string,action_id?:string}|undefined} existing
+   * @param {{file?:string,action_id?:string}} incoming
+   */
+  function shouldKeepExistingCodeMapEntry(key, existing, incoming) {
+    if (!B7_GAMEPLAY_ACTION_IDS.has(key) || !existing) return false;
+    const inFile = String(incoming.file || "");
+    const exFile = String(existing.file || "");
+    if (!inFile.startsWith("config/") || !exFile.startsWith("core/")) return false;
+    return !incoming.action_id;
+  }
+
   function getMergedCodeMap() {
     const fallback = getGenreHighlightFallback(genre);
     const merged = { ...fallback };
     Object.entries(codeMap || {}).forEach(([key, entry]) => {
-      merged[key] = entry;
+      if (!shouldKeepExistingCodeMapEntry(key, merged[key], entry)) {
+        merged[key] = entry;
+      }
       const actionId = entry.action_id;
       if (typeof actionId === "string" && actionId.length > 0) {
-        merged[actionId] = entry;
+        if (!shouldKeepExistingCodeMapEntry(actionId, merged[actionId], entry)) {
+          merged[actionId] = entry;
+        }
       }
     });
     return merged;
@@ -1092,6 +1131,8 @@
     try {
       await window.EduSession.bootstrap();
       spec = window.EduSession.spec;
+      window.EduOrientation?.configure(/** @type {{orientation_breakpoint_px?: number}} */ (spec.layout));
+      window.EduOrientation?.mount();
       window.EduCodeHighlight.configure(spec);
       if (statusEl) statusEl.textContent = "准备就绪！";
       setUiEnabled(true);
@@ -1099,6 +1140,8 @@
       await renderStep();
     } catch (err) {
       spec = window.EduSession.spec || {};
+      window.EduOrientation?.configure(/** @type {{orientation_breakpoint_px?: number}} */ (spec.layout));
+      window.EduOrientation?.mount();
       window.EduCodeHighlight.configure(spec);
       if (statusEl) statusEl.textContent = "演示模式（后端未连接）";
       setUiEnabled(true);

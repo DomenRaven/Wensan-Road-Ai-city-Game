@@ -15,6 +15,7 @@
   --highlight: #fef08a;
   --keyword: #1d4ed8;
   --string: #b45309;
+  --edu-header-h: 72px;
   font-family: "Source Han Sans CN", "Segoe UI", sans-serif;
 }
 
@@ -461,7 +462,7 @@ body.edu-ambient-dual .dual-pane-root {
   background: transparent;
 }
 
-/* Dual pane B3+ */
+/* Dual pane B3+ · 默认 landscape，portrait 由 orientation.js 写入 body[data-orientation] */
 .dual-pane-root {
   display: grid;
   grid-template-columns: minmax(45%, 1fr) minmax(0, 55%);
@@ -469,11 +470,73 @@ body.edu-ambient-dual .dual-pane-root {
   min-height: 0;
 }
 
-@media (max-width: 900px) {
-  .dual-pane-root {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
-  }
+body[data-orientation="portrait"] .dual-pane-root {
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(45%, 1fr) minmax(0, 55%);
+  overflow-x: hidden;
+}
+
+body[data-orientation="portrait"] .pane-left {
+  border-right: none;
+  border-bottom: 1px solid var(--panel-border);
+  overflow: hidden;
+  max-width: 100%;
+}
+
+body[data-orientation="portrait"] .dual-toolbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 6;
+  justify-content: center;
+}
+
+body[data-orientation="portrait"] .pane-left-body {
+  overflow: hidden;
+  min-width: 0;
+}
+
+body[data-orientation="portrait"] .code-scroll {
+  overflow-x: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+  scrollbar-gutter: stable;
+}
+
+body[data-orientation="portrait"] .code-content {
+  touch-action: pan-x pan-y;
+}
+
+body[data-orientation="portrait"] .step-panel {
+  max-width: none;
+  padding: 16px 16px 24px;
+}
+
+body[data-orientation="portrait"] .edu-header {
+  padding: 10px 12px;
+  gap: 10px;
+}
+
+body[data-orientation="portrait"] .edu-header-center {
+  order: 3;
+  flex-basis: 100%;
+  min-width: 0;
+}
+
+body[data-orientation="portrait"] .pane-right-inner:has(.pane-right-stack) {
+  justify-content: flex-start;
+  align-items: stretch;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.pane-right.godot-zone {
+  outline: 2px dashed var(--accent);
+  outline-offset: -4px;
+}
+
+body[data-orientation="portrait"] .pane-right.godot-zone {
+  outline-offset: -2px;
 }
 
 .pane-left {
@@ -584,6 +647,7 @@ body.edu-ambient-dual .dual-pane-root {
   min-width: 0;
   min-height: 0;
   overflow: auto;
+  overscroll-behavior: contain;
   background: var(--theater-bg, var(--code-bg));
 }
 
@@ -1216,6 +1280,24 @@ body.edu-ambient-dual .dual-pane-root {
 }
 
 @keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 竖屏：解说气泡贴近上行伪工作区底缘（双行 grid 约 45%/55% 分界） */
+body[data-orientation="portrait"] .caption-bubble {
+  bottom: calc((100vh - var(--edu-header-h)) * 0.55 + 12px);
+  left: 16px;
+  right: 16px;
+  max-width: none;
+  width: auto;
+}
+
+body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
+  animation: caption-fade-in-portrait 0.25s ease;
+}
+
+@keyframes caption-fade-in-portrait {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }

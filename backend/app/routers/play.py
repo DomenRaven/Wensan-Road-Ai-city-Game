@@ -6,7 +6,11 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel
 
 from app.models.session import SessionPhase, SessionRecord
-from app.services.edu_workspace import append_edu_action, read_edu_actions
+from app.services.edu_workspace import (
+    append_edu_action,
+    apply_edu_workspace_patch,
+    read_edu_actions,
+)
 from app.services.godot_launcher import LaunchResult, get_launcher
 from app.services.workspace_guard import WorkspaceGuardError, validate_session_id
 
@@ -48,6 +52,16 @@ def launch_play(
     genre: str = record.genre or ""
     if not genre:
         raise HTTPException(status_code=400, detail="请先完成 S1 选择品类")
+    workspace_path: str = str(record.payload.get("workspace_path", "")).strip()
+    if workspace_path:
+        workspace_root: Path = Path(workspace_path)
+        if workspace_root.is_dir():
+            apply_edu_workspace_patch(
+                workspace_root,
+                genre,
+                settings.templates_dir,
+                settings.workspace_dir,
+            )
     try:
         launcher = get_launcher(settings)
         result: LaunchResult = launcher.launch(session_id, genre, force=force)

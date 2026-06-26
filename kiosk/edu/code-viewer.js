@@ -11,6 +11,35 @@
   /** @type {string} */
   let currentFile = "config/game_config.json";
 
+  /**
+   * 仅在 .code-scroll 内滚动，避免 scrollIntoView 带动整页/双栏布局偏移
+   * @param {HTMLElement} scrollEl
+   * @param {HTMLElement} target
+   * @param {"center"|"nearest"} [block]
+   */
+  function scrollIntoContainer(scrollEl, target, block = "center") {
+    const scrollRect = scrollEl.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    let nextTop = scrollEl.scrollTop;
+    let nextLeft = scrollEl.scrollLeft;
+
+    if (block === "center") {
+      nextTop += targetRect.top - scrollRect.top - (scrollRect.height - targetRect.height) / 2;
+    } else if (targetRect.top < scrollRect.top) {
+      nextTop += targetRect.top - scrollRect.top;
+    } else if (targetRect.bottom > scrollRect.bottom) {
+      nextTop += targetRect.bottom - scrollRect.bottom;
+    }
+
+    if (targetRect.left < scrollRect.left) {
+      nextLeft += targetRect.left - scrollRect.left;
+    } else if (targetRect.right > scrollRect.right) {
+      nextLeft += targetRect.right - scrollRect.right;
+    }
+
+    scrollEl.scrollTo({ top: nextTop, left: nextLeft, behavior: "smooth" });
+  }
+
   const EduCodeViewer = {
     /**
      * @param {HTMLElement} container
@@ -73,7 +102,10 @@
         })
         .join("\n");
       const last = contentEl.querySelector(".line:last-child");
-      if (last) last.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      const scrollEl = contentEl.closest(".code-scroll");
+      if (last instanceof HTMLElement && scrollEl instanceof HTMLElement) {
+        scrollIntoContainer(scrollEl, last, "nearest");
+      }
     },
 
     /**
@@ -89,7 +121,10 @@
       const line = contentEl.querySelector(`[data-line="${lineNum}"]`);
       if (!line) return false;
       line.classList.add("code-line-highlight");
-      line.scrollIntoView({ block: "center", behavior: "smooth" });
+      const scrollEl = contentEl.closest(".code-scroll");
+      if (scrollEl instanceof HTMLElement) {
+        scrollIntoContainer(scrollEl, line, "center");
+      }
       if (durationMs && durationMs > 0) {
         window.setTimeout(() => line.classList.remove("code-line-highlight"), durationMs);
       }

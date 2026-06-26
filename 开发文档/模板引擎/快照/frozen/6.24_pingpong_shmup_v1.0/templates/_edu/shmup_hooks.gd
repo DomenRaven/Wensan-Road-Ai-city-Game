@@ -122,8 +122,8 @@ func _wire_enemy_node(node: Node) -> void:
 	_wired_enemies[enemy_id] = true
 
 
-func _on_powerup_spawned(_child: Node) -> void:
-	call_deferred("_wire_powerups")
+func _on_powerup_spawned(child: Node) -> void:
+	_wire_single_powerup(child)
 
 
 func _scan_scene() -> void:
@@ -151,14 +151,18 @@ func _wire_player() -> void:
 
 func _wire_powerups() -> void:
 	for node: Node in _find_powerup_nodes():
-		var id: int = node.get_instance_id()
-		if _wired_powerups.has(id):
-			continue
-		if not node.has_signal("collected"):
-			continue
-		if not node.is_connected("collected", _on_powerup_collected):
-			node.connect("collected", _on_powerup_collected)
-		_wired_powerups[id] = true
+		_wire_single_powerup(node)
+
+
+func _wire_single_powerup(node: Node) -> void:
+	var id: int = node.get_instance_id()
+	if _wired_powerups.has(id):
+		return
+	if not node.has_signal("collected"):
+		return
+	if not node.is_connected("collected", _on_powerup_collected):
+		node.connect("collected", _on_powerup_collected)
+	_wired_powerups[id] = true
 
 
 func _find_powerup_nodes() -> Array[Node]:

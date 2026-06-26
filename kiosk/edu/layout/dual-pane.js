@@ -122,6 +122,14 @@
 
     setPhase(phase) {
 
+      const paneRight = rootEl?.querySelector(".pane-right");
+
+      if (paneRight) {
+
+        paneRight.classList.toggle("godot-zone", phase === "play");
+
+      }
+
       document.querySelectorAll(".phase-segment").forEach((el) => {
 
         const seg = /** @type {HTMLElement} */ (el);
