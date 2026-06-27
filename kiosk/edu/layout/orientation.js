@@ -41,21 +41,43 @@
 
 
   /**
+   * 浏览器顶栏到 layout viewport 顶部的偏移（Win32 SetWindowPos 用屏幕 CSS 像素）
+   * @returns {number}
+   */
+  function browserChromeTopPx() {
+    if (typeof window.mozInnerScreenY === "number" && typeof window.screenY === "number") {
+      return Math.max(0, Math.round(window.mozInnerScreenY - window.screenY));
+    }
+    const outerMinusInner = window.outerHeight - window.innerHeight;
+    const scrollBarH = Math.max(0, window.outerWidth - window.innerWidth);
+    return Math.max(0, Math.round(outerMinusInner - scrollBarH));
+  }
+
+  /**
+   * @param {Element} node
+   * @returns {{ x: number, y: number, w: number, h: number }}
+   */
+  function elementScreenRect(node) {
+    const rect = node.getBoundingClientRect();
+    const screenLeft = window.screenX ?? window.screenLeft ?? 0;
+    const screenTop = window.screenY ?? window.screenTop ?? 0;
+    return {
+      x: Math.round(screenLeft + rect.left),
+      y: Math.round(screenTop + browserChromeTopPx() + rect.top),
+      w: Math.round(rect.width),
+      h: Math.round(rect.height),
+    };
+  }
+
+  /**
    * @param {string} selector
    * @returns {{ x: number, y: number, w: number, h: number } | null}
    */
-
-  function queryRect(selector) {
-
+  function queryScreenRect(selector) {
     const node = document.querySelector(selector);
-
     if (!node) return null;
-
-    return rectPayload(node.getBoundingClientRect());
-
+    return elementScreenRect(node);
   }
-
-
 
   const EduOrientation = {
 
@@ -150,7 +172,7 @@
      *     screen_h: number,
      *     devicePixelRatio: number,
      *     kiosk_rect: { x: number, y: number, w: number, h: number } | null,
-     *     godot_zone_rect: { x: number, y: number, w: number, h: number } | null
+     *     godot_zone_rect: { x: number, y: number, w: number, h: number } | null  // 屏幕绝对 CSS 像素
      *   }
      * }}
      */
@@ -159,17 +181,17 @@
 
       const orientation = this.getMode();
 
-      const kioskRect =
+      const kioskNode =
+        document.querySelector("#dualPaneRoot")
+        || document.querySelector(".dual-pane-root");
 
-        queryRect("#dualPaneRoot")
+      const godotZoneNode =
+        document.querySelector(".pane-right.godot-zone")
+        || document.querySelector("#paneRightInner");
 
-        || queryRect(".dual-pane-root");
+      const kioskRect = kioskNode ? elementScreenRect(kioskNode) : null;
 
-      const godotZoneRect =
-
-        queryRect(".pane-right.godot-zone")
-
-        || queryRect("#paneRightInner");
+      const godotZoneRect = godotZoneNode ? elementScreenRect(godotZoneNode) : null;
 
       return {
 
@@ -184,6 +206,10 @@
           screen_w: window.screen.width,
 
           screen_h: window.screen.height,
+
+          monitor_x: window.screen?.availLeft ?? 0,
+
+          monitor_y: window.screen?.availTop ?? 0,
 
           devicePixelRatio: window.devicePixelRatio || 1,
 

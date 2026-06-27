@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
-from fastapi import APIRouter, HTTPException, Query, Request
+from typing import Any, Literal
+from fastapi import APIRouter, Body, HTTPException, Query, Request
 from pydantic import BaseModel
 
 from app.models.session import SessionPhase, SessionRecord
@@ -12,9 +12,41 @@ from app.services.edu_workspace import (
     read_edu_actions,
 )
 from app.services.godot_launcher import LaunchResult, get_launcher
+from app.services.godot_window_layout import WindowRect, get_monitor_bottom_half_rect
 from app.services.workspace_guard import WorkspaceGuardError, validate_session_id
 
 router = APIRouter(tags=["play"])
+
+
+class ClientViewportRect(BaseModel):
+    x: int
+    y: int
+    w: int
+    h: int
+
+
+class ClientViewport(BaseModel):
+    screen_x: int = 0
+    screen_y: int = 0
+    screen_w: int = 0
+    screen_h: int = 0
+    monitor_x: int = 0
+    monitor_y: int = 0
+    devicePixelRatio: float = 1.0
+    kiosk_rect: ClientViewportRect | None = None
+    godot_zone_rect: ClientViewportRect | None = None
+
+
+class LaunchPlayRequest(BaseModel):
+    orientation: Literal["landscape", "portrait"] | None = None
+    client_viewport: ClientViewport | None = None
+
+
+class PlacementRectResponse(BaseModel):
+    x: int
+    y: int
+    w: int
+    h: int
 
 
 class PlayLaunchResponse(BaseModel):
@@ -26,6 +58,8 @@ class PlayLaunchResponse(BaseModel):
     godot_path: str
     message: str
     already_running: bool = False
+    window_placed: bool = False
+    placement_rect: PlacementRectResponse | None = None
 
 
 class PlayActionRequest(BaseModel):
@@ -38,11 +72,75 @@ class PlayActionResponse(BaseModel):
     t_ms: int
 
 
+def _portrait_anchor(client_viewport: ClientViewport) -> tuple[int, int]:
+    kiosk = client_viewport.kiosk_rect
+    if kiosk is not None and kiosk.w > 0 and kiosk.h > 0:
+        return kiosk.x + kiosk.w // 2, kiosk.y + min(kiosk.h // 4, 160)
+    return client_viewport.screen_x + 200, client_viewport.screen_y + 200
+
+
+def _monitor_bottom_half(client_viewport: ClientViewport) -> WindowRect | None:
+    sw: int = client_viewport.screen_w
+    sh: int = client_viewport.screen_h
+    if sw <= 0 or sh <= 0:
+        return None
+    half_h: int = sh // 2
+    return {
+        "x": client_viewport.monitor_x,
+        "y": client_viewport.monitor_y + half_h,
+        "w": sw,
+        "h": half_h,
+    }
+
+
+def resolve_placement_rect(
+    orientation: Literal["landscape", "portrait"] | None,
+    client_viewport: ClientViewport | None,
+) -> WindowRect | None:
+    if client_viewport is None:
+        return None
+
+    # P3-3 LOCK · landscape 验收 2026-06-27：godot_zone_rect 屏幕绝对 CSS 像素贴右栏
+    if orientation == "landscape":
+        zone = client_viewport.godot_zone_rect
+        if zone is not None and zone.w > 0 and zone.h > 0:
+            return {"x": zone.x, "y": zone.y, "w": zone.w, "h": zone.h}
+        sw = client_viewport.screen_w
+        sh = client_viewport.screen_h
+        if sw <= 0 or sh <= 0:
+            return None
+        half_w: int = sw // 2
+        mx: int = client_viewport.monitor_x
+        my: int = client_viewport.monitor_y
+        return {"x": mx + half_w, "y": my, "w": half_w, "h": sh}
+
+    # portrait · 甲方 R3：Win32 取浏览器所在显示器下半屏（不依赖 screen.width 浏览器值）
+    if orientation == "portrait":
+        anchor_x, anchor_y = _portrait_anchor(client_viewport)
+        win_rect: WindowRect | None = get_monitor_bottom_half_rect(anchor_x, anchor_y)
+        if win_rect is not None:
+            return win_rect
+        return _monitor_bottom_half(client_viewport)
+
+    zone = client_viewport.godot_zone_rect
+    if zone is not None and zone.w > 0 and zone.h > 0:
+        return {"x": zone.x, "y": zone.y, "w": zone.w, "h": zone.h}
+
+    return None
+
+
+def _placement_response(rect: WindowRect | None) -> PlacementRectResponse | None:
+    if rect is None:
+        return None
+    return PlacementRectResponse(x=rect["x"], y=rect["y"], w=rect["w"], h=rect["h"])
+
+
 @router.post("/sessions/{session_id}/play/launch", response_model=PlayLaunchResponse)
 def launch_play(
     session_id: str,
     request: Request,
     force: bool = Query(False, description="强制重新启动（Godot 已关闭时使用）"),
+    body: LaunchPlayRequest | None = Body(default=None),
 ) -> PlayLaunchResponse:
     store = request.app.state.session_store
     settings = request.app.state.settings
@@ -62,9 +160,19 @@ def launch_play(
                 settings.templates_dir,
                 settings.workspace_dir,
             )
+    launch_body: LaunchPlayRequest = body or LaunchPlayRequest()
+    layout_rect: WindowRect | None = resolve_placement_rect(
+        launch_body.orientation,
+        launch_body.client_viewport,
+    )
     try:
         launcher = get_launcher(settings)
-        result: LaunchResult = launcher.launch(session_id, genre, force=force)
+        result: LaunchResult = launcher.launch(
+            session_id,
+            genre,
+            force=force,
+            layout_rect=layout_rect,
+        )
     except FileNotFoundError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except RuntimeError as exc:
@@ -83,6 +191,8 @@ def launch_play(
         godot_path=result.godot_path,
         message=result.message,
         already_running=result.already_running,
+        window_placed=result.window_placed,
+        placement_rect=_placement_response(result.placement_rect),
     )
 
 

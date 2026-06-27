@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from app.config import Settings
+from app.services.godot_window_layout import WindowRect, place_by_pid
 from app.services.workspace_guard import (
     WorkspaceGuardError,
     validate_session_id,
@@ -24,6 +25,8 @@ class LaunchResult:
     godot_path: str
     message: str
     already_running: bool = False
+    window_placed: bool = False
+    placement_rect: WindowRect | None = None
 
 
 class GodotLauncher:
@@ -109,7 +112,29 @@ class GodotLauncher:
         """Drop cached PID when session is reset/deleted."""
         self._clear_session_tracking(session_id)
 
-    def launch(self, session_id: str, genre: str, *, force: bool = False) -> LaunchResult:
+    def _try_place_window(
+        self,
+        pid: int | None,
+        layout_rect: WindowRect | None,
+        *,
+        wait_s: float = 0.0,
+        timeout_s: float = 6.0,
+    ) -> tuple[bool, WindowRect | None]:
+        if pid is None or layout_rect is None:
+            return False, None
+        if wait_s > 0:
+            time.sleep(wait_s)
+        placed: bool = place_by_pid(pid, layout_rect, timeout_s=timeout_s, interval_s=0.25)
+        return placed, layout_rect if placed else None
+
+    def launch(
+        self,
+        session_id: str,
+        genre: str,
+        *,
+        force: bool = False,
+        layout_rect: WindowRect | None = None,
+    ) -> LaunchResult:
         if not genre:
             raise ValueError("Session 尚未选择品类 (S1)")
         try:
@@ -130,6 +155,11 @@ class GodotLauncher:
             and self._is_process_running(old_pid)
             and old_project == project_key
         ):
+            window_placed, placement_rect = self._try_place_window(
+                old_pid,
+                layout_rect,
+                timeout_s=4.0,
+            )
             return LaunchResult(
                 ok=True,
                 pid=old_pid,
@@ -138,6 +168,8 @@ class GodotLauncher:
                 godot_path=str(godot),
                 message="试玩窗口已在运行",
                 already_running=True,
+                window_placed=window_placed,
+                placement_rect=placement_rect,
             )
 
         if old_pid is not None and self._is_process_running(old_pid) and old_project != project_key:
@@ -156,6 +188,12 @@ class GodotLauncher:
 
         self._running[session_id] = proc.pid
         self._running_project[session_id] = project_key
+        window_placed, placement_rect = self._try_place_window(
+            proc.pid,
+            layout_rect,
+            wait_s=0.35,
+            timeout_s=6.0,
+        )
         message: str = "已重新启动 Godot 试玩窗口" if force or old_pid is not None else "已启动 Godot 试玩窗口"
         return LaunchResult(
             ok=True,
@@ -165,6 +203,8 @@ class GodotLauncher:
             godot_path=str(godot),
             message=message,
             already_running=False,
+            window_placed=window_placed,
+            placement_rect=placement_rect,
         )
 
     def status(self, session_id: str) -> dict[str, object]:
