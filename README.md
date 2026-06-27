@@ -11,6 +11,18 @@
 
 ## 快速启动
 
+**展厅推荐 · 一键启动**
+
+```powershell
+# 首次：打包 exe（仅需一次）
+.\05-工具脚本\build_launcher.ps1
+
+# 之后：双击仓库根目录「启动游戏工坊.exe」
+# 自动启 Redis（可选）+ API :8000 + Kiosk :8080，并打开浏览器
+```
+
+**手动启动（开发调试）**
+
 ```powershell
 # 1. 后端 API
 .\05-工具脚本\run_backend.ps1
