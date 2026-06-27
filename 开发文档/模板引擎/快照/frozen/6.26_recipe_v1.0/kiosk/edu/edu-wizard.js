@@ -657,7 +657,15 @@
   }
 
   /**
-   * @param {{ok:boolean,already_running?:boolean,pid?:number|null,project_path?:string,message?:string,waiting?:boolean}|null} data
+   * @returns {string}
+   */
+  function getLaunchViewportBody() {
+    const payload = window.EduOrientation?.getViewportPayload?.();
+    return JSON.stringify(payload || {});
+  }
+
+  /**
+   * @param {{ok:boolean,already_running?:boolean,pid?:number|null,project_path?:string,message?:string,waiting?:boolean,window_placed?:boolean,placement_rect?:object,orientation?:string}|null} data
    * @returns {string}
    */
   function renderLaunchStatusPanel(data) {
@@ -676,10 +684,18 @@
         : "Godot 已启动 · 请到游戏窗口试玩";
       const pid = data.pid != null ? String(data.pid) : "—";
       const path = data.project_path || "—";
+      const orient = data.orientation || window.EduOrientation?.getMode?.() || "landscape";
+      let placementHint = "";
+      if (data.window_placed === true) {
+        placementHint = `<p class="launch-placement-hint launch-placement-hint--ok">游戏窗口已自动贴到${orient === "portrait" ? "屏幕下方" : "屏幕右侧"}</p>`;
+      } else if (data.window_placed === false) {
+        placementHint = `<p class="launch-placement-hint launch-placement-hint--manual">请在屏幕${orient === "portrait" ? "下方" : "右侧"}找到游戏窗口</p>`;
+      }
       return `
         <div class="launch-status-inline launch-status-inline--ok">
           <span class="launch-inline-icon" aria-hidden="true">✓</span>
           <span class="launch-status ok" id="launchStatus">${mainMsg}</span>
+          ${placementHint}
           <details class="launch-details launch-details--compact">
             <summary>技术信息</summary>
             <p class="launch-meta">进程 PID：${pid}</p>
@@ -935,7 +951,7 @@
     try {
       const data = await window.EduSession.api(
         `/sessions/${window.EduSession.sessionId}/play/launch`,
-        { method: "POST", body: "{}" }
+        { method: "POST", body: getLaunchViewportBody() }
       );
       if (!data.ok) {
         launchState = { ok: false, message: data.message || "游戏启动失败，请重试" };
@@ -950,6 +966,9 @@
         project_path: data.project_path || "",
         godot_path: data.godot_path || "",
         message: data.message || "",
+        window_placed: data.window_placed,
+        placement_rect: data.placement_rect || null,
+        orientation: window.EduOrientation?.getMode?.() || "landscape",
       };
       window.EduSession.log(
         launchState.already_running ? "✓ 游戏已在运行" : "✓ Godot 已启动"
@@ -1015,7 +1034,7 @@
       try {
         const data = await window.EduSession.api(
           `/sessions/${window.EduSession.sessionId}/play/launch`,
-          { method: "POST", body: "{}" }
+          { method: "POST", body: getLaunchViewportBody() }
         );
         if (data.ok) {
           launchState = {
@@ -1024,6 +1043,9 @@
             pid: data.pid ?? null,
             project_path: data.project_path || "",
             message: data.message || "",
+            window_placed: data.window_placed,
+            placement_rect: data.placement_rect || null,
+            orientation: window.EduOrientation?.getMode?.() || "landscape",
           };
           window.EduSession.log("已加载经典版 · Godot 已启动");
           await renderB7Play();

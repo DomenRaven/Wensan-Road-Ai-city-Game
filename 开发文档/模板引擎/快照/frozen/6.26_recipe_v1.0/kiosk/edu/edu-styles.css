@@ -1233,6 +1233,21 @@ body[data-orientation="portrait"] .pane-right.godot-zone {
   font-weight: 600;
 }
 
+.launch-placement-hint {
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.launch-placement-hint--ok {
+  color: var(--success);
+}
+
+.launch-placement-hint--manual {
+  color: var(--warn, #b45309);
+  font-weight: 600;
+}
+
 .launch-status.warn {
   color: #e8b84a;
   font-weight: 600;
@@ -1357,7 +1372,7 @@ body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 12px;
   background: rgba(2, 6, 23, 0.72);
   backdrop-filter: blur(8px);
 }
@@ -1371,18 +1386,18 @@ body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  width: min(100%, 500px);
-  max-height: calc(100vh - 32px);
+  width: min(100%, 680px);
+  max-height: calc(100vh - 24px);
   overflow: auto;
 }
 
 .edu-certificate {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 580px;
   aspect-ratio: 210 / 297;
-  min-height: 520px;
-  max-height: min(85vh, 680px);
+  min-height: 0;
+  max-height: min(92vh, 860px);
   border-radius: 4px;
   overflow: hidden;
   border: 2px solid #00f5ff;
@@ -1552,8 +1567,9 @@ body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px 18px 14px;
-  gap: 10px;
+  padding: 18px 20px 16px;
+  gap: 11px;
+  font-size: 1.08rem;
 }
 
 .edu-certificate-ribbon {
@@ -1593,7 +1609,7 @@ body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
 
 .edu-certificate-title {
   margin: 6px 0 0;
-  font-size: 1.05rem;
+  font-size: 1.22rem;
   line-height: 1.35;
   font-weight: 800;
   color: #f8fafc;
@@ -1621,8 +1637,8 @@ body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
 
 .edu-certificate-medal {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 92px;
+  height: 92px;
   margin: 0 auto 10px;
 }
 
@@ -1656,7 +1672,7 @@ body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 2.85rem;
   line-height: 1;
   filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.6));
 }
@@ -1683,7 +1699,7 @@ body[data-orientation="portrait"] .caption-bubble:not([hidden]) {
 
 .edu-certificate-work {
   margin: 0;
-  font-size: 1.55rem;
+  font-size: 1.75rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   color: #fef08a;
@@ -1908,11 +1924,12 @@ body[data-orientation="portrait"] .edu-certificate-overlay {
 
 body[data-orientation="portrait"] .edu-certificate-dialog {
   width: min(100%, calc(100vw - 16px));
-  max-height: calc(100vh - var(--edu-header-h, 72px) - 16px);
+  max-height: calc(100vh - var(--edu-header-h, 72px) - 12px);
 }
 
 body[data-orientation="portrait"] .edu-certificate {
-  max-height: min(62vh, 540px);
+  max-width: min(580px, calc(100vw - 16px));
+  max-height: min(78vh, 760px);
 }
 
 body[data-orientation="portrait"] .edu-certificate-content {
@@ -1926,7 +1943,7 @@ body[data-orientation="portrait"] .edu-certificate-actions {
 
 @media (max-height: 720px) {
   .edu-certificate {
-    max-height: min(70vh, 580px);
+    max-height: min(88vh, 720px);
   }
 
   .edu-certificate-content {

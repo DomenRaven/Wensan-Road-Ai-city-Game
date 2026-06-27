@@ -1,7 +1,7 @@
 {
   "name": "recipe_v1",
   "label": "RECIPE 配方问卷 + 作品证书",
-  "frozen_at": "2026-06-26T15:52:46Z",
+  "frozen_at": "2026-06-27T02:42:41Z",
   "files": [
     {
       "path": "05-工具脚本/check_recipe_alignment.py",
@@ -105,11 +105,11 @@
     },
     {
       "path": "kiosk/edu/edu-styles.css",
-      "sha256": "52e6f5244feedb5aa0a719108a60dd90dbc69da41caea372965364507133181c"
+      "sha256": "db811928c579717a300dbd738a7760eb9692d28049a9fea72a14369c229b7332"
     },
     {
       "path": "kiosk/edu/edu-wizard.js",
-      "sha256": "87776e3c94dd73422c4b20cc52d60057437066d844617995ba7ef45339058c56"
+      "sha256": "697df70fc9a15444b730b95faebe078d68feb95411d5f076708177f9e385d4ba"
     },
     {
       "path": "kiosk/edu/index.html",

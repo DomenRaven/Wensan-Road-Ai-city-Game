@@ -6,20 +6,32 @@
 
 ---
 
----
-
-## [未发布] · P3-1 + P3-1-FIX（2026-06-26）
+## [1.1] - 2026-06-28
 
 ### 新增
 
-- **P3-1 蓝白主题**：`kiosk_edu_spec` v1.1 · B/A 链蓝白 CSS · 橙金星空 · `edu-create-ambient.js` · B6 试玩卡片
-- **P3-1-FIX 讲解员演示区**：七款 `GENRE_DEMO_ACTIONS` · `.pane-right-stack` · survivor 高亮补丁 · shmup B7 无「受伤」
+- **P3-2 横竖屏**：`orientation.js` · dual-pane 横/竖 grid · `godot-zone` 引导区
+- **P3-3 Godot 窗口分区**：`play/launch` 携带 `client_viewport` · Win32 `place_by_pid` · 横屏贴右栏 · 竖屏贴主屏下半
+- **RECIPE 配方+证书**：删 B4 小技能题 · tuning 增补 · B6 霓虹作品登记证书 · 打印样式
+- **E2E**：`e2e_p3_godot_window_layout.py` · `e2e_recipe_a_certificate.py` · `check_recipe_alignment.py`
 
 ### 变更
 
-- `kiosk/edu/edu-wizard.js` · `code-highlight.js` · `templates/_edu/survivor_hooks.gd` · `edu_action_bridge.gd`
+- **P3-1 蓝白主题**：`kiosk_edu_spec` v1.1 · B/A 链蓝白 CSS · 橙金星空 · B6 试玩卡片
+- **P3-1-FIX**：七款 `GENRE_DEMO_ACTIONS` · survivor/shmup 高亮补丁
+- `kiosk/edu/edu-wizard.js` · `code-viewer.js` · `edu-styles.css` · `godot_launcher.py` · `godot_window_layout.py`
+- 冻结：`frozen_recipe_v1.json` · 各品类 manifest 刷新
 
-> 正式版本号 **v1.1** 于 P3-4 全量回归后打 tag。
+### 说明
+
+- **LLM**：本期未接入 · P2 展后 backlog
+- **templates/core**：未改
+
+| 项 | 值 |
+|----|-----|
+| 标签 `v1.1` | 见 GitHub releases |
+| 收工评审 | `开发文档/模板引擎/评审记录/6.26_P3_收工.md` |
+| 状态快照 | `开发文档/模板引擎/快照/6.26_P3_收工后状态快照_v1.0.md` |
 
 ---
 
@@ -43,10 +55,8 @@
 
 | 项 | 值 |
 |----|-----|
-| GitHub 首推 | 2026-06-24 · `main` · 约 122 MiB / 11716 objects |
+| GitHub 首推 | 2026-06-24 · `main` |
 | 标签 `v1.0` | `f7f36cc` |
-| `main` HEAD | `7425914`（含 `push_github.ps1`） |
-| 状态快照 | `开发文档/模板引擎/快照/6.24_v1.0_GitHub收工状态快照_v1.0.md` |
 
 ### 回退到此版本
 
@@ -55,14 +65,7 @@ git fetch github --tags
 git checkout v1.0
 ```
 
-或在当前分支上硬回退（**会丢弃未提交改动**）：
-
-```powershell
-git reset --hard v1.0
-```
-
-建议先打备份分支：`git branch backup-before-rollback`
-
 ---
 
+[1.1]: https://github.com/DomenRaven/Wensan-Road-Ai-city-Game/releases/tag/v1.1
 [1.0]: https://github.com/DomenRaven/Wensan-Road-Ai-city-Game/releases/tag/v1.0
