@@ -43,6 +43,10 @@
     "min_card_height_px": 72,
     "max_text_input_length": 20
   },
+  "touch_keyboard": {
+    "provider": "auto",
+    "note": "auto=切换中文IME+TabTip(搜狗为默认输入法时即搜狗拼音); sogou_hand=搜狗手写板; 搜狗软键盘无独立exe"
+  },
   "theater": {
     "theater_total_ms": 45000,
     "line_scroll_speed": "linear",
@@ -120,14 +124,91 @@
   },
   "certificate": {
     "title": "AI 小游戏创作工坊 · 作品登记证书",
+    "subtitle": "AI 小游戏创作工坊 · 作品登记证书",
+    "title_template": "{creator}的{display_name}！",
+    "title_fallback": "《{display_name}》诞生啦！",
+    "title_templates": {
+      "possessive": "{creator}的{display_name}！",
+      "master": "{creator}大师之作·{display_name}",
+      "adventure": "{creator}的{display_name}大冒险"
+    },
     "footer": "GameForge K12 · 文三路 AI 馆",
-    "btn_print": "打印证书",
+    "btn_save": "保存证书",
+    "btn_print": "保存证书",
     "btn_continue": "继续试玩",
-    "btn_view": "查看证书"
+    "btn_view": "查看证书",
+    "public_download_base": "",
+    "qr_download_host": "",
+    "download_ttl_sec": 259200,
+    "qr_hint": "用手机扫码，随时下载证书图片",
+    "qr_hint_note": "实装：复制 exhibition_server.example.json → apply_exhibition_config.ps1 · 或填 public_download_base"
   },
   "b_chain_isolation": {
     "startup_api": "GET /bootstrap",
     "release_api": "POST /sessions/{session_id}/release",
     "on_page_hide": "sendBeacon release"
+  },
+  "genre_themes": {
+    "platformer": {
+      "accent": "#16a34a",
+      "accent_light": "#dcfce7",
+      "surface": "#f0fdf4",
+      "pattern": "grass-blocks",
+      "decor": "🪙🧱",
+      "work_name_prefix": "🌟"
+    },
+    "shmup": {
+      "accent": "#1d4ed8",
+      "accent_light": "#dbeafe",
+      "surface": "#eff6ff",
+      "pattern": "starfield",
+      "decor": "🚀✨",
+      "work_name_prefix": "🚀"
+    },
+    "survivor": {
+      "accent": "#c026d3",
+      "accent_light": "#fae8ff",
+      "surface": "#fdf4ff",
+      "pattern": "xp-orbs",
+      "decor": "⚔️💎",
+      "work_name_prefix": "⚔️"
+    },
+    "pingpong": {
+      "accent": "#059669",
+      "accent_light": "#d1fae5",
+      "surface": "#ecfdf5",
+      "pattern": "court-lines",
+      "decor": "🏓",
+      "work_name_prefix": "🏓"
+    },
+    "fighting": {
+      "accent": "#dc2626",
+      "accent_light": "#fee2e2",
+      "surface": "#fff5f5",
+      "pattern": "impact-lines",
+      "decor": "🥊",
+      "work_name_prefix": "🥊"
+    },
+    "parkour": {
+      "accent": "#7c3aed",
+      "accent_light": "#ede9fe",
+      "surface": "#f5f3ff",
+      "pattern": "speed-lines",
+      "decor": "🏃💨",
+      "work_name_prefix": "🏃"
+    },
+    "racing": {
+      "accent": "#ea580c",
+      "accent_light": "#ffedd5",
+      "surface": "#fff7ed",
+      "pattern": "checkered",
+      "decor": "🏎️🏁",
+      "work_name_prefix": "🏎️"
+    }
+  },
+  "forge_reveal": {
+    "card_template": "开始制作{creator}的{game}游戏！",
+    "firework_count": 12,
+    "skip_on_reduced_motion": true
   }
 }

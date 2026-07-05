@@ -105,9 +105,95 @@
 
     configure(spec) {
       this.spec = spec;
-      if (spec.api_base) this.apiBase = String(spec.api_base);
+      if (spec.api_base) this.apiBase = this.resolveApiBase(String(spec.api_base));
       if (spec.session_storage_key) this.storageKey = String(spec.session_storage_key);
       this.applyThemeFromSpec(spec);
+    },
+
+    /**
+     * 展馆 LAN：页面用 IP 打开时，API 自动跟同源主机（避免手机/副屏连 127.0.0.1 失败）
+     * @param {string} configured
+     * @returns {string}
+     */
+    resolveApiBase(configured) {
+      const raw = String(configured || "http://127.0.0.1:8000").replace(/\/$/, "");
+      try {
+        const parsed = new URL(raw);
+        const pageHost = window.location.hostname;
+        if (
+          pageHost &&
+          pageHost !== "localhost" &&
+          pageHost !== "127.0.0.1" &&
+          pageHost !== parsed.hostname
+        ) {
+          const port = parsed.port || "8000";
+          return `${parsed.protocol}//${pageHost}:${port}`;
+        }
+        return raw;
+      } catch {
+        return raw;
+      }
+    },
+
+    /** @returns {boolean} */
+    isDemoSession() {
+      return !this.sessionId || this.sessionId.startsWith("demo-");
+    },
+
+    /**
+     * 写操作前确保后端存在有效 session（404 / demo 时自动重建）
+     * @returns {Promise<string>}
+     */
+    async ensureSession() {
+      if (!this.isDemoSession()) {
+        try {
+          const res = await fetch(`${this.apiBase}/sessions/${this.sessionId}`, {
+            headers: { Accept: "application/json" },
+          });
+          if (res.ok) return this.sessionId;
+          if (res.status !== 404) {
+            const text = await res.text();
+            throw new Error(`${res.status}: ${text}`);
+          }
+          this.log("会话已失效 · 正在重新建立…");
+        } catch (err) {
+          if (err instanceof TypeError) {
+            throw new Error("无法连接后端 API · 请确认服务已启动");
+          }
+          if (!String(/** @type {Error} */ (err).message).includes("404")) throw err;
+        }
+      } else if (this.sessionId?.startsWith("demo-")) {
+        this.log("演示模式 · 正在连接后端并建立会话…");
+      }
+
+      const data = await this.api("/sessions", { method: "POST", body: "{}" });
+      this.sessionId = data.session_id || data.id || "";
+      if (!this.sessionId) throw new Error("创建会话失败");
+      this.rememberSessionId(this.sessionId);
+      this.ready = true;
+      this.log(`✓ 会话就绪 · ${this.sessionId.slice(0, 8)}…`);
+      return this.sessionId;
+    },
+
+    /**
+     * @param {Record<string, unknown>} report
+     */
+    applyCertificateDeploy(report) {
+      const deploy = /** @type {Record<string, unknown>|undefined} */ (report?.certificate);
+      if (!deploy) return;
+
+      const cert = {
+        .../** @type {Record<string, unknown>} */ (this.spec.certificate || {}),
+      };
+      const publicBase = String(deploy.public_download_base || "").trim();
+      if (publicBase) {
+        cert.public_download_base = publicBase;
+        cert.qr_download_host = publicBase;
+      }
+      const ttl = deploy.download_ttl_sec;
+      if (ttl != null) cert.download_ttl_sec = Number(ttl);
+
+      this.spec = { ...this.spec, certificate: cert };
     },
 
     async loadSpec() {
@@ -137,6 +223,7 @@
       if (removed.length > 0) {
         this.log(`已清理 ${removed.length} 个孤立 workspace`);
       }
+      this.applyCertificateDeploy(report);
       return report;
     },
 

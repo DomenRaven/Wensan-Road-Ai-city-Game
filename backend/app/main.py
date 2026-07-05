@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import Settings, get_settings
 from app.services.bootstrap import run_startup_bootstrap
-from app.routers import bootstrap, creative, edu_preview, generate, health, intent, play, sessions, wizard
+from app.routers import bootstrap, creative, edu_preview, generate, health, intent, kiosk, play, public_certificates, sessions, wizard
 from app.stores.session_store import StoreBackend, create_session_store
 
 
@@ -40,12 +40,14 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(bootstrap.router)
     app.include_router(sessions.router)
+    app.include_router(public_certificates.router)
     app.include_router(wizard.router)
     app.include_router(intent.router)
     app.include_router(creative.router)
     app.include_router(generate.router)
     app.include_router(play.router)
     app.include_router(edu_preview.router)
+    app.include_router(kiosk.router)
     return app
 
 

@@ -6,8 +6,21 @@
     /**
      * @param {string} name
      */
+    normalizeText(name) {
+      return String(name || "")
+        .normalize("NFKC")
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .replace(/[\uFF01-\uFF5E]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+    },
+
+    /**
+     * @param {string} name
+     */
     sanitize(name) {
-      return name.replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, "").trim().slice(0, 20);
+      return this.normalizeText(name)
+        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, "")
+        .trim()
+        .slice(0, 20);
     },
 
     /**
@@ -35,21 +48,19 @@
     /**
      * @param {HTMLElement} formEl
      * @param {Record<string, unknown>} spec
-     * @param {{genre:string, displayName:string, genreLabel:string}} ctx
+     * @param {{genre:string, displayName:string, genreLabel:string, creatorName?:string}} ctx
      * @param {string[]} suggestions
      */
     render(formEl, spec, ctx, suggestions) {
       const maxLen = spec.touch_constraints?.max_text_input_length || 20;
-      const emoji = window.EduB1Intent?.emoji(ctx.genre) || "🎮";
-      const preview = window.EduB1Intent?.previewUrl(ctx.genre) || "";
       formEl.innerHTML = `
-        <div class="genre-confirm">
-          <img src="${preview}" alt="" onerror="this.outerHTML='<span class=\\'emoji-fallback\\'>${emoji}</span>'" />
-          <p>我知道了！我们一起制作一个<strong>【${ctx.genreLabel}】</strong>小游戏吧！</p>
+        <div class="genre-confirm genre-confirm--plain">
+          <p class="genre-confirm-msg">让我们制作一个<strong>${ctx.genreLabel}</strong>小游戏吧！</p>
         </div>
-        <label for="nameInput">你希望它叫什么呢？</label>
-        <input id="nameInput" class="text-input" maxlength="${maxLen}"
-          value="${ctx.displayName || ""}" placeholder="给游戏起个名字…" />
+        <label for="nameInput" class="b2-name-label">你想让它叫什么名字呢？</label>
+        <input id="nameInput" class="text-input b2-name-input edu-touch-input" maxlength="${maxLen}"
+          inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          value="${ctx.displayName || ""}" placeholder="输入游戏名字…" />
         <div class="chip-row scroll-x" id="nameChips">
           ${suggestions
             .map((s) => `<button type="button" class="chip" data-name="${s}">${s}</button>`)
@@ -64,6 +75,7 @@
           input.value = chip.getAttribute("data-name") || "";
         });
       });
+      window.EduTouchKeyboard?.bind(formEl);
     },
 
     /**
@@ -71,12 +83,36 @@
      */
     getInput(formEl) {
       const input = /** @type {HTMLInputElement|null} */ (formEl.querySelector("#nameInput"));
+      if (input && document.activeElement === input) {
+        input.blur();
+      }
       return this.sanitize(input?.value || "");
     },
 
     /** @param {string} name */
     isValid(name) {
       return name.length > 0;
+    },
+
+    /**
+     * @param {HTMLElement} formEl
+     * @param {string} [message]
+     */
+    showValidationError(formEl, message) {
+      const hint = formEl.querySelector(".hint");
+      if (!hint) return;
+      hint.classList.add("hint--error");
+      hint.textContent = message || "请先输入游戏名字";
+    },
+
+    /** @param {HTMLElement} formEl */
+    clearValidationError(formEl) {
+      const hint = formEl.querySelector(".hint");
+      const input = /** @type {HTMLInputElement|null} */ (formEl.querySelector("#nameInput"));
+      if (!hint) return;
+      hint.classList.remove("hint--error");
+      const maxLen = input?.maxLength || 20;
+      hint.textContent = `最多 ${maxLen} 个字 · 中英文和数字`;
     },
   };
 

@@ -28,6 +28,10 @@
   /** @type {string} */
   let displayName = "";
   /** @type {string} */
+  let creatorName = "";
+  /** @type {"creator"|"gameName"} */
+  let b2SubStep = "creator";
+  /** @type {string} */
   let intentRaw = "";
   /** @type {string} */
   let replyText = "";
@@ -78,8 +82,14 @@
   }
 
   function updateWorkName() {
-    if (displayName) {
+    if (creatorName && displayName) {
+      workNameEl.textContent = `${creatorName}《${displayName}》`;
+      workNameEl.classList.remove("empty");
+    } else if (displayName) {
       workNameEl.textContent = `《${displayName}》`;
+      workNameEl.classList.remove("empty");
+    } else if (creatorName) {
+      workNameEl.textContent = creatorName;
       workNameEl.classList.remove("empty");
     } else if (stepIndex > 0) {
       workNameEl.textContent = genreLabel ? `【${genreLabel}】创作中` : "创作中…";
@@ -123,6 +133,8 @@
 
     if (["B1", "B2"].includes(step)) {
       showPanel("step");
+      document.body.classList.toggle("edu-step-b1", step === "B1");
+      document.body.classList.toggle("edu-step-b2", step === "B2");
       stepTitleEl.textContent = meta.title;
       stepSubtitleEl.textContent = meta.subtitle;
       btnPrev.disabled = step === "B1" || !uiReady;
@@ -131,12 +143,34 @@
         window.EduB1Intent.render(stepFormEl, spec, { intentRaw, genre, replyText });
         btnNext.textContent = "下一步";
       } else if (step === "B2") {
-        nameSuggestions = await window.EduB2Name.getSuggestions(genre, spec);
-        window.EduB2Name.render(stepFormEl, spec, { genre, displayName, genreLabel }, nameSuggestions);
+        window.EduB1Intent.destroy?.();
+        if (b2SubStep === "creator") {
+          stepTitleEl.textContent = "你的名字是？";
+          stepSubtitleEl.textContent = "讲解员和证书上会这样叫你";
+          stepSubtitleEl.hidden = false;
+          btnPrev.disabled = !uiReady;
+          window.EduB2Creator.render(stepFormEl, spec, { creatorName });
+        } else {
+          stepTitleEl.textContent = creatorName ? `你好，${creatorName}！` : "你好！";
+          stepSubtitleEl.textContent = "";
+          stepSubtitleEl.hidden = true;
+          btnPrev.disabled = !uiReady;
+          nameSuggestions = await window.EduB2Name.getSuggestions(genre, spec);
+          window.EduB2Name.render(
+            stepFormEl,
+            spec,
+            { genre, displayName, genreLabel, creatorName },
+            nameSuggestions
+          );
+        }
         btnNext.textContent = "下一步";
       }
       return;
     }
+
+    document.body.classList.remove("edu-step-b1", "edu-step-b2");
+    document.body.classList.toggle("edu-step-dual-create", step === "B3" || step === "B4");
+    document.body.classList.toggle("edu-step-b4", step === "B4");
 
     showPanel("dual");
 
@@ -170,9 +204,10 @@
       window.EduDualPane.showGenrePreview(genre, genreLabel);
       window.EduDualPane.setToolbar(true, `
         <button type="button" id="btnDualPrev" class="btn btn-secondary">上一步</button>
-        <button type="button" id="btnDualNext" class="btn btn-primary">开始制作</button>
+        <button type="button" id="btnDualNext" class="btn btn-primary b4-submit-btn" hidden>开始制作</button>
       `);
       bindDualToolbar();
+      window.EduB4CardFlow?.syncSubmitButton?.();
       return;
     }
 
@@ -814,6 +849,7 @@
     }
     window.EduCertificate.show({
       displayName,
+      creatorName,
       genreLabel: creativeTemplate?.display_name || genreLabel || genre,
       genre,
       genreEmoji: window.EduB1Intent?.emoji(genre),
@@ -1069,21 +1105,66 @@
       intentRaw = window.EduB1Intent.getInput(stepFormEl);
       if (!intentRaw) return;
       btnNext.disabled = true;
-      const match = await window.EduB1Intent.matchGenre(intentRaw, window.EduSession.sessionId);
-      genre = match.matched_genre || "platformer";
-      replyText = match.reply_text || "";
-      const names = spec.genre_display_names || {};
-      genreLabel = names[genre] || genre;
-      stepIndex += 1;
-      btnNext.disabled = false;
-      await renderStep();
+      try {
+        const match = await window.EduB1Intent.matchGenre(intentRaw, window.EduSession.sessionId);
+        genre = match.matched_genre || "platformer";
+        replyText = match.reply_text || "";
+        const names = spec.genre_display_names || {};
+        genreLabel = names[genre] || genre;
+        stepIndex += 1;
+        await renderStep();
+      } catch (err) {
+        window.EduSession.log(`B1 匹配失败 · ${err.message || err}`);
+      } finally {
+        btnNext.disabled = false;
+      }
       return;
     }
 
     if (step === "B2") {
+      if (b2SubStep === "creator") {
+        if (window.EduB2Creator.isComposing?.(stepFormEl)) {
+          window.EduB2Creator.showValidationError(stepFormEl, "请选字确认后再点下一步");
+          return;
+        }
+        window.EduB2Creator.commitComposition?.(stepFormEl);
+        creatorName = window.EduB2Creator.getInput(stepFormEl);
+        if (!window.EduB2Creator.isValid(creatorName)) {
+          const raw = stepFormEl.querySelector("#creatorInput")?.value || "";
+          const msg = /[a-zA-Z]{2,}/.test(String(raw))
+            ? "请从拼音里选中文，再点下一步"
+            : "请先填写你的名字（1–8 个字）";
+          window.EduB2Creator.showValidationError(stepFormEl, msg);
+          return;
+        }
+        window.EduB2Creator.clearValidationError(stepFormEl);
+        try {
+          await window.EduSession.ensureSession();
+          await window.EduSession.api(`/sessions/${window.EduSession.sessionId}`, {
+            method: "PATCH",
+            body: JSON.stringify({ creator_name: creatorName }),
+          });
+        } catch (err) {
+          window.EduSession.log(`保存名字失败 · ${err.message}`);
+          const msg = String(err.message || "").includes("无法连接")
+            ? "无法连接创作工坊，请检查网络或联系老师"
+            : "保存失败，请重试";
+          window.EduB2Creator.showValidationError(stepFormEl, msg);
+          return;
+        }
+        b2SubStep = "gameName";
+        await renderStep();
+        return;
+      }
+
       displayName = window.EduB2Name.getInput(stepFormEl);
-      if (!window.EduB2Name.isValid(displayName)) return;
+      if (!window.EduB2Name.isValid(displayName)) {
+        window.EduB2Name.showValidationError(stepFormEl);
+        return;
+      }
+      window.EduB2Name.clearValidationError(stepFormEl);
       try {
+        await window.EduSession.ensureSession();
         await window.EduSession.api(`/sessions/${window.EduSession.sessionId}/wizard/S0`, {
           method: "POST",
           body: JSON.stringify({ data: { display_name: displayName } }),
@@ -1091,6 +1172,15 @@
       } catch (err) {
         window.EduSession.log(`保存游戏名称失败 · ${err.message}`);
       }
+      if (window.EduForgeReveal?.play) {
+        await window.EduForgeReveal.play({
+          creatorName,
+          displayName,
+          genre,
+          genreLabel,
+        });
+      }
+      b2SubStep = "creator";
       stepIndex += 1;
       await renderStep();
       return;
@@ -1132,10 +1222,22 @@
   async function goPrev() {
     if (stepIndex <= 1) return;
     if (currentStep() === "B5") return;
+    if (currentStep() === "B2" && b2SubStep === "gameName") {
+      b2SubStep = "creator";
+      await renderStep();
+      return;
+    }
+    if (currentStep() === "B4" && window.EduB4CardFlow?.canGoPrev?.()) {
+      await window.EduB4CardFlow.prev();
+      return;
+    }
     window.EduCodeTheater.stop();
     window.EduCodeHighlight.stopPolling();
     stopLaunchStatusPolling();
     stepIndex -= 1;
+    if (currentStep() === "B2") {
+      b2SubStep = creatorName ? "gameName" : "creator";
+    }
     if (currentStep() === "B3") paneRefs.codeWorkspace = null;
     await renderStep();
   }
@@ -1143,6 +1245,7 @@
   async function resetWizard() {
     window.EduCertificate?.hide();
     window.EduCodeViewer?.setViewportPinned(false);
+    window.EduGenreTheme?.clear?.();
     certificateCreatedAt = null;
     window.EduCodeTheater.stop();
     window.EduCodeHighlight.stopPolling();
@@ -1152,6 +1255,8 @@
     genre = "";
     genreLabel = "";
     displayName = "";
+    creatorName = "";
+    b2SubStep = "creator";
     intentRaw = "";
     replyText = "";
     creativeAnswers = {};
@@ -1171,6 +1276,18 @@
     await renderStep();
   }
 
+  async function hydrateSessionMeta() {
+    const sessionId = window.EduSession.sessionId;
+    if (!sessionId || sessionId.startsWith("demo-")) return;
+    try {
+      const record = await window.EduSession.api(`/sessions/${sessionId}`);
+      if (record.creator_name) creatorName = String(record.creator_name);
+      if (record.display_name) displayName = String(record.display_name);
+    } catch (_) {
+      /* 演示模式或无 GET · 静默 */
+    }
+  }
+
   async function init() {
     showPanel("welcome");
     const statusEl = el("bootstrapStatus");
@@ -1182,8 +1299,10 @@
     try {
       await window.EduSession.bootstrap();
       spec = window.EduSession.spec;
+      await hydrateSessionMeta();
       window.EduOrientation?.configure(/** @type {{orientation_breakpoint_px?: number}} */ (spec.layout));
       window.EduOrientation?.mount();
+      window.EduTouchKeyboard?.init();
       window.EduCodeHighlight.configure(spec);
       if (statusEl) statusEl.textContent = "准备就绪！";
       setUiEnabled(true);
@@ -1193,6 +1312,7 @@
       spec = window.EduSession.spec || {};
       window.EduOrientation?.configure(/** @type {{orientation_breakpoint_px?: number}} */ (spec.layout));
       window.EduOrientation?.mount();
+      window.EduTouchKeyboard?.init();
       window.EduCodeHighlight.configure(spec);
       if (statusEl) statusEl.textContent = "演示模式（后端未连接）";
       setUiEnabled(true);
@@ -1201,6 +1321,6 @@
     }
   }
 
-  window.EduWizard = { spec, init, currentStep, resetWizard, fetchWorkspaceFile, fetchPreviewFile };
+  window.EduWizard = { spec, init, currentStep, resetWizard, fetchWorkspaceFile, fetchPreviewFile, setUiEnabled };
   document.addEventListener("DOMContentLoaded", () => init());
 })();

@@ -101,7 +101,7 @@
       },
       "impact": {
         "shoot": "res://assets/kenney/impact-sounds/Audio/impactTin_medium_000.ogg",
-        "hit": "res://assets/kenney/impact-sounds/Audio/impactMetal_heavy_000.ogg",
+        "enemy_shoot": "res://assets/kenney/impact-sounds/Audio/impactMetal_light_001.ogg",
         "explode": "res://assets/kenney/impact-sounds/Audio/impactGlass_heavy_000.ogg"
       }
     }

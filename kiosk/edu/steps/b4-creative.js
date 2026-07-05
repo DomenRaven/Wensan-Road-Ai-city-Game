@@ -312,6 +312,16 @@
 
 
 
+      if (window.EduB4CardFlow?.mount) {
+
+        window.EduB4CardFlow.mount(container, template, this.answers, genre, { catalog });
+
+        return;
+
+      }
+
+
+
       container.innerHTML = `
 
         <div class="creative-form-panel">

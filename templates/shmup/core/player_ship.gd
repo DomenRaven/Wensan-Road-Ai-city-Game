@@ -122,7 +122,7 @@ func _fire_bullet(x_offset: float) -> void:
 	var muzzle: Vector2 = global_position + Vector2(x_offset, -20.0)
 	if pool.has_method("spawn_player_bullet"):
 		pool.call("spawn_player_bullet", muzzle, _bullet_speed, false)
-	ThemeSoundUtil.play(self, "impact", "shoot")
+	ThemeSoundUtil.play(self, "impact", "shoot", -4.0)
 
 
 func _get_bullet_pool() -> Node2D:

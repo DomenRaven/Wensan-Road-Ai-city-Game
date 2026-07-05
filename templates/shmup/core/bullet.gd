@@ -3,7 +3,6 @@ extends Area2D
 signal deactivated(bullet: Area2D)
 
 const ShmupSheetUtil := preload("res://core/shmup_sheet.gd")
-const ThemeSoundUtil := preload("res://core/theme_sound.gd")
 
 var velocity: Vector2 = Vector2.ZERO
 var damage: int = 1
@@ -71,7 +70,6 @@ func _on_area_entered(area: Area2D) -> void:
 	if is_player_bullet and area.is_in_group("enemy"):
 		if area.has_method("take_damage"):
 			area.call("take_damage", damage)
-		ThemeSoundUtil.play(self, "impact", "hit")
 		if not pierce:
 			call_deferred("deactivate")
 	elif not is_player_bullet and area.is_in_group("player"):

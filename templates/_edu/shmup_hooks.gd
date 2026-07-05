@@ -33,6 +33,7 @@ var _rescan_timer: SceneTreeTimer = null
 
 
 func _ready() -> void:
+	_mute_exhibition_audio()
 	var main: Node = get_parent()
 	if main == null:
 		return
@@ -42,6 +43,13 @@ func _ready() -> void:
 		for child: Node in _game_root.get_children():
 			_bind_game_scene(child)
 	call_deferred("_scan_scene")
+
+
+func _mute_exhibition_audio() -> void:
+	var master_idx: int = AudioServer.get_bus_index("Master")
+	if master_idx < 0:
+		return
+	AudioServer.set_bus_mute(master_idx, true)
 
 
 func _on_game_root_child_entered(child: Node) -> void:

@@ -55,13 +55,13 @@
             ${particles}
           </div>
           <div class="build-wait-core" aria-hidden="true">
+            <div class="build-wait-halo"></div>
+            <div class="build-wait-ring ring-track"></div>
             <div class="build-wait-ring ring-outer"></div>
             <div class="build-wait-ring ring-inner"></div>
-            <div class="build-wait-orbit">
-              <span class="build-wait-orbit-dot od1"></span>
-              <span class="build-wait-orbit-dot od2"></span>
-              <span class="build-wait-orbit-dot od3"></span>
-            </div>
+            <div class="build-wait-orbit-arm arm-1"><span class="build-wait-orbit-dot"></span></div>
+            <div class="build-wait-orbit-arm arm-2"><span class="build-wait-orbit-dot"></span></div>
+            <div class="build-wait-orbit-arm arm-3"><span class="build-wait-orbit-dot"></span></div>
             <div class="build-wait-icon">${meta.emoji}</div>
           </div>
           <div class="build-wait-tokens" aria-hidden="true">${tokens}</div>

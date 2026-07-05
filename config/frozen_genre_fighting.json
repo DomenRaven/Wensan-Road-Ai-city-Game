@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "frozen_at": "2026-06-26T15:52:58Z",
+  "frozen_at": "2026-07-04T09:57:34Z",
   "genres": [
     "fighting"
   ],
@@ -3037,13 +3037,13 @@
     },
     {
       "path": "templates/_edu/fighting_hooks.gd",
-      "sha256": "3db283eb2b370d4bca64c88d7941d664decf1de4ceaff9ce1e774836d02ed80f",
-      "bytes": 4121
+      "sha256": "77f67e873e64f1ad7b7644a801972b5e9ecbc3d61280261b43b5c61beac5145c",
+      "bytes": 4328
     },
     {
       "path": "templates/_edu/fighting_touch_overlay.gd",
-      "sha256": "aa1cc2274615ae18faea840f02d40b53bd4e40e79fa53402f08c96aa74329ea8",
-      "bytes": 2714
+      "sha256": "356f186781b7b3ff42341e11def213de5007421a4e8491d814b471ccd31d2db6",
+      "bytes": 13788
     },
     {
       "path": "config/code_anchors/fighting.json",

@@ -24,6 +24,7 @@ class BootstrapReport:
     orphan_workspaces_removed: list[str] = field(default_factory=list)
     active_sessions: int = 0
     messages: list[str] = field(default_factory=list)
+    certificate: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -40,7 +41,24 @@ class BootstrapReport:
                 "templates_readonly": True,
                 "user_isolation": "per session_id workspace copy",
             },
+            "certificate": self.certificate,
         }
+
+
+def certificate_deploy_config(settings: Settings) -> dict[str, Any]:
+    """展馆实装 · 证书扫码下载契约（供 Kiosk bootstrap 同步）。"""
+    public_base: str = settings.public_api_base.strip().rstrip("/")
+    ttl_sec: int = settings.certificate_download_ttl_sec
+    return {
+        "public_download_base": public_base,
+        "download_ttl_sec": ttl_sec,
+        "ready_for_public_qr": bool(public_base),
+        "endpoints": {
+            "upload": "PUT /sessions/{session_id}/certificate",
+            "public_download": "GET /public/certificates/{token}",
+            "legacy_session_download": "GET /sessions/{session_id}/certificate/download",
+        },
+    }
 
 
 def run_startup_bootstrap(settings: Settings, store: SessionStore) -> BootstrapReport:
@@ -71,4 +89,5 @@ def run_startup_bootstrap(settings: Settings, store: SessionStore) -> BootstrapR
         orphan_workspaces_removed=removed,
         active_sessions=store.count_active(),
         messages=messages,
+        certificate=certificate_deploy_config(settings),
     )

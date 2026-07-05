@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     workspace_dir: Path = ROOT_DIR / "workspace"
     deployment_server_os: str = "TBD"
     deployment_terminal_layout: str = "TBD"
+    # 实装公网域名，如 https://gameforge.example.com — 二维码编码此地址供游客扫码
+    public_api_base: str = ""
+    certificate_download_ttl_sec: int = 259200
 
 
 @lru_cache

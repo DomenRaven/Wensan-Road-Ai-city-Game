@@ -26,5 +26,15 @@ def health(request: Request) -> dict[str, Any]:
         "deployment": {
             "server_os": settings.deployment_server_os,
             "terminal_layout": settings.deployment_terminal_layout,
+            "public_api_base": settings.public_api_base or None,
         },
+        "certificate": (
+            bootstrap.certificate
+            if bootstrap is not None
+            else {
+                "public_download_base": settings.public_api_base.strip(),
+                "download_ttl_sec": settings.certificate_download_ttl_sec,
+                "ready_for_public_qr": bool(settings.public_api_base.strip()),
+            }
+        ),
     }

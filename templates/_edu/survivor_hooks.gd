@@ -12,6 +12,7 @@ extends Node
 const ACTION_KILL_ENEMY: String = "kill_enemy"
 const ACTION_PICKUP_XP: String = "pickup_xp"
 const ACTION_LEVEL_UP: String = "level_up"
+const EXHIBITION_VOLUME_DB: float = -10.0
 
 var _game_root: Node2D = null
 var _gems_root: Node2D = null
@@ -23,6 +24,7 @@ var _rescan_scheduled: bool = false
 
 
 func _ready() -> void:
+	_apply_exhibition_volume()
 	var main: Node = get_parent()
 	if main != null:
 		_game_root = main.get_node_or_null("GameRoot") as Node2D
@@ -31,6 +33,14 @@ func _ready() -> void:
 				_game_root.child_entered_tree.connect(_on_game_root_child)
 	call_deferred("_scan_arena")
 	call_deferred("_schedule_rescans")
+
+
+func _apply_exhibition_volume() -> void:
+	var master_idx: int = AudioServer.get_bus_index("Master")
+	if master_idx < 0:
+		return
+	var current_db: float = AudioServer.get_bus_volume_db(master_idx)
+	AudioServer.set_bus_volume_db(master_idx, current_db + EXHIBITION_VOLUME_DB)
 
 
 func _on_game_root_child(_child: Node) -> void:

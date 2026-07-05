@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-07-06",
+  "doc_ref": "开发文档/部署手册_v1.1.md §十六",
+  "role": "exhibition_hall_server",
+  "notes": [
+    "复制本文件为 exhibition_server.json 后填写实装值",
+    "运行 05-工具脚本/apply_exhibition_config.ps1 同步到 backend/.env 与 kiosk_edu_spec.json",
+    "public_api_base 须为游客手机可访问的 HTTPS 地址（馆内 Wi-Fi 或公网域名均可）"
+  ],
+  "api": {
+    "bind_host": "0.0.0.0",
+    "port": 8000,
+    "internal_base": "http://127.0.0.1:8000",
+    "public_base": "https://gameforge.example.com"
+  },
+  "kiosk": {
+    "static_port": 8080,
+    "edu_entry": "/kiosk/edu/",
+    "api_base": "http://127.0.0.1:8000"
+  },
+  "certificate": {
+    "public_download_base": "https://gameforge.example.com",
+    "download_ttl_hours": 72,
+    "endpoints": {
+      "upload": "PUT /sessions/{session_id}/certificate",
+      "public_download": "GET /public/certificates/{token}",
+      "legacy_session_download": "GET /sessions/{session_id}/certificate/download"
+    }
+  },
+  "nginx": {
+    "template": "05-工具脚本/nginx_exhibition.conf.example",
+    "lan_draft_script": "05-工具脚本/kiosk_lan_nginx.ps1"
+  }
+}

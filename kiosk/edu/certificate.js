@@ -1,9 +1,17 @@
-/* B6/B7 · 作品登记证书 · 配方摘要 + 打印 */
+/* B6/B7 · 作品登记证书 · 配方摘要 + PNG 保存 */
 (() => {
   "use strict";
 
-  const DEFAULT_TITLE = "AI 小游戏创作工坊 · 作品登记证书";
+  const DEFAULT_SUBTITLE = "AI 小游戏创作工坊 · 作品登记证书";
   const DEFAULT_FOOTER = "GameForge K12 · 文三路 AI 馆";
+  const DEFAULT_QR_HINT = "用手机扫描二维码，即可下载证书图片";
+
+  /** @type {string} */
+  let lastDisplayName = "证书";
+  /** @type {string} */
+  let lastSessionId = "";
+  /** @type {number} */
+  let lastExpiresInSec = 259200;
 
   /** @param {string} text */
   function escapeHtml(text) {
@@ -102,22 +110,227 @@
     return sid.slice(-6);
   }
 
-  /** @returns {{title:string,footer:string,btnPrint:string,btnContinue:string}} */
+  /**
+   * @param {string} creator
+   * @param {string} displayName
+   * @returns {string}
+   */
+  function formatTitle(creator, displayName) {
+    const cert = /** @type {Record<string, unknown>|undefined} */ (
+      window.EduSession?.spec?.certificate
+    );
+    const dn = String(displayName || "未命名作品").trim();
+    const cr = String(creator || "").trim();
+
+    if (!cr) {
+      const fallback = String(cert?.title_fallback || "《{display_name}》诞生啦！");
+      return fallback.replace(/\{display_name\}/g, dn);
+    }
+
+    let template = String(cert?.title_template || "{creator}的{display_name}！");
+    const templates = /** @type {Record<string, string>|undefined} */ (
+      cert?.title_templates
+    );
+    if (templates && typeof templates === "object") {
+      template =
+        templates.possessive ||
+        Object.values(templates)[0] ||
+        template;
+    }
+
+    return template
+      .replace(/\{creator\}/g, cr)
+      .replace(/\{display_name\}/g, dn);
+  }
+
+  /** @returns {{subtitle:string,footer:string,btnSave:string,btnContinue:string,qrHint:string}} */
   function copyFromSpec() {
     const cert = /** @type {Record<string,string>|undefined} */ (
       window.EduSession?.spec?.certificate
     );
     return {
-      title: cert?.title || DEFAULT_TITLE,
+      subtitle: cert?.subtitle || cert?.title || DEFAULT_SUBTITLE,
       footer: cert?.footer || DEFAULT_FOOTER,
-      btnPrint: cert?.btn_print || "打印证书",
+      btnSave: cert?.btn_save || cert?.btn_print || "保存证书",
       btnContinue: cert?.btn_continue || "继续试玩",
+      qrHint: cert?.qr_hint || DEFAULT_QR_HINT,
     };
+  }
+
+  /** @param {string} name */
+  function sanitizeFilename(name) {
+    return String(name || "证书")
+      .replace(/[\\/:*?"<>|]/g, "_")
+      .trim()
+      .slice(0, 40) || "证书";
+  }
+
+  /** @returns {Promise<(el: HTMLElement, opts?: object) => Promise<HTMLCanvasElement>>} */
+  function loadHtml2Canvas() {
+    const existing = /** @type {((el: HTMLElement, opts?: object) => Promise<HTMLCanvasElement>)|undefined} */ (
+      window.html2canvas
+    );
+    if (existing) return Promise.resolve(existing);
+    return Promise.reject(new Error("html2canvas not loaded — check vendor/html2canvas.min.js"));
+  }
+
+  /** @returns {string} */
+  function resolvePublicApiBase() {
+    const cert = /** @type {Record<string,string>|undefined} */ (
+      window.EduSession?.spec?.certificate
+    );
+    if (cert?.public_download_base) {
+      return String(cert.public_download_base).replace(/\/$/, "");
+    }
+    if (cert?.qr_download_host) {
+      return String(cert.qr_download_host).replace(/\/$/, "");
+    }
+    const apiBase = window.EduSession?.apiBase || "http://127.0.0.1:8000";
+    try {
+      const parsed = new URL(apiBase);
+      const pageHost = window.location.hostname;
+      const host =
+        pageHost && pageHost !== "localhost" && pageHost !== "127.0.0.1"
+          ? pageHost
+          : parsed.hostname;
+      const port = parsed.port || "8000";
+      return `${parsed.protocol}//${host}:${port}`;
+    } catch {
+      return apiBase;
+    }
+  }
+
+  /**
+   * @param {string} sessionId
+   * @returns {string}
+   */
+  function buildDownloadUrl(sessionId) {
+    const sid = String(sessionId || "").trim();
+    return `${resolvePublicApiBase()}/sessions/${sid}/certificate/download`;
+  }
+
+  /** @returns {number} */
+  function configuredTtlSec() {
+    const cert = /** @type {Record<string, unknown>|undefined} */ (
+      window.EduSession?.spec?.certificate
+    );
+    const ttl = Number(cert?.download_ttl_sec);
+    return Number.isFinite(ttl) && ttl > 0 ? ttl : 259200;
+  }
+
+  /**
+   * @param {number} [expiresInSec]
+   * @returns {string}
+   */
+  function formatQrExpiryNote(expiresInSec) {
+    const sec = expiresInSec != null && expiresInSec > 0 ? expiresInSec : configuredTtlSec();
+    const hours = Math.max(1, Math.round(sec / 3600));
+    return `链接 ${hours} 小时内有效 · 手机有网即可下载`;
+  }
+
+  /**
+   * @param {Blob} blob
+   * @param {string} sessionId
+   * @returns {Promise<string>}
+   */
+  async function uploadCertificatePng(blob, sessionId) {
+    const apiBase = window.EduSession?.apiBase || "http://127.0.0.1:8000";
+    const res = await fetch(`${apiBase}/sessions/${sessionId}/certificate`, {
+      method: "PUT",
+      headers: { "Content-Type": "image/png" },
+      body: blob,
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`${res.status}: ${text}`);
+    }
+    const data = /** @type {{download_url?:string,download_path?:string,download_token?:string,expires_in_sec?:number}} */ (
+      await res.json()
+    );
+    if (data.expires_in_sec != null && data.expires_in_sec > 0) {
+      lastExpiresInSec = data.expires_in_sec;
+    }
+    if (data.download_url && data.download_url.startsWith("http")) {
+      return data.download_url;
+    }
+    const path =
+      data.download_url ||
+      data.download_path ||
+      (data.download_token ? `/public/certificates/${data.download_token}` : "");
+    if (!path) throw new Error("missing download url");
+    if (path.startsWith("http")) return path;
+    return `${resolvePublicApiBase()}${path.startsWith("/") ? path : `/${path}`}`;
+  }
+
+  function hideQrPanel() {
+    const panel = document.getElementById("edu-cert-qr-panel");
+    if (panel) panel.hidden = true;
+  }
+
+  /**
+   * @param {string} downloadUrl
+   */
+  function showQrPanel(downloadUrl) {
+    const panel = document.getElementById("edu-cert-qr-panel");
+    const mount = document.getElementById("eduCertQrMount");
+    const hint = document.getElementById("eduCertQrHint");
+    if (!panel || !mount) return;
+
+    const copy = copyFromSpec();
+    if (hint) hint.textContent = copy.qrHint;
+
+    const note = document.getElementById("eduCertQrNote");
+    if (note) note.textContent = formatQrExpiryNote(lastExpiresInSec);
+
+    mount.innerHTML = "";
+    const QRCodeCtor = /** @type {typeof QRCode|undefined} */ (window.QRCode);
+    if (!QRCodeCtor) {
+      mount.textContent = downloadUrl;
+      panel.hidden = false;
+      return;
+    }
+
+    /* qrcodejs · 每次重新生成须新建容器 */
+    const holder = document.createElement("div");
+    holder.className = "edu-cert-qr-code";
+    mount.appendChild(holder);
+    // eslint-disable-next-line no-new
+    new QRCodeCtor(holder, {
+      text: downloadUrl,
+      width: 220,
+      height: 220,
+      colorDark: "#0f172a",
+      colorLight: "#ffffff",
+      correctLevel: QRCodeCtor.CorrectLevel.M,
+    });
+    panel.hidden = false;
+  }
+
+  /**
+   * @param {Blob} blob
+   * @param {string} filename
+   */
+  function tryDirectDownload(blob, filename) {
+    try {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.rel = "noopener";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.warn("[EduCertificate] direct download skipped", err);
+    }
   }
 
   /**
    * @param {{
    *   displayName: string,
+   *   creatorName?: string,
+   *   genre?: string,
    *   genreLabel: string,
    *   genreEmoji: string,
    *   sessionId: string,
@@ -128,6 +341,7 @@
    */
   function buildCertificateHtml(ctx) {
     const copy = copyFromSpec();
+    const funTitle = formatTitle(ctx.creatorName || "", ctx.displayName || "");
     const created =
       ctx.createdAt instanceof Date
         ? formatCreatedAt(ctx.createdAt)
@@ -153,6 +367,15 @@
       )
       .join("");
 
+    const confetti = ["#00f5ff", "#e879f9", "#facc15", "#4ade80", "#fb7185"]
+      .flatMap((color, ci) =>
+        [12, 28, 44, 58, 72, 86].map(
+          (left, i) =>
+            `<span class="edu-cert-confetti" style="--cf-left:${left + (ci % 3) * 2}%;--cf-color:${color};--cf-delay:${(ci * 0.18 + i * 0.12).toFixed(2)}s;--cf-rot:${(ci * 37 + i * 19) % 360}deg"></span>`
+        )
+      )
+      .join("");
+
     const corners = ["tl", "tr", "bl", "br"]
       .map((pos) => `<span class="edu-cert-corner edu-cert-corner--${pos}" aria-hidden="true"></span>`)
       .join("");
@@ -172,14 +395,17 @@
 
     return `
       <div class="edu-certificate-inner${denseClass}">
+        <div class="edu-certificate-frame" aria-hidden="true"></div>
         <div class="edu-certificate-bg" aria-hidden="true"></div>
         <div class="edu-cert-neon-grid" aria-hidden="true"></div>
         <div class="edu-cert-scanlines" aria-hidden="true"></div>
         <div class="edu-cert-glow edu-cert-glow--cyan" aria-hidden="true"></div>
         <div class="edu-cert-glow edu-cert-glow--magenta" aria-hidden="true"></div>
+        <div class="edu-cert-glow edu-cert-glow--accent" aria-hidden="true"></div>
         ${corners}
         <div class="edu-cert-pixels" aria-hidden="true">${pixels}</div>
         <div class="edu-certificate-sparkles" aria-hidden="true">${sparkles}</div>
+        <div class="edu-cert-confetti-wrap" aria-hidden="true">${confetti}</div>
         <div class="edu-certificate-content">
           <div class="edu-certificate-ribbon">
             <span class="edu-certificate-ribbon-icon" aria-hidden="true">🏆</span>
@@ -187,13 +413,16 @@
           </div>
           <header class="edu-certificate-header">
             <p class="edu-certificate-kicker">▶ GAME FORGE K12 ◀</p>
-            <h2 class="edu-certificate-title" id="edu-certificate-title">${escapeHtml(copy.title)}</h2>
-            <p class="edu-certificate-tagline">专属游戏配方已锁定 · 值得打印留念</p>
+            <h2 class="edu-certificate-title" id="edu-certificate-title">${escapeHtml(funTitle)}</h2>
+            <p class="edu-certificate-subtitle">${escapeHtml(copy.subtitle)}</p>
+            <p class="edu-certificate-tagline">专属游戏配方已锁定 · 值得保存留念</p>
           </header>
           <div class="edu-certificate-hero">
             <div class="edu-certificate-medal" aria-hidden="true">
+              <span class="edu-certificate-medal-halo"></span>
               <span class="edu-certificate-medal-glow"></span>
               <span class="edu-certificate-medal-ring"></span>
+              <span class="edu-certificate-medal-core"></span>
               <span class="edu-certificate-emoji">${escapeHtml(ctx.genreEmoji || "🎮")}</span>
               <div class="edu-certificate-orbit">${orbitIcons}</div>
             </div>
@@ -226,11 +455,43 @@
       </div>`;
   }
 
+  /** @param {HTMLElement} overlay */
+  function wireQrPanel(overlay) {
+    overlay.querySelector("#btnCertQrClose")?.addEventListener("click", () => {
+      hideQrPanel();
+    });
+  }
+
+  /** @param {HTMLElement} overlay */
+  function ensureQrPanel(overlay) {
+    if (overlay.querySelector("#edu-cert-qr-panel")) return;
+    const copy = copyFromSpec();
+    const panel = document.createElement("div");
+    panel.id = "edu-cert-qr-panel";
+    panel.className = "edu-cert-qr-panel";
+    panel.hidden = true;
+    panel.innerHTML = `
+      <div class="edu-cert-qr-card">
+        <p class="edu-cert-qr-title">📱 扫码下载证书</p>
+        <div id="eduCertQrMount" class="edu-cert-qr-mount" aria-hidden="true"></div>
+        <p id="eduCertQrHint" class="edu-cert-qr-hint">${escapeHtml(copy.qrHint)}</p>
+        <p id="eduCertQrNote" class="edu-cert-qr-note">${escapeHtml(formatQrExpiryNote())}</p>
+        <button type="button" id="btnCertQrClose" class="btn btn-secondary edu-cert-qr-close">知道了</button>
+      </div>`;
+    const dialog = overlay.querySelector(".edu-certificate-dialog");
+    if (dialog) dialog.appendChild(panel);
+    wireQrPanel(overlay);
+  }
+
   /** @returns {HTMLElement} */
   function ensureOverlayRoot() {
     let overlay = document.getElementById("edu-certificate-overlay");
-    if (overlay) return overlay;
+    if (overlay) {
+      ensureQrPanel(overlay);
+      return overlay;
+    }
 
+    const copy = copyFromSpec();
     overlay = document.createElement("div");
     overlay.id = "edu-certificate-overlay";
     overlay.className = "edu-certificate-overlay";
@@ -240,18 +501,28 @@
       <div class="edu-certificate-dialog" role="dialog" aria-modal="true" aria-labelledby="edu-certificate-title">
         <div id="edu-certificate" class="edu-certificate"></div>
         <div class="edu-certificate-actions">
-          <button type="button" id="btnCertPrint" class="btn btn-primary edu-cert-btn">${escapeHtml(copyFromSpec().btnPrint)}</button>
-          <button type="button" id="btnCertContinue" class="btn btn-secondary edu-cert-btn">${escapeHtml(copyFromSpec().btnContinue)}</button>
+          <button type="button" id="btnCertSave" class="btn btn-primary edu-cert-btn">${escapeHtml(copy.btnSave)}</button>
+          <button type="button" id="btnCertContinue" class="btn btn-secondary edu-cert-btn">${escapeHtml(copy.btnContinue)}</button>
+        </div>
+        <div id="edu-cert-qr-panel" class="edu-cert-qr-panel" hidden>
+          <div class="edu-cert-qr-card">
+            <p class="edu-cert-qr-title">📱 扫码下载证书</p>
+            <div id="eduCertQrMount" class="edu-cert-qr-mount" aria-hidden="true"></div>
+            <p id="eduCertQrHint" class="edu-cert-qr-hint">${escapeHtml(copy.qrHint)}</p>
+            <p id="eduCertQrNote" class="edu-cert-qr-note">${escapeHtml(formatQrExpiryNote())}</p>
+            <button type="button" id="btnCertQrClose" class="btn btn-secondary edu-cert-qr-close">知道了</button>
+          </div>
         </div>
       </div>`;
     document.body.appendChild(overlay);
 
-    overlay.querySelector("#btnCertPrint")?.addEventListener("click", () => {
-      openPrint();
+    overlay.querySelector("#btnCertSave")?.addEventListener("click", () => {
+      void saveCertificate();
     });
     overlay.querySelector("#btnCertContinue")?.addEventListener("click", () => {
       hide();
     });
+    wireQrPanel(overlay);
     overlay.querySelector("[data-cert-dismiss]")?.addEventListener("click", () => {
       hide();
     });
@@ -260,8 +531,85 @@
   }
 
   /**
+   * @param {string} [genre]
+   */
+  function applyGenreAccent(genre) {
+    const card = document.getElementById("edu-certificate");
+    if (!card) return;
+    const theme = window.EduGenreTheme?.themeFor?.(genre || "");
+    const accent = theme?.accent || "#00f5ff";
+    const accentLight = theme?.accent_light || "rgba(0, 245, 255, 0.15)";
+    card.style.setProperty("--cert-accent", accent);
+    card.style.setProperty("--cert-accent-light", accentLight);
+  }
+
+  async function saveCertificate() {
+    const card = document.getElementById("edu-certificate");
+    if (!card) return;
+
+    const copy = copyFromSpec();
+    const saveBtn = /** @type {HTMLButtonElement|null} */ (
+      document.getElementById("btnCertSave")
+    );
+    const prevLabel = saveBtn?.textContent || copy.btnSave;
+    const sessionId =
+      lastSessionId || window.EduSession?.sessionId || "";
+
+    if (!sessionId) {
+      window.alert("会话未就绪，请刷新页面后重试");
+      return;
+    }
+
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.textContent = "正在生成…";
+    }
+    hideQrPanel();
+
+    try {
+      const html2canvas = await loadHtml2Canvas();
+      const canvas = await html2canvas(card, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#060b1f",
+        logging: false,
+        allowTaint: true,
+        onclone: (doc) => {
+          const cloned = doc.getElementById("edu-certificate");
+          if (cloned) {
+            cloned.style.transform = "none";
+            cloned.style.animation = "none";
+          }
+        },
+      });
+
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, "image/png", 0.92);
+      });
+      if (!blob) throw new Error("PNG encode failed");
+
+      if (saveBtn) saveBtn.textContent = "正在上传…";
+      const downloadUrl = await uploadCertificatePng(blob, sessionId);
+
+      const filename = `${sanitizeFilename(lastDisplayName)}_证书.png`;
+      tryDirectDownload(blob, filename);
+      showQrPanel(downloadUrl);
+    } catch (err) {
+      console.error("[EduCertificate] save failed", err);
+      window.alert("保存失败，请检查网络后重试，或联系老师帮忙");
+    } finally {
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = prevLabel;
+      }
+    }
+  }
+
+  /**
    * @param {{
    *   displayName: string,
+   *   creatorName?: string,
+   *   genre?: string,
    *   genreLabel: string,
    *   genreEmoji: string,
    *   sessionId: string,
@@ -274,34 +622,27 @@
     const card = document.getElementById("edu-certificate");
     if (card) {
       card.innerHTML = buildCertificateHtml(ctx);
+      applyGenreAccent(ctx.genre);
     }
     const copy = copyFromSpec();
-    const printBtn = overlay.querySelector("#btnCertPrint");
+    const saveBtn = overlay.querySelector("#btnCertSave");
     const continueBtn = overlay.querySelector("#btnCertContinue");
-    if (printBtn) printBtn.textContent = copy.btnPrint;
+    if (saveBtn) saveBtn.textContent = copy.btnSave;
     if (continueBtn) continueBtn.textContent = copy.btnContinue;
     return overlay;
-  }
-
-  function openPrint() {
-    document.body.classList.add("edu-printing");
-    const cleanup = () => {
-      document.body.classList.remove("edu-printing");
-      window.removeEventListener("afterprint", cleanup);
-    };
-    window.addEventListener("afterprint", cleanup);
-    window.print();
   }
 
   function hide() {
     const overlay = document.getElementById("edu-certificate-overlay");
     if (overlay) overlay.hidden = true;
+    hideQrPanel();
     document.body.classList.remove("edu-printing");
   }
 
   /**
    * @param {{
    *   displayName?: string,
+   *   creatorName?: string,
    *   genreLabel?: string,
    *   genre?: string,
    *   genreEmoji?: string,
@@ -324,8 +665,13 @@
       (input.genre && window.EduB1Intent?.emoji(input.genre)) ||
       "🎮";
 
+    lastDisplayName = input.displayName || "证书";
+    lastSessionId = input.sessionId || window.EduSession?.sessionId || "";
+
     const ctx = {
       displayName: input.displayName || "",
+      creatorName: input.creatorName || "",
+      genre: input.genre || "",
       genreLabel: input.genreLabel || "",
       genreEmoji,
       sessionId: input.sessionId || window.EduSession?.sessionId || "",
@@ -341,9 +687,10 @@
   window.EduCertificate = {
     buildRecipeRows,
     formatCreatedAt,
+    formatTitle,
     buildCertificateHtml,
     mountOverlay,
-    openPrint,
+    saveCertificate,
     show,
     hide,
   };

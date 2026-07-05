@@ -27,6 +27,7 @@ class SessionRecord(BaseModel):
     wizard_step: str = "S0"
     wizard_index: int = 0
     display_name: str = ""
+    creator_name: str = ""
     genre: str | None = None
     play_variant_id: str | None = None
     payload: dict[str, Any] = Field(default_factory=dict)

@@ -29,6 +29,7 @@ var _block_was_held: bool = false
 
 
 func _ready() -> void:
+	_mute_exhibition_audio()
 	var main: Node = get_parent()
 	if main == null:
 		return
@@ -59,6 +60,13 @@ func _on_rescan_timer() -> void:
 		_pending_rescan_count -= 1
 		_rescan_timer = null
 		_schedule_game_rescan()
+
+
+func _mute_exhibition_audio() -> void:
+	var master_idx: int = AudioServer.get_bus_index("Master")
+	if master_idx < 0:
+		return
+	AudioServer.set_bus_mute(master_idx, true)
 
 
 func _scan_scene() -> void:

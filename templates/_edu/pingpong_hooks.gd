@@ -29,6 +29,7 @@ var _game_root: Node2D = null
 
 
 func _ready() -> void:
+	_mute_exhibition_audio()
 	var main: Node = get_parent()
 	if main == null:
 		return
@@ -36,6 +37,13 @@ func _ready() -> void:
 	if _game_root != null:
 		_game_root.child_entered_tree.connect(_on_game_root_child_entered)
 	call_deferred("_scan_scene")
+
+
+func _mute_exhibition_audio() -> void:
+	var master_idx: int = AudioServer.get_bus_index("Master")
+	if master_idx < 0:
+		return
+	AudioServer.set_bus_mute(master_idx, true)
 
 
 func _on_game_root_child_entered(_child: Node) -> void:

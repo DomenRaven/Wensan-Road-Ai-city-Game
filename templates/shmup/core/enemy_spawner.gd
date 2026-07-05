@@ -7,6 +7,7 @@ signal boss_hp_changed(current_hp: int, max_hp: int)
 
 const ENEMY_SCENE: PackedScene = preload("res://scenes/enemy.tscn")
 const EXPLOSION_SCENE: PackedScene = preload("res://scenes/explosion_fx.tscn")
+const ThemeSoundUtil := preload("res://core/theme_sound.gd")
 
 var _spawn_delay_ms: int = 1500
 var _min_spawn_delay_ms: int = 500
@@ -135,6 +136,7 @@ func _on_enemy_fan_shot(origin: Vector2) -> void:
 		return
 	var tuning: Dictionary = GameConfig.get_tuning()
 	var bullet_speed: float = float((tuning.get("enemy", {}) as Dictionary).get("bullet_speed", 300.0))
+	ThemeSoundUtil.play(self, "impact", "enemy_shoot", -6.0)
 	pool.call("spawn_enemy_bullet_fan", origin + Vector2(0.0, 50.0), bullet_speed)
 
 

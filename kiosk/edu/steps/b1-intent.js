@@ -130,6 +130,28 @@
 
 
 
+  /** 快捷 chip 文案 → 品类（优先于 KEYWORD_MAP，避免「格斗双人」误匹配乒乓球「双人」） */
+
+  const CHIP_TEXT_GENRE = Object.freeze({
+
+    "马里奥闯关": "platformer",
+
+    "我想打飞机": "shmup",
+
+    "割草打怪": "survivor",
+
+    "乒乓球": "pingpong",
+
+    "格斗双人": "fighting",
+
+    "跑酷": "parkour",
+
+    "赛车": "racing",
+
+  });
+
+
+
   /**
 
    * @param {Record<string, unknown>} spec
@@ -154,6 +176,104 @@
 
 
 
+  const BUBBLE_COLORS = [
+
+    "#4ade80", "#60a5fa", "#e879f9", "#34d399", "#f87171", "#a78bfa", "#fb923c",
+
+  ];
+
+
+
+  /**
+
+   * @param {HTMLElement} parent
+
+   * @param {string[]} chips
+
+   * @param {(text: string) => void} onSelect
+
+   */
+
+  function mountBubbleFallback(parent, chips, onSelect) {
+
+    const host = document.createElement("div");
+
+    host.id = "intentBubbleField";
+
+    host.className = "intent-bubble-field intent-bubble-field--static";
+
+    const grid = document.createElement("div");
+
+    grid.className = "intent-bubble-static-grid";
+
+    chips.forEach((text, index) => {
+
+      const btn = document.createElement("button");
+
+      btn.type = "button";
+
+      btn.className = "intent-bubble-float";
+
+      btn.style.setProperty("--bubble-color", BUBBLE_COLORS[index % BUBBLE_COLORS.length]);
+
+      btn.style.setProperty("--bubble-rgb", "96, 165, 250");
+
+      const shine = document.createElement("span");
+
+      shine.className = "intent-bubble-shine";
+
+      shine.setAttribute("aria-hidden", "true");
+
+      const content = document.createElement("span");
+
+      content.className = "intent-bubble-content";
+
+      const slug = EduB1Intent?.chipGenre?.(text) || "platformer";
+
+      const emoji = EduB1Intent?.emoji?.(slug) || "🎮";
+
+      if (window.EduBubblePicker?.createMedal) {
+
+        content.appendChild(window.EduBubblePicker.createMedal(emoji));
+
+      } else {
+
+        const glyph = document.createElement("span");
+
+        glyph.className = "intent-bubble-emoji";
+
+        glyph.textContent = emoji;
+
+        content.appendChild(glyph);
+
+      }
+
+      const label = document.createElement("span");
+
+      label.className = "intent-bubble-label";
+
+      label.textContent = text;
+
+      content.appendChild(label);
+
+      btn.appendChild(shine);
+
+      btn.appendChild(content);
+
+      btn.addEventListener("click", () => onSelect(text));
+
+      grid.appendChild(btn);
+
+    });
+
+    host.appendChild(grid);
+
+    parent.appendChild(host);
+
+  }
+
+
+
   const EduB1Intent = {
 
     /**
@@ -168,37 +288,25 @@
 
     render(formEl, spec, state) {
 
+      window.EduBubblePicker?.destroy();
+
       const chips = exampleChips(spec);
-
-      const chipHtml = chips
-
-        .map((text) => `<button type="button" class="chip" data-text="${text}">${text}</button>`)
-
-        .join("");
 
 
 
       formEl.innerHTML = `
 
-        <div class="intent-form-card">
+        <div class="intent-b1-center">
 
-          <div class="hint-banner intent-hint">💡 试试说：「我想玩马里奥闯关」「我想打飞机」</div>
+          <textarea id="intentInput" class="text-input textarea intent-textarea intent-textarea--b1 edu-touch-input" maxlength="80"
 
-          <textarea id="intentInput" class="text-input textarea intent-textarea" maxlength="80"
+            inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
 
             aria-label="描述你想玩的游戏"
 
-            placeholder="在这里输入…">${state.intentRaw || ""}</textarea>
+            placeholder="在这里输入，或点选、拖拽周围泡泡…">${state.intentRaw || ""}</textarea>
 
-          <p class="intent-chip-label">或点一下快捷示例：</p>
-
-          <div class="chip-row intent-chip-row" id="intentExamples">
-
-            ${chipHtml}
-
-          </div>
-
-          <p class="hint intent-reply" id="intentReply">${state.replyText || ""}</p>
+          <p class="hint intent-reply intent-reply--b1" id="intentReply">${state.replyText || ""}</p>
 
         </div>
 
@@ -206,17 +314,44 @@
 
 
 
-      formEl.querySelectorAll("#intentExamples .chip").forEach((chip) => {
+      const input = /** @type {HTMLTextAreaElement|null} */ (formEl.querySelector("#intentInput"));
+      window.EduTouchKeyboard?.bind(formEl);
 
-        chip.addEventListener("click", () => {
+      if (input && window.EduBubblePicker) {
 
-          const input = /** @type {HTMLTextAreaElement} */ (formEl.querySelector("#intentInput"));
+        window.EduBubblePicker.mount(null, {
 
-          input.value = chip.getAttribute("data-text") || "";
+          chips,
+
+          fullscreen: true,
+
+          onSelect(text) {
+
+            input.value = text;
+
+          },
 
         });
 
-      });
+      } else if (input) {
+
+        mountBubbleFallback(document.body, chips, (text) => {
+
+          input.value = text;
+
+        });
+
+      }
+
+    },
+
+
+
+    /** @returns {void} */
+
+    destroy() {
+
+      window.EduBubblePicker?.destroy();
 
     },
 
@@ -339,6 +474,26 @@
         return this.fallbackMatch(text);
 
       }
+
+    },
+
+
+
+    /** @param {string} text */
+
+    chipGenre(text) {
+
+      const raw = String(text || "").trim();
+
+      if (CHIP_TEXT_GENRE[raw]) return CHIP_TEXT_GENRE[raw];
+
+      for (const row of KEYWORD_MAP) {
+
+        if (row.words.some((w) => raw.includes(w))) return row.genre;
+
+      }
+
+      return TIE_BREAK[0];
 
     },
 

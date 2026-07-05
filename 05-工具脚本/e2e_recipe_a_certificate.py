@@ -12,6 +12,7 @@ DEFAULT_KIOSK: str = "http://127.0.0.1:8080"
 
 PLATFORMER_CASE: dict[str, Any] = {
     "intent_text": "我想玩马里奥闯关",
+    "creator_name": "小明",
     "display_name": "星星大冒险",
     "genre_label": "横版闯关",
     "creative_answers": {
@@ -47,6 +48,10 @@ def advance_to_b6(page: Page, case: dict[str, Any]) -> None:
         page.fill("#intentInput", intent_text)
     page.click("#btnNext")
 
+    page.wait_for_selector("#creatorInput", timeout=15_000)
+    page.fill("#creatorInput", str(case.get("creator_name", "小明")))
+    page.click("#btnNext")
+
     page.wait_for_selector("#nameInput", timeout=15_000)
     name_chip = page.locator(f"#nameChips .chip[data-name='{display_name}']")
     if name_chip.count() > 0:
@@ -78,11 +83,18 @@ def advance_to_b6(page: Page, case: dict[str, Any]) -> None:
 def verify_certificate(page: Page, case: dict[str, Any], orientation: str) -> None:
     display_name: str = str(case["display_name"])
     genre_label: str = str(case["genre_label"])
+    creator_name: str = str(case.get("creator_name", ""))
 
     page.wait_for_selector("#edu-certificate-overlay:not([hidden])", timeout=180_000)
     cert_text: str = page.locator("#edu-certificate").inner_text(timeout=5_000)
 
-    assert_ok(f"{orientation}/cert_title", "作品登记证书" in cert_text or "AI 小游戏创作工坊" in cert_text)
+    expected_title: str = (
+        f"{creator_name}的{display_name}！"
+        if creator_name
+        else f"《{display_name}》诞生啦！"
+    )
+    assert_ok(f"{orientation}/cert_title", expected_title in cert_text, expected_title)
+    assert_ok(f"{orientation}/cert_subtitle", "作品登记证书" in cert_text)
     assert_ok(f"{orientation}/cert_name", display_name in cert_text, display_name)
     assert_ok(f"{orientation}/cert_genre", genre_label in cert_text, genre_label)
     assert_ok(
@@ -101,18 +113,22 @@ def verify_certificate(page: Page, case: dict[str, Any], orientation: str) -> No
         str(box),
     )
 
-    print_btn = page.locator("#btnCertPrint")
+    save_btn = page.locator("#btnCertSave")
     continue_btn = page.locator("#btnCertContinue")
-    print_box = print_btn.bounding_box()
+    save_box = save_btn.bounding_box()
     continue_box = continue_btn.bounding_box()
     assert_ok(
         f"{orientation}/touch_targets",
         bool(
-            print_box
+            save_box
             and continue_box
-            and print_box.get("height", 0) >= 44
-            and continue_box.get("height", 0) >= 44
+            and save_box.get("height", 0) >= 52
+            and continue_box.get("height", 0) >= 52
         ),
+    )
+    assert_ok(
+        f"{orientation}/save_label",
+        "保存证书" in (save_btn.inner_text(timeout=2_000) or ""),
     )
 
     page.click("#btnCertContinue")

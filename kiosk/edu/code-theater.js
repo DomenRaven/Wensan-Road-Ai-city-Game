@@ -6,6 +6,8 @@
   let timerId = null;
   /** @type {boolean} */
   let running = false;
+  /** @type {HTMLElement|null} */
+  let stageElRef = null;
 
   /**
    * @param {string} relPath
@@ -68,6 +70,14 @@
       this.stop();
       running = true;
 
+      codeContainer.classList.add("code-theater-stage");
+      codeContainer.dataset.theaterGenre = genre;
+      stageElRef = codeContainer;
+      const theme = window.EduGenreTheme?.themeFor(genre);
+      if (theme?.accent) {
+        codeContainer.style.setProperty("--theater-accent", theme.accent);
+      }
+
       const apiBase = String(spec.api_base || window.EduSession?.apiBase || "http://127.0.0.1:8000").replace(
         /\/$/,
         ""
@@ -90,6 +100,8 @@
       }
 
       if (window.EduCodeViewer) window.EduCodeViewer.mount(codeContainer);
+      window.EduCodeViewer?.setViewportPinned(true);
+      window.EduTheaterOverlays?.start(genre, codeContainer);
       window.EduFileTree?.clear();
       const treeHost = document.getElementById("fileTree");
       if (treeHost && window.EduFileTree) window.EduFileTree.mount(treeHost);
@@ -151,6 +163,12 @@
 
     stop() {
       running = false;
+      window.EduTheaterOverlays?.stop();
+      if (stageElRef) {
+        stageElRef.classList.remove("code-theater-stage");
+        delete stageElRef.dataset.theaterGenre;
+        stageElRef = null;
+      }
       if (timerId) {
         window.clearTimeout(timerId);
         timerId = null;

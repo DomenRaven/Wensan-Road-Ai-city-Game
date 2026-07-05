@@ -127,7 +127,7 @@ func take_damage(amount: int) -> void:
 		tween.tween_property(sprite, "modulate", Color.WHITE, 0.05)
 	if _hp > 0:
 		return
-	ThemeSoundUtil.play(self, "impact", "explode")
+	ThemeSoundUtil.play(self, "impact", "explode", -2.0)
 	destroyed.emit(self, _score_value, _drop_rate, _is_boss)
 	if _boss_tween != null and _boss_tween.is_valid():
 		_boss_tween.kill()
@@ -146,6 +146,7 @@ func _fire_at_player() -> void:
 	var direction: Vector2 = _compute_launch_direction(muzzle)
 	if pool.has_method("spawn_enemy_bullet"):
 		pool.call("spawn_enemy_bullet", muzzle, direction, _bullet_speed)
+	ThemeSoundUtil.play(self, "impact", "enemy_shoot", -6.0)
 
 
 func _compute_launch_direction(muzzle: Vector2) -> Vector2:

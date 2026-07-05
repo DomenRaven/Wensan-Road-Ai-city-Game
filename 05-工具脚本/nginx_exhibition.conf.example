@@ -1,0 +1,72 @@
+# GameForge K12 · 展馆专用服务器 · Nginx 反代示例
+# 用途：单域名同时服务 Kiosk 静态页 + FastAPI（含证书公网扫码下载）
+# 实装步骤：
+#   1. 复制为 /etc/nginx/sites-available/gameforge.conf（Linux）或 include 到 nginx.conf（Windows）
+#   2. 替换 YOUR_DOMAIN · SSL 证书路径 · 仓库根目录 REPO_ROOT
+#   3. backend/.env 设置 PUBLIC_API_BASE=https://YOUR_DOMAIN
+#   4. config/kiosk_edu_spec.json → certificate.public_download_base 同源
+#   5. nginx -t && nginx -s reload
+
+# --- 上游 API ---
+upstream gameforge_api {
+    server 127.0.0.1:8000;
+    keepalive 16;
+}
+
+# --- HTTP → HTTPS 跳转（可选）---
+server {
+    listen 80;
+    server_name YOUR_DOMAIN;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name YOUR_DOMAIN;
+
+    ssl_certificate     /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+
+    # 仓库根目录（含 kiosk/ assets/ config/ templates/）
+    root REPO_ROOT;
+    client_max_body_size 8m;
+
+    # Kiosk 教育链入口
+    location /kiosk/ {
+        try_files $uri $uri/ /kiosk/index.html;
+    }
+    location = / {
+        return 302 /kiosk/edu/;
+    }
+
+    # 静态资源（Kiosk 引用 ../assets ../config）
+    location /assets/ {
+        alias REPO_ROOT/assets/;
+        expires 7d;
+    }
+    location /config/ {
+        alias REPO_ROOT/config/;
+        add_header Cache-Control "no-cache";
+    }
+
+    # ★ 证书公网扫码下载（游客手机 GET，须反代到 FastAPI）
+    location /public/certificates/ {
+        proxy_pass http://gameforge_api/public/certificates/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # FastAPI 主路由（按前缀反代，勿漏 /sessions /bootstrap /play 等）
+    location ~ ^/(sessions|bootstrap|health|creative|wizard|play|generate|intent|kiosk)(/|$) {
+        proxy_pass http://gameforge_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 120s;
+    }
+}
