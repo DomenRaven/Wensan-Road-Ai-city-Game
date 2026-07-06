@@ -342,17 +342,26 @@ def run_slug_e2e(base: str, slug: str, case: SlugCase) -> dict[str, Any]:
         "play_actions": isinstance(actions.get("actions"), list),  # type: ignore[union-attr]
     }
     results["pass"] = all(results["assertions"].values())
+    api_call(base, "DELETE", f"/sessions/{session_id}")
     return results
 
 
 def cleanup_sessions(base: str) -> None:
     st, listed = api_call(base, "GET", "/sessions")
     if st != 200 or not isinstance(listed, dict):
-        return
+        raise AssertionError(f"cleanup_sessions: GET /sessions failed ({st})")
     for row in listed.get("sessions", []):
         sid: str = str(row.get("session_id", ""))
-        if sid:
-            api_call(base, "DELETE", f"/sessions/{sid}")
+        if not sid:
+            continue
+        del_st, _ = api_call(base, "DELETE", f"/sessions/{sid}")
+        if del_st not in (200, 204, 404):
+            raise AssertionError(f"cleanup_sessions: DELETE {sid} failed ({del_st})")
+    verify_st, verify = api_call(base, "GET", "/sessions")
+    if verify_st == 200 and isinstance(verify, dict) and verify.get("sessions"):
+        raise AssertionError(
+            f"cleanup_sessions: {len(verify['sessions'])} sessions remain after cleanup"
+        )
 
 
 def run_batch(base: str, slugs: list[str]) -> dict[str, Any]:

@@ -26,12 +26,17 @@ var _rescan_timer: SceneTreeTimer = null
 var _pending_rescan_count: int = 0
 var _steer_left_was_pressed: bool = false
 var _steer_right_was_pressed: bool = false
+var _manager: Node = null
+var _prev_playing: bool = false
+var _run_complete_sent: bool = false
+var _run_start_ms: int = 0
 
 
 func _ready() -> void:
 	var main: Node = get_parent()
 	if main == null:
 		return
+	_manager = main
 	_lap_label = main.get_node_or_null(
 		"GameHost/GameViewport/CanvasLayer/HUD/LapPanel/VBox/LapValue"
 	) as Label
@@ -118,6 +123,7 @@ func _process(_delta: float) -> void:
 		_wire_player()
 	_detect_steer()
 	_detect_lap_complete()
+	_watch_run_complete()
 
 
 func _detect_steer() -> void:
@@ -176,3 +182,47 @@ func _emit_action(action_id: String) -> void:
 	if not bridge.has_method("emit_action"):
 		return
 	bridge.call("emit_action", action_id)
+
+
+func _is_playing() -> bool:
+	if _manager == null:
+		return false
+	var st = _manager.get("_status")
+	return st != null and int(st) == 1
+
+
+func _is_run_end_screen() -> bool:
+	if _manager == null:
+		return false
+	var game_over: Node = _manager.get_node_or_null(
+		"GameHost/GameViewport/CanvasLayer/GameOverScreen"
+	)
+	return game_over != null and game_over.visible
+
+
+func _read_run_stats() -> Dictionary:
+	if _manager == null:
+		return {"score": 0, "elapsed_ms": 0, "metric": "lap_count"}
+	var laps: int = int(_manager.get("_laps") if _manager.get("_laps") != null else 0)
+	var time_left: int = int(_manager.get("_time_left") if _manager.get("_time_left") != null else 0)
+	var played_ms: int = maxi(0, (90 - time_left) * 1000)
+	return {"score": laps, "elapsed_ms": played_ms, "metric": "lap_count"}
+
+
+func _watch_run_complete() -> void:
+	var playing: bool = _is_playing()
+	if playing and not _prev_playing:
+		_run_start_ms = Time.get_ticks_msec()
+		_run_complete_sent = false
+	if _prev_playing and not playing and not _run_complete_sent and _is_run_end_screen():
+		_emit_run_complete(_read_run_stats())
+		_run_complete_sent = true
+	_prev_playing = playing
+
+
+func _emit_run_complete(payload: Dictionary) -> void:
+	var bridge: Node = get_node_or_null("/root/EduActionBridge")
+	if bridge == null:
+		return
+	if bridge.has_method("emit_run_complete"):
+		bridge.call("emit_run_complete", payload)

@@ -1,14 +1,15 @@
-/* Kiosk · 唤起 Windows 系统触控软键盘（中文 IME + TabTip）· 禁止自建模拟键位 */
+/* Kiosk · Windows TabTip 触控软键盘 · 点击输入即显 · 点外/导航即隐 · 零人为延迟 */
 (() => {
   "use strict";
 
   /** @type {boolean} */
   let initialized = false;
-  /** @type {number} */
-  let lastInvokeMs = 0;
+  /** @type {"show"|"hide"|null} */
+  let keyboardIntent = null;
+  /** @type {AbortController|null} */
+  let inflight = null;
 
   const SELECTOR = "input.edu-touch-input, textarea.edu-touch-input, [data-edu-keyboard]";
-  const INVOKE_COOLDOWN_MS = 900;
 
   /** @returns {string} */
   function apiBase() {
@@ -26,6 +27,15 @@
   }
 
   /** @returns {void} */
+  function hideVirtualKeyboardApi() {
+    try {
+      navigator.virtualKeyboard?.hide();
+    } catch (_) {
+      /* ignore */
+    }
+  }
+
+  /** @returns {void} */
   function showVirtualKeyboardApi() {
     try {
       if (navigator.virtualKeyboard) {
@@ -33,46 +43,122 @@
         navigator.virtualKeyboard.show();
       }
     } catch (_) {
-      /* Chromium 旧版或无 VirtualKeyboard API */
+      /* ignore */
     }
   }
 
-  /** @returns {void} */
-  function invokeOsKeyboard() {
-    const now = Date.now();
-    if (now - lastInvokeMs < INVOKE_COOLDOWN_MS) return;
-    lastInvokeMs = now;
+  /**
+   * @param {"show"|"hide"} action
+   * @returns {void}
+   */
+  function postKeyboardRequest(action) {
+    inflight?.abort();
+    inflight = new AbortController();
 
-    showVirtualKeyboardApi();
-
-    const url = `${apiBase()}/kiosk/touch-keyboard/show`;
-    fetch(url, {
+    const path = action === "show" ? "show" : "hide";
+    const url = `${apiBase()}/kiosk/touch-keyboard/${path}`;
+    const options = {
       method: "POST",
       keepalive: true,
       mode: "cors",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ provider: keyboardProvider() }),
-    }).catch(() => {
+      signal: inflight.signal,
+    };
+    if (action === "show") {
+      options.body = JSON.stringify({ provider: keyboardProvider() });
+    }
+
+    fetch(url, options).catch(() => {
       /* 后端未启动时静默降级 */
     });
   }
 
   /**
-   * @param {HTMLInputElement|HTMLTextAreaElement} target
+   * @param {"show"|"hide"} action
    * @returns {void}
    */
-  function activateInput(target) {
-    if (target.disabled) return;
-    target.removeAttribute("readonly");
-    if (document.activeElement !== target) {
-      target.focus({ preventScroll: false });
+  function postKeyboard(action) {
+    keyboardIntent = action;
+    if (action === "show") {
+      showVirtualKeyboardApi();
+    } else {
+      hideVirtualKeyboardApi();
     }
-    invokeOsKeyboard();
-    window.setTimeout(() => {
-      if (document.activeElement === target) {
-        target.scrollIntoView({ block: "center", behavior: "smooth" });
-      }
-    }, 80);
+    postKeyboardRequest(action);
+  }
+
+  /**
+   * @param {HTMLElement|null|undefined} el
+   * @returns {boolean}
+   */
+  function isTouchInput(el) {
+    if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) {
+      return false;
+    }
+    return el.matches(SELECTOR) || el.classList.contains("edu-touch-input");
+  }
+
+  /** @returns {void} */
+  function blurActiveTouchInput() {
+    const active = document.activeElement;
+    if (isTouchInput(active)) {
+      active.blur();
+    }
+  }
+
+  /** @returns {void} */
+  function showKeyboard() {
+    postKeyboard("show");
+  }
+
+  /** @returns {void} */
+  function hideKeyboard() {
+    postKeyboard("hide");
+  }
+
+  /** @returns {void} */
+  function dismissForNavigation() {
+    blurActiveTouchInput();
+    hideKeyboard();
+  }
+
+  /** @returns {void} */
+  function dismiss() {
+    dismissForNavigation();
+  }
+
+  /**
+   * @param {HTMLElement} el
+   * @returns {boolean}
+   */
+  function isInsideTouchInput(el) {
+    return Boolean(el.closest(SELECTOR));
+  }
+
+  /**
+   * @param {HTMLElement} el
+   * @returns {boolean}
+   */
+  function isNavigationControl(el) {
+    return Boolean(
+      el.closest(
+        "#btnNext, #btnPrev, #btnDualNext, #btnDualPrev, .btn-primary, .btn-secondary"
+      )
+    );
+  }
+
+  /**
+   * @param {HTMLInputElement|HTMLTextAreaElement} target
+   * @param {PointerEvent|Event} [ev]
+   * @returns {void}
+   */
+  function activateInput(target, ev) {
+    if (target.disabled) return;
+    if (ev && "isComposing" in ev && ev.isComposing) return;
+
+    target.removeAttribute("readonly");
+    target.focus({ preventScroll: true });
+    showKeyboard();
   }
 
   /**
@@ -81,10 +167,56 @@
    */
   function targetFromEvent(ev) {
     const t = ev.target;
+    if (!(t instanceof Element)) return null;
     if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement) {
       return t.matches(SELECTOR) ? t : null;
     }
+    const nested = t.closest(SELECTOR);
+    if (nested instanceof HTMLInputElement || nested instanceof HTMLTextAreaElement) {
+      return nested;
+    }
     return null;
+  }
+
+  /**
+   * @param {Event} ev
+   * @returns {void}
+   */
+  function onPointerDown(ev) {
+    const target = targetFromEvent(ev);
+    if (target) {
+      activateInput(target, ev);
+      return;
+    }
+
+    const el = ev.target;
+    if (!(el instanceof Element)) return;
+    if (isInsideTouchInput(el)) return;
+
+    if (isNavigationControl(el) || keyboardIntent === "show" || isTouchInput(document.activeElement)) {
+      blurActiveTouchInput();
+      hideKeyboard();
+    }
+  }
+
+  /**
+   * @param {FocusEvent} ev
+   * @returns {void}
+   */
+  function onFocusOut(ev) {
+    const next = ev.relatedTarget;
+    if (isTouchInput(next)) return;
+    if (keyboardIntent !== "show") return;
+    hideKeyboard();
+  }
+
+  /** @returns {void} */
+  function warmKeyboard() {
+    fetch(`${apiBase()}/kiosk/touch-keyboard/warm`, {
+      method: "POST",
+      keepalive: true,
+      mode: "cors",
+    }).catch(() => {});
   }
 
   /** @returns {void} */
@@ -92,15 +224,9 @@
     if (initialized) return;
     initialized = true;
 
-    const onActivate = (ev) => {
-      const target = targetFromEvent(ev);
-      if (!target) return;
-      activateInput(target);
-    };
-
-    /* 仅 pointerdown/touchstart · 避免 focusin 重复 Toggle 导致键盘闪退 */
-    document.addEventListener("pointerdown", onActivate, true);
-    document.addEventListener("touchstart", onActivate, { capture: true, passive: true });
+    document.addEventListener("pointerdown", onPointerDown, true);
+    document.addEventListener("focusout", onFocusOut, true);
+    warmKeyboard();
   }
 
   /**
@@ -124,6 +250,10 @@
   window.EduTouchKeyboard = {
     init,
     bind,
-    invoke: invokeOsKeyboard,
+    show: showKeyboard,
+    hide: hideKeyboard,
+    invoke: showKeyboard,
+    dismiss,
+    dismissForNavigation,
   };
 })();

@@ -19,12 +19,18 @@ var _wired_collectibles: Dictionary = {}
 var _level_root: Node2D = null
 var _rescan_timer: SceneTreeTimer = null
 var _pending_rescan_count: int = 0
+var _manager: Node = null
+var _run_session_start_ms: int = 0
+var _run_session_active: bool = false
+var _prev_playing: bool = false
+var _run_complete_sent: bool = false
 
 
 func _ready() -> void:
 	var main: Node = get_parent()
 	if main == null:
 		return
+	_manager = main
 	_level_root = main.get_node_or_null("LevelRoot") as Node2D
 	if _level_root != null:
 		if not _level_root.is_connected("child_entered_tree", _on_level_child_entered):
@@ -140,6 +146,7 @@ func _physics_process(_delta: float) -> void:
 		_wire_player()
 	_detect_jump()
 	_track_enemy_stomps()
+	_watch_run_complete()
 
 
 func _detect_jump() -> void:
@@ -186,3 +193,92 @@ func _emit_action(action_id: String) -> void:
 	if not bridge.has_method("emit_action"):
 		return
 	bridge.call("emit_action", action_id)
+
+
+func _is_playing() -> bool:
+	if _manager != null and _manager.has_method("is_playing"):
+		return bool(_manager.call("is_playing"))
+	return false
+
+
+func _is_run_end_screen() -> bool:
+	if _manager == null:
+		return false
+	var game_over: Node = _manager.get_node_or_null("CanvasLayer/GameOverScreen")
+	if game_over != null and game_over.visible:
+		return true
+	var victory: Node = _manager.get_node_or_null("CanvasLayer/VictoryScreen")
+	if victory != null and victory.visible:
+		return true
+	return false
+
+
+func _is_game_over_screen() -> bool:
+	if _manager == null:
+		return false
+	var game_over: Node = _manager.get_node_or_null("CanvasLayer/GameOverScreen")
+	return game_over != null and game_over.visible
+
+
+func _is_start_screen() -> bool:
+	if _manager == null:
+		return false
+	var start_screen: Node = _manager.get_node_or_null("CanvasLayer/StartScreen")
+	return start_screen != null and start_screen.visible
+
+
+func _read_score() -> int:
+	if _manager == null:
+		return 0
+	if _manager.has_method("get_score"):
+		return int(_manager.call("get_score"))
+	if _manager.get("_score") != null:
+		return int(_manager.get("_score"))
+	return 0
+
+
+func _read_level_reached() -> int:
+	if _manager == null:
+		return 1
+	if _manager.has_method("get_level_num"):
+		return maxi(1, int(_manager.call("get_level_num")))
+	if _manager.get("_level_num") != null:
+		return maxi(1, int(_manager.get("_level_num")))
+	return 1
+
+
+func _watch_run_complete() -> void:
+	var playing: bool = _is_playing()
+
+	if playing and not _prev_playing:
+		if not _run_session_active:
+			_run_session_start_ms = Time.get_ticks_msec()
+			_run_session_active = true
+		_run_complete_sent = false
+
+	if not playing and _is_start_screen():
+		_run_session_active = false
+		_run_session_start_ms = 0
+
+	if _prev_playing and not playing and not _run_complete_sent and _is_run_end_screen():
+		var elapsed_ms: int = maxi(0, Time.get_ticks_msec() - _run_session_start_ms)
+		_emit_run_complete({
+			"score": _read_score(),
+			"elapsed_ms": elapsed_ms,
+			"level_reached": _read_level_reached(),
+			"metric": "level_reached",
+		})
+		_run_complete_sent = true
+		if _is_game_over_screen():
+			_run_session_active = false
+
+	_prev_playing = playing
+
+
+func _emit_run_complete(payload: Dictionary) -> void:
+	var bridge: Node = get_node_or_null("/root/EduActionBridge")
+	if bridge == null:
+		return
+	if not bridge.has_method("emit_run_complete"):
+		return
+	bridge.call("emit_run_complete", payload)

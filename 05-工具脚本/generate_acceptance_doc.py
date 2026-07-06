@@ -12,8 +12,6 @@ from docx.shared import Cm, Pt, RGBColor
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "AI学习小游戏创作-功能验收文档.docx"
 
-# (section_id, group_title or None, items) — legacy placeholder removed
-
 ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
     (
         "一、系统导航与公共功能",
@@ -29,7 +27,7 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
                 "1.2",
                 "蓝白主题界面",
                 "B 链与 A 链采用统一蓝白 K12 展厅 UI",
-                "页面背景浅蓝白、卡片白底、主按钮品牌蓝；代码区浅灰底；无大面积深色 IDE 风格残留",
+                "页面背景浅蓝白、卡片白底、主按钮品牌蓝；代码区浅灰底；**不**按品类整页换肤（C-03 决策）",
             ),
             (
                 "1.3",
@@ -47,13 +45,19 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
                 "1.5",
                 "一键启动工坊",
                 "提供本地一键启动 API 与 Kiosk 静态服务",
-                "运行 `启动游戏工坊.exe` 或 `launch_workshop.py` 后，`:8000` API 与 `:8080` Kiosk 可访问",
+                "运行 `启动游戏工坊.exe` 或 `launch_workshop.py` 后，`:8000` API 与 `:8080` Kiosk 可访问；B 链须从 `http://127.0.0.1:8080/kiosk/edu/` 进入",
             ),
             (
                 "1.6",
                 "系统触控软键盘",
-                "文本输入时唤起 Windows 系统触控键盘",
-                "B1/B2 等 `edu-touch-input` 聚焦后调用 `POST /kiosk/touch-keyboard/show`；支持 auto/tabtip 配置",
+                "文本输入唤起 Windows TabTip，点外/导航自动收起",
+                "B1/B2 `edu-touch-input` 点击调用 `POST /kiosk/touch-keyboard/show`；点输入区外、上一步/下一步 `pointerdown` 调用 `hide`；`warm` 预加载；`tabtip_native` COM 线程",
+            ),
+            (
+                "1.7",
+                "页眉今日榜单",
+                "B6/B7 阶段页眉提供日榜入口",
+                "「今日榜单」钮与「← 展厅快玩」「重新开始」同高；点击打开 `leaderboard.js` 霓虹弹层；七款 Tab 可切换",
             ),
         ],
     ),
@@ -137,13 +141,13 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
     ),
     (
         "三、B 链 · 准备与创作阶段",
-        "B2 起名",
+        "B2 起名与揭幕",
         [
             (
                 "3.3.1",
                 "填写你的名字",
                 "B2 第一屏询问「你的名字是？」",
-                "须先输入 1–8 字 creator_name；校验通过后 `PATCH /sessions/{id}` 持久化",
+                "须先输入 1–8 字 creator_name；校验通过后 `PATCH /sessions/{id}` 持久化；触控键盘可正常输入中文",
             ),
             (
                 "3.3.2",
@@ -156,6 +160,12 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
                 "B2 子步骤导航",
                 "上一步在名字屏与游戏名屏间切换",
                 "游戏名屏点上一步回到名字屏；名字屏点上一步回到 B1",
+            ),
+            (
+                "3.3.4",
+                "揭幕卡与烟花",
+                "B2 完成后播放揭幕过渡再进入 B3",
+                "`EduForgeReveal.play` 展示「开始制作{creator}的{game}游戏！」文案与烟花动画；结束后进入双栏 B3",
             ),
         ],
     ),
@@ -171,18 +181,36 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
             ),
             (
                 "3.4.2",
-                "B4 配方问卷加载",
-                "按品类加载创作模板题目",
-                "`GET /creative/templates/{genre}` 加载；七款均有 4–5 道 tuning 单选题",
+                "B4 逐卡轮播",
+                "配方问卷一题一卡展示",
+                "`EduB4CardFlow` 每道 tuning 题单独卡片；选答后切下一卡；末卡「完成配方」可提交",
             ),
             (
                 "3.4.3",
+                "B4 进度条",
+                "顶部显示答题进度",
+                "进度条随 `confirmedIndices` 更新；全部作答后进度满格",
+            ),
+            (
+                "3.4.4",
+                "B4 题面 widget",
+                "按品类展示互动小部件",
+                "各品类卡片含 thumb/slider 等 widget（见 `b4-card-flow.js`）；与题面选项联动",
+            ),
+            (
+                "3.4.5",
+                "B4 卡内上一步",
+                "配方阶段可在卡片间回退",
+                "B4 步骤点「上一步」调用 `EduB4CardFlow.prev` 回到上一题；首卡上一步回到 B3",
+            ),
+            (
+                "3.4.6",
                 "B4 配方提交",
                 "用户选择手感选项并提交",
                 "每题须作答；提交 `POST .../creative/answers` 成功；**无**小技能勾选题（`q_skill` 已移除）",
             ),
             (
-                "3.4.4",
+                "3.4.7",
                 "配方数值合并",
                 "答案写入 workspace 的 game_config",
                 "generate 后 tuning 在 ±30% clamp 内；试玩体感与所选选项可感知差异",
@@ -207,12 +235,18 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
             ),
             (
                 "4.1.3",
+                "B5 品类剧场 overlay",
+                "代码打字时叠加品类趣味动效",
+                "`EduTheaterOverlays` 按七款 genre 注入半透明 overlay（见 `theater-overlays/`）；打字结束 `stop` 清理",
+            ),
+            (
+                "4.1.4",
                 "generate/v2 工作区生成",
                 "复制模板到隔离工作区并合并配置",
                 "`POST .../generate/v2` 生成 `workspace/{session_id}/`；返回 `code_map` 供高亮；不修改 `templates/` 原目录",
             ),
             (
-                "4.1.4",
+                "4.1.5",
                 "B6 真代码展示",
                 "制作完成后展示 workspace 内真实文件",
                 "可读 `game_config.json`；文件树可点开 `.gd`/`.json`/`.tscn` 节选；代码区纵向滚动可读",
@@ -225,24 +259,36 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
         [
             (
                 "5.1.1",
-                "B6 证书自动展示",
-                "制作完成时展示作品登记证书",
-                "含作品名、品类中文名、创作时间、配方摘要表（≥3 行有效问答）",
+                "证书趣味标题",
+                "证书主标题使用创作者与游戏名",
+                "标题格式 `{creator}的{game}！`（如「小明的星星大冒险！」）；非通用「作品登记证书」作主标题",
             ),
             (
                 "5.1.2",
+                "B6 证书自动展示",
+                "制作完成时展示作品登记证书",
+                "含品类中文名、创作时间、配方摘要表（≥3 行有效问答）",
+            ),
+            (
+                "5.1.3",
                 "证书配方摘要",
                 "摘要来自 B4 答案与模板题面",
                 "每道已答 tuning 题显示「问题 + 你的选择」；不显示已删除的小技能题",
             ),
             (
-                "5.1.3",
-                "证书打印",
-                "支持浏览器打印留念",
-                "点击「打印证书」进入打印预览；`@media print` 仅证书区域可见",
+                "5.1.4",
+                "证书 PNG 保存",
+                "一键导出证书图片到本机",
+                "点击「保存证书」`#btnCertSave`；`html2canvas` 渲染 `#edu-cert-card` 并触发浏览器下载 PNG",
             ),
             (
-                "5.1.4",
+                "5.1.5",
+                "证书扫码下载",
+                "证书含二维码供手机下载同图",
+                "后端签发 token；`GET /public/certificates/{token}` 返回 PNG；**展馆公网域名未配时扫码仅 API 就绪**",
+            ),
+            (
+                "5.1.6",
                 "B7 复看证书",
                 "试玩阶段可再次打开证书",
                 "B7 工具栏「查看证书」可重新打开证书叠层",
@@ -288,6 +334,42 @@ ITEMS: list[tuple[str, str | None, list[tuple[str, str, str, str]]]] = [
                 "试玩进程状态",
                 "轮询 Godot 是否仍在运行",
                 "`GET .../play/status` 返回 running true/false；关窗后 running 变为 false",
+            ),
+        ],
+    ),
+    (
+        "五、B 链 · 试玩与教育联动",
+        "日榜排行榜",
+        [
+            (
+                "5.3.1",
+                "关窗触发日榜",
+                "试玩结束关 Godot 窗后弹出排行榜",
+                "platformer / shmup / survivor 等品类关窗后 `leaderboard.js` 展示本局得分与当日榜单",
+            ),
+            (
+                "5.3.2",
+                "七款 Tab 切换",
+                "榜单弹层可按品类查看",
+                "弹层顶部 7 个 Tab（横版闯关、街机飞机…）；切换后 `GET .../leaderboard/daily/{genre}` 刷新列表",
+            ),
+            (
+                "5.3.3",
+                "乒乓球单局规则",
+                "乒乓球仅在整局结束结算上榜",
+                "`pingpong_hooks` 发 `session_end` 才弹榜；单分得分不触发弹层",
+            ),
+            (
+                "5.3.4",
+                "日榜持久化",
+                "当日成绩本机 JSON 存储",
+                "按 `Asia/Shanghai` 自然日；Redis 可用时同步；断网可用 `edu_leaderboard_session_fallback` 降级",
+            ),
+            (
+                "5.3.5",
+                "页眉随时查榜",
+                "不试玩也可从页眉打开榜单",
+                "B6/B7 页眉「今日榜单」打开同一弹层；「继续」关闭后回到当前步骤",
             ),
         ],
     ),
@@ -461,14 +543,12 @@ def add_table(doc: Document, rows: list[tuple[str, str, str, str]]) -> None:
 def build() -> None:
     doc = Document()
 
-    # Page margins
     for section in doc.sections:
         section.top_margin = Cm(2)
         section.bottom_margin = Cm(2)
         section.left_margin = Cm(2.2)
         section.right_margin = Cm(2.2)
 
-    # Title
     title = doc.add_paragraph()
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = title.add_run("AI学习小游戏创作 · 功能验收文档")
@@ -480,12 +560,14 @@ def build() -> None:
 
     meta_lines = [
         "项目名称：文三路 AI 游戏创作工坊（GameForge K12）",
-        "产品版本：1.1（Git tag v1.1）· 含 7.4 阶段已交付触控与 B1/B2 UI 增强",
+        "产品版本：1.2（7.4 P4-B/C 展厅落地）· Git tag v1.2 待用户确认",
+        "文档版本：v1.2 · 2026-07-06 · 对齐 P4-E2E 收工基线",
         "验收范围：本文档仅包含当前仓库已实现的功能点验收，不含规划未开发项。",
-        "不含范围：大模型实时生成、Godot 浏览器内嵌、联机/存档/商城、排行榜、"
-        "揭幕烟花/分品类主题/B4 卡片轮播/B5 趣味剧场叠加/GIF 证书等待施工项。",
+        "不含范围：大模型实时代码生成、Godot 浏览器内嵌（P4-A 挂起）、联机/存档/内购/商城、"
+        "展馆公网扫码域名（C-08 API 已就绪，手机实机待配）。",
         "验收说明：逐项操作验证，在「验收结果」栏勾选通过或不通过，并在备注栏填写说明。",
-        "访问地址：Kiosk http://127.0.0.1:8080 · API http://127.0.0.1:8000/docs",
+        "访问地址：Kiosk http://127.0.0.1:8080/kiosk/edu/ · API http://127.0.0.1:8000/docs",
+        "生成脚本：05-工具脚本/generate_acceptance_doc.py",
     ]
     for line in meta_lines:
         p = doc.add_paragraph(line)
@@ -509,7 +591,6 @@ def build() -> None:
 
         add_table(doc, rows)
 
-    # Signature block
     doc.add_heading("验收签字", level=1)
     sign_table = doc.add_table(rows=4, cols=4)
     sign_table.style = "Table Grid"

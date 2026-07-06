@@ -35,48 +35,57 @@ def assert_ok(name: str, condition: bool, detail: str = "") -> None:
         raise AssertionError(f"{name}: {detail}")
 
 
+def select_intent(page: Page, intent_text: str) -> None:
+    bubble = page.locator(
+        f".intent-bubble-float:has(.intent-bubble-label:text('{intent_text}'))"
+    )
+    if bubble.count() > 0:
+        bubble.first.click()
+        return
+    page.fill("#intentInput", intent_text)
+
+
 def advance_to_b6(page: Page, case: dict[str, Any]) -> None:
     intent_text: str = str(case["intent_text"])
     display_name: str = str(case["display_name"])
+    creator_name: str = str(case.get("creator_name", "小明"))
     answers: dict[str, str] = dict(case["creative_answers"])
 
     page.wait_for_selector("#btnNext:not([disabled])", timeout=30_000)
-    chip = page.locator(f"#intentExamples .chip[data-text='{intent_text}']")
-    if chip.count() > 0:
-        chip.first.click()
-    else:
-        page.fill("#intentInput", intent_text)
+    select_intent(page, intent_text)
     page.click("#btnNext")
 
     page.wait_for_selector("#creatorInput", timeout=15_000)
-    page.fill("#creatorInput", str(case.get("creator_name", "小明")))
+    page.fill("#creatorInput", creator_name)
+    page.locator("#creatorInput").blur()
+    page.wait_for_timeout(200)
     page.click("#btnNext")
 
-    page.wait_for_selector("#nameInput", timeout=15_000)
+    page.wait_for_selector("#nameInput", timeout=30_000)
     name_chip = page.locator(f"#nameChips .chip[data-name='{display_name}']")
     if name_chip.count() > 0:
         name_chip.first.click()
     else:
         page.fill("#nameInput", display_name)
+    page.locator("#nameInput").blur()
+    page.wait_for_timeout(200)
     page.click("#btnNext")
 
-    page.wait_for_selector("#btnDualNext", timeout=15_000)
+    page.wait_for_function(
+        "() => !document.body.classList.contains('forge-reveal-active')",
+        timeout=15_000,
+    )
+    page.wait_for_selector("#btnDualNext:not([hidden])", timeout=15_000)
     page.click("#btnDualNext")
 
-    page.wait_for_selector(".creative-form-panel .question-block", timeout=20_000)
-    page.evaluate(
-        """
-        (answers) => {
-          for (const [qid, value] of Object.entries(answers)) {
-            document.querySelector(
-              `.question-block[data-qid="${qid}"] input[type="radio"][value="${value}"]`
-            )?.closest('.option-card')?.click();
-          }
-        }
-        """,
-        answers,
-    )
-    page.wait_for_timeout(200)
+    page.wait_for_selector(".creative-form-panel .question-block, .b4-card-stage", timeout=20_000)
+    for qid, value in answers.items():
+        page.wait_for_selector(f'.question-block[data-qid="{qid}"]', timeout=20_000)
+        page.locator(
+            f'.question-block[data-qid="{qid}"] input[type="radio"][value="{value}"]'
+        ).evaluate("el => el.closest('.option-card')?.click()")
+        page.wait_for_timeout(900)
+    page.wait_for_selector("#btnDualNext:not([hidden])", timeout=20_000)
     page.click("#btnDualNext")
 
 

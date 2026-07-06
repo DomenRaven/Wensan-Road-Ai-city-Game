@@ -48,7 +48,7 @@
 
     /** @param {string} sid */
     releaseBeacon(sid) {
-      if (!sid) return;
+      if (!sid || sid.startsWith("demo-")) return;
       try {
         navigator.sendBeacon(`${this.apiBase}/sessions/${sid}/release`, "");
       } catch (_) {
@@ -59,7 +59,7 @@
     /** @param {string} [sid] */
     async releaseAsync(sid) {
       const id = sid || this.sessionId;
-      if (!id) return;
+      if (!id || id.startsWith("demo-")) return;
       await this.api(`/sessions/${id}/release`, { method: "POST" }).catch(() => {});
       if (id === this.sessionId) {
         this.sessionId = "";
@@ -70,9 +70,58 @@
     async cleanupStaleSession() {
       const prev = sessionStorage.getItem(this.storageKey);
       if (!prev) return;
+      if (prev.startsWith("demo-")) {
+        sessionStorage.removeItem(this.storageKey);
+        return;
+      }
       this.log("检测到上次未释放会话 · 清理 workspace 副本…");
       await this.releaseAsync(prev);
       sessionStorage.removeItem(this.storageKey);
+    },
+
+    /**
+     * 会话池满（429）时释放最旧的一条非当前会话，腾出名额
+     * @returns {Promise<boolean>}
+     */
+    async recoverSessionPool() {
+      try {
+        const list = await this.api("/sessions");
+        const sessions = /** @type {Array<{session_id:string,created_at?:number}>} */ (
+          list.sessions || []
+        );
+        if (!sessions.length) return false;
+        const sorted = [...sessions].sort(
+          (a, b) => (a.created_at || 0) - (b.created_at || 0)
+        );
+        for (const row of sorted) {
+          const sid = row.session_id;
+          if (!sid || sid === this.sessionId) continue;
+          this.log(`会话池已满 · 释放最旧会话 ${sid.slice(0, 8)}…`);
+          await this.releaseAsync(sid);
+          return true;
+        }
+      } catch (err) {
+        this.log(`会话池恢复失败 · ${/** @type {Error} */ (err).message || err}`);
+      }
+      return false;
+    },
+
+    /**
+     * @param {number} [retries]
+     * @returns {Promise<Record<string, unknown>>}
+     */
+    async createSessionWithRecovery(retries = 2) {
+      for (let attempt = 0; attempt <= retries; attempt += 1) {
+        try {
+          return await this.api("/sessions", { method: "POST", body: "{}" });
+        } catch (err) {
+          const msg = String(/** @type {Error} */ (err).message || err);
+          if (!msg.includes("429") || attempt >= retries) throw err;
+          const recovered = await this.recoverSessionPool();
+          if (!recovered) throw err;
+        }
+      }
+      throw new Error("创建会话失败");
     },
 
     /**
@@ -166,7 +215,7 @@
         this.log("演示模式 · 正在连接后端并建立会话…");
       }
 
-      const data = await this.api("/sessions", { method: "POST", body: "{}" });
+      const data = await this.createSessionWithRecovery();
       this.sessionId = data.session_id || data.id || "";
       if (!this.sessionId) throw new Error("创建会话失败");
       this.rememberSessionId(this.sessionId);
@@ -228,7 +277,7 @@
     },
 
     async createSession() {
-      const data = await this.api("/sessions", { method: "POST", body: "{}" });
+      const data = await this.createSessionWithRecovery();
       this.sessionId = data.session_id || data.id || "";
       this.rememberSessionId(this.sessionId);
       return this.sessionId;

@@ -52,6 +52,16 @@ func emit_action(action_id: String) -> void:
 	_append_log_line(action_id, now_ms)
 
 
+func emit_run_complete(payload: Dictionary) -> void:
+	var now_ms: int = int(Time.get_unix_time_from_system() * 1000.0)
+	var row: Dictionary = {"action_id": "run_complete", "t_ms": now_ms}
+	for key: Variant in payload.keys():
+		row[key] = payload[key]
+	_last_emit_ms["run_complete"] = now_ms
+	action_emitted.emit("run_complete")
+	_append_log_dict(row)
+
+
 func _is_debounced(action_id: String, now_ms: int) -> bool:
 	if not _last_emit_ms.has(action_id):
 		return false
@@ -61,10 +71,13 @@ func _is_debounced(action_id: String, now_ms: int) -> bool:
 
 
 func _append_log_line(action_id: String, t_ms: int) -> void:
+	_append_log_dict({"action_id": action_id, "t_ms": t_ms})
+
+
+func _append_log_dict(payload: Dictionary) -> void:
 	var log_path: String = _resolve_log_path()
 	if log_path.is_empty():
 		return
-	var payload: Dictionary = {"action_id": action_id, "t_ms": t_ms}
 	var line: String = JSON.stringify(payload) + "\n"
 	var file: FileAccess = null
 	if FileAccess.file_exists(log_path):

@@ -21,12 +21,16 @@ var _wired_gems: Dictionary = {}
 var _wired_enemies: Dictionary = {}
 var _ui_was_visible: bool = false
 var _rescan_scheduled: bool = false
+var _manager: Node = null
+var _prev_playing: bool = false
+var _run_complete_sent: bool = false
 
 
 func _ready() -> void:
 	_apply_exhibition_volume()
 	var main: Node = get_parent()
 	if main != null:
+		_manager = main
 		_game_root = main.get_node_or_null("GameRoot") as Node2D
 		if _game_root != null:
 			if not _game_root.is_connected("child_entered_tree", _on_game_root_child):
@@ -50,6 +54,7 @@ func _on_game_root_child(_child: Node) -> void:
 func _physics_process(_delta: float) -> void:
 	if _gems_root == null or not is_instance_valid(_gems_root):
 		_scan_arena()
+	_watch_run_complete()
 
 
 func _schedule_rescans() -> void:
@@ -159,3 +164,62 @@ func _emit_action(action_id: String) -> void:
 	if not bridge.has_method("emit_action"):
 		return
 	bridge.call("emit_action", action_id)
+
+
+func _is_playing() -> bool:
+	if _manager != null and _manager.has_method("is_playing"):
+		return bool(_manager.call("is_playing"))
+	return false
+
+
+func _is_run_end_screen() -> bool:
+	if _manager == null:
+		return false
+	var game_over: Node = _manager.get_node_or_null("CanvasLayer/GameOverScreen")
+	if game_over != null and game_over.visible:
+		return true
+	var victory: Node = _manager.get_node_or_null("CanvasLayer/VictoryScreen")
+	return victory != null and victory.visible
+
+
+func _read_survival_ms() -> int:
+	if _manager == null:
+		return 0
+	var survive_sec: int = 0
+	var boss_sec: int = 0
+	if _manager.get("_survive_seconds") != null:
+		survive_sec = int(_manager.get("_survive_seconds"))
+	if _manager.get("_boss_seconds") != null:
+		boss_sec = int(_manager.get("_boss_seconds"))
+	return maxi(0, (survive_sec + boss_sec) * 1000)
+
+
+func _read_player_level() -> int:
+	if _manager == null:
+		return 1
+	if _manager.get("_level") != null:
+		return maxi(1, int(_manager.get("_level")))
+	return 1
+
+
+func _watch_run_complete() -> void:
+	var playing: bool = _is_playing()
+	if playing and not _prev_playing:
+		_run_complete_sent = false
+	if _prev_playing and not playing and not _run_complete_sent and _is_run_end_screen():
+		_emit_run_complete({
+			"survival_ms": _read_survival_ms(),
+			"score": _read_player_level(),
+			"metric": "survival_ms",
+		})
+		_run_complete_sent = true
+	_prev_playing = playing
+
+
+func _emit_run_complete(payload: Dictionary) -> void:
+	var bridge: Node = get_node_or_null("/root/EduActionBridge")
+	if bridge == null:
+		return
+	if not bridge.has_method("emit_run_complete"):
+		return
+	bridge.call("emit_run_complete", payload)

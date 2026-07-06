@@ -63,7 +63,7 @@
     "debounce_ms": 500,
     "highlight_duration_ms": 2000,
     "caption_duration_ms": 3000,
-    "suppress_actions": ["fire", "boost", "move"],
+    "suppress_actions": ["fire", "boost", "move", "run_complete"],
     "action_priority": {
       "steer": 1,
       "fire": 1,
@@ -210,5 +210,12 @@
     "card_template": "开始制作{creator}的{game}游戏！",
     "firework_count": 12,
     "skip_on_reduced_motion": true
+  },
+  "leaderboard": {
+    "daily_enabled": true,
+    "timezone": "Asia/Shanghai",
+    "top_limit": 10,
+    "store_limit": 50,
+    "genres": ["platformer", "shmup", "survivor", "pingpong", "fighting", "parkour", "racing"]
   }
 }

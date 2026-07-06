@@ -6,6 +6,36 @@
 
 ---
 
+## [1.2] - 2026-07-06
+
+### 新增
+
+- **P4-B 七款全触控**：platformer / parkour / survivor / pingpong / shmup / racing / fighting 触控 overlay · `e2e_b_edu_batch` 6/6
+- **P4-C 展厅 UI**：B1 碰撞泡泡 · B2 名字填空 · 揭幕烟花 · B4 卡片轮播 · B5 品类剧场 · 证书 PNG+扫码 · 七款日榜
+- **日榜 API**：`leaderboard_daily` · `leaderboard.js` · 七款 hooks 记分 · 页眉榜单钮
+- **触控键盘热修**：`touch-keyboard.js` · `tabtip_native` · `?v=7.4-c07-14` / `7.4-c08-02`
+
+### 变更
+
+- `kiosk/edu/` 全线 UI 组件与 `edu-styles.css` 局部 accent（全页保持蓝白）
+- `e2e_recipe_a_certificate.py` · `e2e_b_edu_batch.py` 适配 P4-C 新向导流
+- `backend/` 会话补丁 · 证书公网 token · 日榜持久化
+
+### 说明
+
+- **P4-A Godot 内嵌**：挂起 · 继续 v1.1 P3-3 外置窗
+- **C-08 扫码**：API 就绪 · **展馆公网域名待配**
+- **templates/core**：未改
+- **tag `v1.2`**：待用户确认后打 tag / push
+
+| 项 | 值 |
+|----|-----|
+| 收工评审 | `开发文档/模板引擎/评审记录/7.4_验收记录.md` |
+| 状态快照 | `开发文档/模板引擎/快照/7.4_收工后状态快照_v1.0.md` |
+| 功能验收 | 根目录 `AI学习小游戏创作-功能验收文档.docx` v1.2 |
+
+---
+
 ## [1.1] - 2026-06-28
 
 ### 新增
@@ -67,5 +97,6 @@ git checkout v1.0
 
 ---
 
+[1.2]: https://github.com/DomenRaven/Wensan-Road-Ai-city-Game/releases/tag/v1.2
 [1.1]: https://github.com/DomenRaven/Wensan-Road-Ai-city-Game/releases/tag/v1.1
 [1.0]: https://github.com/DomenRaven/Wensan-Road-Ai-city-Game/releases/tag/v1.0

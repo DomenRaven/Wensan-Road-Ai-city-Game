@@ -31,7 +31,6 @@
     const cap = maxLinesForPath(relPath);
     if (all.length <= cap) return all;
     const head = all.slice(0, cap);
-    head.push("…  （展示节选，完整文件在试玩阶段可点开查看）");
     return head;
   }
 

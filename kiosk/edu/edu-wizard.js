@@ -59,6 +59,14 @@
   let launchState = null;
   /** @type {number|null} */
   let launchStatusPollTimer = null;
+  /** @type {boolean} */
+  let prevGodotRunning = false;
+  /** @type {boolean} */
+  let leaderboardHandledThisRun = false;
+  /** @type {boolean} */
+  let sawGodotRunning = false;
+  /** @type {number} */
+  let launchPollStartedAt = 0;
   /** @type {{codeWorkspace:HTMLElement|null}} */
   let paneRefs = { codeWorkspace: null };
   /** @type {Date|null} */
@@ -107,6 +115,17 @@
     if (btnNext) btnNext.disabled = !enabled;
   }
 
+  /** @param {HTMLElement|null|undefined} node */
+  function bindNavDismiss(node) {
+    if (!node || node.dataset.eduKbDismiss) return;
+    node.dataset.eduKbDismiss = "1";
+    node.addEventListener(
+      "pointerdown",
+      () => window.EduTouchKeyboard?.dismissForNavigation?.(),
+      true
+    );
+  }
+
   function showPanel(mode) {
     welcomePanel.hidden = mode !== "welcome";
     stepPanel.hidden = mode !== "step";
@@ -125,6 +144,7 @@
     const meta = STEP_META[step];
     updateWorkName();
     updatePhaseBar();
+    updateLeaderboardButton();
 
     if (step === "B0") {
       showPanel("welcome");
@@ -265,8 +285,13 @@
   }
 
   function bindDualToolbar() {
+    bindNavDismiss(document.getElementById("btnDualPrev"));
+    bindNavDismiss(document.getElementById("btnDualNext"));
     document.getElementById("btnDualPrev")?.addEventListener("click", () => goPrev());
     document.getElementById("btnDualNext")?.addEventListener("click", () => goNext());
+    document.getElementById("btnViewLeaderboard")?.addEventListener("click", () => {
+      void openLeaderboardPanel();
+    });
   }
 
   function setBuildWaitPanel(phase, progressPct = 10) {
@@ -899,6 +924,88 @@
       window.clearInterval(launchStatusPollTimer);
       launchStatusPollTimer = null;
     }
+    prevGodotRunning = false;
+    sawGodotRunning = false;
+  }
+
+  function updateLeaderboardButton() {
+    const btn = document.getElementById("btnLeaderboard");
+    if (!btn) return;
+    const enabled = window.EduSession?.spec?.leaderboard?.daily_enabled !== false;
+    const show = enabled && genre && window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre);
+    btn.hidden = !show;
+  }
+
+  async function openLeaderboardPanel() {
+    if (!window.EduLeaderboard?.openDaily) return;
+    await window.EduLeaderboard.openDaily(genre || "platformer");
+  }
+
+  /**
+   * @param {string} sessionId
+   */
+  async function handleLeaderboardAfterRunClose(sessionId) {
+    if (!window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre)) return;
+    if (leaderboardHandledThisRun) return;
+    leaderboardHandledThisRun = true;
+    sawGodotRunning = false;
+
+    await new Promise((resolve) => window.setTimeout(resolve, 450));
+
+    const result = await window.EduLeaderboard.submitAfterRun({
+      sessionId,
+      genre,
+      creatorName,
+      displayName,
+    });
+    window.EduLeaderboard.open({
+      genre,
+      entries: result.entries || [],
+      highlightSessionId: result.skippedSubmit ? null : sessionId,
+      highlightCreatedAt: result.skippedSubmit ? null : result.entry?.created_at || null,
+      degraded: !!result.degraded,
+      fallbackEntry: result.entry,
+    });
+  }
+
+  /**
+   * @param {string} sessionId
+   */
+  async function pollLaunchStatus(sessionId) {
+    const statusEl = document.getElementById("godotRunStatus");
+    try {
+      const status = await window.EduSession.api(`/sessions/${sessionId}/play/status`);
+      if (status.running === true) {
+        sawGodotRunning = true;
+        prevGodotRunning = true;
+        if (statusEl) {
+          statusEl.textContent = "● 游戏运行中";
+          statusEl.className = "godot-run-status running";
+        }
+        return;
+      }
+
+      if (statusEl) {
+        statusEl.textContent = "○ 游戏窗口已关闭";
+        statusEl.className = "godot-run-status stopped";
+      }
+
+      const elapsed = Date.now() - launchPollStartedAt;
+      const closedAfterRun =
+        genre === "pingpong"
+          ? sawGodotRunning
+          : sawGodotRunning || (!!launchState?.ok && elapsed >= 1200);
+      const shouldHandle =
+        closedAfterRun &&
+        window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre) &&
+        !leaderboardHandledThisRun;
+      if (shouldHandle) {
+        await handleLeaderboardAfterRunClose(sessionId);
+      }
+      prevGodotRunning = false;
+    } catch (_) {
+      /* 可选 UI · 静默 */
+    }
   }
 
   /**
@@ -906,22 +1013,13 @@
    */
   function startLaunchStatusPolling(sessionId) {
     stopLaunchStatusPolling();
-    launchStatusPollTimer = window.setInterval(async () => {
-      const el = document.getElementById("godotRunStatus");
-      if (!el) return;
-      try {
-        const status = await window.EduSession.api(`/sessions/${sessionId}/play/status`);
-        if (status.running === true) {
-          el.textContent = "● 游戏运行中";
-          el.className = "godot-run-status running";
-        } else if (status.running === false) {
-          el.textContent = "○ 游戏窗口已关闭";
-          el.className = "godot-run-status stopped";
-        }
-      } catch (_) {
-        /* 可选 UI · 静默 */
-      }
-    }, 3000);
+    leaderboardHandledThisRun = false;
+    launchPollStartedAt = Date.now();
+    sawGodotRunning = !!(launchState && launchState.ok && launchState.already_running);
+    void pollLaunchStatus(sessionId);
+    launchStatusPollTimer = window.setInterval(() => {
+      void pollLaunchStatus(sessionId);
+    }, 1500);
   }
 
   function getFallbackConfigSnippet() {
@@ -973,6 +1071,7 @@
 
     window.EduDualPane.setToolbar(true, `
       <button type="button" id="btnDualPrev" class="btn btn-secondary" disabled>上一步</button>
+      <button type="button" id="btnViewLeaderboard" class="btn btn-secondary">今日榜单</button>
       <button type="button" id="btnDualNext" class="btn btn-primary">进入试玩</button>
     `);
     bindDualToolbar();
@@ -1006,6 +1105,9 @@
         placement_rect: data.placement_rect || null,
         orientation: window.EduOrientation?.getMode?.() || "landscape",
       };
+      leaderboardHandledThisRun = false;
+      launchPollStartedAt = Date.now();
+      sawGodotRunning = !!data.already_running;
       window.EduSession.log(
         launchState.already_running ? "✓ 游戏已在运行" : "✓ Godot 已启动"
       );
@@ -1033,12 +1135,6 @@
     const launched = !!(launchState && launchState.ok);
     window.EduCodeHighlight.stopPolling();
     stopLaunchStatusPolling();
-    if (launched) {
-      window.EduCodeHighlight.startPolling(window.EduSession.sessionId);
-      startLaunchStatusPolling(window.EduSession.sessionId);
-    } else if (workspacePath) {
-      window.EduCodeHighlight.startPolling(window.EduSession.sessionId);
-    }
 
     window.EduDualPane.setRightContent(`
       <div class="pane-right-stack">
@@ -1059,10 +1155,18 @@
       </div>
     `);
 
+    if (launched) {
+      window.EduCodeHighlight.startPolling(window.EduSession.sessionId);
+      startLaunchStatusPolling(window.EduSession.sessionId);
+    } else if (workspacePath) {
+      window.EduCodeHighlight.startPolling(window.EduSession.sessionId);
+    }
+
     bindGenreDemoActions(genre, { launched });
 
     window.EduDualPane.setToolbar(true, `
       <button type="button" id="btnLoadClassic" class="btn btn-ghost">加载经典版</button>
+      <button type="button" id="btnViewLeaderboard" class="btn btn-secondary">今日榜单</button>
       <button type="button" id="btnViewCertificate" class="btn btn-secondary">查看证书</button>
       <button type="button" id="btnFinish" class="btn btn-secondary">完成创作</button>
     `);
@@ -1094,6 +1198,9 @@
     });
     document.getElementById("btnViewCertificate")?.addEventListener("click", () => {
       showCertificateOverlay();
+    });
+    document.getElementById("btnViewLeaderboard")?.addEventListener("click", () => {
+      void openLeaderboardPanel();
     });
     document.getElementById("btnFinish")?.addEventListener("click", () => resetWizard());
   }
@@ -1172,6 +1279,7 @@
       } catch (err) {
         window.EduSession.log(`保存游戏名称失败 · ${err.message}`);
       }
+      window.EduTouchKeyboard?.dismissForNavigation?.();
       if (window.EduForgeReveal?.play) {
         await window.EduForgeReveal.play({
           creatorName,
@@ -1251,6 +1359,8 @@
     window.EduCodeHighlight.stopPolling();
     stopLaunchStatusPolling();
     launchState = null;
+    sawGodotRunning = false;
+    leaderboardHandledThisRun = false;
     await window.EduSession.releaseAsync();
     genre = "";
     genreLabel = "";
@@ -1292,9 +1402,14 @@
     showPanel("welcome");
     const statusEl = el("bootstrapStatus");
 
+    bindNavDismiss(btnNext);
+    bindNavDismiss(btnPrev);
     btnNext.addEventListener("click", () => goNext());
     btnPrev.addEventListener("click", () => goPrev());
     btnReset.addEventListener("click", () => resetWizard());
+    document.getElementById("btnLeaderboard")?.addEventListener("click", () => {
+      void openLeaderboardPanel();
+    });
 
     try {
       await window.EduSession.bootstrap();

@@ -30,6 +30,10 @@ var _wired_enemy_containers: Dictionary = {}
 var _game_root: Node2D = null
 var _powerups_root: Node2D = null
 var _rescan_timer: SceneTreeTimer = null
+var _manager: Node = null
+var _run_start_ms: int = 0
+var _prev_playing: bool = false
+var _run_complete_sent: bool = false
 
 
 func _ready() -> void:
@@ -37,6 +41,7 @@ func _ready() -> void:
 	var main: Node = get_parent()
 	if main == null:
 		return
+	_manager = main
 	_game_root = main.get_node_or_null("GameRoot") as Node2D
 	if _game_root != null:
 		_game_root.child_entered_tree.connect(_on_game_root_child_entered)
@@ -186,6 +191,7 @@ func _find_powerup_nodes() -> Array[Node]:
 
 func _physics_process(delta: float) -> void:
 	_tick_hit_invincibility(delta)
+	_watch_run_complete()
 
 
 func _tick_hit_invincibility(delta: float) -> void:
@@ -233,3 +239,51 @@ func _emit_action(action_id: String) -> void:
 	if not bridge.has_method("emit_action"):
 		return
 	bridge.call("emit_action", action_id)
+
+
+func _is_playing() -> bool:
+	if _manager != null and _manager.has_method("is_playing"):
+		return bool(_manager.call("is_playing"))
+	return false
+
+
+func _is_run_end_screen() -> bool:
+	if _manager == null:
+		return false
+	var game_over: Node = _manager.get_node_or_null("CanvasLayer/GameOverScreen")
+	return game_over != null and game_over.visible
+
+
+func _read_score() -> int:
+	if _manager == null:
+		return 0
+	if _manager.has_method("get_score"):
+		return int(_manager.call("get_score"))
+	if _manager.get("_score") != null:
+		return int(_manager.get("_score"))
+	return 0
+
+
+func _watch_run_complete() -> void:
+	var playing: bool = _is_playing()
+	if playing and not _prev_playing:
+		_run_start_ms = Time.get_ticks_msec()
+		_run_complete_sent = false
+	if _prev_playing and not playing and not _run_complete_sent and _is_run_end_screen():
+		var survival_ms: int = maxi(0, Time.get_ticks_msec() - _run_start_ms)
+		_emit_run_complete({
+			"score": _read_score(),
+			"survival_ms": survival_ms,
+			"metric": "score",
+		})
+		_run_complete_sent = true
+	_prev_playing = playing
+
+
+func _emit_run_complete(payload: Dictionary) -> void:
+	var bridge: Node = get_node_or_null("/root/EduActionBridge")
+	if bridge == null:
+		return
+	if not bridge.has_method("emit_run_complete"):
+		return
+	bridge.call("emit_run_complete", payload)
