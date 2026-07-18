@@ -10,14 +10,17 @@ from app.services.creative.agent_contracts import format_contract_for_prompt, lo
 # 人工维护接线 playbook；深度对齐 platformer；禁止「禁止改会话 core」旧表述。
 _GENRE_PLAYBOOK: dict[str, str] = {
     "platformer": """
-【platformer 玩法接线】
-- 主场景 res://scenes/main.tscn；GameManager / player_platformer.gd（CharacterBody2D）
-- 金币 collectible.gd：信号 collected；二段跳/下砸：has_skill("double_jump"|"ground_pound")
-- 桥已对下落段补二段跳；数值类 buff 仅当用户明确要求时再加
-- 前所未有需求：在会话 core/scenes **现场实现**用户要的机制；catalog/桥是捷径不是天花板
-- 需求对齐：summary 声称的能力必须落在磁盘上；勿用无关玩法顶替后口头交差
+【platformer 玩法接线 · 精确架构（改前先 read_file 对应文件）】
+- 主场景 res://scenes/main.tscn；GameManager(core/game_manager.gd) + core/level_01.gd 程序化建关
+- 【金币】不是手摆在场景里，而是 core/level_01.gd 的 `_build_procedural_content()` 按 `_level_profile.coin_chance` 调 `_add_coin(pos)` 程序化生成。
+  · 要「加金币 / 金币变多」：调大 level 的 coin_chance（`_build_level_profile` 里 `coin_chance`），或在 `_build_procedural_content` 循环里多调 `_add_coin(...)`；**别新建独立场景摆金币**，那样不会进收集链
+  · 收集链：collectible.gd `_on_body_entered`(player 组)→`collected` 信号→level `_register_collectible_with_manager`→game_manager `_on_collectible_collected()`（`_coins += 1`）。要「每 N 金币触发」在 game_manager 计数或用桥 watch_coins
+- 【敌人/受伤】敌人场景 scenes/patrol_enemy.tscn / tough / jumper / turret；红怪光球 core/enemy_orb.gd 命中调 `player.notify_hazard("enemy")`；玩家受伤在 player_platformer.gd `notify_hazard()`（有 `_is_invincible`/`_hurt_area`/`_stomp_area`）
+  · 要「怪物变小」：只改敌人 **AnimatedSprite2D/Sprite2D 的 scale 或帧**；**绝不要**改敌人 CharacterBody2D 根节点或 CollisionShape2D 的 scale/大小——那会破坏踩踏判定、碰撞与受伤（子弹卡住/不扣血就是这样来的）
+- 二段跳/下砸：has_skill("double_jump"|"ground_pound")；桥已对下落段补二段跳
+- 【铁律】改已有 core/*.gd 用**最小 targeted 编辑**：read_file 后只改相关函数/行，禁止整文件重写（会丢碰撞/受伤/信号/收集逻辑，导致金币收不到、子弹卡住不扣血）
+- 需求对齐：summary 声称的能力必须真落在对应文件（加金币→level_01.gd 有改；勿口头声称）
 - 【可改】会话副本 core/*.gd、config、scenes；【禁止】templates/**
-- 新机制：优先写可运行的 GDScript 并挂到场景；ai_sandbox+桥可选
 """.strip(),
     "shmup": """
 【shmup 玩法接线 · 与 platformer 同级深度】
@@ -30,7 +33,10 @@ _GENRE_PLAYBOOK: dict[str, str] = {
 - 前所未有需求：会话 core/scenes 现场写；catalog/桥是捷径
 - 【可改】会话 core/player_ship.gd、bullet.gd、bullet_pool.gd、config、scenes；【禁止】templates/**
 - 示例「五颜六色子弹」：ai_sandbox + rainbow_player_bullets，或直接改 bullet 生成链
-- 【展厅硬性】how_to_play 写「点屏幕下方 炸弹/激光 按钮」；ShmupTouch 只负责移动，技能键走桥 HUD
+- 【展厅硬性】按钮技能：how_to_play 写「点屏幕下方 炸弹/激光 按钮」；ShmupTouch 只负责移动
+- 【掉落物例外】用户要「敌机掉落才开」：powerup_types 加 laser/bomb + apply_powerup 内
+  追加 GameConfig.enabled_skills 并 AiSandboxBridge.ensure_touch_skill_buttons；
+  勿动 enemy_spawner/main.tscn；how_to_play 写「打敌机→捡掉落」；禁 enable_catalog 冒充
 """.strip(),
     "survivor": """
 【survivor】割草幸存者；玩家移动自动攻击；catalog：magnet / nova（捷径）。

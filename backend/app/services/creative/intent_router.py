@@ -23,8 +23,36 @@ _TUNING_HINTS: re.Pattern[str] = re.compile(
 )
 _CATALOG_HINTS: re.Pattern[str] = re.compile(
     r"技能太少|技能少|多加点技能|开技能|启用|打开|开启|加上|要炸弹|要激光|"
-    r"二段跳|双跳|下砸|滑铲|吸经验|爆发|扣杀|旋转球|格挡|上勾拳|氮气|漂移"
+    r"二段跳|双跳|下砸|滑铲|吸经验|爆发|扣杀|旋转球|格挡|上勾拳|氮气|漂移|"
+    r"发射激光|磁铁|大力扣杀|曲线球"
 )
+# 「掉落才开 / 敌机掉落物」≠ 一键 enable catalog 按钮技能
+_DROP_LOOT_MECH: re.Pattern[str] = re.compile(
+    r"掉落|掉落物|掉下来|敌机掉|敌人掉|击杀掉|"
+    r"捡到才|拾取才|捡了才|捡起才|获得才|掉到才|掉了才|"
+    r"不是按钮|别.*按钮|不要按钮|不要一上来就|"
+    r"道具开启|掉宝|战利品|落地才"
+)
+
+
+def is_drop_loot_request(text: str) -> bool:
+    """用户要把某能力做成掉落/拾取才解锁，而非直接开 catalog 按钮。"""
+    return bool(_DROP_LOOT_MECH.search(text or ""))
+
+
+# 掉落语义中明确点名 catalog 技能（激光/炸弹）——才允许走 shmup 掉落快车道 + 专用门禁
+_LASER_BOMB_NAME: re.Pattern[str] = re.compile(
+    r"激光|镭射|laser|炸弹|清屏|bomb", re.I
+)
+
+
+def is_laser_bomb_drop_request(text: str) -> bool:
+    """掉落请求且明确针对激光/炸弹（快车道/专用门禁的适用范围）。
+
+    「掉落一颗爱心回血」等通用掉落不属于此类，应走 LLM 自由创作。
+    """
+    t = text or ""
+    return is_drop_loot_request(t) and bool(_LASER_BOMB_NAME.search(t))
 
 
 def _catalog_entries(contract: dict[str, Any]) -> list[dict[str, Any]]:
@@ -40,19 +68,19 @@ def _match_catalog_skills(text: str, contract: dict[str, Any]) -> list[str]:
     low = text.lower()
     hits: list[str] = []
     aliases: dict[str, tuple[str, ...]] = {
-        "bomb": ("炸弹", "清屏", "bomb"),
-        "laser_beam": ("激光", "镭射", "laser"),
-        "double_jump": ("二段跳", "双跳", "两段跳", "double_jump", "double jump"),
-        "ground_pound": ("下砸", "砸地", "ground_pound", "ground pound"),
-        "magnet": ("吸经验", "磁铁", "吸取", "magnet"),
-        "nova": ("环形爆发", "爆发", "清屏一圈", "nova"),
-        "slide": ("滑铲", "下滑", "slide"),
-        "power_smash": ("大力扣杀", "扣杀", "重击", "power_smash"),
-        "curve_ball": ("旋转球", "曲线球", "curve"),
-        "block_parry": ("格挡", "招架", "parry", "block"),
-        "special_uppercut": ("上勾拳", "勾拳", "uppercut"),
-        "boost": ("氮气", "加速氮气", "boost"),
-        "drift_snap": ("漂移", "drift"),
+        "bomb": ("炸弹", "清屏", "清屏弹", "大炸弹", "bomb"),
+        "laser_beam": ("激光", "镭射", "发射激光", "开激光", "激光炮", "laser"),
+        "double_jump": ("二段跳", "双跳", "两段跳", "再跳一次", "double_jump", "double jump"),
+        "ground_pound": ("下砸", "砸地", "地面砸击", "ground_pound", "ground pound"),
+        "magnet": ("吸经验", "磁铁", "吸取", "磁力", "magnet"),
+        "nova": ("环形爆发", "爆发", "清屏一圈", "大招清怪", "nova"),
+        "slide": ("滑铲", "下滑", "滑行", "slide"),
+        "power_smash": ("大力扣杀", "扣杀", "重击", "大力扣", "power_smash"),
+        "curve_ball": ("旋转球", "曲线球", "曲线球路", "curve"),
+        "block_parry": ("格挡", "招架", "防御反击", "parry", "block"),
+        "special_uppercut": ("上勾拳", "勾拳", "必杀勾拳", "uppercut"),
+        "boost": ("氮气", "加速氮气", "开加速", "喷气加速", "boost"),
+        "drift_snap": ("漂移", "甩尾", "drift"),
     }
     for skill in _catalog_entries(contract):
         sid = str(skill.get("id", "")).strip()
@@ -218,6 +246,40 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "advisory": True,
         }
 
+    # 掉落/拾取才开启：即使点名了激光炸弹，也是新机制，禁止走 catalog 快开
+    if is_drop_loot_request(text):
+        named = skill_ids[:2]
+        named_txt = "、".join(named) if named else "该能力"
+        return {
+            "intent": "C",
+            "recipe_id": recipe_id or "drop_loot_unlock",
+            "skill_ids": [],
+            "actions": [
+                {"tool": "diagnose_workspace"},
+                {
+                    "tool": "write_file",
+                    "path": "core/ai_sandbox/drop_loot_unlock.gd",
+                    "hint": (
+                        f"实现：{named_txt} 作为敌机/敌人掉落道具；"
+                        "玩家捡到后才解锁或临时可用；禁止只 enable_catalog_skill 当按钮技能交差"
+                    ),
+                },
+            ],
+            "hint": (
+                "用户要的是「掉落物/捡到才开」，不是底部技能按钮。"
+                "shmup 最小改法：①config powerup_types 加 laser/bomb；"
+                "②仅扩展 player_ship.apply_powerup：拾取后往 GameConfig.tuning.enabled_skills "
+                "追加 laser_beam/bomb，再 AiSandboxBridge.ensure_touch_skill_buttons()；"
+                "③禁止改写 enemy_spawner/main.tscn/game_manager；禁止 Bridge. 幻想 API；"
+                "开局 enabled_skills 保持 []；how_to_play 写打敌机→捡掉落。"
+            ),
+            "stop": False,
+            "stop_reason": "",
+            "genre": genre,
+            "advisory": False,
+            "express": False,
+        }
+
     # A：命中 catalog
     if skill_ids:
         actions = [
@@ -244,7 +306,9 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "stop": False,
             "stop_reason": "",
             "genre": genre,
-            "advisory": True,
+            # 点名技能（激光/炸弹等）可确定性快开；「技能太少」批量建议仍标 advisory
+            "advisory": bool(re.search(r"技能太少|技能少|多加.*技能|多来点技能", text)),
+            "express": True,
         }
 
     # 有 recipe：先按 action 分流（bridge/sandbox → C，再 B）

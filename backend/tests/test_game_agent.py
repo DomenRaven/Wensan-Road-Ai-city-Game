@@ -130,6 +130,60 @@ def test_nl_patch_agent_with_key_stub_without(tmp_path: Path) -> None:
     assert result2["provider"] == "stub"
 
 
+def test_catalog_express_laser_skips_llm(tmp_path: Path) -> None:
+    """「发射激光」应走 catalog 快车道，不调用多轮 LLM。"""
+    from app.services.creative.game_agent import run_game_agent
+
+    templates, workspace, root = _mini_tree(tmp_path)
+    # shmup 树：补 optional 目录技能依赖
+    shmup = templates / "shmup"
+    (shmup / "config").mkdir(parents=True, exist_ok=True)
+    (shmup / "config" / "game_config.json").write_text(
+        json.dumps(
+            {
+                "meta": {"genre": "shmup"},
+                "tuning": {"enabled_skills": [], "player": {"move_speed": 200}},
+                "theme": {"title": "测"},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    (root / "config" / "game_config.json").write_text(
+        json.dumps(
+            {
+                "meta": {"genre": "shmup"},
+                "tuning": {"enabled_skills": [], "player": {"move_speed": 200}},
+                "theme": {"title": "测"},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    settings = _settings(templates, workspace, api_key="sk-test")
+    with patch("app.services.creative.game_agent._llm_turn") as llm:
+        with patch(
+            "app.services.creative.game_agent.refresh_ai_sandbox_bridge",
+            return_value=True,
+        ):
+            with patch(
+                "app.services.creative.game_agent.enable_catalog_skill",
+                return_value={"skill_id": "laser_beam", "label": "激光"},
+            ):
+                with patch(
+                    "app.services.creative.game_agent.run_done_gates",
+                    return_value=[],
+                ):
+                    out = run_game_agent(
+                        settings, root, "shmup", "我想加发射激光"
+                    )
+    assert out["ok"] is True
+    assert out.get("express") is True
+    assert out["agent_rounds"] == 0
+    assert "laser_beam" in (out.get("applied_capabilities") or [])
+    llm.assert_not_called()
+
+
 def test_enable_catalog_skill_writes_config(tmp_path: Path) -> None:
     templates, workspace, root = _mini_tree(tmp_path)
     out = enable_catalog_skill(root, "platformer", "double_jump")

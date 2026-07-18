@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import re
+import uuid
 from pathlib import Path
 
 from app.services.creative.agent_contracts import (
@@ -23,6 +25,196 @@ def test_route_shmup_catalog_is_a() -> None:
     assert "bomb" in r["skill_ids"]
     assert "laser_beam" in r["skill_ids"]
     assert any(a.get("tool") == "enable_catalog_skill" for a in r["actions"])
+
+
+def test_route_drop_loot_is_c_not_catalog_express() -> None:
+    """「敌机掉落才开」不得走 catalog 快开按钮技能。"""
+    from app.services.creative.game_agent import _can_catalog_express
+
+    c = load_contract("shmup")
+    text = "激光和炸弹是敌机掉落物，掉落才开启"
+    r = route_intent(text, c)
+    assert r["intent"] == "C"
+    assert r.get("skill_ids") == []
+    assert r.get("express") is False
+    assert not any(a.get("tool") == "enable_catalog_skill" for a in r["actions"])
+    assert _can_catalog_express(r, text, "") is False
+    # 对比：单纯开激光仍走 A 快车道
+    r2 = route_intent("开启激光", c)
+    assert r2["intent"] == "A"
+    assert _can_catalog_express(r2, "开启激光", "") is True
+
+
+def test_shmup_drop_loot_express_patches_powerup() -> None:
+    """shmup 掉落快车道：powerup_types + apply_powerup，且非 catalog express。"""
+    from app.config import get_settings
+    from app.services.creative.game_agent import _run_shmup_drop_loot_express
+    from app.services.workspace import copy_template_to_workspace
+    from app.services.workspace_guard import remove_workspace
+
+    settings = get_settings()
+    sid = str(uuid.uuid4())
+    root = copy_template_to_workspace(
+        settings.templates_dir, settings.workspace_dir, "shmup", sid
+    )
+    try:
+        c = load_contract("shmup")
+        text = "激光和炸弹是敌机掉落物，掉落才开启"
+        r = route_intent(text, c)
+        out = _run_shmup_drop_loot_express(settings, root, text, r, c)
+        assert out["ok"] is True
+        assert out.get("express") is False
+        assert "点屏幕下方对应按钮" not in out["summary"]
+        cfg = json.loads((root / "config" / "game_config.json").read_text(encoding="utf-8"))
+        names = [x.get("name") for x in cfg["tuning"]["powerup_types"]]
+        assert "laser" in names and "bomb" in names
+        assert cfg["tuning"]["enabled_skills"] == []
+        ps = (root / "core" / "player_ship.gd").read_text(encoding="utf-8")
+        assert "_unlock_catalog_skill" in ps
+        assert re.search(r"func\s+_unlock_catalog_skill\s*\(", ps)
+        assert re.search(r'["\']laser["\']', ps)
+    finally:
+        remove_workspace(settings.workspace_dir, sid)
+
+
+def test_done_gate_rejects_button_promo_for_drop_loot(tmp_path: Path) -> None:
+    """掉落需求：禁止「已开启/点下方按钮」空口交差。"""
+    root = tmp_path / "ws"
+    (root / "config").mkdir(parents=True)
+    (root / "core").mkdir(parents=True)
+    (root / "config" / "game_config.json").write_text(
+        json.dumps(
+            {
+                "tuning": {
+                    "enabled_skills": ["bomb", "laser_beam"],
+                    "powerup_types": [
+                        {"name": "fireRate", "frame": 12},
+                        {"name": "shield", "frame": 13},
+                    ],
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "core" / "player_ship.gd").write_text(
+        'extends Area2D\nfunc apply_powerup(powerup_name: String) -> void:\n'
+        '\tmatch powerup_name:\n\t\t"fireRate":\n\t\t\tpass\n\t\t"shield":\n\t\t\tpass\n',
+        encoding="utf-8",
+    )
+    c = load_contract("shmup")
+    text = "激光和炸弹是敌机掉落物，掉落才开启"
+    errs = run_done_gates(
+        root,
+        written_paths=["config/game_config.json"],
+        summary="已为你开启「清屏炸弹、激光」。请重新启动游戏，点屏幕下方对应按钮试玩。",
+        how_to_play=[
+            "重要：必须重新启动游戏后新技能才会生效",
+            "点屏幕下方「清屏炸弹、激光」按钮试玩（触屏）",
+        ],
+        genre="shmup",
+        contract=c,
+        catalog_changed=True,
+        user_text=text,
+    )
+    assert any("掉落物" in e for e in errs)
+
+
+def test_done_gate_accepts_drop_loot_powerup_impl(tmp_path: Path) -> None:
+    """掉落需求：powerup_types + apply_powerup + 捡掉落话术可通过。"""
+    root = tmp_path / "ws"
+    (root / "config").mkdir(parents=True)
+    (root / "core").mkdir(parents=True)
+    (root / "scenes").mkdir(parents=True)
+    (root / "config" / "game_config.json").write_text(
+        json.dumps(
+            {
+                "tuning": {
+                    "enabled_skills": [],
+                    "powerup_types": [
+                        {"name": "fireRate", "frame": 12},
+                        {"name": "laser", "frame": 8},
+                        {"name": "bomb", "frame": 9},
+                    ],
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "core" / "player_ship.gd").write_text(
+        'extends Area2D\nfunc apply_powerup(powerup_name: String) -> void:\n'
+        '\tmatch powerup_name:\n'
+        '\t\t"laser":\n'
+        '\t\t\tvar skills: Array = []\n'
+        '\t\t\tskills.append("laser_beam")\n'
+        '\t\t\t# unlock via enabled_skills + AiSandboxBridge\n'
+        '\t\t"bomb":\n'
+        '\t\t\tpass\n',
+        encoding="utf-8",
+    )
+    (root / "core" / "enemy_spawner.gd").write_text(
+        "extends Node2D\nsignal request_powerup(spawn_pos: Vector2, count: int)\n",
+        encoding="utf-8",
+    )
+    (root / "scenes" / "main.tscn").write_text(
+        '[gd_scene load_steps=2 format=3]\n[node name="Main" type="Node2D" groups=["game_manager"]]\n'
+        '[node name="EnemySpawner" type="Node2D" parent="."]\n',
+        encoding="utf-8",
+    )
+    c = load_contract("shmup")
+    errs = run_done_gates(
+        root,
+        written_paths=["config/game_config.json", "core/player_ship.gd"],
+        summary="已把激光和炸弹改成敌机掉落物，捡到后才解锁。",
+        how_to_play=[
+            "重要：重新启动游戏后生效",
+            "打敌机，捡掉落的激光/炸弹道具后再用（触屏飞过去撞拾取）",
+        ],
+        genre="shmup",
+        contract=c,
+        catalog_changed=False,
+        user_text="激光和炸弹是敌机掉落物，掉落才开启",
+    )
+    assert not any("掉落物" in e for e in errs)
+
+
+def test_done_gate_rejects_gutted_spawner_for_drop_loot(tmp_path: Path) -> None:
+    """掉落需求：掏空 enemy_spawner 应被门禁拦住。"""
+    root = tmp_path / "ws"
+    (root / "config").mkdir(parents=True)
+    (root / "core").mkdir(parents=True)
+    (root / "config" / "game_config.json").write_text(
+        json.dumps(
+            {
+                "tuning": {
+                    "enabled_skills": [],
+                    "powerup_types": [
+                        {"name": "laser", "frame": 14},
+                        {"name": "bomb", "frame": 15},
+                    ],
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "core" / "player_ship.gd").write_text(
+        'extends Area2D\nfunc apply_powerup(n: String) -> void:\n\tmatch n:\n\t\t"laser":\n\t\t\tpass\n',
+        encoding="utf-8",
+    )
+    (root / "core" / "enemy_spawner.gd").write_text(
+        "extends Node\nfunc spawn_enemy() -> void:\n\tpass\n",
+        encoding="utf-8",
+    )
+    c = load_contract("shmup")
+    errs = run_done_gates(
+        root,
+        written_paths=["core/enemy_spawner.gd", "config/game_config.json"],
+        summary="已做成敌机掉落，捡到才开激光炸弹。",
+        how_to_play=["重开后打敌机捡掉落物"],
+        genre="shmup",
+        contract=c,
+        user_text="激光和炸弹是敌机掉落物，掉落才开启",
+    )
+    assert any("request_powerup" in e for e in errs)
 
 
 def test_route_mouse_skill_conflict_is_b_not_a() -> None:

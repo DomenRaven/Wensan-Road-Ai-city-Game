@@ -123,10 +123,16 @@
   ],
   "edit_recipes": [
     {
+      "intent": "掉落物/敌机掉落/捡到才开",
+      "action": "edit_session_core",
+      "paths": "core/*.gd scenes/*.tscn core/ai_sandbox/*.gd",
+      "hint": "激光炸弹作掉落：会话 powerup_types 加 laser/bomb + apply_powerup 解锁；禁 enable_catalog 当按钮"
+    },
+    {
       "intent": "开炸弹/激光",
       "action": "enable_catalog_skill",
       "paths": "config/game_config.json",
-      "hint": "catalog 最多 2 个：bomb / laser_beam"
+      "hint": "catalog 最多 2 个：bomb / laser_beam（仅用户要按钮技能时）"
     },
     {
       "intent": "鼠标与技能按钮冲突/点按钮飞机会跑",

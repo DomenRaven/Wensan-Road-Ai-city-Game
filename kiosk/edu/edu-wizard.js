@@ -1104,6 +1104,11 @@
         statusEl.textContent = "○ 游戏窗口已关闭";
         statusEl.className = "godot-run-status stopped";
       }
+      // 关窗立刻停代码高亮/滚动，避免关窗后仍黄字乱跳
+      if (sawGodotRunning || prevGodotRunning) {
+        window.EduCodeHighlight?.stopPolling?.();
+        window.EduCodeHighlight?.clearPresentation?.();
+      }
       // N-4 · 关窗后把「运行中」死态改为「已关闭」，引导重新试玩
       if (sawGodotRunning) {
         const hint = document.getElementById("playWindowHint");
@@ -1111,20 +1116,27 @@
         const hintText = document.getElementById("playWindowHintText");
         if (hint) hint.classList.add("play-window-hint--closed");
         if (title) title.textContent = "游戏已关闭";
-        if (hintText) hintText.textContent = "点「重新试玩」再玩一次，或看看今日榜单";
+        if (hintText) hintText.textContent = "点「重新试玩」再玩一次，或点「今日榜单」查看排名";
       }
 
-      const elapsed = Date.now() - launchPollStartedAt;
-      const closedAfterRun =
-        genre === "pingpong"
-          ? sawGodotRunning
-          : sawGodotRunning || (!!launchState?.ok && elapsed >= 1200);
+      // 必须真实跑过 Godot 才自动弹榜；禁止「launch ok 满 1.2s」误弹
+      // AI 改游戏弹层打开时不抢焦点弹榜
+      const nlOpen = !!document.getElementById("edu-nlpatch-overlay");
+      const closedAfterRun = !!sawGodotRunning;
       const shouldHandle =
         closedAfterRun &&
+        !nlOpen &&
         window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre) &&
         !leaderboardHandledThisRun;
       if (shouldHandle) {
         await handleLeaderboardAfterRunClose(sessionId);
+        stopLaunchStatusPolling();
+        return;
+      }
+      if (closedAfterRun) {
+        // 已确认关窗：停 status 轮询（榜单已处理 / 品类无榜 / AI 弹层打开）
+        stopLaunchStatusPolling();
+        return;
       }
       prevGodotRunning = false;
     } catch (_) {

@@ -203,18 +203,18 @@
   function startProgressPoll() {
     stopProgressPoll();
     const sid = ctx.sessionId;
-    if (!sid || !window.EduSession?.apiWithSession) return;
+    // 禁止用 apiWithSession：进度 404 时会误建新会话，导致主请求像「一直加载」
+    if (!sid || !window.EduSession?.api) return;
     progressPollId = window.setInterval(async () => {
       try {
-        const prog = await window.EduSession.apiWithSession(
-          `/sessions/${sid}/agent-progress`,
-          { method: "GET" }
-        );
+        const prog = await window.EduSession.api(`/sessions/${sid}/agent-progress`, {
+          method: "GET",
+        });
         if (prog && prog.stage && window.EduLlmCreateWait?.setStage) {
           window.EduLlmCreateWait.setStage(String(prog.stage), String(prog.detail || ""));
         }
       } catch (_e) {
-        /* 轮询失败静默 */
+        /* 轮询失败静默，绝不重建会话 */
       }
     }, 1200);
   }
@@ -363,6 +363,13 @@
     // 对齐大模型对话：同会话始终带短历史；本轮原文始终作 text（最高优先）
     const historyForApi = history.slice(0, -1).slice(-10);
 
+    // 智能体多轮可能数分钟；超过则诚实失败，避免无限转圈
+    const NL_PATCH_TIMEOUT_MS = 360000;
+    const ac = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = ac
+      ? window.setTimeout(() => ac.abort(), NL_PATCH_TIMEOUT_MS)
+      : null;
+
     try {
       const result = await window.EduSession.apiWithSession(
         `/sessions/${ctx.sessionId}/nl-patch`,
@@ -373,6 +380,7 @@
             history: historyForApi,
             feedback: fb || (isRuntimeFault ? trimmed : ""),
           }),
+          signal: ac?.signal,
         }
       );
       patched = patched || !!result.ok;
@@ -385,19 +393,27 @@
       renderResult(lastResult);
       // 不自动重开：游客先读完 AI 说明，再点「现在重开游戏」
     } catch (err) {
-      window.EduSession?.log?.(`nl-patch 失败 · ${err?.message || err}`);
-      history.push({ role: "assistant", content: "网络出了点小问题，请稍后再试一次" });
+      const raw = String(err?.message || err || "");
+      const aborted =
+        (ac && ac.signal.aborted) ||
+        /abort|AbortError|The user aborted/i.test(raw);
+      window.EduSession?.log?.(`nl-patch 失败 · ${raw}`);
+      const msg = aborted
+        ? "这轮想得太久了（超过约 6 分钟）。请再发一次，或把需求拆成更短的一句话。"
+        : "网络出了点小问题，请稍后再试一次";
+      history.push({ role: "assistant", content: msg });
       lastResult = {
         ok: false,
-        provider: "stub",
+        provider: "agent",
         summary: "",
-        message: "网络出了点小问题，请稍后再试一次",
+        message: msg,
         changes: [],
         how_to_play: [],
         applied_capabilities: [],
       };
       renderResult(lastResult);
     } finally {
+      if (timeoutId != null) window.clearTimeout(timeoutId);
       busy = false;
     }
   }

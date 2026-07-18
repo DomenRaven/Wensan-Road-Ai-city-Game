@@ -14,14 +14,20 @@
 
 - **智能体自由创作**：契约/提示改为「会话 core/scenes 主路径；桥与 catalog 为捷径」；幻想 API 不再硬劝退，改为继续让 LLM 用 GDScript 实现；默认意图走自由创作
 - **去伪降级**：有 `LLM_API_KEY` 时 **只走** `run_game_agent`（失败重试后诚实 `provider=agent`）；**禁止**再掉进旧 `_call_llm` / stub；无 Key 才用离线 stub
-- **对话对齐 DeepSeek 体验**：本轮原话置顶；强制 `understanding` + `goals[]`；多 goals 覆盖 summary；同会话带历史；UI 展示理解/拆解（`nl-patch-dialog.js?v=7.4-c09-25`）
+- **对话对齐 DeepSeek 体验**：本轮原话置顶；强制 `understanding` + `goals[]`；多 goals 覆盖 summary；同会话带历史；UI 展示理解/拆解
 - **故障反馈**：人物消失/白屏等 → Intent B 诊断修盘，禁止叠无关 buff；故障局 done 门禁软化
+- **门禁纳入 Godot 冒烟自愈**：本轮改 `.gd/.tscn` 强制 `dry_run_godot`，错误（含 `at:` 定位）回灌 LLM；`None/True/False` 静态拦截
+- **HF-8 不上锁**：轮次/门禁耗尽 → `_salvage_agent_return` 尽力交付或回滚保加载，禁「没改成」劝退
+- **HF-9（进行中）**：坏 JSON 仍上锁 + 回滚到「已坏可加载」基线却假安慰——见热修手册；本提交先落文档，代码紧随
 - **项目瘦身**：清理 workspace 运行时报告/证书令牌、根目录重复部署手册与一次性验收 docx、pytest 缓存与 learned_skills 体验运行时
 
 ### 新增
 
+- **掉落物快车道（shmup）**：激光/炸弹「掉落才开」与通用掉落（爱心等）语义分流；`assert_drop_loot_done`
+- **七品类真·LLM E2E**：`05-工具脚本/e2e_7_18_live_three_tasks.py`（7×3 全绿）
+- **热修手册**：`开发文档/7.18_AI改游戏智能体_热修手册.md`（HF-1…HF-9）
 - **P0-通用工作流（条件通过）**：`intent_router`（A/B/C/D）· 七品类契约 `runtime` · `assert_catalog_runtime` · 桥 `ensure_touch_action` · Agent 注入路由
-- 单测：`test_intent_router` 等；godot-mcp 抽测 shmup/platformer 无 ERROR；ai_sandbox/game_agent/nl_patch 对齐 Agent-only（非 live **70 passed**）
+- 单测扩：`test_intent_router` / `test_agent_contracts` / `test_catalog_express_all_genres` 等
 - **Live 可感知矩阵** `05-工具脚本/live_perceivable_matrix.py`
 
 ### 既有变更

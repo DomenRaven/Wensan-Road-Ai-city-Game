@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -164,6 +165,17 @@ def read_workspace_file(
     return text
 
 
+def _deep_merge_dict(base: dict, overlay: dict) -> dict:
+    """overlay 覆盖同名叶；base 独有键保留（防 LLM 整表覆盖丢字段）。"""
+    out: dict = dict(base)
+    for key, val in overlay.items():
+        if key in out and isinstance(out[key], dict) and isinstance(val, dict):
+            out[key] = _deep_merge_dict(out[key], val)
+        else:
+            out[key] = val
+    return out
+
+
 def write_workspace_file(
     workspace_root: Path,
     workspace_dir: Path,
@@ -178,6 +190,19 @@ def write_workspace_file(
     )
     if rel.endswith(".gd"):
         validate_gdscript_safe(content)
+    # game_config：合并写入，避免 LLM 只写局部 tuning 时丢掉 powerup_types 等
+    if rel.replace("\\", "/") == "config/game_config.json" and target.is_file():
+        try:
+            incoming = json.loads(content)
+            existing = json.loads(target.read_text(encoding="utf-8"))
+            if isinstance(incoming, dict) and isinstance(existing, dict):
+                content = json.dumps(
+                    _deep_merge_dict(existing, incoming),
+                    ensure_ascii=False,
+                    indent=2,
+                ) + "\n"
+        except (json.JSONDecodeError, OSError, TypeError):
+            pass
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
     return rel

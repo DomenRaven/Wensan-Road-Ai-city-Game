@@ -6,6 +6,8 @@
   let pollTimer = null;
   /** @type {number|null} */
   let captionTimer = null;
+  /** 关窗 / stop 后立刻禁止继续高亮与切文件滚动 */
+  let pollingActive = false;
   /** @type {number} */
   let actionCursor = 0;
   /** @type {Record<string, number>} */
@@ -122,8 +124,12 @@
 
     /**
      * @param {string} actionId
+     * @param {{manual?: boolean}} [opts] manual=讲解员按钮手动触发，不受游戏轮询状态门控
      */
-    async handleAction(actionId) {
+    async handleAction(actionId, opts = {}) {
+      const manual = opts.manual === true;
+      // 手动讲解演示无需游戏在跑；仅游戏轮询驱动的高亮才受 pollingActive 门控
+      if (!manual && !pollingActive) return;
       if ((config.suppress_actions || []).includes(actionId)) return;
 
       const now = Date.now();
@@ -182,6 +188,7 @@
         }
       }
 
+      if (!manual && !pollingActive) return;
       if (window.EduCodeViewer) {
         window.EduCodeViewer.setActiveFile(file);
         const hit = window.EduCodeViewer.highlightLine(
@@ -195,7 +202,22 @@
         }
       }
 
-      if (anchor.caption) this.showCaption(anchor.caption, priority);
+      if ((manual || pollingActive) && anchor.caption) this.showCaption(anchor.caption, priority);
+    },
+
+    /** 清掉黄字高亮与讲解气泡（关窗时调用） */
+    clearPresentation() {
+      presentationLockUntil = 0;
+      presentationLockPriority = 0;
+      const bubble = document.getElementById("captionBubble");
+      if (bubble) bubble.hidden = true;
+      if (captionTimer) {
+        window.clearTimeout(captionTimer);
+        captionTimer = null;
+      }
+      document.querySelectorAll(".code-line-highlight").forEach((el) => {
+        el.classList.remove("code-line-highlight");
+      });
     },
 
     /**
@@ -219,9 +241,9 @@
       }, config.caption_duration_ms);
     },
 
-    /** 演示模式：无 Godot 桥时手动模拟 action */
+    /** 演示模式：无 Godot 桥时手动模拟 action（讲解员按钮，不需游戏在跑） */
     simulateAction(actionId) {
-      void this.handleAction(actionId);
+      void this.handleAction(actionId, { manual: true });
     },
 
     /**
@@ -229,30 +251,35 @@
      */
     startPolling(sessionId) {
       this.stopPolling();
+      pollingActive = true;
       actionCursor = 0;
       presentationLockUntil = 0;
       presentationLockPriority = 0;
       pollTimer = window.setInterval(async () => {
+        if (!pollingActive) return;
         try {
           const data = await window.EduSession.api(
             `/sessions/${sessionId}/play/actions?since=${actionCursor}`
           );
+          if (!pollingActive) return;
           const actions = (data.actions || []).slice();
           actions.sort(
             (a, b) => actionPriority(b.action_id) - actionPriority(a.action_id)
           );
           for (const /** @type {{action_id:string,t_ms?:number,cursor?:number}} */ a of actions) {
+            if (!pollingActive) break;
             const eventMs = a.t_ms ?? a.cursor ?? 0;
             if (eventMs > 0) actionCursor = Math.max(actionCursor, eventMs);
             await this.handleAction(a.action_id);
           }
         } catch (_) {
-          /* TODO: GET /sessions/{id}/play/actions 未就绪时静默 */
+          /* GET /play/actions 未就绪或会话失效时静默 */
         }
       }, config.poll_interval_ms);
     },
 
     stopPolling() {
+      pollingActive = false;
       if (pollTimer) {
         window.clearInterval(pollTimer);
         pollTimer = null;

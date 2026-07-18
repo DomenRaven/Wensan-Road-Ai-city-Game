@@ -244,10 +244,54 @@ def compile_user_intent(
     config: dict[str, Any],
 ) -> dict[str, Any]:
     """把自然语言编译成 changes / new_files / applied / how_to_play。"""
+    from app.services.creative.intent_router import (
+        is_drop_loot_request,
+        is_laser_bomb_drop_request,
+    )
+
     changes: list[dict[str, Any]] = []
     new_files: list[dict[str, str]] = []
     applied: list[str] = []
     how_to_play: list[str] = []
+    # 掉落才开 ≠ catalog 按钮：离线 stub 也不要 enable bomb/laser
+    if is_drop_loot_request(text):
+        if genre == "shmup" and is_laser_bomb_drop_request(text):
+            before_raw = get_path(config, "tuning.powerup_types")
+            before: list[Any] = list(before_raw) if isinstance(before_raw, list) else []
+            names = {
+                str(x.get("name", "")).strip()
+                for x in before
+                if isinstance(x, dict)
+            }
+            after = list(before)
+            if "laser" not in names:
+                after.append({"name": "laser", "frame": 14})
+            if "bomb" not in names:
+                after.append({"name": "bomb", "frame": 15})
+            if after != before:
+                _merge_change(
+                    changes,
+                    "tuning.powerup_types",
+                    before,
+                    after,
+                )
+            applied.append("drop_loot_powerup")
+            how_to_play.append(
+                "离线演示：已把激光/炸弹加入掉落表；有 Key 时智能体还会改 apply_powerup 拾取解锁"
+            )
+            how_to_play.append("重要：重新启动游戏后，打敌机并捡掉落物试玩")
+        else:
+            how_to_play.append(
+                "掉落物需智能体改会话 core（请配置 LLM_API_KEY）；离线 stub 无法完整落地"
+            )
+            how_to_play.append("重要：重新启动游戏后再试")
+        return {
+            "changes": changes,
+            "new_files": new_files,
+            "applied_capabilities": applied,
+            "how_to_play": how_to_play,
+        }
+
     catalog = load_optional_skills_catalog().get(genre, [])
     want_icon = any(w in text for w in ("图标", "icon", "画画", "绘制", "画一个", "画个"))
     # 开技能默认给图标，对话更完整

@@ -23,6 +23,7 @@ PROGRESS_STAGES: dict[str, tuple[str, str]] = {
 }
 
 # 全局禁止幻想 API（即使未写进契约 forbidden 列表）
+# 匹配时按「整词/显式调用」——勿误伤 _merge_overrides_json 等合法实现
 _GLOBAL_FORBIDDEN_APIS: tuple[str, ...] = (
     "add_method",
     "bridge.add_method",
@@ -31,7 +32,50 @@ _GLOBAL_FORBIDDEN_APIS: tuple[str, ...] = (
     "patch_tuning",
     "set_color(",
     "bullet.set_color",
+    'Engine.has_singleton("Bridge")',
+    "Bridge.ensure_touch_skill_buttons",
 )
+
+_TRUSTED_EDU_SCRIPT_NAMES: frozenset[str] = frozenset(
+    {
+        "ai_sandbox_bridge.gd",
+        "edu_action_bridge.gd",
+        "window_chrome_overlay.gd",
+    }
+)
+
+
+def _is_trusted_edu_script(rel: str) -> bool:
+    """会话内从 _edu 注入的桥/触屏脚本：门禁不验其正文（模板已审）。"""
+    name = Path(rel.replace("\\", "/")).name
+    if name in _TRUSTED_EDU_SCRIPT_NAMES:
+        return True
+    return name.endswith("_touch_overlay.gd")
+
+
+def _strip_gd_strings_and_comments(content: str) -> str:
+    """去掉双引号/单引号字符串与 # 行注释，供括号配对粗检。"""
+    no_str = re.sub(r'"(?:\\.|[^"\\])*"', '""', content)
+    no_str = re.sub(r"'(?:\\.|[^'\\])*'", "''", no_str)
+    lines: list[str] = []
+    for line in no_str.splitlines():
+        if "#" in line:
+            line = line.split("#", 1)[0]
+        lines.append(line)
+    return "\n".join(lines)
+
+
+def _contains_forbidden_api(content: str, snip: str) -> bool:
+    """禁止 API 检测：带点号/括号的按字面；裸名按整词，避免 _merge_overrides_json 误伤。"""
+    token = str(snip or "").strip()
+    if not token:
+        return False
+    if "(" in token or "." in token:
+        return token in content
+    return (
+        re.search(rf"(?<![A-Za-z0-9_]){re.escape(token)}(?![A-Za-z0-9_])", content)
+        is not None
+    )
 
 # Godot 4 常见写错：Color.red → Color.RED
 _BAD_COLOR_LITERALS: re.Pattern[str] = re.compile(
@@ -193,15 +237,23 @@ def validate_gdscript(content: str) -> list[str]:
         return errors
     if "extends " not in body and "class_name " not in body:
         errors.append("缺少 extends / class_name")
-    if body.count("(") != body.count(")"):
+    structural = _strip_gd_strings_and_comments(body)
+    if structural.count("(") != structural.count(")"):
         errors.append("括号不配对")
-    if body.count("{") != body.count("}"):
+    if structural.count("{") != structural.count("}"):
         errors.append("花括号不配对")
     bad = _BAD_COLOR_LITERALS.search(body)
     if bad:
         errors.append(f"Godot 4 颜色应为大写常量，勿写 Color.{bad.group(1)}")
+    # Python 字面量误写：GDScript 用 null/true/false（在去字符串/注释后按整词检测）
+    py_lit = re.search(r"(?<![A-Za-z0-9_.])(None|True|False)(?![A-Za-z0-9_])", structural)
+    if py_lit:
+        repl = {"None": "null", "True": "true", "False": "false"}[py_lit.group(1)]
+        errors.append(
+            f"含 Python 字面量 {py_lit.group(1)}，GDScript 应写 {repl}"
+        )
     for snip in _GLOBAL_FORBIDDEN_APIS:
-        if snip in body:
+        if _contains_forbidden_api(body, snip):
             errors.append(f"含幻想/禁止 API: {snip}")
     return errors
 
@@ -212,12 +264,27 @@ def assert_apis_in_contract(content: str, contract: dict[str, Any]) -> list[str]
     forbid = {
         str(x) for x in (contract.get("forbidden_invented_apis") or _GLOBAL_FORBIDDEN_APIS)
     }
+    # Node 通用方法：局部变量常叫 bridge，勿当成 Autoload 桥 API
+    node_methods = {
+        "has_method",
+        "call",
+        "get",
+        "set",
+        "connect",
+        "disconnect",
+        "is_connected",
+        "emit_signal",
+        "get_node",
+        "get_node_or_null",
+    }
     errors: list[str] = []
     for snip in forbid:
-        if snip and snip in content:
+        if snip and _contains_forbidden_api(content, snip):
             errors.append(f"禁止 API: {snip}")
     for m in _BRIDGE_CALL_RE.finditer(content):
         name = m.group(1)
+        if name in node_methods:
+            continue
         if name not in allowed:
             errors.append(f"桥 API 不在契约内: bridge.{name}()")
     return list(dict.fromkeys(errors))
@@ -579,6 +646,168 @@ def read_progress(workspace_root: Path) -> dict[str, Any]:
         return {"stage": "", "title": "", "detail": ""}
 
 
+_DROP_BUTTON_PROMO: re.Pattern[str] = re.compile(
+    r"已为你开启|点屏幕下方对应按钮|点屏幕下方「|点屏幕下方.*按钮试玩|"
+    r"底部.*技能按钮|点下方对应按钮"
+)
+_DROP_PLAY_HINT: re.Pattern[str] = re.compile(r"捡|拾取|碰|撞|接住|掉落|掉下|飞到|吃到")
+
+
+def _powerup_types_has_loot(workspace_root: Path) -> bool:
+    cfg_path = workspace_root / "config" / "game_config.json"
+    if not cfg_path.is_file():
+        return False
+    try:
+        cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+        tuning = cfg.get("tuning") if isinstance(cfg, dict) else {}
+        types = tuning.get("powerup_types") if isinstance(tuning, dict) else []
+        if not isinstance(types, list):
+            return False
+        for item in types:
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get("name", "")).strip().lower()
+            if name in ("laser", "bomb", "laser_beam"):
+                return True
+    except (OSError, json.JSONDecodeError, TypeError):
+        return False
+    return False
+
+
+def _apply_powerup_unlocks_loot(workspace_root: Path) -> bool:
+    player = workspace_root / "core" / "player_ship.gd"
+    if not player.is_file():
+        return False
+    try:
+        text = player.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return False
+    m = re.search(r"func\s+apply_powerup[\s\S]+?(?=\nfunc\s+|\Z)", text)
+    if not m:
+        return False
+    body = m.group(0)
+    has_branch = bool(re.search(r'["\'](?:laser|bomb|laser_beam)["\']\s*:', body))
+    unlocks = bool(
+        re.search(r"enabled_skills|unlock|AiSandboxBridge|_unlock_catalog", body)
+    )
+    return has_branch and unlocks
+
+
+def _sandbox_drop_loot_script(workspace_root: Path, written_paths: list[str]) -> bool:
+    candidates: list[Path] = []
+    for rel in written_paths:
+        if "drop_loot" in rel.replace("\\", "/") or rel.endswith("drop_loot_unlock.gd"):
+            candidates.append(workspace_root / rel)
+    sandbox = workspace_root / "core" / "ai_sandbox"
+    if sandbox.is_dir():
+        candidates.extend(sandbox.glob("*drop*loot*.gd"))
+    for p in candidates:
+        if not p.is_file():
+            continue
+        try:
+            chunk = p.read_text(encoding="utf-8", errors="ignore")[:12000]
+        except OSError:
+            continue
+        if re.search(r"laser|bomb|laser_beam", chunk, re.I) and re.search(
+            r"enabled_skills|apply_powerup|pickup|拾取|unlock",
+            chunk,
+            re.I,
+        ):
+            return True
+    return False
+
+
+def _drop_loot_impl_evidence(workspace_root: Path, written_paths: list[str]) -> bool:
+    """须同时具备：掉落表含 laser/bomb + apply_powerup 拾取解锁（或等价 sandbox）。"""
+    types_ok = _powerup_types_has_loot(workspace_root)
+    apply_ok = _apply_powerup_unlocks_loot(workspace_root)
+    if types_ok and apply_ok:
+        return True
+    if _sandbox_drop_loot_script(workspace_root, written_paths) and types_ok and apply_ok:
+        return True
+    return False
+
+
+def assert_drop_loot_done(
+    workspace_root: Path,
+    *,
+    written_paths: list[str],
+    summary: str,
+    how_to_play: list[str],
+    catalog_changed: bool = False,
+    genre: str = "",
+    laser_bomb: bool = False,
+) -> list[str]:
+    """掉落物需求门禁。
+
+    - 通用掉落（爱心/金币等）：禁按钮话术冒充 + 须写捡/拾取试玩说明（实现证据由通用门禁把关）。
+    - 激光/炸弹掉落（laser_bomb=True）：额外要求 powerup_types 含 laser/bomb + apply_powerup 解锁，
+      并保护 shmup 敌机→request_powerup 管道 / 主场景不被掏空。
+    """
+    errors: list[str] = []
+    claim = summary + "\n" + "\n".join(how_to_play)
+    if _DROP_BUTTON_PROMO.search(claim) and not _DROP_PLAY_HINT.search(claim):
+        errors.append(
+            "掉落物需求：禁止用「已开启/点下方按钮」冒充完成；"
+            "须说明敌机掉落→拾取后才可用"
+        )
+    if not _DROP_PLAY_HINT.search(claim):
+        errors.append(
+            "掉落物需求：how_to_play/summary 须写清「打敌机→捡掉落物」试玩步骤"
+        )
+
+    if not laser_bomb:
+        # 通用掉落：不强制 laser/bomb 专用实现；实现证据交给通用 assert_claims/写盘检查
+        return list(dict.fromkeys(errors))
+
+    cfg_path = workspace_root / "config" / "game_config.json"
+    if cfg_path.is_file():
+        try:
+            cfg = json.loads(cfg_path.read_text(encoding="utf-8"))
+            tuning = cfg.get("tuning") if isinstance(cfg, dict) else {}
+            if isinstance(tuning, dict) and "powerup_types" not in tuning:
+                errors.append(
+                    "掉落物需求：game_config 丢失 powerup_types（禁止整表覆盖，"
+                    "须在原配置上追加 laser/bomb）"
+                )
+        except (OSError, json.JSONDecodeError, TypeError):
+            pass
+    if not _drop_loot_impl_evidence(workspace_root, written_paths):
+        errors.append(
+            "掉落物需求：须同时做到 powerup_types 含 laser/bomb，且 "
+            "player_ship.apply_powerup 拾取后写入 enabled_skills（或写完整 drop_loot 脚本）"
+        )
+    if catalog_changed and not _drop_loot_impl_evidence(workspace_root, written_paths):
+        errors.append(
+            "掉落物需求：禁止只 enable_catalog_skill；须落地掉落→拾取逻辑"
+        )
+    # shmup：保住敌机→request_powerup 管道，禁止 LLM 整文件掏空 spawner/主场景
+    if genre == "shmup":
+        spawner = workspace_root / "core" / "enemy_spawner.gd"
+        if spawner.is_file():
+            try:
+                sp_txt = spawner.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                sp_txt = ""
+            if "request_powerup" not in sp_txt:
+                errors.append(
+                    "掉落物需求：enemy_spawner 丢失 request_powerup（勿整文件重写 spawner）"
+                )
+        main_tscn = workspace_root / "scenes" / "main.tscn"
+        if main_tscn.is_file():
+            try:
+                main_txt = main_tscn.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                main_txt = ""
+            if "game_manager" not in main_txt.lower() and "GameManager" not in main_txt:
+                if len(main_txt) < 400 or "EnemySpawner" not in main_txt:
+                    errors.append(
+                        "掉落物需求：scenes/main.tscn 疑似被掏空，请只改 powerup_types/"
+                        "apply_powerup，勿重写主场景"
+                    )
+    return list(dict.fromkeys(errors))
+
+
 def run_done_gates(
     workspace_root: Path,
     *,
@@ -600,6 +829,14 @@ def run_done_gates(
         errors.append("how_to_play 须提醒重开游戏后生效")
     how_blob = "\n".join(how_to_play) + "\n" + summary
     ut = (user_text or "").strip()
+    # 延迟导入，避免与 intent_router 循环依赖
+    from app.services.creative.intent_router import (
+        is_drop_loot_request,
+        is_laser_bomb_drop_request,
+    )
+
+    drop_loot = is_drop_loot_request(ut)
+    laser_bomb_drop = is_laser_bomb_drop_request(ut)
     is_bugfix = bool(
         re.search(
             r"消失|不显示|看不见|白屏|黑屏|没法|无法启动|打不开|闪退|报错|修复|修好|坏了|"
@@ -607,13 +844,36 @@ def run_done_gates(
             ut,
         )
     )
-    if not re.search(r"触屏|点按|按钮|屏幕下方|手指", how_blob):
+    # 触屏可玩：按钮技能要点按；被动/位移类机制（碰到/穿过/踩/接住…）也是触屏拖动操控角色达成
+    touch_ok = bool(
+        re.search(
+            r"触屏|点按|按钮|屏幕下方|手指|碰到|碰|撞|穿过|踩|接住|走到|移动|拖动|靠近|吃到|捡",
+            how_blob,
+        )
+    )
+    if drop_loot and _DROP_PLAY_HINT.search(how_blob):
+        touch_ok = True
+    if not touch_ok:
         # 故障修复局允许「重开后查看」类试玩说明，不强行要技能按钮文案
         if not (
             is_bugfix
             and re.search(r"重开|启动|重新|查看|看看|是否", how_blob)
         ):
-            errors.append("how_to_play 须含触屏操作说明（展厅硬性，禁止只写键盘）")
+            errors.append(
+                "how_to_play 须含触屏可玩操作说明（点按/拖动/碰到等，禁止只写键盘）"
+            )
+    if drop_loot:
+        errors.extend(
+            assert_drop_loot_done(
+                workspace_root,
+                written_paths=written_paths,
+                summary=summary,
+                how_to_play=how_to_play,
+                catalog_changed=catalog_changed,
+                genre=genre,
+                laser_bomb=laser_bomb_drop,
+            )
+        )
 
     # 本轮优先：问题/故障类原话时，禁止只复读「已加技能」类宣传
     if re.search(
@@ -649,6 +909,8 @@ def run_done_gates(
 
     for rel in written_paths:
         if not rel.endswith(".gd"):
+            continue
+        if _is_trusted_edu_script(rel):
             continue
         path = workspace_root / rel
         if not path.is_file():
@@ -723,13 +985,29 @@ def dry_run_godot(
         return {"ok": False, "skipped": False, "reason": str(exc), "errors": [str(exc)]}
 
     combined = (proc.stdout or "") + "\n" + (proc.stderr or "")
+    lines = combined.splitlines()
     errors: list[str] = []
-    for line in combined.splitlines():
-        low = line.lower()
-        if "script error" in low or "parse error" in low or "failed to load script" in low:
+    # 命中这些即视为加载/运行错误（含破坏场景接线、丢节点等运行时错，不只脚本解析）
+    _err_needle = re.compile(
+        r"script error|parse error|failed to load|"
+        r"node not found|invalid access|invalid call|invalid get index|"
+        r"nonexistent function|already connected|"
+        r"could not (?:resolve|preload)|non-existent resource|invalid parameter",
+        re.I,
+    )
+    for i, line in enumerate(lines):
+        if _err_needle.search(line):
+            msg = line.strip()[:240]
+            # 追加紧跟的定位行「   at: func (res://xxx.gd:NN)」，让 LLM 精确定位
+            for j in (i + 1, i + 2):
+                if j < len(lines) and re.search(r"\bat:\s", lines[j]) and "res://" in lines[j]:
+                    msg += " | " + lines[j].strip()[:160]
+                    break
+            errors.append(msg)
+        elif re.search(r"\bERROR:", line) and ("res://" in line or "script" in line.lower()):
             errors.append(line.strip()[:240])
-        elif re.search(r"\bERROR:", line) and "script" in low:
-            errors.append(line.strip()[:240])
+    # 去重保序
+    errors = list(dict.fromkeys(errors))
     return {
         "ok": len(errors) == 0,
         "skipped": False,
@@ -741,7 +1019,7 @@ def dry_run_godot(
 
 def snippet_has_invented_apis(snippet: str, contract: dict[str, Any] | None = None) -> bool:
     """坏片段检测：幻想 API → 拒绝入库。"""
-    if any(x in snippet for x in _GLOBAL_FORBIDDEN_APIS):
+    if any(_contains_forbidden_api(snippet, x) for x in _GLOBAL_FORBIDDEN_APIS):
         return True
     if _BAD_COLOR_LITERALS.search(snippet):
         return True

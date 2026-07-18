@@ -156,14 +156,25 @@ def post_nl_patch(session_id: str, body: NlPatchRequest, request: Request) -> Nl
 
 @router.get("/sessions/{session_id}/agent-progress", response_model=AgentProgressResponse)
 def get_agent_progress(session_id: str, request: Request) -> AgentProgressResponse:
-    """智能体多阶段进度（Kiosk 轮询 · 中文阶段名）。"""
-    _session_or_404(request, session_id)
+    """智能体多阶段进度（Kiosk 轮询 · 中文阶段名）。
+
+    优先读会话记录里的 workspace_path；会话短暂丢失时仍尽量读盘，避免前端误判「无输出」。
+    """
     settings = request.app.state.settings
     try:
         validate_session_id(session_id)
     except WorkspaceGuardError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    workspace_root: Path = workspace_root_for_session(settings.workspace_dir, session_id)
+
+    workspace_root: Path | None = None
+    store = request.app.state.session_store
+    record: SessionRecord | None = store.get(session_id)
+    if record is not None:
+        wp = str(record.payload.get("workspace_path", "")).strip()
+        if wp:
+            workspace_root = Path(wp)
+    if workspace_root is None:
+        workspace_root = workspace_root_for_session(settings.workspace_dir, session_id)
     if not workspace_root.is_dir():
         return AgentProgressResponse()
     prog = read_progress(workspace_root)

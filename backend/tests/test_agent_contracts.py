@@ -71,6 +71,57 @@ func apply(bridge) -> void:
     assert validate_gdscript(good) == []
 
 
+def test_edu_bridge_not_flagged_for_merge_overrides_helper() -> None:
+    """模板桥合法函数 _merge_overrides_json 不得被误判为幻想 API。"""
+    from pathlib import Path
+
+    from app.config import ROOT_DIR
+
+    bridge = ROOT_DIR / "templates" / "_edu" / "ai_sandbox_bridge.gd"
+    text = bridge.read_text(encoding="utf-8")
+    assert "_merge_overrides_json" in text
+    assert validate_gdscript(text) == []
+    c = load_contract("shmup")
+    assert assert_apis_in_contract(text, c) == []
+
+
+def test_forbidden_api_still_catches_bare_merge_overrides() -> None:
+    bad = 'extends Node\nfunc apply(b):\n\tmerge_overrides({"a":1})\n'
+    assert any("merge_overrides" in e for e in validate_gdscript(bad))
+
+
+def test_done_gate_skips_trusted_edu_bridge(tmp_path: Path) -> None:
+    root = tmp_path / "ws"
+    (root / "config").mkdir(parents=True)
+    (root / "core").mkdir(parents=True)
+    (root / "config" / "game_config.json").write_text(
+        '{"tuning":{"enabled_skills":["laser_beam"]}}', encoding="utf-8"
+    )
+    # 故意写「会被旧门禁误杀」的桥内容
+    (root / "core" / "ai_sandbox_bridge.gd").write_text(
+        "extends Node\nfunc _merge_overrides_json() -> void:\n\tpass\n",
+        encoding="utf-8",
+    )
+    (root / "core" / "shmup_touch_overlay.gd").write_text(
+        "extends CanvasLayer\n", encoding="utf-8"
+    )
+    c = load_contract("shmup")
+    errs = run_done_gates(
+        root,
+        written_paths=["core/ai_sandbox_bridge.gd", "config/game_config.json"],
+        summary="已为你开启「激光」。请重新启动游戏，点屏幕下方对应按钮试玩。",
+        how_to_play=[
+            "重要：必须重新启动游戏后新技能才会生效",
+            "点屏幕下方「激光」按钮试玩（触屏）",
+        ],
+        genre="shmup",
+        contract=c,
+        catalog_changed=True,
+        user_text="开启激光",
+    )
+    assert not any("merge_overrides" in e or "括号" in e for e in errs)
+
+
 def test_done_gate_bugfix_allows_relaunch_howto(tmp_path: Path) -> None:
     """故障修复局：how_to_play 写「重开后查看」即可，不强制技能按钮文案。"""
     root = tmp_path / "ws"

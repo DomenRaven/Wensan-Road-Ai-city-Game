@@ -878,6 +878,7 @@ def apply_nl_patch(
         )
 
     if settings.llm_api_key.strip():
+        # 网络类可再试 1 次；门禁/业务失败不整段重跑（避免 6 分钟×2）
         agent_attempts = 2
         last_exc: BaseException | None = None
         for attempt in range(agent_attempts):
@@ -895,7 +896,8 @@ def apply_nl_patch(
                     request_text,
                     history=history,
                     feedback=fb,
-                    max_rounds=16,
+                    max_rounds=10,
+                    run_dry_run=False,
                 )
                 how_lines = list(agent_out.get("how_to_play") or [])
                 msg = str(agent_out.get("summary") or agent_out.get("message") or "").strip()
@@ -931,19 +933,26 @@ def apply_nl_patch(
                         "diagnose": agent_out.get("diagnose"),
                         "understanding": agent_out.get("understanding"),
                         "goals": list(agent_out.get("goals") or []),
+                        "express": bool(agent_out.get("express")),
                     },
                 )
             except (
                 requests.RequestException,
                 TimeoutError,
+            ) as exc:
+                last_exc = exc
+                llm_error = f"agent:{exc}"
+                continue
+            except (
                 ValueError,
                 json.JSONDecodeError,
                 OSError,
                 AgentWorkspaceError,
             ) as exc:
+                # 业务/门禁失败：不整段重跑（否则「发射激光」可拖到十几分钟）
                 last_exc = exc
                 llm_error = f"agent:{exc}"
-                continue
+                break
 
         detail = str(last_exc or llm_error).strip()[:200]
         message = (
