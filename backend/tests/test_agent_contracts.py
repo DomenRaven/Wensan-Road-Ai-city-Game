@@ -381,7 +381,37 @@ def test_assert_player_presence_blocks_bad_paths(tmp_path: Path) -> None:
 def test_genre_playbook_warns_player_path() -> None:
     from app.config import ROOT_DIR
 
-    for genre in ("shmup", "platformer", "parkour"):
+    for genre in (
+        "shmup",
+        "platformer",
+        "parkour",
+        "survivor",
+        "fighting",
+        "racing",
+        "pingpong",
+    ):
         ctx = build_genre_llm_context(ROOT_DIR / "templates", genre)
-        assert "get_nodes_in_group" in ctx or "get_player_node" in ctx
-        assert "../Player" in ctx or "Main/Player" in ctx
+        assert "Player" in ctx or "PlayerPaddle" in ctx or "paddle" in ctx
+        assert "../Player" in ctx or "Main/Player" in ctx or "PlayerPaddle" in ctx
+
+
+def test_all_seven_templates_player_health_ok() -> None:
+    """HF-10 全品类：模板基线须通过玩家健康门禁。"""
+    from app.config import ROOT_DIR
+    from app.services.creative.agent_contracts import (
+        PLAYER_PRESENCE_BY_GENRE,
+        assert_player_presence_health,
+    )
+
+    assert set(PLAYER_PRESENCE_BY_GENRE) == {
+        "shmup",
+        "platformer",
+        "parkour",
+        "survivor",
+        "fighting",
+        "racing",
+        "pingpong",
+    }
+    for genre in PLAYER_PRESENCE_BY_GENRE:
+        errs = assert_player_presence_health(ROOT_DIR / "templates" / genre, genre)
+        assert errs == [], f"{genre}: {errs}"

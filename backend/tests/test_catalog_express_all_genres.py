@@ -53,6 +53,8 @@ def _settings(templates: Path, workspace: Path) -> Settings:
 
 
 def _session_for_genre(tmp_path: Path, genre: str) -> tuple[Path, Path, Path]:
+    from app.services.creative.agent_contracts import PLAYER_PRESENCE_BY_GENRE
+
     templates = tmp_path / "templates"
     workspace = tmp_path / "workspace"
     cfg = {
@@ -80,6 +82,56 @@ def _session_for_genre(tmp_path: Path, genre: str) -> tuple[Path, Path, Path]:
         json.dumps(cfg, ensure_ascii=False), encoding="utf-8"
     )
     (root / "core").mkdir(parents=True)
+    # HF-10：快车道 done 门禁要玩家健康；补最小脚本/场景
+    presence = PLAYER_PRESENCE_BY_GENRE.get(genre) or {}
+    script_rel = str(presence.get("script") or "")
+    scene_rel = str(presence.get("scene") or "scenes/player.tscn")
+    node = str(presence.get("scene_node") or "Player")
+    if script_rel:
+        sp = root / script_rel
+        sp.parent.mkdir(parents=True, exist_ok=True)
+        body = "extends Node\n"
+        if genre == "survivor":
+            body = 'extends Area2D\nfunc _ready() -> void:\n\tadd_to_group("player")\n'
+        elif genre == "pingpong":
+            body = "extends Area2D\n"
+        elif genre == "racing":
+            body = "extends Node2D\n"
+        else:
+            body = "extends CharacterBody2D\n"
+        sp.write_text(body, encoding="utf-8")
+    sc = root / scene_rel
+    sc.parent.mkdir(parents=True, exist_ok=True)
+    if genre == "pingpong":
+        sc.write_text(
+            f'[gd_scene load_steps=1 format=3]\n'
+            f'[node name="Game" type="Node2D"]\n'
+            f'[node name="{node}" type="Area2D" parent="."]\n'
+            f'[node name="Sprite" type="Sprite2D" parent="{node}"]\n'
+            f'[node name="Visual" type="ColorRect" parent="{node}"]\n',
+            encoding="utf-8",
+        )
+    elif genre == "survivor":
+        sc.write_text(
+            f'[gd_scene load_steps=2 format=3]\n'
+            f'[node name="{node}" type="Area2D"]\n'
+            f'[node name="Sprite2D" type="Sprite2D" parent="."]\n',
+            encoding="utf-8",
+        )
+    elif genre == "fighting":
+        sc.write_text(
+            f'[gd_scene load_steps=2 format=3]\n'
+            f'[node name="{node}" type="CharacterBody2D" groups=["player"]]\n'
+            f'[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]\n',
+            encoding="utf-8",
+        )
+    else:
+        sc.write_text(
+            f'[gd_scene load_steps=2 format=3]\n'
+            f'[node name="{node}" type="CharacterBody2D" groups=["player"]]\n'
+            f'[node name="Sprite2D" type="Sprite2D" parent="."]\n',
+            encoding="utf-8",
+        )
     return templates, workspace, root
 
 

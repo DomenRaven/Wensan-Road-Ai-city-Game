@@ -45,8 +45,11 @@ _GENRE_PLAYBOOK: dict[str, str] = {
   勿动 enemy_spawner/main.tscn；how_to_play 写「打敌机→捡掉落」；禁 enable_catalog 冒充
 """.strip(),
     "survivor": """
-【survivor】割草幸存者；玩家移动自动攻击；catalog：magnet / nova（捷径）。
-- 前所未有需求：会话 core/scenes 现场实现；勿被 catalog 限死
+【survivor 玩法接线】
+- 玩家：core/player_survivor.gd + scenes/player.tscn（Area2D；_ready 里 add_to_group("player")）
+- 开局后在 GameRoot 动态实例下；找玩家用 group=player / get_player_node()；禁止 ../Player、/root/Main/Player
+- hooks：core/survivor_hooks.gd；禁对玩家 visible=false / queue_free；禁删 add_to_group("player")
+- catalog：magnet / nova（捷径）；新机制写会话 core；【铁律】最小编辑，禁整写玩家脚本
 - 【可改】会话 core/config/scenes；【禁止】templates/**
 """.strip(),
     "parkour": """
@@ -63,19 +66,26 @@ _GENRE_PLAYBOOK: dict[str, str] = {
 - 【可改】会话 core/config/scenes；【禁止】templates/**
 """.strip(),
     "pingpong": """
-【pingpong】乒乓；catalog：power_smash / curve_ball（捷径）。
-- 改球速用 tuning / 会话 core；前所未有需求现场写会话副本
-- 【可改】会话 core/config/scenes；【禁止】templates/**
+【pingpong 玩法接线】
+- 操控拍：scenes/game.tscn 的 PlayerPaddle + core/paddle.gd（不是 scenes/player.tscn）
+- 接线：match_controller.gd 的 $PlayerPaddle；禁止 get_node("../Player") / /root/Main/Player
+- 保留 PlayerPaddle 下 Visual/Sprite；勿 visible=false 藏拍；catalog：power_smash / curve_ball
+- 【铁律】最小编辑 paddle/match_controller/ball；【可改】会话 core/config/scenes；【禁止】templates/**
 """.strip(),
     "fighting": """
-【fighting】格斗擂台；catalog：block_parry / special_uppercut（捷径）。
-- 临时霸体可用桥；新招式/新规则用会话 core 写；无血腥
+【fighting 玩法接线】
+- 玩家：core/player_fighter.gd（继承 fighter.gd）+ scenes/player.tscn（group=player · AnimatedSprite2D）
+- 开局在擂台实例下；找玩家用 group=player / get_player_node()；禁止 ../Player、/root/Main/Player
+- hooks：core/fighting_hooks.gd；禁玩家根 visible=false / queue_free；catalog：block_parry / special_uppercut
+- 临时霸体可用桥；新招式写会话 core；无血腥；【铁律】最小编辑，禁整写 fighter/player_fighter
 - 【可改】会话 core/config/scenes；【禁止】templates/**
 """.strip(),
     "racing": """
-【racing】欢乐赛车；catalog：boost / drift_snap（捷径）。
-- 氮气感可用桥或开 boost；新赛道要素用会话 core/scenes 写
-- 【可改】会话 core/config/scenes；【禁止】templates/**
+【racing 玩法接线】
+- 玩家车：core/car_topdown.gd + scenes/player.tscn（Node2D · group=player · Sprite2D）
+- 开局在 GameRoot 下；找车用 group=player / get_player_node()；禁止 ../Player、/root/Main/Player
+- hooks：core/racing_hooks.gd；禁玩家根 visible=false / queue_free；catalog：boost / drift_snap
+- 【铁律】最小编辑 car_topdown / player.tscn；【可改】会话 core/config/scenes；【禁止】templates/**
 """.strip(),
 }
 

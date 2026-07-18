@@ -18,7 +18,7 @@
 - **故障反馈**：人物消失/白屏等 → Intent B 诊断修盘，禁止叠无关 buff；故障局 done 门禁软化
 - **门禁纳入 Godot 冒烟自愈**：本轮改 `.gd/.tscn` 强制 `dry_run_godot`，错误（含 `at:` 定位）回灌 LLM；`None/True/False` 静态拦截
 - **HF-8 不上锁**：轮次/门禁耗尽 → `_salvage_agent_return` 尽力交付或回滚保加载，禁「没改成」劝退
-- **HF-10 玩家可见/可控**：多轮改后人物消失——静态门禁 + write 拦截 + last_playable 快照恢复；修正误导路径 `/root/Main/Player`
+- **HF-10 玩家可见/可控（七品类）**：静态门禁 + write 拦截 + last_playable；覆盖 shmup/platformer/parkour/survivor/fighting/racing/pingpong（含 PlayerPaddle）
 - **项目瘦身**：清理 workspace 运行时报告/证书令牌、根目录重复部署手册与一次性验收 docx、pytest 缓存与 learned_skills 体验运行时
 
 ### 新增

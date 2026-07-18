@@ -352,35 +352,82 @@ def _workspace_has_touch_pathway(workspace_root: Path) -> bool:
     return False
 
 
-# 三品类玩家关键路径（会话副本；用于健康门禁 / 可玩快照）
+# 七品类玩家关键路径（会话副本；用于健康门禁 / 可玩快照）
+# scene_node：场景里操控角色节点名；group_in_scene=False 时须脚本 add_to_group("player")
+# （pingpong 无独立 player.tscn，角色是 game.tscn 的 PlayerPaddle）
+PLAYER_PRESENCE_BY_GENRE: dict[str, dict[str, Any]] = {
+    "shmup": {
+        "script": "core/player_ship.gd",
+        "scene": "scenes/player.tscn",
+        "hooks": "core/shmup_hooks.gd",
+        "scene_node": "Player",
+        "group_in_scene": True,
+    },
+    "platformer": {
+        "script": "core/player_platformer.gd",
+        "scene": "scenes/player.tscn",
+        "hooks": "core/platformer_hooks.gd",
+        "scene_node": "Player",
+        "group_in_scene": True,
+    },
+    "parkour": {
+        "script": "core/player_runner.gd",
+        "scene": "scenes/player.tscn",
+        "hooks": "core/parkour_hooks.gd",
+        "scene_node": "Player",
+        "group_in_scene": True,
+    },
+    "survivor": {
+        "script": "core/player_survivor.gd",
+        "scene": "scenes/player.tscn",
+        "hooks": "core/survivor_hooks.gd",
+        "scene_node": "Player",
+        "group_in_scene": False,  # _ready 里 add_to_group("player")
+    },
+    "fighting": {
+        "script": "core/player_fighter.gd",
+        "scene": "scenes/player.tscn",
+        "hooks": "core/fighting_hooks.gd",
+        "scene_node": "Player",
+        "group_in_scene": True,
+    },
+    "racing": {
+        "script": "core/car_topdown.gd",
+        "scene": "scenes/player.tscn",
+        "hooks": "core/racing_hooks.gd",
+        "scene_node": "Player",
+        "group_in_scene": True,
+    },
+    "pingpong": {
+        "script": "core/paddle.gd",
+        "scene": "scenes/game.tscn",
+        "hooks": "core/pingpong_hooks.gd",
+        "scene_node": "PlayerPaddle",
+        "group_in_scene": False,
+        "visual_tokens": ("Sprite2D", "AnimatedSprite2D", "Sprite", "Visual", "ColorRect"),
+    },
+}
+
+# 兼容旧引用
 PLAYER_SCRIPT_BY_GENRE: dict[str, str] = {
-    "shmup": "core/player_ship.gd",
-    "platformer": "core/player_platformer.gd",
-    "parkour": "core/player_runner.gd",
+    g: str(cfg["script"]) for g, cfg in PLAYER_PRESENCE_BY_GENRE.items()
 }
 PLAYER_HOOKS_BY_GENRE: dict[str, str] = {
-    "shmup": "core/shmup_hooks.gd",
-    "platformer": "core/platformer_hooks.gd",
-    "parkour": "core/parkour_hooks.gd",
+    g: str(cfg["hooks"]) for g, cfg in PLAYER_PRESENCE_BY_GENRE.items() if cfg.get("hooks")
 }
 PLAYER_SCENE_REL: str = "scenes/player.tscn"
 
 # 臆造相对/绝对路径：Player 不在 Main 直属，开局在 GameRoot/LevelRoot 动态实例下
 _BAD_PLAYER_NODE_PATH = re.compile(
-    r"""get_node(?:_or_null)?\s*\(\s*["'](?:\.\./)+Player(?:/[^"']*)?["']"""
-    r"""|get_node(?:_or_null)?\s*\(\s*["']/root/Main/Player(?:/[^"']*)?["']"""
-    r"""|\$["']?(?:\.\./)+Player"""
-    r"""|\$["']?/root/Main/Player""",
+    r"""get_node(?:_or_null)?\s*\(\s*["'](?:\.\./)+(?:Player|PlayerPaddle)(?:/[^"']*)?["']"""
+    r"""|get_node(?:_or_null)?\s*\(\s*["']/root/Main/(?:Player|PlayerPaddle)(?:/[^"']*)?["']"""
+    r"""|\$["']?(?:\.\./)+(?:Player|PlayerPaddle)"""
+    r"""|\$["']?/root/Main/(?:Player|PlayerPaddle)""",
     re.I,
-)
-_BAD_ROOT_VISIBLE_FALSE = re.compile(
-    r"""(?:^|[^\w.])(?:self|_player|player)\.visible\s*=\s*false\b"""
-    r"""|(?:^|\n)\s*visible\s*=\s*false\b""",
-    re.I | re.M,
 )
 _OK_VISIBLE_FALSE_CONTEXT = re.compile(
     r"shield|overlay|label|hud|countdown|beam|laser|_ui|ui_|toast|preview|"
-    r"start_screen|game_over|victory|boss_bar|help_label|level_up",
+    r"start_screen|game_over|victory|boss_bar|help_label|level_up|visual\b",
     re.I,
 )
 _BAD_ROOT_MODULATE_ZERO = re.compile(
@@ -391,17 +438,26 @@ _BAD_PLAYER_QUEUE_FREE = re.compile(
     r"""(?:self|_player|player)\.queue_free\s*\(""",
     re.I,
 )
+_PLAYER_SCRIPT_SUFFIXES: tuple[str, ...] = (
+    "player_ship.gd",
+    "player_platformer.gd",
+    "player_runner.gd",
+    "player_survivor.gd",
+    "player_fighter.gd",
+    "car_topdown.gd",
+    "paddle.gd",
+)
 
 
 def player_critical_paths(genre: str) -> list[str]:
+    cfg = PLAYER_PRESENCE_BY_GENRE.get(genre)
+    if not cfg:
+        return []
     paths: list[str] = []
-    ps = PLAYER_SCRIPT_BY_GENRE.get(genre)
-    if ps:
-        paths.append(ps)
-    paths.append(PLAYER_SCENE_REL)
-    hk = PLAYER_HOOKS_BY_GENRE.get(genre)
-    if hk:
-        paths.append(hk)
+    for key in ("script", "scene", "hooks"):
+        rel = cfg.get(key)
+        if rel:
+            paths.append(str(rel))
     return paths
 
 
@@ -421,11 +477,11 @@ def _scan_script_player_dangers(rel: str, text: str) -> list[str]:
         errs.append(
             f"{rel}: 禁止 get_node('../Player') 或 /root/Main/Player；"
             "玩家在 GameRoot/LevelRoot 动态实例下，用 get_tree().get_nodes_in_group('player') "
-            "或 AiSandboxBridge.get_player_node()"
+            "或 AiSandboxBridge.get_player_node()（乒乓用 $PlayerPaddle / match_controller）"
         )
     stripped = _strip_gd_comments_strings(text)
-    is_player_script = rel in PLAYER_SCRIPT_BY_GENRE.values() or rel.endswith(
-        ("player_ship.gd", "player_platformer.gd", "player_runner.gd")
+    is_player_script = rel in PLAYER_SCRIPT_BY_GENRE.values() or any(
+        rel.endswith(s) for s in _PLAYER_SCRIPT_SUFFIXES
     )
     is_hooks = rel.endswith("_hooks.gd")
     if is_player_script or is_hooks:
@@ -435,7 +491,6 @@ def _scan_script_player_dangers(rel: str, text: str) -> list[str]:
             if re.search(r"\.visible\s*=\s*false\b|^\s*visible\s*=\s*false\b", line, re.I):
                 if _OK_VISIBLE_FALSE_CONTEXT.search(line):
                     continue
-                # hooks / 玩家脚本里非 UI 的 visible=false 一律拦（含 p.visible）
                 if is_hooks or re.search(
                     r"(?:self|_player|player|\bp)\.visible\s*=\s*false|^\s*visible\s*=\s*false",
                     line,
@@ -456,19 +511,41 @@ def _scan_script_player_dangers(rel: str, text: str) -> list[str]:
     return errs
 
 
-def _scan_player_tscn(text: str) -> list[str]:
+def _scan_player_scene(
+    scene_rel: str,
+    text: str,
+    *,
+    scene_node: str = "Player",
+    group_in_scene: bool = True,
+    visual_tokens: tuple[str, ...] | None = None,
+    script_text: str = "",
+) -> list[str]:
     errs: list[str] = []
-    if not re.search(r'groups\s*=\s*\[[^\]]*["\']player["\']', text):
-        errs.append('scenes/player.tscn 须保留 groups 含 "player"')
-    if "Sprite2D" not in text and "AnimatedSprite2D" not in text:
-        errs.append("scenes/player.tscn 须保留 Sprite2D 或 AnimatedSprite2D（否则人物不可见）")
+    tokens = visual_tokens or ("Sprite2D", "AnimatedSprite2D")
+    if not any(tok in text for tok in tokens):
+        errs.append(
+            f"{scene_rel} 须保留可视节点（{'/'.join(tokens)}），否则角色不可见"
+        )
+    node_pat = re.escape(scene_node)
+    if not re.search(rf'\[node name="{node_pat}"', text):
+        errs.append(f'{scene_rel} 须保留节点 "{scene_node}"')
+    if group_in_scene:
+        if not re.search(r'groups\s*=\s*\[[^\]]*["\']player["\']', text):
+            errs.append(f'{scene_rel} 须保留 groups 含 "player"')
+    else:
+        # survivor：场景无 group，脚本必须 add_to_group
+        if scene_node == "Player" and script_text:
+            if 'add_to_group("player")' not in script_text and "add_to_group('player')" not in script_text:
+                errs.append(
+                    f'玩家脚本须保留 add_to_group("player")（{scene_rel} 无 groups 时）'
+                )
     m = re.search(
-        r'\[node name="Player"[^\]]*\](.*?)(?=\n\[node |\Z)',
+        rf'\[node name="{node_pat}"[^\]]*\](.*?)(?=\n\[node |\Z)',
         text,
         re.S,
     )
     if m and re.search(r"(?m)^visible\s*=\s*false\s*$", m.group(1)):
-        errs.append("scenes/player.tscn 的 Player 根节点禁止 visible=false")
+        errs.append(f'{scene_rel} 的 {scene_node} 根节点禁止 visible=false')
     return errs
 
 
@@ -480,34 +557,42 @@ def assert_player_presence_health(
 ) -> list[str]:
     """静态门禁：玩家脚本/场景仍在，且无「人消失」高危写法。
 
-    覆盖 shmup / platformer / parkour；其它品类返回空。
+    覆盖七品类（shmup/platformer/parkour/survivor/fighting/racing/pingpong）。
     """
-    if genre not in PLAYER_SCRIPT_BY_GENRE:
+    cfg = PLAYER_PRESENCE_BY_GENRE.get(genre)
+    if not cfg:
         return []
     errs: list[str] = []
     written = {str(p).replace("\\", "/") for p in (written_paths or [])}
 
-    script_rel = PLAYER_SCRIPT_BY_GENRE[genre]
+    script_rel = str(cfg["script"])
+    scene_rel = str(cfg["scene"])
+    hooks_rel = str(cfg.get("hooks") or "")
+    script_text = ""
+
     script_path = workspace_root / script_rel
     if not script_path.is_file():
         errs.append(f"缺少玩家脚本 {script_rel}（人物会消失/无法操控）")
     else:
+        script_text = script_path.read_text(encoding="utf-8", errors="ignore")
+        errs.extend(_scan_script_player_dangers(script_rel, script_text))
+
+    scene_path = workspace_root / scene_rel
+    if not scene_path.is_file():
+        errs.append(f"缺少 {scene_rel}（人物无法生成）")
+    else:
+        visual = cfg.get("visual_tokens")
         errs.extend(
-            _scan_script_player_dangers(
-                script_rel,
-                script_path.read_text(encoding="utf-8", errors="ignore"),
+            _scan_player_scene(
+                scene_rel,
+                scene_path.read_text(encoding="utf-8", errors="ignore"),
+                scene_node=str(cfg.get("scene_node") or "Player"),
+                group_in_scene=bool(cfg.get("group_in_scene", True)),
+                visual_tokens=tuple(visual) if visual else None,
+                script_text=script_text,
             )
         )
 
-    scene_path = workspace_root / PLAYER_SCENE_REL
-    if not scene_path.is_file():
-        errs.append(f"缺少 {PLAYER_SCENE_REL}（人物无法生成）")
-    else:
-        errs.extend(
-            _scan_player_tscn(scene_path.read_text(encoding="utf-8", errors="ignore"))
-        )
-
-    hooks_rel = PLAYER_HOOKS_BY_GENRE.get(genre)
     if hooks_rel:
         hooks_path = workspace_root / hooks_rel
         if hooks_path.is_file():
@@ -518,7 +603,6 @@ def assert_player_presence_health(
                 )
             )
 
-    # 本轮写过的其它 .gd 也扫坏路径（如 ai_sandbox 里乱 get_node）
     for rel in sorted(written):
         if not rel.endswith(".gd"):
             continue
@@ -528,11 +612,6 @@ def assert_player_presence_health(
         if not path.is_file():
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")
-        if _BAD_PLAYER_NODE_PATH.search(text):
-            errs.append(
-                f"{rel}: 禁止 get_node('../Player') 或 /root/Main/Player；"
-                "用 group 'player' 或 AiSandboxBridge.get_player_node()"
-            )
         errs.extend(_scan_script_player_dangers(rel, text))
 
     return list(dict.fromkeys(errs))
@@ -544,16 +623,33 @@ def validate_player_write_content(path: str, content: str, genre: str) -> list[s
     if not content.strip():
         return []
     errs: list[str] = []
-    if rel == PLAYER_SCENE_REL:
-        errs.extend(_scan_player_tscn(content))
+    cfg = PLAYER_PRESENCE_BY_GENRE.get(genre) or {}
+    scene_rel = str(cfg.get("scene") or PLAYER_SCENE_REL)
+    if rel == scene_rel or rel == PLAYER_SCENE_REL:
+        visual = cfg.get("visual_tokens")
+        errs.extend(
+            _scan_player_scene(
+                rel,
+                content,
+                scene_node=str(cfg.get("scene_node") or "Player"),
+                group_in_scene=bool(cfg.get("group_in_scene", True)),
+                visual_tokens=tuple(visual) if visual else None,
+                script_text="",
+            )
+        )
+        # survivor 写场景时不强制 group（由脚本负责）；若误删 Sprite 仍拦
     elif rel.endswith(".gd"):
         errs.extend(_scan_script_player_dangers(rel, content))
+        # 写 survivor 玩家脚本时强制保留 add_to_group
+        if genre == "survivor" and rel.endswith("player_survivor.gd"):
+            if 'add_to_group("player")' not in content and "add_to_group('player')" not in content:
+                errs.append(f'{rel}: 须保留 add_to_group("player")')
     return list(dict.fromkeys(errs))
 
 
 def save_last_playable_snapshot(workspace_root: Path, genre: str) -> bool:
     """门禁通过后保存玩家关键文件，供 salvage 从「已坏但可加载」基线救回。"""
-    if genre not in PLAYER_SCRIPT_BY_GENRE:
+    if genre not in PLAYER_PRESENCE_BY_GENRE:
         return False
     if assert_player_presence_health(workspace_root, genre):
         return False
@@ -571,7 +667,10 @@ def save_last_playable_snapshot(workspace_root: Path, genre: str) -> bool:
             saved += 1
         meta = snap_root / "meta.json"
         meta.write_text(
-            json.dumps({"genre": genre, "files": player_critical_paths(genre)}, ensure_ascii=False),
+            json.dumps(
+                {"genre": genre, "files": player_critical_paths(genre)},
+                ensure_ascii=False,
+            ),
             encoding="utf-8",
         )
         return saved > 0
@@ -654,14 +753,19 @@ def diagnose_workspace(
             "飞机鼠标跟机未加守卫，点技能键可能拖飞机 → patch_mouse_steer_guard"
         )
 
-    player_script = PLAYER_SCRIPT_BY_GENRE.get(genre, "")
-    hooks_file = PLAYER_HOOKS_BY_GENRE.get(genre, "")
+    presence = PLAYER_PRESENCE_BY_GENRE.get(genre) or {}
+    player_script = str(presence.get("script") or "")
+    hooks_file = str(presence.get("hooks") or "")
+    player_scene = str(presence.get("scene") or "")
+    scene_node = str(presence.get("scene_node") or "Player")
     player_health = assert_player_presence_health(workspace_root, genre)
     if player_script:
         hints.append(
-            f"玩家脚本={player_script} 场景={PLAYER_SCENE_REL} hooks={hooks_file or '无'}；"
-            "开局后在 GameRoot/LevelRoot 下，勿用 ../Player 或 /root/Main/Player；"
+            f"玩家脚本={player_script} 场景={player_scene} 节点={scene_node} "
+            f"hooks={hooks_file or '无'}；"
+            "开局后多在 GameRoot/LevelRoot 下，勿用 ../Player 或 /root/Main/Player；"
             "用 group=player 或 AiSandboxBridge.get_player_node()"
+            + ("；乒乓操控节点是 PlayerPaddle（scenes/game.tscn）" if genre == "pingpong" else "")
         )
     if player_health:
         hints.append("玩家健康告警: " + "；".join(player_health[:4]))
@@ -681,7 +785,9 @@ def diagnose_workspace(
         "player_script": player_script,
         "player_script_exists": bool(player_script)
         and (workspace_root / player_script).is_file(),
-        "player_scene_exists": (workspace_root / PLAYER_SCENE_REL).is_file(),
+        "player_scene": player_scene,
+        "player_scene_exists": bool(player_scene)
+        and (workspace_root / player_scene).is_file(),
         "hooks_file": hooks_file,
         "player_health_errors": player_health,
         "hints": hints,
