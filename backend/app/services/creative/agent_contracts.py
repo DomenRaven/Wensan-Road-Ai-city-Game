@@ -352,6 +352,253 @@ def _workspace_has_touch_pathway(workspace_root: Path) -> bool:
     return False
 
 
+# 三品类玩家关键路径（会话副本；用于健康门禁 / 可玩快照）
+PLAYER_SCRIPT_BY_GENRE: dict[str, str] = {
+    "shmup": "core/player_ship.gd",
+    "platformer": "core/player_platformer.gd",
+    "parkour": "core/player_runner.gd",
+}
+PLAYER_HOOKS_BY_GENRE: dict[str, str] = {
+    "shmup": "core/shmup_hooks.gd",
+    "platformer": "core/platformer_hooks.gd",
+    "parkour": "core/parkour_hooks.gd",
+}
+PLAYER_SCENE_REL: str = "scenes/player.tscn"
+
+# 臆造相对/绝对路径：Player 不在 Main 直属，开局在 GameRoot/LevelRoot 动态实例下
+_BAD_PLAYER_NODE_PATH = re.compile(
+    r"""get_node(?:_or_null)?\s*\(\s*["'](?:\.\./)+Player(?:/[^"']*)?["']"""
+    r"""|get_node(?:_or_null)?\s*\(\s*["']/root/Main/Player(?:/[^"']*)?["']"""
+    r"""|\$["']?(?:\.\./)+Player"""
+    r"""|\$["']?/root/Main/Player""",
+    re.I,
+)
+_BAD_ROOT_VISIBLE_FALSE = re.compile(
+    r"""(?:^|[^\w.])(?:self|_player|player)\.visible\s*=\s*false\b"""
+    r"""|(?:^|\n)\s*visible\s*=\s*false\b""",
+    re.I | re.M,
+)
+_OK_VISIBLE_FALSE_CONTEXT = re.compile(
+    r"shield|overlay|label|hud|countdown|beam|laser|_ui|ui_|toast|preview|"
+    r"start_screen|game_over|victory|boss_bar|help_label|level_up",
+    re.I,
+)
+_BAD_ROOT_MODULATE_ZERO = re.compile(
+    r"""(?:self|_player|player)\.modulate(?:\.a)?\s*=\s*(?:0(?:\.0+)?|Color\s*\([^)]*0\s*\))""",
+    re.I,
+)
+_BAD_PLAYER_QUEUE_FREE = re.compile(
+    r"""(?:self|_player|player)\.queue_free\s*\(""",
+    re.I,
+)
+
+
+def player_critical_paths(genre: str) -> list[str]:
+    paths: list[str] = []
+    ps = PLAYER_SCRIPT_BY_GENRE.get(genre)
+    if ps:
+        paths.append(ps)
+    paths.append(PLAYER_SCENE_REL)
+    hk = PLAYER_HOOKS_BY_GENRE.get(genre)
+    if hk:
+        paths.append(hk)
+    return paths
+
+
+def _strip_gd_comments_strings(text: str) -> str:
+    """粗去注释与字符串，降低门禁误报。"""
+    out = re.sub(r"#.*?$", "", text, flags=re.M)
+    out = re.sub(r'"""[\s\S]*?"""', '""', out)
+    out = re.sub(r"'''[\s\S]*?'''", "''", out)
+    out = re.sub(r'"(?:\\.|[^"\\])*"', '""', out)
+    out = re.sub(r"'(?:\\.|[^'\\])*'", "''", out)
+    return out
+
+
+def _scan_script_player_dangers(rel: str, text: str) -> list[str]:
+    errs: list[str] = []
+    if _BAD_PLAYER_NODE_PATH.search(text):
+        errs.append(
+            f"{rel}: 禁止 get_node('../Player') 或 /root/Main/Player；"
+            "玩家在 GameRoot/LevelRoot 动态实例下，用 get_tree().get_nodes_in_group('player') "
+            "或 AiSandboxBridge.get_player_node()"
+        )
+    stripped = _strip_gd_comments_strings(text)
+    is_player_script = rel in PLAYER_SCRIPT_BY_GENRE.values() or rel.endswith(
+        ("player_ship.gd", "player_platformer.gd", "player_runner.gd")
+    )
+    is_hooks = rel.endswith("_hooks.gd")
+    if is_player_script or is_hooks:
+        for line in stripped.splitlines():
+            if not line.strip():
+                continue
+            if re.search(r"\.visible\s*=\s*false\b|^\s*visible\s*=\s*false\b", line, re.I):
+                if _OK_VISIBLE_FALSE_CONTEXT.search(line):
+                    continue
+                # hooks / 玩家脚本里非 UI 的 visible=false 一律拦（含 p.visible）
+                if is_hooks or re.search(
+                    r"(?:self|_player|player|\bp)\.visible\s*=\s*false|^\s*visible\s*=\s*false",
+                    line,
+                    re.I,
+                ):
+                    errs.append(
+                        f"{rel}: 禁止把玩家根节点设为 visible=false（护盾/UI 子节点除外）；"
+                        "会导致人物消失且无法操控"
+                    )
+                    break
+        if _BAD_ROOT_MODULATE_ZERO.search(stripped):
+            errs.append(
+                f"{rel}: 禁止把玩家 modulate/a 永久设为 0（闪烁须成对恢复）；"
+                "会导致人物看不见"
+            )
+        if _BAD_PLAYER_QUEUE_FREE.search(stripped):
+            errs.append(f"{rel}: 禁止对玩家 queue_free（会直接删掉可操控角色）")
+    return errs
+
+
+def _scan_player_tscn(text: str) -> list[str]:
+    errs: list[str] = []
+    if not re.search(r'groups\s*=\s*\[[^\]]*["\']player["\']', text):
+        errs.append('scenes/player.tscn 须保留 groups 含 "player"')
+    if "Sprite2D" not in text and "AnimatedSprite2D" not in text:
+        errs.append("scenes/player.tscn 须保留 Sprite2D 或 AnimatedSprite2D（否则人物不可见）")
+    m = re.search(
+        r'\[node name="Player"[^\]]*\](.*?)(?=\n\[node |\Z)',
+        text,
+        re.S,
+    )
+    if m and re.search(r"(?m)^visible\s*=\s*false\s*$", m.group(1)):
+        errs.append("scenes/player.tscn 的 Player 根节点禁止 visible=false")
+    return errs
+
+
+def assert_player_presence_health(
+    workspace_root: Path,
+    genre: str,
+    *,
+    written_paths: list[str] | None = None,
+) -> list[str]:
+    """静态门禁：玩家脚本/场景仍在，且无「人消失」高危写法。
+
+    覆盖 shmup / platformer / parkour；其它品类返回空。
+    """
+    if genre not in PLAYER_SCRIPT_BY_GENRE:
+        return []
+    errs: list[str] = []
+    written = {str(p).replace("\\", "/") for p in (written_paths or [])}
+
+    script_rel = PLAYER_SCRIPT_BY_GENRE[genre]
+    script_path = workspace_root / script_rel
+    if not script_path.is_file():
+        errs.append(f"缺少玩家脚本 {script_rel}（人物会消失/无法操控）")
+    else:
+        errs.extend(
+            _scan_script_player_dangers(
+                script_rel,
+                script_path.read_text(encoding="utf-8", errors="ignore"),
+            )
+        )
+
+    scene_path = workspace_root / PLAYER_SCENE_REL
+    if not scene_path.is_file():
+        errs.append(f"缺少 {PLAYER_SCENE_REL}（人物无法生成）")
+    else:
+        errs.extend(
+            _scan_player_tscn(scene_path.read_text(encoding="utf-8", errors="ignore"))
+        )
+
+    hooks_rel = PLAYER_HOOKS_BY_GENRE.get(genre)
+    if hooks_rel:
+        hooks_path = workspace_root / hooks_rel
+        if hooks_path.is_file():
+            errs.extend(
+                _scan_script_player_dangers(
+                    hooks_rel,
+                    hooks_path.read_text(encoding="utf-8", errors="ignore"),
+                )
+            )
+
+    # 本轮写过的其它 .gd 也扫坏路径（如 ai_sandbox 里乱 get_node）
+    for rel in sorted(written):
+        if not rel.endswith(".gd"):
+            continue
+        if rel in (script_rel, hooks_rel):
+            continue
+        path = workspace_root / rel
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        if _BAD_PLAYER_NODE_PATH.search(text):
+            errs.append(
+                f"{rel}: 禁止 get_node('../Player') 或 /root/Main/Player；"
+                "用 group 'player' 或 AiSandboxBridge.get_player_node()"
+            )
+        errs.extend(_scan_script_player_dangers(rel, text))
+
+    return list(dict.fromkeys(errs))
+
+
+def validate_player_write_content(path: str, content: str, genre: str) -> list[str]:
+    """write_file 前置：拦截会毁掉玩家可见/可控的内容。"""
+    rel = str(path or "").replace("\\", "/").lstrip("/")
+    if not content.strip():
+        return []
+    errs: list[str] = []
+    if rel == PLAYER_SCENE_REL:
+        errs.extend(_scan_player_tscn(content))
+    elif rel.endswith(".gd"):
+        errs.extend(_scan_script_player_dangers(rel, content))
+    return list(dict.fromkeys(errs))
+
+
+def save_last_playable_snapshot(workspace_root: Path, genre: str) -> bool:
+    """门禁通过后保存玩家关键文件，供 salvage 从「已坏但可加载」基线救回。"""
+    if genre not in PLAYER_SCRIPT_BY_GENRE:
+        return False
+    if assert_player_presence_health(workspace_root, genre):
+        return False
+    snap_root = workspace_root / ".agent" / "last_playable"
+    try:
+        snap_root.mkdir(parents=True, exist_ok=True)
+        saved = 0
+        for rel in player_critical_paths(genre):
+            src = workspace_root / rel
+            if not src.is_file():
+                continue
+            dest = snap_root / rel
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(src.read_bytes())
+            saved += 1
+        meta = snap_root / "meta.json"
+        meta.write_text(
+            json.dumps({"genre": genre, "files": player_critical_paths(genre)}, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        return saved > 0
+    except OSError:
+        return False
+
+
+def restore_last_playable_snapshot(workspace_root: Path, genre: str) -> list[str]:
+    """从 last_playable 恢复玩家关键文件；返回已恢复相对路径。"""
+    snap_root = workspace_root / ".agent" / "last_playable"
+    if not snap_root.is_dir():
+        return []
+    restored: list[str] = []
+    for rel in player_critical_paths(genre):
+        src = snap_root / rel
+        if not src.is_file():
+            continue
+        dest = workspace_root / rel
+        try:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(src.read_bytes())
+            restored.append(rel)
+        except OSError:
+            pass
+    return restored
+
+
 def diagnose_workspace(
     workspace_root: Path,
     genre: str,
@@ -406,6 +653,19 @@ def diagnose_workspace(
         hints.append(
             "飞机鼠标跟机未加守卫，点技能键可能拖飞机 → patch_mouse_steer_guard"
         )
+
+    player_script = PLAYER_SCRIPT_BY_GENRE.get(genre, "")
+    hooks_file = PLAYER_HOOKS_BY_GENRE.get(genre, "")
+    player_health = assert_player_presence_health(workspace_root, genre)
+    if player_script:
+        hints.append(
+            f"玩家脚本={player_script} 场景={PLAYER_SCENE_REL} hooks={hooks_file or '无'}；"
+            "开局后在 GameRoot/LevelRoot 下，勿用 ../Player 或 /root/Main/Player；"
+            "用 group=player 或 AiSandboxBridge.get_player_node()"
+        )
+    if player_health:
+        hints.append("玩家健康告警: " + "；".join(player_health[:4]))
+
     return {
         "genre": genre,
         "enabled_skills": skills,
@@ -418,6 +678,12 @@ def diagnose_workspace(
         "has_touch_pathway": _workspace_has_touch_pathway(workspace_root),
         "sandbox_files": sandbox_files[:20],
         "player_ship_mouse_guard": "_edu_skill_ui_blocks_mouse" in ship_txt,
+        "player_script": player_script,
+        "player_script_exists": bool(player_script)
+        and (workspace_root / player_script).is_file(),
+        "player_scene_exists": (workspace_root / PLAYER_SCENE_REL).is_file(),
+        "hooks_file": hooks_file,
+        "player_health_errors": player_health,
         "hints": hints,
     }
 
@@ -431,6 +697,16 @@ def format_diagnose_for_prompt(diag: dict[str, Any]) -> str:
     )
     lines.append(f"- sandbox={diag.get('sandbox_files')}")
     lines.append(f"- mouse_guard={diag.get('player_ship_mouse_guard')}")
+    if diag.get("player_script"):
+        lines.append(
+            f"- player_script={diag.get('player_script')} exists={diag.get('player_script_exists')} "
+            f"scene={diag.get('player_scene_exists')} hooks={diag.get('hooks_file')}"
+        )
+    health = diag.get("player_health_errors") or []
+    if health:
+        lines.append("- player_health=FAIL: " + "；".join(str(x) for x in health[:4]))
+    else:
+        lines.append("- player_health=ok")
     for h in diag.get("hints") or []:
         lines.append(f"- 提示: {h}")
     return "\n".join(lines)
@@ -947,6 +1223,14 @@ def run_done_gates(
             contract,
             summary=summary,
             how_to_play=how_to_play,
+        )
+    )
+    # HF-10：玩家可见/可控静态门禁（shmup/platformer/parkour）
+    errors.extend(
+        assert_player_presence_health(
+            workspace_root,
+            genre,
+            written_paths=written_paths,
         )
     )
     return list(dict.fromkeys(errors))

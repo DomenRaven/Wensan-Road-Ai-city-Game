@@ -19,18 +19,24 @@ _GENRE_PLAYBOOK: dict[str, str] = {
   · 要「怪物变小」：只改敌人 **AnimatedSprite2D/Sprite2D 的 scale 或帧**；**绝不要**改敌人 CharacterBody2D 根节点或 CollisionShape2D 的 scale/大小——那会破坏踩踏判定、碰撞与受伤（子弹卡住/不扣血就是这样来的）
 - 二段跳/下砸：has_skill("double_jump"|"ground_pound")；桥已对下落段补二段跳
 - 【铁律】改已有 core/*.gd 用**最小 targeted 编辑**：read_file 后只改相关函数/行，禁止整文件重写（会丢碰撞/受伤/信号/收集逻辑，导致金币收不到、子弹卡住不扣血）
+- 找玩家：group=player 或 AiSandboxBridge.get_player_node()；开局在 LevelRoot 下，**禁止** ../Player、/root/Main/Player
+- 禁止玩家根 visible=false / modulate.a=0 / queue_free；无敌闪烁只改 Sprite 且须恢复
 - 需求对齐：summary 声称的能力必须真落在对应文件（加金币→level_01.gd 有改；勿口头声称）
 - 【可改】会话副本 core/*.gd、config、scenes；【禁止】templates/**
 """.strip(),
     "shmup": """
 【shmup 玩法接线 · 与 platformer 同级深度】
-- 主场景射击；玩家 Area2D · core/player_ship.gd（group=player）；get_player() 可能 null → 用 get_player_node()
+- 主场景射击；玩家 Area2D · core/player_ship.gd + scenes/player.tscn（group=player）
+- 开局后挂载：/root/Main/GameRoot/<game>/Player（不在 Main 直属！）
+- 找玩家：get_tree().get_nodes_in_group("player") 或 AiSandboxBridge.get_player_node()；
+  **禁止** get_node("../Player")、/root/Main/Player（会找不到节点，后续乱改易让人物消失）
+- hooks：core/shmup_hooks.gd 用 group 接线；勿臆造相对路径；勿对玩家 visible=false / queue_free
 - 自动射击；左右移动；子弹池 core/bullet_pool.gd → spawn_player_bullet / spawn_enemy_bullet
 - 子弹外观 core/bullet.gd activate()；改颜色勿发明 set_color——用桥 tint_player_bullets / rainbow_player_bullets
 - 预制技能仅 bomb、laser_beam（enabled_skills）；输入见 skills/*.gd
-- 护盾：【不是】catalog 技能；机体捡道具 "shield" 或桥 grant_temp_shield(seconds)
+- 护盾：【不是】catalog 技能；机体捡道具 "shield" 或桥 grant_temp_shield(seconds)；ShieldSprite.visible 可 false，**玩家根节点不可**
 - 【鼠标冲突】飞机用左键跟机；点技能按钮会抢输入。须 patch_mouse_steer_guard / 会话 player_ship 守卫；禁止只重复 enable 技能
-- 前所未有需求：会话 core/scenes 现场写；catalog/桥是捷径
+- 【铁律】改 player_ship.gd 用最小 targeted 编辑，禁整文件重写（会丢碰撞/射击/无敌闪烁恢复）
 - 【可改】会话 core/player_ship.gd、bullet.gd、bullet_pool.gd、config、scenes；【禁止】templates/**
 - 示例「五颜六色子弹」：ai_sandbox + rainbow_player_bullets，或直接改 bullet 生成链
 - 【展厅硬性】按钮技能：how_to_play 写「点屏幕下方 炸弹/激光 按钮」；ShmupTouch 只负责移动
@@ -44,9 +50,16 @@ _GENRE_PLAYBOOK: dict[str, str] = {
 - 【可改】会话 core/config/scenes；【禁止】templates/**
 """.strip(),
     "parkour": """
-【parkour】跑酷冲刺；catalog：double_jump / slide（捷径）。
-- 二段跳下落段可由桥补齐；加速可用桥或改会话 core
-- 前所未有需求：会话 core/scenes 现场写
+【parkour 玩法接线 · 精确架构】
+- 玩家：core/player_runner.gd + scenes/player.tscn（CharacterBody2D · group=player · 默认约 (100,300)）
+- 开局后挂载：/root/Main/GameRoot/<game>/Player（不在 Main 直属！）
+- 找玩家：get_nodes_in_group("player") 或 AiSandboxBridge.get_player_node()；
+  **禁止** get_node("../Player")、/root/Main/Player（EduHooks 相对 Main 找不到 Player）
+- hooks：core/parkour_hooks.gd 已用 group 接线；改机制优先写 ai_sandbox / 桥 API，少改 hooks 路径
+- 操控依赖 player_runner 的 `_playing` / set_playing；搞坏会「看得见也可能不能跳」
+- 无敌闪烁只改 `_sprite.modulate.a` 且须恢复；禁止玩家根 visible=false / modulate.a=0 / queue_free
+- catalog 捷径：double_jump / slide；二段跳下落段可由桥补齐；加速可用桥或最小改 player_runner
+- 【铁律】改 player_runner.gd / player.tscn 用最小 targeted 编辑，禁整文件重写
 - 【可改】会话 core/config/scenes；【禁止】templates/**
 """.strip(),
     "pingpong": """

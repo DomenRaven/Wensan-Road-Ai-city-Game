@@ -227,8 +227,13 @@ def test_salvage_bugfix_rollback_does_not_claim_playable(tmp_path: Path) -> None
     assert out.get("playability_suspect") is True
     msg = out["message"]
     assert "能正常玩" not in msg
-    assert "原先" in msg or "可能还在" in msg
-    assert "没弄坏" not in msg or "可能还在" in msg
+    assert "没弄坏" not in msg
+    assert (
+        "原先" in msg
+        or "可能还在" in msg
+        or "人物仍有问题" in msg
+        or "专修" in msg
+    )
 
 
 def test_llm_bad_json_salvages_inside_agent(tmp_path: Path) -> None:

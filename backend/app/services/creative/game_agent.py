@@ -22,13 +22,17 @@ from app.services.agent_workspace import (
 )
 from app.services.creative.agent_contracts import (
     assert_apis_in_contract,
+    assert_player_presence_health,
     diagnose_workspace,
     dry_run_godot,
     emit_progress,
     format_diagnose_for_prompt,
     load_contract,
+    restore_last_playable_snapshot,
     run_done_gates,
+    save_last_playable_snapshot,
     validate_gdscript,
+    validate_player_write_content,
 )
 from app.services.creative.genre_context import genre_context_as_system_suffix
 from app.services.creative.intent_router import (  # noqa: F401
@@ -57,6 +61,8 @@ _AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对�
 - 本轮用户原话优先级最高；历史只作背景，换话题就跟新话题走
 - done.summary 用自然中文直接回答本轮原话，说明做了什么 / 修好了什么
 - 若本轮在抱怨故障、没生效、看不到、打不开、人物消失/不显示：先 diagnose + 读玩家/主场景，修复可见性（visible / modulate / position），禁止再开新技能交差
+- 找玩家节点：用 get_tree().get_nodes_in_group("player") 或 AiSandboxBridge.get_player_node()；禁止 get_node("../Player") 与 /root/Main/Player（Player 在 GameRoot/LevelRoot 动态实例下，不在 Main 直属）
+- 禁止把玩家根节点 visible=false / modulate.a=0 / queue_free；无敌闪烁只改 Sprite 且须恢复；禁整写 player_*.gd / scenes/player.tscn 丢掉碰撞与 group=player
 - 若用户说「掉落物 / 敌机掉落 / 捡到才开」：禁止 enable_catalog_skill；shmup 只改 powerup_types + player_ship.apply_powerup（拾取后追加 GameConfig.enabled_skills + AiSandboxBridge.ensure_touch_skill_buttons）。禁止重写 enemy_spawner/main.tscn；禁止 Bridge. 幻想 API。how_to_play 写「打敌机→捡掉落」
 - 写 config/game_config.json 时必须先 read_file 再合并字段，禁止整文件覆盖导致丢失 powerup_types/enemies 等
 - 用户没提就不要送无关大礼包；长期库仅明显相关才复用
@@ -515,6 +521,11 @@ def _run_action(
         content = str(action.get("content", ""))
         if not path or not content.strip():
             raise AgentWorkspaceError("write_file 需要 path 与 content")
+        player_errs = validate_player_write_content(path, content, genre)
+        if player_errs:
+            raise AgentWorkspaceError(
+                "玩家健康写入拦截: " + "; ".join(player_errs)
+            )
         if path.endswith(".gd"):
             syn = validate_gdscript(content)
             api = assert_apis_in_contract(content, contract)
@@ -728,9 +739,62 @@ def _salvage_agent_return(
 
     base_how = [h for h in (last_how or []) if str(h).strip()]
     playability_suspect = bool(bugfix)
+    health_errs = assert_player_presence_health(
+        workspace_root, genre, written_paths=written_unique
+    )
+    restored_playable: list[str] = []
+
+    def _try_restore_playable() -> None:
+        nonlocal restored_playable, health_errs, playability_suspect
+        restored_playable = restore_last_playable_snapshot(workspace_root, genre)
+        if restored_playable:
+            health_errs = assert_player_presence_health(workspace_root, genre)
+            playability_suspect = True
+
+    # 能加载但仍把玩家改坏 → 不交付坏盘，优先恢复 last_playable
+    if loads_ok and health_errs and (written_unique or catalog_changed):
+        _try_restore_playable()
+        if health_errs:
+            # 快照也救不了则回滚本轮
+            _rollback_snapshot(workspace_root, pre_turn_snapshot)
+            health_errs = assert_player_presence_health(workspace_root, genre)
+            if health_errs:
+                _try_restore_playable()
+        summary = (
+            "这轮改动会让人物看不见或操控不了，我已经撤回/恢复到上一版还能玩的角色。"
+            "请再说一次你想要的效果，我换更安全的改法继续做。"
+        )
+        return {
+            "ok": True,
+            "provider": "agent",
+            "summary": summary,
+            "message": summary,
+            "changes": [],
+            "sandbox_files": [],
+            "how_to_play": [
+                "人物应已恢复可见可操控；请重开游戏确认",
+                "可继续描述想要的改动，我接着改",
+            ],
+            "applied_capabilities": [],
+            "needs_relaunch": True,
+            "verify_gaps": [
+                f"玩家健康未过已拦截: {'; '.join(health_errs[:3]) or reason}"
+            ],
+            "repaired": False,
+            "agent_rounds": rounds_used,
+            "understanding": last_understanding,
+            "goals": plan_goals,
+            "progress": progress_events,
+            "gate_passed": False,
+            "partial": True,
+            "playability_suspect": True,
+            "restored_playable": restored_playable,
+            "intent_route": route,
+            "dry_run": dry,
+        }
 
     if loads_ok and (written_unique or catalog_changed):
-        # 尽力交付：本轮确有改动且游戏能加载
+        # 尽力交付：本轮确有改动且游戏能加载、玩家健康过
         if last_summary.strip():
             summary = last_summary.strip()
             if not re.search(r"可能|再|继续|不满意|如果", summary):
@@ -772,20 +836,23 @@ def _salvage_agent_return(
     # 改动会让游戏打不开 → 回滚保持可加载；仍不上锁
     if not loads_ok:
         rolled = _rollback_snapshot(workspace_root, pre_turn_snapshot)
-        if playability_suspect:
+        health_errs = assert_player_presence_health(workspace_root, genre)
+        if health_errs or playability_suspect:
+            _try_restore_playable()
+        if playability_suspect or restored_playable or health_errs:
             summary = (
-                "这次的改法会让游戏打不开，我已经把这次改动撤回了。"
-                "不过你刚才说的问题（例如人物消失）可能还在——"
-                "回滚只是撤掉会崩的改法，不会自动修好原先的故障。"
-                "请再说一次或补充一点细节，我继续专修那个问题。"
+                "这次的改法会让游戏打不开，我已经把这次改动撤回"
+                + ("，并恢复了上一版还能看见的角色" if restored_playable else "")
+                + "。"
+                "若人物仍有问题请再说一次，我继续专修（回滚不会自动修好更早埋下的故障，除非已有可玩快照）。"
             )
             how = [
-                "原先的问题可能还在，请继续描述现象（我接着修）",
-                "不必换说法；同一句再说一次也可以",
+                "请重开游戏看人物是否恢复",
+                "原先的问题若还在，直接再说一次即可",
             ]
             gaps = [
                 f"本轮改动被回滚（会导致无法加载）：{reason}",
-                "playability_suspect：回滚后故障可能仍在，禁止声称「能正常玩」",
+                "playability_suspect：已尽量恢复 last_playable",
             ]
         else:
             summary = (
@@ -803,7 +870,7 @@ def _salvage_agent_return(
             "sandbox_files": [],
             "how_to_play": how,
             "applied_capabilities": [],
-            "needs_relaunch": False,
+            "needs_relaunch": bool(restored_playable),
             "verify_gaps": gaps,
             "repaired": False,
             "agent_rounds": rounds_used,
@@ -812,17 +879,22 @@ def _salvage_agent_return(
             "progress": progress_events,
             "gate_passed": False,
             "partial": True,
-            "playability_suspect": playability_suspect,
+            "playability_suspect": playability_suspect or bool(health_errs),
             "rolled_back": rolled,
+            "restored_playable": restored_playable,
             "intent_route": route,
             "dry_run": dry,
         }
 
     # 本轮没有任何改动 → 温和邀请继续，不用"换个说法/没改成"的上锁话术
     if playability_suspect:
+        if health_errs:
+            _try_restore_playable()
         summary = (
             (last_understanding.strip() + "。" if last_understanding.strip() else "")
-            + "这轮还没把故障修好，游戏文件我先没动。"
+            + "这轮还没把故障修好，游戏文件我先没动"
+            + ("（已尝试恢复可玩角色快照）" if restored_playable else "")
+            + "。"
             "你可以直接再说一次同样的问题，或补充「什么时候消失/还能不能听见脚步」之类细节，我继续修。"
         )
         how = ["故障可能还在，请继续告诉我，我接着改"]
@@ -842,7 +914,7 @@ def _salvage_agent_return(
         "sandbox_files": [],
         "how_to_play": how,
         "applied_capabilities": [],
-        "needs_relaunch": False,
+        "needs_relaunch": bool(restored_playable),
         "verify_gaps": [f"本轮未产出改动：{reason}"],
         "repaired": False,
         "agent_rounds": rounds_used,
@@ -852,6 +924,7 @@ def _salvage_agent_return(
         "gate_passed": False,
         "partial": True,
         "playability_suspect": playability_suspect,
+        "restored_playable": restored_playable,
         "intent_route": route,
         "dry_run": {},
     }
@@ -884,6 +957,8 @@ def run_game_agent(
 
     route = route_intent(user_text or feedback, contract)
     bugfix = _is_bugfix_turn(user_text, feedback, route)
+    # 开局若玩家健康，先存可玩快照（供后续 salvage 从「已坏可加载」救回）
+    save_last_playable_snapshot(workspace_root, genre)
 
     # catalog 捷径：激光/炸弹/二段跳等明确命中 → 秒级落地，不进多轮 LLM
     # 故障修盘局禁止走「再开 catalog」交差
@@ -1016,10 +1091,12 @@ def run_game_agent(
         context_bits.append(learned_block)
     if bugfix:
         context_bits.append(
-            "【故障修盘·强制】本轮是运行故障反馈：先 diagnose_workspace + 读玩家/主场景/"
-            "hooks（含 _edu）；节点用绝对路径如 /root/Main/Player，禁止 ../Player；"
-            "确保 visible=true、合理 position；禁止 enable 新技能、禁止叠冲刺/无敌/彩虹等新机制；"
-            "只修让人/画面能看见、能玩的问题。"
+            "【故障修盘·强制】本轮是运行故障反馈：先 diagnose_workspace + 读玩家脚本/"
+            "scenes/player.tscn/hooks；"
+            "找玩家用 get_nodes_in_group('player') 或 AiSandboxBridge.get_player_node()；"
+            "禁止 get_node('../Player') 与 /root/Main/Player（Player 不在 Main 直属）；"
+            "确保可见：勿 visible=false / modulate.a=0 / queue_free；"
+            "禁止 enable 新技能、禁止叠冲刺/无敌/彩虹等新机制；只修让人能看见、能操控。"
         )
     context_bits.append(
         "请先给出 understanding + goals（拆解本轮原话），再施工；"
@@ -1352,6 +1429,7 @@ def run_game_agent(
                     success=True,
                     failed=False,
                 )
+            save_last_playable_snapshot(workspace_root, genre)
             return {
                 "ok": True,
                 "provider": "agent",

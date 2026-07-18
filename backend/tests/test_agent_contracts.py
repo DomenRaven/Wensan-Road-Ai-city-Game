@@ -127,9 +127,20 @@ def test_done_gate_bugfix_allows_relaunch_howto(tmp_path: Path) -> None:
     root = tmp_path / "ws"
     (root / "config").mkdir(parents=True)
     (root / "core").mkdir(parents=True)
+    (root / "scenes").mkdir(parents=True)
     (root / "config" / "game_config.json").write_text("{}", encoding="utf-8")
     (root / "core" / "fix.gd").write_text(
-        "extends CharacterBody2D\nfunc _ready() -> void:\n\tvisible = true\n",
+        "extends CharacterBody2D\nfunc _ready() -> void:\n\tpass\n",
+        encoding="utf-8",
+    )
+    (root / "core" / "player_platformer.gd").write_text(
+        "extends CharacterBody2D\nfunc _ready() -> void:\n\tpass\n",
+        encoding="utf-8",
+    )
+    (root / "scenes" / "player.tscn").write_text(
+        '[gd_scene load_steps=2 format=3]\n'
+        '[node name="Player" type="CharacterBody2D" groups=["player"]]\n'
+        '[node name="Sprite2D" type="Sprite2D" parent="."]\n',
         encoding="utf-8",
     )
     c = load_contract("platformer")
@@ -315,3 +326,62 @@ def test_genre_context_allows_session_core(tmp_path: Path) -> None:
     assert "禁止改已有 core" not in ctx
     assert "tint_player_bullets" in ctx or "grant_temp_shield" in ctx
     assert "player_ship" in ctx
+
+
+def test_assert_player_presence_blocks_bad_paths(tmp_path: Path) -> None:
+    """HF-10：../Player 与玩家根 visible=false 须被门禁拦住。"""
+    from app.services.creative.agent_contracts import (
+        assert_player_presence_health,
+        restore_last_playable_snapshot,
+        save_last_playable_snapshot,
+        validate_player_write_content,
+    )
+
+    root = tmp_path / "ws"
+    (root / "core").mkdir(parents=True)
+    (root / "scenes").mkdir(parents=True)
+    good_script = "extends CharacterBody2D\nfunc _ready() -> void:\n\tpass\n"
+    good_scene = (
+        '[gd_scene load_steps=2 format=3]\n'
+        '[node name="Player" type="CharacterBody2D" groups=["player"]]\n'
+        '[node name="Sprite2D" type="Sprite2D" parent="."]\n'
+    )
+    (root / "core" / "player_runner.gd").write_text(good_script, encoding="utf-8")
+    (root / "scenes" / "player.tscn").write_text(good_scene, encoding="utf-8")
+    assert assert_player_presence_health(root, "parkour") == []
+
+    bad_hooks = (
+        "extends Node\n"
+        "func _ready() -> void:\n"
+        '\tvar p = get_node("../Player")\n'
+        "\tp.visible = false\n"
+    )
+    (root / "core" / "parkour_hooks.gd").write_text(bad_hooks, encoding="utf-8")
+    errs = assert_player_presence_health(root, "parkour")
+    assert any("../Player" in e or "Main/Player" in e for e in errs)
+    assert any("visible=false" in e for e in errs)
+
+    write_errs = validate_player_write_content(
+        "core/parkour_hooks.gd", bad_hooks, "parkour"
+    )
+    assert write_errs
+
+    (root / "core" / "parkour_hooks.gd").write_text("extends Node\n", encoding="utf-8")
+    assert save_last_playable_snapshot(root, "parkour") is True
+    (root / "core" / "player_runner.gd").write_text(
+        "extends CharacterBody2D\nfunc _ready() -> void:\n\tself.visible = false\n",
+        encoding="utf-8",
+    )
+    assert assert_player_presence_health(root, "parkour")
+    restored = restore_last_playable_snapshot(root, "parkour")
+    assert "core/player_runner.gd" in restored
+    assert assert_player_presence_health(root, "parkour") == []
+
+
+def test_genre_playbook_warns_player_path() -> None:
+    from app.config import ROOT_DIR
+
+    for genre in ("shmup", "platformer", "parkour"):
+        ctx = build_genre_llm_context(ROOT_DIR / "templates", genre)
+        assert "get_nodes_in_group" in ctx or "get_player_node" in ctx
+        assert "../Player" in ctx or "Main/Player" in ctx
