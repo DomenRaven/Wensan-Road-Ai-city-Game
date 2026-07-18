@@ -676,6 +676,23 @@ def _rollback_snapshot(
     return rolled
 
 
+def _is_bugfix_turn(user_text: str, feedback: str, route: dict[str, Any] | None = None) -> bool:
+    """故障修盘局：人物消失/白屏/没生效等，回滚与话术须承认「原先问题可能还在」。"""
+    blob = f"{user_text or ''}\n{feedback or ''}"
+    if re.search(
+        r"消失|不显示|看不见|白屏|黑屏|没法.*启动|无法启动|打不开|闪退|报错|"
+        r"修复|修好|坏了|人物.*没|角色.*没|看不到画|没有画面|没生效|点了没反应|"
+        r"二段跳没用|技能没用|不能用",
+        blob,
+    ):
+        return True
+    if route and str(route.get("intent") or "") == "B":
+        return True
+    if route and "运行故障" in str(route.get("recipe_id") or ""):
+        return True
+    return False
+
+
 def _salvage_agent_return(
     settings: Settings,
     workspace_root: Path,
@@ -692,11 +709,12 @@ def _salvage_agent_return(
     progress_events: list[dict[str, Any]],
     rounds_used: int,
     reason: str,
+    bugfix: bool = False,
 ) -> dict[str, Any]:
     """轮次耗尽/门禁多次未过时的兜底：尽力交付本轮已改内容，绝不上锁、绝不把游戏改到打不开。
 
     - 若磁盘能加载（或无代码改动）：返回本轮改动 = 诚实的"尽力而为、可能不完美、可继续"。
-    - 若磁盘已被改到打不开：回滚本轮改动，保持可玩，诚实告知并邀请继续（仍不上锁）。
+    - 若磁盘已被改到打不开：回滚本轮改动，保持可加载；故障局须诚实说「原先问题可能还在」。
     """
     written_unique = list(dict.fromkeys(written))
     code_touched = any(str(p).endswith((".gd", ".tscn")) for p in written_unique)
@@ -709,6 +727,7 @@ def _salvage_agent_return(
             loads_ok = False
 
     base_how = [h for h in (last_how or []) if str(h).strip()]
+    playability_suspect = bool(bugfix)
 
     if loads_ok and (written_unique or catalog_changed):
         # 尽力交付：本轮确有改动且游戏能加载
@@ -722,6 +741,8 @@ def _salvage_agent_return(
                 f"{head}。我已经改了：{'、'.join(written_unique[:6]) or '本局配置'}。"
                 "可能还没完全到位，先重开看看；不满意再说一句，我继续改。"
             )
+        if playability_suspect and not re.search(r"可能还|原先|消失|看不见", summary):
+            summary += "若人物/画面仍有问题，直接再说一次，我继续专修。"
         how = base_how or ["请重新启动游戏后试玩刚才的改动"]
         if not any("重开" in h or "启动" in h or "重新" in h for h in how):
             how.append("重要：重新启动游戏后新改动才会生效")
@@ -743,17 +764,36 @@ def _salvage_agent_return(
             "progress": progress_events,
             "gate_passed": False,
             "partial": True,
+            "playability_suspect": playability_suspect,
             "intent_route": route,
             "dry_run": dry,
         }
 
-    # 改动会让游戏打不开 → 回滚保持可玩；仍不上锁
+    # 改动会让游戏打不开 → 回滚保持可加载；仍不上锁
     if not loads_ok:
         rolled = _rollback_snapshot(workspace_root, pre_turn_snapshot)
-        summary = (
-            "这次的改法会让游戏打不开，我已经把这次改动撤回、保持游戏能正常玩（放心，没弄坏）。"
-            "你可以再把想要的效果多说一点，或换个说法，我接着试。"
-        )
+        if playability_suspect:
+            summary = (
+                "这次的改法会让游戏打不开，我已经把这次改动撤回了。"
+                "不过你刚才说的问题（例如人物消失）可能还在——"
+                "回滚只是撤掉会崩的改法，不会自动修好原先的故障。"
+                "请再说一次或补充一点细节，我继续专修那个问题。"
+            )
+            how = [
+                "原先的问题可能还在，请继续描述现象（我接着修）",
+                "不必换说法；同一句再说一次也可以",
+            ]
+            gaps = [
+                f"本轮改动被回滚（会导致无法加载）：{reason}",
+                "playability_suspect：回滚后故障可能仍在，禁止声称「能正常玩」",
+            ]
+        else:
+            summary = (
+                "这次的改法会让游戏打不开，我已经把这次改动撤回、游戏还能加载。"
+                "你可以再把想要的效果多说一点，我接着试。"
+            )
+            how = ["游戏保持可加载，可继续试玩；想要的改动可以再说一次"]
+            gaps = [f"本轮改动被回滚（会导致无法加载）：{reason}"]
         return {
             "ok": True,
             "provider": "agent",
@@ -761,10 +801,10 @@ def _salvage_agent_return(
             "message": summary,
             "changes": [],
             "sandbox_files": [],
-            "how_to_play": ["游戏保持原样，可继续试玩；想要的改动可以再说一次"],
+            "how_to_play": how,
             "applied_capabilities": [],
             "needs_relaunch": False,
-            "verify_gaps": [f"本轮改动被回滚（会导致无法加载）：{reason}"],
+            "verify_gaps": gaps,
             "repaired": False,
             "agent_rounds": rounds_used,
             "understanding": last_understanding,
@@ -772,17 +812,27 @@ def _salvage_agent_return(
             "progress": progress_events,
             "gate_passed": False,
             "partial": True,
+            "playability_suspect": playability_suspect,
             "rolled_back": rolled,
             "intent_route": route,
             "dry_run": dry,
         }
 
     # 本轮没有任何改动 → 温和邀请继续，不用"换个说法/没改成"的上锁话术
-    summary = (
-        (last_understanding.strip() + "。" if last_understanding.strip() else "")
-        + "我还在琢磨怎么把这个改好，先没动你的游戏。"
-        "你可以多给一点细节（想要什么效果、在哪出现），我继续帮你改。"
-    )
+    if playability_suspect:
+        summary = (
+            (last_understanding.strip() + "。" if last_understanding.strip() else "")
+            + "这轮还没把故障修好，游戏文件我先没动。"
+            "你可以直接再说一次同样的问题，或补充「什么时候消失/还能不能听见脚步」之类细节，我继续修。"
+        )
+        how = ["故障可能还在，请继续告诉我，我接着改"]
+    else:
+        summary = (
+            (last_understanding.strip() + "。" if last_understanding.strip() else "")
+            + "我还在琢磨怎么把这个改好，先没动你的游戏。"
+            "你可以多给一点细节（想要什么效果、在哪出现），我继续帮你改。"
+        )
+        how = ["游戏保持原样，可继续试玩"]
     return {
         "ok": True,
         "provider": "agent",
@@ -790,7 +840,7 @@ def _salvage_agent_return(
         "message": summary,
         "changes": [],
         "sandbox_files": [],
-        "how_to_play": ["游戏保持原样，可继续试玩"],
+        "how_to_play": how,
         "applied_capabilities": [],
         "needs_relaunch": False,
         "verify_gaps": [f"本轮未产出改动：{reason}"],
@@ -801,6 +851,7 @@ def _salvage_agent_return(
         "progress": progress_events,
         "gate_passed": False,
         "partial": True,
+        "playability_suspect": playability_suspect,
         "intent_route": route,
         "dry_run": {},
     }
@@ -819,21 +870,24 @@ def run_game_agent(
 ) -> dict[str, Any]:
     """执行智能体；成功返回 ok/provider=agent。
 
-    轮次耗尽 / 门禁多次未过 → **不再抛异常上锁**，而是尽力交付本轮已改内容
-    （见 `_salvage_agent_return`）；只有无 Key / LLM 通信等真错误才抛异常。
+    轮次耗尽 / 门禁多次未过 / LLM 坏 JSON → **不再抛异常上锁**，而是尽力交付
+    （见 `_salvage_agent_return`）；只有无 Key / 网络类错误才向上抛供入口重试。
     """
     if not settings.llm_api_key.strip():
         raise ValueError("无 LLM_API_KEY，无法启动智能体")
 
     contract = load_contract(genre)
     progress_events: list[dict[str, Any]] = []
+    bugfix = _is_bugfix_turn(user_text, feedback, None)
     emit_progress(workspace_root, "understand", user_text[:80] or "读懂需求")
     progress_events.append({"stage": "understand"})
 
     route = route_intent(user_text or feedback, contract)
+    bugfix = _is_bugfix_turn(user_text, feedback, route)
 
     # catalog 捷径：激光/炸弹/二段跳等明确命中 → 秒级落地，不进多轮 LLM
-    if _can_catalog_express(route, user_text, feedback):
+    # 故障修盘局禁止走「再开 catalog」交差
+    if (not bugfix) and _can_catalog_express(route, user_text, feedback):
         try:
             return _run_catalog_express(
                 settings, workspace_root, genre, user_text, route, contract
@@ -960,6 +1014,13 @@ def run_game_agent(
     ]
     if learned_block:
         context_bits.append(learned_block)
+    if bugfix:
+        context_bits.append(
+            "【故障修盘·强制】本轮是运行故障反馈：先 diagnose_workspace + 读玩家/主场景/"
+            "hooks（含 _edu）；节点用绝对路径如 /root/Main/Player，禁止 ../Player；"
+            "确保 visible=true、合理 position；禁止 enable 新技能、禁止叠冲刺/无敌/彩虹等新机制；"
+            "只修让人/画面能看见、能玩的问题。"
+        )
     context_bits.append(
         "请先给出 understanding + goals（拆解本轮原话），再施工；"
         "一条话里的多个要求都要进 goals 并尽量落地。"
@@ -999,7 +1060,42 @@ def run_game_agent(
             "write_changes" if _round > 0 else "read_contract",
             f"智能体第 {_round + 1}/{max_rounds} 轮思考中…",
         )
-        parsed = _llm_turn(settings, messages)
+        try:
+            parsed = _llm_turn(settings, messages)
+        except (requests.RequestException, TimeoutError):
+            # 网络类交给入口重试
+            raise
+        except (ValueError, json.JSONDecodeError, KeyError, TypeError) as exc:
+            # 坏 JSON / 缺字段：不上锁，回灌后继续；末轮走 salvage
+            err = str(exc).strip()[:240]
+            messages.append(
+                {
+                    "role": "user",
+                    "content": (
+                        f"上一轮回复无法解析（{err}）。请只返回合法 JSON 对象，"
+                        "含 understanding、goals、actions；不要 markdown 代码块外的杂文。"
+                    ),
+                }
+            )
+            if _round >= max(1, max_rounds) - 1:
+                return _salvage_agent_return(
+                    settings,
+                    workspace_root,
+                    genre,
+                    route=route,
+                    written=written,
+                    catalog_changed=catalog_changed,
+                    pre_turn_snapshot=pre_turn_snapshot,
+                    last_summary=summary,
+                    last_how=how_to_play,
+                    last_understanding=last_understanding,
+                    plan_goals=plan_goals,
+                    progress_events=progress_events,
+                    rounds_used=_round + 1,
+                    reason=f"LLM 回复无法解析: {err}",
+                    bugfix=bugfix,
+                )
+            continue
         last_thought = str(parsed.get("thought", "")).strip()
         understanding = str(parsed.get("understanding", "") or "").strip()
         if understanding:
@@ -1014,7 +1110,19 @@ def run_game_agent(
             )
         actions = parsed.get("actions")
         if not isinstance(actions, list) or not actions:
-            raise ValueError("智能体未给出 actions")
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": json.dumps(parsed, ensure_ascii=False)[:4000],
+                }
+            )
+            messages.append(
+                {
+                    "role": "user",
+                    "content": "缺少 actions 数组。请给出可执行的 actions（含工具调用或 done）。",
+                }
+            )
+            continue
 
         # 首轮或尚未拆解：要求先产出 goals，避免跳过理解直接乱写
         has_mutate = any(
@@ -1213,7 +1321,7 @@ def run_game_agent(
                     }
                 )
                 if gate_failures >= 6:
-                    # 不上锁：尽力交付本轮已改内容（能加载就给，坏了就回滚保可玩）
+                    # 不上锁：尽力交付本轮已改内容（能加载就给，坏了就回滚保可加载）
                     return _salvage_agent_return(
                         settings,
                         workspace_root,
@@ -1229,6 +1337,7 @@ def run_game_agent(
                         progress_events=progress_events,
                         rounds_used=_round + 1,
                         reason="门禁多次未通过: " + "; ".join(gate_errors[:4]),
+                        bugfix=bugfix,
                     )
                 continue
 
@@ -1292,4 +1401,5 @@ def run_game_agent(
         progress_events=progress_events,
         rounds_used=max(1, max_rounds),
         reason="未在限定轮次内完成",
+        bugfix=bugfix,
     )

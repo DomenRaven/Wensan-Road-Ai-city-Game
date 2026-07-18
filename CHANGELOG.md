@@ -18,7 +18,7 @@
 - **故障反馈**：人物消失/白屏等 → Intent B 诊断修盘，禁止叠无关 buff；故障局 done 门禁软化
 - **门禁纳入 Godot 冒烟自愈**：本轮改 `.gd/.tscn` 强制 `dry_run_godot`，错误（含 `at:` 定位）回灌 LLM；`None/True/False` 静态拦截
 - **HF-8 不上锁**：轮次/门禁耗尽 → `_salvage_agent_return` 尽力交付或回滚保加载，禁「没改成」劝退
-- **HF-9（进行中）**：坏 JSON 仍上锁 + 回滚到「已坏可加载」基线却假安慰——见热修手册；本提交先落文档，代码紧随
+- **HF-9 失败语义闭环**：坏 JSON/业务异常 → `ok=True·partial` 软继续（禁「没改成/换个说法」）；故障局回滚诚实承认「原先问题可能还在」；Agent 内坏 JSON 回灌自愈；故障局禁 catalog 快车道
 - **项目瘦身**：清理 workspace 运行时报告/证书令牌、根目录重复部署手册与一次性验收 docx、pytest 缓存与 learned_skills 体验运行时
 
 ### 新增

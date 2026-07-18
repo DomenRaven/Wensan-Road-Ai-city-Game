@@ -190,3 +190,69 @@ def test_enable_catalog_skill_writes_config(tmp_path: Path) -> None:
     assert out["skill_id"] == "double_jump"
     cfg = json.loads((root / "config" / "game_config.json").read_text(encoding="utf-8"))
     assert "double_jump" in cfg["tuning"]["enabled_skills"]
+
+
+def test_salvage_bugfix_rollback_does_not_claim_playable(tmp_path: Path) -> None:
+    """HF-9：故障局回滚不得声称「能正常玩」。"""
+    from app.services.creative.game_agent import _salvage_agent_return
+
+    templates, workspace, root = _mini_tree(tmp_path)
+    settings = _settings(templates, workspace, api_key="sk-test")
+    # 本轮「写坏」了脚本，dry_run 会失败 → 走回滚分支
+    bad = root / "core" / "player.gd"
+    bad.write_text("extends CharacterBody2D\nfunc _ready():\n\tbroken(\n", encoding="utf-8")
+    with patch(
+        "app.services.creative.game_agent.dry_run_godot",
+        return_value={"ok": False, "skipped": False, "errors": ["Node not found: ../Player"]},
+    ):
+        out = _salvage_agent_return(
+            settings,
+            root,
+            "platformer",
+            route={"intent": "B", "skill_ids": [], "recipe_id": "运行时显示/启动故障"},
+            written=["core/player.gd"],
+            catalog_changed=False,
+            pre_turn_snapshot={"core/player.gd": b"extends CharacterBody2D\n"},
+            last_summary="",
+            last_how=[],
+            last_understanding="人物消失需要修节点路径",
+            plan_goals=["修玩家可见"],
+            progress_events=[],
+            rounds_used=3,
+            reason='dry_run: Node not found: "../Player"',
+            bugfix=True,
+        )
+    assert out["ok"] is True
+    assert out.get("partial") is True
+    assert out.get("playability_suspect") is True
+    msg = out["message"]
+    assert "能正常玩" not in msg
+    assert "原先" in msg or "可能还在" in msg
+    assert "没弄坏" not in msg or "可能还在" in msg
+
+
+def test_llm_bad_json_salvages_inside_agent(tmp_path: Path) -> None:
+    """HF-9：Agent 内 LLM 坏 JSON 应 salvage，不抛到入口上锁。"""
+    from app.services.creative.game_agent import run_game_agent
+
+    templates, workspace, root = _mini_tree(tmp_path)
+    settings = _settings(templates, workspace, api_key="sk-test")
+    with patch(
+        "app.services.creative.game_agent._llm_turn",
+        side_effect=json.JSONDecodeError("Expecting ',' delimiter", "bad", 10),
+    ):
+        with patch(
+            "app.services.creative.game_agent._can_catalog_express",
+            return_value=False,
+        ):
+            out = run_game_agent(
+                settings,
+                root,
+                "platformer",
+                "人物消失不见了",
+                max_rounds=2,
+            )
+    assert out["ok"] is True
+    assert out.get("partial") is True
+    assert "没改成" not in out["message"]
+    assert "换个说法" not in out["message"]

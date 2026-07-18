@@ -949,18 +949,34 @@ def apply_nl_patch(
                 OSError,
                 AgentWorkspaceError,
             ) as exc:
-                # 业务/门禁失败：不整段重跑（否则「发射激光」可拖到十几分钟）
+                # 业务/解析失败：不整段重跑；也不上锁劝退（HF-9）
                 last_exc = exc
                 llm_error = f"agent:{exc}"
                 break
 
+        # HF-9：坏 JSON / 业务异常 → 软继续（ok=True·partial），禁止「没改成/换个说法」上锁
         detail = str(last_exc or llm_error).strip()[:200]
-        message = (
-            "智能体这轮没改成（不是降级成规则引擎，是施工/门禁未通过）。"
-            "请换个说法或再发一次，我继续用智能体改会话副本。"
-        )
-        if detail:
-            message = message.rstrip("。") + f"。线索：{detail}"
+        if bugfix:
+            message = (
+                "这轮还没把故障修好，游戏我先按能加载的状态留下了。"
+                "你可以直接再说一次同样的问题，或补充一点细节，我继续专修。"
+            )
+            how = [
+                "故障可能还在，请继续告诉我（同一句再说一次也可以）",
+                "不必换说法",
+            ]
+        else:
+            message = (
+                "这轮还没完全改到位，游戏我先没弄坏。"
+                "你可以直接再说一次，或把想要的效果多说一点，我继续改。"
+            )
+            how = [
+                "可直接再发一次同样的需求",
+                "或补充更具体的现象后让我继续改",
+            ]
+        if detail and "Expecting" in detail:
+            # JSON 解析类：给内部线索，不吓用户
+            how = list(how) + ["（内部：模型回复格式异常，已跳过上锁）"]
         return _log_patch_result(
             settings,
             workspace_root,
@@ -968,22 +984,21 @@ def apply_nl_patch(
             request_text,
             feedback_text,
             {
-                "ok": False,
+                "ok": True,
                 "provider": "agent",
                 "summary": message,
                 "message": message,
                 "changes": [],
                 "sandbox_files": list_sandbox_files(workspace_root),
                 "llm_error": llm_error,
-                "how_to_play": [
-                    "可直接再发一次同样的需求",
-                    "或补充更具体的现象后让我继续改",
-                ],
+                "how_to_play": how,
                 "applied_capabilities": [],
                 "needs_relaunch": False,
-                "verify_gaps": [detail] if detail else [],
+                "verify_gaps": [detail] if detail else ["本轮未完成施工"],
                 "repaired": False,
                 "gate_passed": False,
+                "partial": True,
+                "playability_suspect": bool(bugfix),
             },
         )
 

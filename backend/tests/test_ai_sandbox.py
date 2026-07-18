@@ -304,7 +304,7 @@ def test_nl_patch_with_key_uses_agent_not_legacy_llm(
 def test_nl_patch_agent_failure_does_not_degrade_to_stub_llm(
     tree: tuple[Path, Path, Path],
 ) -> None:
-    """Agent 失败时诚实失败，禁止降级成 llm/stub 空话。"""
+    """Agent 业务失败：软继续（不上锁），禁止降级成 llm/stub。"""
     templates, workspace, root = tree
     settings = _settings(templates, workspace, api_key="sk-test")
     with patch(
@@ -317,10 +317,36 @@ def test_nl_patch_agent_failure_does_not_degrade_to_stub_llm(
                     settings, root, templates, "platformer", "人物消失不显示"
                 )
     assert result["provider"] == "agent"
-    assert result["ok"] is False
-    assert "智能体" in result["message"] or "没改成" in result["message"]
+    assert result["ok"] is True
+    assert result.get("partial") is True
+    assert "没改成" not in result["message"]
+    assert "换个说法" not in result["message"]
+    assert "继续" in result["message"] or "再说" in result["message"]
     legacy.assert_not_called()
     stub.assert_not_called()
+
+
+def test_nl_patch_json_error_soft_continue_no_lock(
+    tree: tuple[Path, Path, Path],
+) -> None:
+    """HF-9：JSON 解析失败不得返回上锁话术。"""
+    templates, workspace, root = tree
+    settings = _settings(templates, workspace, api_key="sk-test")
+    with patch(
+        "app.services.creative.llm_patch.run_game_agent",
+        side_effect=json.JSONDecodeError("Expecting ',' delimiter", "x", 0),
+    ):
+        result = apply_nl_patch(
+            settings, root, templates, "parkour", "人物消失不见了"
+        )
+    assert result["ok"] is True
+    assert result["provider"] == "agent"
+    assert result.get("partial") is True
+    assert result.get("playability_suspect") is True
+    msg = result["message"]
+    assert "没改成" not in msg
+    assert "换个说法" not in msg
+    assert "Expecting" not in msg  # 不把 JSON 堆栈甩给用户主文案
 
 
 def test_nl_patch_sanitize_rejects_evil_via_helpers() -> None:
