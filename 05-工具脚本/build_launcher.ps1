@@ -1,12 +1,11 @@
-# 打包「启动游戏工坊.exe」一键启动器
+# 打包「启动游戏工坊.exe」一键启动器 · v1.2
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
 $Script = Join-Path $PSScriptRoot "launch_workshop.py"
 $Dist = Join-Path $PSScriptRoot "dist"
 $Build = Join-Path $PSScriptRoot "build\launcher"
-$Spec = Join-Path $PSScriptRoot "launch_workshop.spec"
 
-Write-Host "Building launcher exe..."
+Write-Host "Building launcher exe v1.2 (P4-B/C 展厅落地)..."
 python -m pip install --quiet pyinstaller
 
 if (Test-Path $Dist) { Remove-Item -Recurse -Force $Dist }
@@ -33,6 +32,7 @@ Write-Host ""
 Write-Host "OK: $Exe"
 Write-Host "OK: $RootExe  (仓库根目录副本，双击即可启动)"
 Write-Host ""
+Write-Host "  产品版本: 1.2 · 启动器 v1.2"
 Write-Host "用法: 双击 exe，或"
 Write-Host "  .\启动游戏工坊.exe --mode fast   # A 链快玩"
 Write-Host "  .\启动游戏工坊.exe --no-browser  # 不自动开浏览器"

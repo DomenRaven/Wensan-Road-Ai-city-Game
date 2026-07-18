@@ -1,0 +1,128 @@
+{
+  "genre": "parkour",
+  "bridge_apis": [
+    {
+      "name": "get_player",
+      "sig": "() -> CharacterBody2D",
+      "desc": "跑者"
+    },
+    {
+      "name": "get_player_node",
+      "sig": "() -> Node",
+      "desc": "玩家节点"
+    },
+    {
+      "name": "get_game_manager",
+      "sig": "() -> Node",
+      "desc": "主场景"
+    },
+    {
+      "name": "watch_coins",
+      "sig": "(cb: Callable) -> void",
+      "desc": "金币"
+    },
+    {
+      "name": "get_coin_count",
+      "sig": "() -> int",
+      "desc": "金币数"
+    },
+    {
+      "name": "grant_invincibility",
+      "sig": "(seconds: float) -> void",
+      "desc": "无敌"
+    },
+    {
+      "name": "boost_move_speed",
+      "sig": "(multiplier: float, seconds: float) -> void",
+      "desc": "冲刺感移速"
+    },
+    {
+      "name": "show_countdown",
+      "sig": "(seconds: float, title: String) -> void",
+      "desc": "倒计时"
+    },
+    {
+      "name": "flash_player_fx",
+      "sig": "(seconds: float) -> void",
+      "desc": "闪烁"
+    },
+    {
+      "name": "set_tuning_number",
+      "sig": "(dotted_path: String, value: float) -> void",
+      "desc": "内存数值"
+    },
+    {
+      "name": "grant_temp_shield",
+      "sig": "(seconds: float) -> void",
+      "desc": "临时护盾"
+    },
+    {
+      "name": "ensure_touch_action",
+      "sig": "(action_id: String, label: String) -> void",
+      "desc": "通用触屏按钮"
+    }
+  ],
+  "catalog_skills": [
+    {
+      "id": "double_jump",
+      "label": "二段跳",
+      "desc": "空中再跳",
+      "trigger": "触屏跳",
+      "runtime": {
+        "input": "action:jump",
+        "effect": "catalog:double_jump",
+        "touch": "overlay|ensure_touch_action"
+      }
+    },
+    {
+      "id": "slide",
+      "label": "滑铲",
+      "desc": "钻低障碍",
+      "trigger": "触屏下滑",
+      "runtime": {
+        "input": "action:slide",
+        "effect": "catalog:slide",
+        "touch": "overlay|ensure_touch_action"
+      }
+    }
+  ],
+  "edit_recipes": [
+    {
+      "intent": "开二段跳/滑铲",
+      "action": "enable_catalog_skill",
+      "paths": "config/game_config.json",
+      "hint": "double_jump / slide"
+    },
+    {
+      "intent": "更快冲刺",
+      "action": "bridge_or_tuning",
+      "paths": "boost_move_speed / set_tuning_number",
+      "hint": "可感知试玩"
+    },
+    {
+      "intent": "新机制",
+      "action": "edit_session_core",
+      "paths": "core/** scenes/**",
+      "hint": "会话 core/scenes 自由实现用户所求；桥/catalog 为捷径"
+    }
+  ],
+  "hooks": {
+    "main_scene": "scenes/main.tscn",
+    "config": "config/game_config.json",
+    "sandbox": "core/ai_sandbox/"
+  },
+  "notes": [
+    "二段跳下落段可由桥补齐",
+    "可改会话 core，禁止改 templates",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死",
+    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差"
+  ],
+  "forbidden_invented_apis": [
+    "add_method",
+    "bridge.add_method",
+    "merge_overrides",
+    "patch_tuning",
+    "set_color(",
+    "bullet.set_color"
+  ]
+}

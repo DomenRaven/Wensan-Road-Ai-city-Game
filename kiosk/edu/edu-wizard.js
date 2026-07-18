@@ -60,6 +60,8 @@
   /** @type {number|null} */
   let launchStatusPollTimer = null;
   /** @type {boolean} */
+  let launchInFlight = false;
+  /** @type {boolean} */
   let prevGodotRunning = false;
   /** @type {boolean} */
   let leaderboardHandledThisRun = false;
@@ -307,17 +309,63 @@
     }
   }
 
+  /**
+   * B5 制作前确保会话仍在；若中途被 A 链误杀，重建并重放关键状态。
+   * @returns {Promise<string>}
+   */
+  async function ensureBuildSession() {
+    const sid = await window.EduSession.ensureSession();
+    try {
+      if (intentRaw || genre) {
+        await window.EduSession.api("/intent/match-genre", {
+          method: "POST",
+          body: JSON.stringify({
+            text: intentRaw || genreLabel || genre,
+            session_id: sid,
+          }),
+        });
+      }
+      if (creatorName) {
+        await window.EduSession.api(`/sessions/${sid}`, {
+          method: "PATCH",
+          body: JSON.stringify({ creator_name: creatorName }),
+        });
+      }
+      if (displayName) {
+        await window.EduSession.api(`/sessions/${sid}/wizard/S0`, {
+          method: "POST",
+          body: JSON.stringify({ data: { display_name: displayName } }),
+        }).catch(() => {});
+      }
+      if (Object.keys(creativeAnswers).length) {
+        await window.EduSession.api(`/sessions/${sid}/creative/answers`, {
+          method: "POST",
+          body: JSON.stringify({ answers: creativeAnswers }),
+        });
+        await window.EduSession.api(`/sessions/${sid}/analyze-requirements`, {
+          method: "POST",
+          body: "{}",
+        });
+      }
+    } catch (err) {
+      window.EduSession.log(`同步会话状态失败 · ${err?.message || err}`);
+    }
+    return sid;
+  }
+
   async function runBuildPipeline() {
     mountDualPaneIfNeeded();
     window.EduDualPane.setPhase("build");
     paneRefs.codeWorkspace = window.EduDualPane.restoreCodeLayout();
     setBuildWaitPanel("analyze", 8);
     window.EduDualPane.setToolbar(false);
+    window.EduSession.protectRelease = true;
 
-    const sessionId = window.EduSession.sessionId;
+    let sessionId = window.EduSession.sessionId;
     let analyzeOk = false;
 
     try {
+      sessionId = await ensureBuildSession();
       const analyze = await window.EduSession.api(`/sessions/${sessionId}/analyze-requirements`, {
         method: "POST",
         body: "{}",
@@ -351,6 +399,7 @@
           (async () => {
             let genOk = false;
             try {
+              sessionId = await ensureBuildSession();
               const gen = await window.EduSession.api(`/sessions/${sessionId}/generate/v2`, {
                 method: "POST",
                 body: JSON.stringify({
@@ -370,11 +419,35 @@
                   window.EduSession.log(`加载 game_config 失败 · ${err.message}`);
                 }
               }
-            } catch (_) {
-              window.EduSession.log("TODO: POST generate/v2 未就绪 · 跳过 workspace 生成");
+            } catch (err) {
+              const msg = String(err?.message || err);
+              window.EduSession.log(`制作失败 · ${msg}`);
+              // 会话丢失时再重建一次
+              if (msg.includes("404") || msg.includes("Session not found")) {
+                try {
+                  sessionId = await ensureBuildSession();
+                  const gen = await window.EduSession.api(`/sessions/${sessionId}/generate/v2`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                      meta: { genre, display_name: displayName },
+                      creative_answers: creativeAnswers,
+                    }),
+                  });
+                  genOk = gen.ok !== false;
+                  workspacePath = gen.workspace_path || "";
+                  if (gen.code_map) codeMap = gen.code_map;
+                } catch (err2) {
+                  window.EduSession.log(`重试制作仍失败 · ${err2?.message || err2}`);
+                }
+              }
             }
 
-            window.EduSession.log(analyzeOk && genOk ? "✓ 制作完成" : "⚠ 降级模式 · 可试玩经典版");
+            window.EduSession.protectRelease = false;
+            window.EduSession.log(
+              analyzeOk && genOk && workspacePath
+                ? "✓ 制作完成"
+                : "⚠ 制作未完成 · 可点讲解演示看代码，或重新开始"
+            );
             window.EduBuildWait?.updateProgress(null, 100);
             window.EduCodeTheater.updateProgress(null, 100);
             window.setTimeout(() => {
@@ -770,7 +843,7 @@
       <div class="launch-status-inline launch-status-inline--err">
         <span class="launch-inline-icon" aria-hidden="true">!</span>
         <p class="launch-status err" id="launchStatus">${errMsg}</p>
-        <p class="hint">可点「加载经典版」重试，或先进入演示模式看左侧高亮</p>
+        <p class="hint">可点「重新试玩」再试一次，或先看左侧代码高亮演示</p>
       </div>
     `;
   }
@@ -852,6 +925,43 @@
   }
 
   /**
+   * S-A3 / S-B6 · AI 改代码入口按钮（放在讲解演示下方并放大，触控友好 ≥ 56px）。
+   * @returns {string}
+   */
+  function renderAiPatchButtonHtml() {
+    return `
+      <button type="button" id="btnAiPatch" class="btn-ai-patch" aria-label="用 AI 改游戏参数">
+        <span class="btn-ai-patch__icon" aria-hidden="true">🤖</span>
+        <span class="btn-ai-patch__body">
+          <span class="btn-ai-patch__title">用 AI 改游戏</span>
+          <span class="btn-ai-patch__sub">说一句话，让 AI 帮你调整游戏</span>
+        </span>
+      </button>
+    `;
+  }
+
+  function bindAiPatchButton() {
+    const root = document.getElementById("paneRightInner");
+    const btn = root?.querySelector("#btnAiPatch");
+    btn?.addEventListener("click", () => openAiPatchDialog());
+  }
+
+  /** 打开 AI 改代码对话框（S-A3/N-5）。完成后可「用新参数试玩」→ force relaunch。 */
+  function openAiPatchDialog() {
+    if (!window.EduNlPatchDialog) {
+      window.EduSession.log("AI 改代码组件未就绪");
+      return;
+    }
+    window.EduNlPatchDialog.open({
+      sessionId: window.EduSession.sessionId,
+      genre,
+      onReplay: () => {
+        void launchCurrentGame({ force: true, reason: "ai-patch" });
+      },
+    });
+  }
+
+  /**
    * @param {string} genreSlug
    * @param {{ launched?: boolean }} [opts]
    */
@@ -867,7 +977,10 @@
     });
   }
 
-  function showCertificateOverlay() {
+  /**
+   * @param {"full"|"auto_flash"} [mode]
+   */
+  function showCertificateOverlay(mode = "full") {
     if (!window.EduCertificate) return;
     if (!certificateCreatedAt) {
       certificateCreatedAt = new Date();
@@ -882,6 +995,7 @@
       questions: creativeTemplate?.questions || [],
       answers: creativeAnswers,
       createdAt: certificateCreatedAt,
+      mode,
     });
   }
 
@@ -914,6 +1028,7 @@
           <div class="demo-panel-actions demo-panel-actions--wrap">
             ${renderGenreDemoActionsHtml(genre, { compact: false, launched: false })}
           </div>
+          ${renderAiPatchButtonHtml()}
         </div>
       </div>
     `;
@@ -988,6 +1103,15 @@
       if (statusEl) {
         statusEl.textContent = "○ 游戏窗口已关闭";
         statusEl.className = "godot-run-status stopped";
+      }
+      // N-4 · 关窗后把「运行中」死态改为「已关闭」，引导重新试玩
+      if (sawGodotRunning) {
+        const hint = document.getElementById("playWindowHint");
+        const title = document.getElementById("playWindowTitle");
+        const hintText = document.getElementById("playWindowHintText");
+        if (hint) hint.classList.add("play-window-hint--closed");
+        if (title) title.textContent = "游戏已关闭";
+        if (hintText) hintText.textContent = "点「重新试玩」再玩一次，或看看今日榜单";
       }
 
       const elapsed = Date.now() - launchPollStartedAt;
@@ -1066,8 +1190,11 @@
       renderPlayReadyPanel(window.EduB1Intent?.emoji(genre))
     );
 
-    document.getElementById("btnLaunch")?.addEventListener("click", launchGame);
+    document.getElementById("btnLaunch")?.addEventListener("click", () =>
+      launchCurrentGame({ force: false, reason: "start" })
+    );
     bindGenreDemoActions(genre, { launched: false });
+    bindAiPatchButton();
 
     window.EduDualPane.setToolbar(true, `
       <button type="button" id="btnDualPrev" class="btn btn-secondary" disabled>上一步</button>
@@ -1075,19 +1202,55 @@
       <button type="button" id="btnDualNext" class="btn btn-primary">进入试玩</button>
     `);
     bindDualToolbar();
-    showCertificateOverlay();
+    // S-B1 · 进入 B6 自动闪现证书约 3 秒后消失（闪现态无保存钮，不阻断开始试玩）
+    showCertificateOverlay("auto_flash");
   }
 
-  async function launchGame() {
+  /**
+   * S-B3 · 统一启动通路：开始试玩 / 重新试玩 / AI 用新参数试玩共用。
+   * force=true 时后端会结束旧 Godot 并重启，读到最新 game_config.json（N-5）。
+   * @param {{ force?: boolean, reason?: string }} [opts]
+   */
+  async function launchCurrentGame(opts = {}) {
+    if (launchInFlight) return;
+    const force = !!opts.force;
+    launchInFlight = true;
+
+    const launchBtns = ["btnLaunch", "btnReplay"]
+      .map((id) => /** @type {HTMLButtonElement|null} */ (document.getElementById(id)))
+      .filter(Boolean);
+    launchBtns.forEach((b) => {
+      if (b) b.disabled = true;
+    });
+
     launchState = { ok: false, waiting: true };
     const wrap = document.getElementById("launchStatusWrap");
     if (wrap) wrap.innerHTML = renderLaunchStatusPanel(launchState);
 
     try {
-      const data = await window.EduSession.api(
-        `/sessions/${window.EduSession.sessionId}/play/launch`,
-        { method: "POST", body: getLaunchViewportBody() }
-      );
+      let sessionId = await ensureBuildSession();
+      // 若制作阶段未写出 workspace，启动前补一次 generate
+      if (!workspacePath) {
+        try {
+          const gen = await window.EduSession.api(`/sessions/${sessionId}/generate/v2`, {
+            method: "POST",
+            body: JSON.stringify({
+              meta: { genre, display_name: displayName },
+              creative_answers: creativeAnswers,
+            }),
+          });
+          workspacePath = gen.workspace_path || "";
+          if (gen.code_map) codeMap = gen.code_map;
+        } catch (err) {
+          window.EduSession.log(`补做 generate 失败 · ${err?.message || err}`);
+        }
+      }
+
+      const path = `/sessions/${sessionId}/play/launch${force ? "?force=true" : ""}`;
+      const data = await window.EduSession.api(path, {
+        method: "POST",
+        body: getLaunchViewportBody(),
+      });
       if (!data.ok) {
         launchState = { ok: false, message: data.message || "游戏启动失败，请重试" };
         window.EduSession.log(`play/launch 未成功 · ${launchState.message}`);
@@ -1109,7 +1272,7 @@
       launchPollStartedAt = Date.now();
       sawGodotRunning = !!data.already_running;
       window.EduSession.log(
-        launchState.already_running ? "✓ 游戏已在运行" : "✓ Godot 已启动"
+        force ? "✓ 已用新参数重新启动" : launchState.already_running ? "✓ 游戏已在运行" : "✓ Godot 已启动"
       );
       stepIndex = STEPS.indexOf("B7");
       await renderStep();
@@ -1118,6 +1281,11 @@
       launchState = { ok: false, message: msg };
       window.EduSession.log(`play/launch 失败 · ${msg}`);
       if (wrap) wrap.innerHTML = renderLaunchStatusPanel(launchState);
+    } finally {
+      launchInFlight = false;
+      launchBtns.forEach((b) => {
+        if (b) b.disabled = false;
+      });
     }
   }
 
@@ -1140,10 +1308,10 @@
       <div class="pane-right-stack">
         <div class="godot-frame-wrap play-active-wrap">
           ${launched ? renderLaunchStatusPanel(launchState) : ""}
-          <div class="play-window-hint play-window-hint--active">
+          <div class="play-window-hint play-window-hint--active" id="playWindowHint">
             <span class="play-window-icon" aria-hidden="true">🎮</span>
-            <p class="play-window-title">游戏在外置窗口中运行</p>
-            <p class="hint">请看讲解员指向的大屏旁 Godot 游戏窗口</p>
+            <p class="play-window-title" id="playWindowTitle">游戏已全屏铺满显示器</p>
+            <p class="hint" id="playWindowHintText">请在游戏窗口试玩；玩完关闭窗口即可看今日榜</p>
           </div>
         </div>
         <div class="demo-panel-card demo-panel-card--compact">
@@ -1151,6 +1319,7 @@
           <div class="demo-panel-actions demo-panel-actions--wrap">
             ${renderGenreDemoActionsHtml(genre, { compact: true, launched })}
           </div>
+          ${renderAiPatchButtonHtml()}
         </div>
       </div>
     `);
@@ -1163,41 +1332,19 @@
     }
 
     bindGenreDemoActions(genre, { launched });
+    bindAiPatchButton();
 
     window.EduDualPane.setToolbar(true, `
-      <button type="button" id="btnLoadClassic" class="btn btn-ghost">加载经典版</button>
+      <button type="button" id="btnReplay" class="btn btn-primary">▶ 重新试玩</button>
       <button type="button" id="btnViewLeaderboard" class="btn btn-secondary">今日榜单</button>
       <button type="button" id="btnViewCertificate" class="btn btn-secondary">查看证书</button>
       <button type="button" id="btnFinish" class="btn btn-secondary">完成创作</button>
     `);
-    document.getElementById("btnLoadClassic")?.addEventListener("click", async () => {
-      try {
-        const data = await window.EduSession.api(
-          `/sessions/${window.EduSession.sessionId}/play/launch`,
-          { method: "POST", body: getLaunchViewportBody() }
-        );
-        if (data.ok) {
-          launchState = {
-            ok: true,
-            already_running: !!data.already_running,
-            pid: data.pid ?? null,
-            project_path: data.project_path || "",
-            message: data.message || "",
-            window_placed: data.window_placed,
-            placement_rect: data.placement_rect || null,
-            orientation: window.EduOrientation?.getMode?.() || "landscape",
-          };
-          window.EduSession.log("已加载经典版 · Godot 已启动");
-          await renderB7Play();
-        } else {
-          window.EduSession.log(`经典版加载失败 · ${data.message || "未知错误"}`);
-        }
-      } catch (err) {
-        window.EduSession.log(`经典版 fallback 失败 · ${parseLaunchError(err)}`);
-      }
-    });
+    document.getElementById("btnReplay")?.addEventListener("click", () =>
+      launchCurrentGame({ force: true, reason: "replay" })
+    );
     document.getElementById("btnViewCertificate")?.addEventListener("click", () => {
-      showCertificateOverlay();
+      showCertificateOverlay("full");
     });
     document.getElementById("btnViewLeaderboard")?.addEventListener("click", () => {
       void openLeaderboardPanel();
@@ -1246,8 +1393,7 @@
         }
         window.EduB2Creator.clearValidationError(stepFormEl);
         try {
-          await window.EduSession.ensureSession();
-          await window.EduSession.api(`/sessions/${window.EduSession.sessionId}`, {
+          await window.EduSession.apiWithSession(`/sessions/${window.EduSession.sessionId}`, {
             method: "PATCH",
             body: JSON.stringify({ creator_name: creatorName }),
           });
@@ -1271,8 +1417,7 @@
       }
       window.EduB2Name.clearValidationError(stepFormEl);
       try {
-        await window.EduSession.ensureSession();
-        await window.EduSession.api(`/sessions/${window.EduSession.sessionId}/wizard/S0`, {
+        await window.EduSession.apiWithSession(`/sessions/${window.EduSession.sessionId}/wizard/S0`, {
           method: "POST",
           body: JSON.stringify({ data: { display_name: displayName } }),
         });
@@ -1351,6 +1496,7 @@
   }
 
   async function resetWizard() {
+    window.EduSession.protectRelease = false;
     window.EduCertificate?.hide();
     window.EduCodeViewer?.setViewportPinned(false);
     window.EduGenreTheme?.clear?.();
@@ -1436,6 +1582,17 @@
     }
   }
 
-  window.EduWizard = { spec, init, currentStep, resetWizard, fetchWorkspaceFile, fetchPreviewFile, setUiEnabled };
+  window.EduWizard = {
+    get spec() {
+      return spec;
+    },
+    init,
+    currentStep,
+    resetWizard,
+    fetchWorkspaceFile,
+    fetchPreviewFile,
+    hasWorkspace: () => !!workspacePath,
+    setUiEnabled,
+  };
   document.addEventListener("DOMContentLoaded", () => init());
 })();

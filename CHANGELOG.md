@@ -6,6 +6,42 @@
 
 ---
 
+## [Unreleased]
+
+> 工作树快照（相对 tag `v1.2`）：[`开发文档/AI改游戏智能体_工作进度与快照_2026-07-18.md`](开发文档/AI改游戏智能体_工作进度与快照_2026-07-18.md)
+
+### 变更
+
+- **智能体自由创作**：契约/提示改为「会话 core/scenes 主路径；桥与 catalog 为捷径」；幻想 API 不再硬劝退，改为继续让 LLM 用 GDScript 实现；默认意图走自由创作
+- **去伪降级**：有 `LLM_API_KEY` 时 **只走** `run_game_agent`（失败重试后诚实 `provider=agent`）；**禁止**再掉进旧 `_call_llm` / stub；无 Key 才用离线 stub
+- **对话对齐 DeepSeek 体验**：本轮原话置顶；强制 `understanding` + `goals[]`；多 goals 覆盖 summary；同会话带历史；UI 展示理解/拆解（`nl-patch-dialog.js?v=7.4-c09-25`）
+- **故障反馈**：人物消失/白屏等 → Intent B 诊断修盘，禁止叠无关 buff；故障局 done 门禁软化
+- **项目瘦身**：清理 workspace 运行时报告/证书令牌、根目录重复部署手册与一次性验收 docx、pytest 缓存与 learned_skills 体验运行时
+
+### 新增
+
+- **P0-通用工作流（条件通过）**：`intent_router`（A/B/C/D）· 七品类契约 `runtime` · `assert_catalog_runtime` · 桥 `ensure_touch_action` · Agent 注入路由
+- 单测：`test_intent_router` 等；godot-mcp 抽测 shmup/platformer 无 ERROR；ai_sandbox/game_agent/nl_patch 对齐 Agent-only（非 live **70 passed**）
+- **Live 可感知矩阵** `05-工具脚本/live_perceivable_matrix.py`
+
+### 既有变更
+
+- Kiosk nl-patch：禁自动 `onReplay`，保留「现在重开游戏」
+- **L3 收紧**：`assert_catalog_runtime` 去掉「无 core 即放行」
+- **shmup 触屏收敛**：炸弹/激光走桥 HUD
+
+### 文档
+
+- **AI 改游戏智能体需求升至 v1.2**；工作方向锁定 / 映射 / 施工 / 开工 v3
+- **进度·足迹·快照**：`开发文档/AI改游戏智能体_工作进度与快照_2026-07-18.md`
+- 索引：`文档目录说明.md` / `README.md` / `.cursor/rules/godot-mini-game.mdc`
+
+### 建议人手补签
+
+- 展厅实机：新开一局 → 短对话 → 手动重开 → 点屏技能可感（旧 workspace 需重做才注入）
+
+---
+
 ## [1.2] - 2026-07-06
 
 ### 新增
@@ -20,19 +56,22 @@
 - `kiosk/edu/` 全线 UI 组件与 `edu-styles.css` 局部 accent（全页保持蓝白）
 - `e2e_recipe_a_certificate.py` · `e2e_b_edu_batch.py` 适配 P4-C 新向导流
 - `backend/` 会话补丁 · 证书公网 token · 日榜持久化
+- **部署手册 v1.2** · **启动游戏工坊.exe 启动器 v1.2**（端口复用 · bind 127.0.0.1）
 
 ### 说明
 
 - **P4-A Godot 内嵌**：挂起 · 继续 v1.1 P3-3 外置窗
 - **C-08 扫码**：API 就绪 · **展馆公网域名待配**
 - **templates/core**：未改
-- **tag `v1.2`**：待用户确认后打 tag / push
+- **tag `v1.2`**：已打 tag / push（2026-07-06）
+- **部署包**：`请先读_展厅部署与操作.md` · `软件操作说明书_v1.2` · `展厅本地服务器_AI一键部署说明_v1.2` · `deploy_exhibition.ps1` / `pack_exhibition_delivery.ps1`
 
 | 项 | 值 |
 |----|-----|
 | 收工评审 | `开发文档/模板引擎/评审记录/7.4_验收记录.md` |
 | 状态快照 | `开发文档/模板引擎/快照/7.4_收工后状态快照_v1.0.md` |
 | 功能验收 | 根目录 `AI学习小游戏创作-功能验收文档.docx` v1.2 |
+| 部署手册 | `开发文档/部署手册_v1.2.md` |
 
 ---
 

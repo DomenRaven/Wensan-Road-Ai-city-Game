@@ -1,0 +1,123 @@
+{
+  "genre": "racing",
+  "bridge_apis": [
+    {
+      "name": "get_player",
+      "sig": "() -> CharacterBody2D",
+      "desc": "载具（若适用）"
+    },
+    {
+      "name": "get_player_node",
+      "sig": "() -> Node",
+      "desc": "玩家节点"
+    },
+    {
+      "name": "get_game_manager",
+      "sig": "() -> Node",
+      "desc": "赛道场景"
+    },
+    {
+      "name": "watch_coins",
+      "sig": "(cb: Callable) -> void",
+      "desc": "少用"
+    },
+    {
+      "name": "get_coin_count",
+      "sig": "() -> int",
+      "desc": "计数"
+    },
+    {
+      "name": "grant_invincibility",
+      "sig": "(seconds: float) -> void",
+      "desc": "无敌"
+    },
+    {
+      "name": "boost_move_speed",
+      "sig": "(multiplier: float, seconds: float) -> void",
+      "desc": "氮气感加速"
+    },
+    {
+      "name": "show_countdown",
+      "sig": "(seconds: float, title: String) -> void",
+      "desc": "倒计时"
+    },
+    {
+      "name": "flash_player_fx",
+      "sig": "(seconds: float) -> void",
+      "desc": "闪烁"
+    },
+    {
+      "name": "set_tuning_number",
+      "sig": "(dotted_path: String, value: float) -> void",
+      "desc": "车速等"
+    },
+    {
+      "name": "ensure_touch_action",
+      "sig": "(action_id: String, label: String) -> void",
+      "desc": "通用触屏按钮"
+    }
+  ],
+  "catalog_skills": [
+    {
+      "id": "boost",
+      "label": "氮气加速",
+      "desc": "短时极速",
+      "trigger": "触屏氮气",
+      "runtime": {
+        "input": "action:boost",
+        "effect": "catalog:boost",
+        "touch": "overlay|ensure_touch_action"
+      }
+    },
+    {
+      "id": "drift_snap",
+      "label": "漂移",
+      "desc": "弯道保速",
+      "trigger": "触屏漂移",
+      "runtime": {
+        "input": "action:drift",
+        "effect": "catalog:drift_snap",
+        "touch": "overlay|ensure_touch_action"
+      }
+    }
+  ],
+  "edit_recipes": [
+    {
+      "intent": "开氮气/漂移",
+      "action": "enable_catalog_skill",
+      "paths": "config/game_config.json",
+      "hint": "boost / drift_snap"
+    },
+    {
+      "intent": "更快",
+      "action": "bridge_or_tuning",
+      "paths": "boost_move_speed / set_tuning_number",
+      "hint": "可感知"
+    },
+    {
+      "intent": "新机制",
+      "action": "edit_session_core",
+      "paths": "core/** scenes/**",
+      "hint": "会话 core/scenes 自由实现用户所求；桥/catalog 为捷径"
+    }
+  ],
+  "hooks": {
+    "main_scene": "scenes/main.tscn",
+    "config": "config/game_config.json",
+    "sandbox": "core/ai_sandbox/"
+  },
+  "notes": [
+    "勿提飞机护盾等无关机制",
+    "可改会话 core，禁止改 templates",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死",
+    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差"
+  ],
+  "forbidden_invented_apis": [
+    "add_method",
+    "bridge.add_method",
+    "merge_overrides",
+    "patch_tuning",
+    "set_color(",
+    "bullet.set_color"
+  ]
+}

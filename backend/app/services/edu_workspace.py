@@ -9,12 +9,15 @@ from pathlib import Path
 from app.services.workspace_guard import assert_not_under_templates, assert_under_workspace
 
 EDU_BRIDGE_FILENAME: str = "edu_action_bridge.gd"
+AI_SANDBOX_BRIDGE_FILENAME: str = "ai_sandbox_bridge.gd"
+WINDOW_CHROME_FILENAME: str = "window_chrome_overlay.gd"
 FIGHTING_TOUCH_FILENAME: str = "fighting_touch_overlay.gd"
 PLATFORMER_TOUCH_FILENAME: str = "platformer_touch_overlay.gd"
 PARKOUR_TOUCH_FILENAME: str = "parkour_touch_overlay.gd"
 SURVIVOR_TOUCH_FILENAME: str = "survivor_touch_overlay.gd"
 PINGPONG_TOUCH_FILENAME: str = "pingpong_touch_overlay.gd"
 RACING_TOUCH_FILENAME: str = "racing_touch_overlay.gd"
+SHMUP_TOUCH_FILENAME: str = "shmup_touch_overlay.gd"
 GENRE_HOOKS: dict[str, str] = {
     "platformer": "platformer_hooks.gd",
     "shmup": "shmup_hooks.gd",
@@ -52,6 +55,22 @@ def apply_edu_workspace_patch(
     shutil.copy2(bridge_src, core_dir / EDU_BRIDGE_FILENAME)
     shutil.copy2(hooks_src, core_dir / hooks_filename)
 
+    sandbox_bridge_src: Path = edu_dir / AI_SANDBOX_BRIDGE_FILENAME
+    if sandbox_bridge_src.is_file():
+        shutil.copy2(sandbox_bridge_src, core_dir / AI_SANDBOX_BRIDGE_FILENAME)
+        sandbox_dir: Path = core_dir / "ai_sandbox"
+        sandbox_dir.mkdir(parents=True, exist_ok=True)
+        keep: Path = sandbox_dir / ".keep"
+        if not keep.is_file():
+            keep.write_text(
+                "# AI session sandbox — created only; destroyed with workspace\n",
+                encoding="utf-8",
+            )
+
+    chrome_src: Path = edu_dir / WINDOW_CHROME_FILENAME
+    if chrome_src.is_file():
+        shutil.copy2(chrome_src, core_dir / WINDOW_CHROME_FILENAME)
+
     if genre == "fighting":
         touch_src: Path = edu_dir / FIGHTING_TOUCH_FILENAME
         if touch_src.is_file():
@@ -76,6 +95,11 @@ def apply_edu_workspace_patch(
         touch_src = edu_dir / RACING_TOUCH_FILENAME
         if touch_src.is_file():
             shutil.copy2(touch_src, core_dir / RACING_TOUCH_FILENAME)
+    if genre == "shmup":
+        touch_src = edu_dir / SHMUP_TOUCH_FILENAME
+        if touch_src.is_file():
+            shutil.copy2(touch_src, core_dir / SHMUP_TOUCH_FILENAME)
+        patch_shmup_mouse_steer_guard(resolved_workspace)
 
     project_path: Path = resolved_workspace / "project.godot"
     if project_path.is_file():
@@ -84,6 +108,7 @@ def apply_edu_workspace_patch(
     main_scene: Path = resolved_workspace / "scenes" / "main.tscn"
     if main_scene.is_file():
         _patch_main_tscn_hooks(main_scene, hooks_filename)
+        _patch_main_tscn_window_chrome(main_scene)
         if genre == "fighting":
             _patch_main_tscn_fighting_touch(main_scene)
         if genre == "platformer":
@@ -96,19 +121,103 @@ def apply_edu_workspace_patch(
             _patch_main_tscn_pingpong_touch(main_scene)
         if genre == "racing":
             _patch_main_tscn_racing_touch(main_scene)
+        if genre == "shmup":
+            _patch_main_tscn_shmup_touch(main_scene)
 
+    return True
+
+
+def patch_shmup_mouse_steer_guard(workspace_root: Path) -> bool:
+    """会话副本：点技能 HUD 时不触发飞机鼠标跟机（不改 templates 源）。
+
+    player_ship 用 Input.is_mouse_button_pressed 跟机，会与技能按钮抢左键。
+    """
+    ship: Path = workspace_root / "core" / "player_ship.gd"
+    if not ship.is_file():
+        return False
+    text: str = ship.read_text(encoding="utf-8")
+    if "_edu_skill_ui_blocks_mouse" in text:
+        return True
+    old: str = (
+        "\tif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):\n"
+        "\t\t_target_x = get_global_mouse_position().x"
+    )
+    new: str = (
+        "\tif Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) "
+        "and not _edu_skill_ui_blocks_mouse():\n"
+        "\t\t_target_x = get_global_mouse_position().x"
+    )
+    if old not in text:
+        return False
+    helper: str = """
+
+func _edu_skill_ui_blocks_mouse() -> bool:
+	## edu 注入：技能按钮按下/悬停时不跟机
+	var tree: SceneTree = get_tree()
+	if tree != null:
+		var bridge: Node = tree.get_first_node_in_group("ai_sandbox_bridge")
+		if bridge != null and bridge.has_method("is_mouse_steer_blocked"):
+			if bool(bridge.call("is_mouse_steer_blocked")):
+				return true
+	var vp: Viewport = get_viewport()
+	if vp == null:
+		return false
+	var hovered: Control = vp.gui_get_hovered_control()
+	if hovered == null:
+		return false
+	var node: Node = hovered
+	while node != null:
+		if node is BaseButton:
+			return true
+		var nm: String = str(node.name)
+		if nm.begins_with("Zone_") or nm == "AiTouchActionHud" or nm == "TouchPad":
+			return true
+		node = node.get_parent()
+	return false
+"""
+    ship.write_text(text.replace(old, new, 1) + helper, encoding="utf-8")
+    return True
+
+
+def refresh_ai_sandbox_bridge(
+    workspace_root: Path,
+    templates_dir: Path,
+) -> bool:
+    """把最新 templates/_edu/ai_sandbox_bridge.gd 覆盖进会话（修触屏 HUD 等）。"""
+    src: Path = templates_dir / "_edu" / AI_SANDBOX_BRIDGE_FILENAME
+    dst: Path = workspace_root / "core" / AI_SANDBOX_BRIDGE_FILENAME
+    if not src.is_file():
+        return False
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
     return True
 
 
 def _patch_project_godot_autoload(project_path: Path) -> None:
     text: str = project_path.read_text(encoding="utf-8")
-    if "EduActionBridge=" in text:
-        return
     marker: str = "[autoload]\n"
     if marker not in text:
         return
-    line: str = 'EduActionBridge="*res://core/edu_action_bridge.gd"\n'
-    project_path.write_text(text.replace(marker, marker + line, 1), encoding="utf-8")
+    additions: list[str] = []
+    if "EduActionBridge=" not in text:
+        additions.append('EduActionBridge="*res://core/edu_action_bridge.gd"\n')
+    if "AiSandboxBridge=" not in text:
+        # 必须在 GameConfig 之后加载，才能合并 overrides
+        additions.append('AiSandboxBridge="*res://core/ai_sandbox_bridge.gd"\n')
+    if not additions:
+        return
+    # 插到 [autoload] 段末尾（GameConfig 行之后）：若已有 GameConfig，插在其后
+    if "GameConfig=" in text and "AiSandboxBridge=" not in text:
+        text = re.sub(
+            r'(GameConfig="[^"]+"\n)',
+            r"\1" + "".join(a for a in additions if a.startswith("AiSandbox")),
+            text,
+            count=1,
+        )
+        additions = [a for a in additions if not a.startswith("AiSandbox")]
+    if additions:
+        text = text.replace(marker, marker + "".join(additions), 1)
+    project_path.write_text(text, encoding="utf-8")
 
 
 def _patch_main_tscn_hooks(main_path: Path, hooks_filename: str) -> None:
@@ -196,6 +305,7 @@ def _patch_main_tscn_touch_overlay(
     node_name: str,
     touch_filename: str,
     ext_suffix: str,
+    z_index: int = 100,
 ) -> None:
     text: str = main_path.read_text(encoding="utf-8")
     canvas_parent: str | None = _resolve_canvas_layer_parent(text)
@@ -234,7 +344,7 @@ def _patch_main_tscn_touch_overlay(
         f"grow_horizontal = 2\n"
         f"grow_vertical = 2\n"
         f"mouse_filter = 0\n"
-        f"z_index = 100\n"
+        f"z_index = {z_index}\n"
         f'script = ExtResource("{ext_id}")\n'
     )
     text = text[:insert_child] + touch_block + text[insert_child:]
@@ -245,6 +355,58 @@ def _patch_main_tscn_fighting_touch(main_path: Path) -> None:
     _patch_main_tscn_touch_overlay(
         main_path, "FightingTouch", FIGHTING_TOUCH_FILENAME, "fighttouch"
     )
+
+
+def _patch_main_tscn_window_chrome(main_path: Path) -> None:
+    """注入根级高 layer CanvasLayer，避免游戏中 HUD/触控抢走点击。"""
+    text: str = main_path.read_text(encoding="utf-8")
+    if 'name="WindowChromeLayer"' in text:
+        return
+
+    # 清理旧版：挂在游戏 CanvasLayer 下的 Control（会被同层 UI 挡住）
+    text = re.sub(
+        r'\n\[node name="WindowChrome" type="Control"[^\]]*\](?:\n(?!\[).*)*',
+        "",
+        text,
+        count=1,
+    )
+    text = re.sub(
+        r'\n\[ext_resource type="Script" path="res://core/window_chrome_overlay\.gd" id="[^"]+"\]\n?',
+        "\n",
+        text,
+        count=1,
+    )
+
+    load_match = re.search(r"load_steps=(\d+)", text)
+    load_steps: int = int(load_match.group(1)) if load_match else 1
+    new_load_steps: int = load_steps + 1
+    ext_id: str = f"{new_load_steps}_winchrome"
+    script_path: str = f"res://core/{WINDOW_CHROME_FILENAME}"
+
+    text = re.sub(r"load_steps=\d+", f"load_steps={new_load_steps}", text, count=1)
+
+    ext_line: str = f'[ext_resource type="Script" path="{script_path}" id="{ext_id}"]\n'
+    insert_pos: int = text.find("\n\n[")
+    if insert_pos == -1:
+        insert_pos = text.find("\n[node")
+    if insert_pos == -1:
+        insert_pos = len(text)
+    text = text[:insert_pos] + "\n" + ext_line + text[insert_pos:]
+
+    chrome_block: str = (
+        f'\n[node name="WindowChromeLayer" type="CanvasLayer" parent="."]\n'
+        f"layer = 128\n"
+        f'script = ExtResource("{ext_id}")\n'
+    )
+    edu_idx: int = text.find('\n[node name="EduHooks"')
+    if edu_idx != -1:
+        text = text[:edu_idx] + chrome_block + text[edu_idx:]
+    else:
+        if not text.endswith("\n"):
+            text += "\n"
+        text += chrome_block
+
+    main_path.write_text(text, encoding="utf-8")
 
 
 def _patch_main_tscn_platformer_touch(main_path: Path) -> None:
@@ -274,6 +436,12 @@ def _patch_main_tscn_pingpong_touch(main_path: Path) -> None:
 def _patch_main_tscn_racing_touch(main_path: Path) -> None:
     _patch_main_tscn_touch_overlay(
         main_path, "RacingTouch", RACING_TOUCH_FILENAME, "racetouch"
+    )
+
+
+def _patch_main_tscn_shmup_touch(main_path: Path) -> None:
+    _patch_main_tscn_touch_overlay(
+        main_path, "ShmupTouch", SHMUP_TOUCH_FILENAME, "shmuptouch"
     )
 
 

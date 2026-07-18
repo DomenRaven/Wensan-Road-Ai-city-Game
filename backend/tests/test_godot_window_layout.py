@@ -9,32 +9,28 @@ from app.routers.play import ClientViewport, ClientViewportRect, resolve_placeme
 from app.services.godot_window_layout import get_monitor_bottom_half_rect, place_by_pid
 
 
-def test_resolve_placement_rect_from_godot_zone() -> None:
+@patch("app.routers.play.get_monitor_fullscreen_rect")
+def test_resolve_placement_rect_prefers_win32_monitor(mock_win32: MagicMock) -> None:
+    # S-A1：优先 Win32 真实显示器整块边界（多屏 + 横竖屏自适应）
+    mock_win32.return_value = {"x": 1920, "y": 0, "w": 1920, "h": 1080}
     rect = resolve_placement_rect(
         "landscape",
         ClientViewport(
-            screen_x=100,
+            screen_x=2000,
             screen_y=50,
             screen_w=1920,
             screen_h=1080,
-            godot_zone_rect=ClientViewportRect(x=1060, y=114, w=860, h=900),
+            monitor_x=1920,
+            monitor_y=0,
+            kiosk_rect=ClientViewportRect(x=1960, y=120, w=900, h=800),
         ),
     )
-    assert rect == {"x": 1060, "y": 114, "w": 860, "h": 900}
+    assert rect == {"x": 1920, "y": 0, "w": 1920, "h": 1080}
+    mock_win32.assert_called_once_with(1960 + 450, 120 + 400)
 
 
-def test_resolve_placement_rect_ignores_device_pixel_ratio() -> None:
-    rect = resolve_placement_rect(
-        "landscape",
-        ClientViewport(
-            devicePixelRatio=1.5,
-            godot_zone_rect=ClientViewportRect(x=960, y=80, w=960, h=1000),
-        ),
-    )
-    assert rect == {"x": 960, "y": 80, "w": 960, "h": 1000}
-
-
-def test_resolve_placement_rect_landscape_fallback() -> None:
+@patch("app.routers.play.get_monitor_fullscreen_rect", return_value=None)
+def test_resolve_placement_rect_landscape_fallback_full_display(_mock_win32: MagicMock) -> None:
     rect = resolve_placement_rect(
         "landscape",
         ClientViewport(
@@ -46,29 +42,13 @@ def test_resolve_placement_rect_landscape_fallback() -> None:
             monitor_y=0,
         ),
     )
-    assert rect == {"x": 960, "y": 0, "w": 960, "h": 1080}
+    # 禁止半屏小窗：铺满整块显示器
+    assert rect == {"x": 0, "y": 0, "w": 1920, "h": 1080}
 
 
-@patch("app.routers.play.get_monitor_bottom_half_rect")
-def test_resolve_placement_rect_portrait_uses_win32_monitor(mock_win32: MagicMock) -> None:
-    mock_win32.return_value = {"x": 0, "y": 533, "w": 1707, "h": 533}
-    rect = resolve_placement_rect(
-        "portrait",
-        ClientViewport(
-            screen_x=200,
-            screen_y=100,
-            screen_w=1920,
-            screen_h=1080,
-            kiosk_rect=ClientViewportRect(x=200, y=120, w=900, h=800),
-            godot_zone_rect=ClientViewportRect(x=200, y=700, w=900, h=400),
-        ),
-    )
-    assert rect == {"x": 0, "y": 533, "w": 1707, "h": 533}
-    mock_win32.assert_called_once_with(200 + 450, 120 + 160)
-
-
-@patch("app.routers.play.get_monitor_bottom_half_rect", return_value=None)
-def test_resolve_placement_rect_portrait_fallback_when_win32_fails(_mock_win32: MagicMock) -> None:
+@patch("app.routers.play.get_monitor_fullscreen_rect", return_value=None)
+def test_resolve_placement_rect_portrait_full_display(_mock_win32: MagicMock) -> None:
+    # 展厅竖屏：按显示器实际宽高铺满，不写死横屏
     rect = resolve_placement_rect(
         "portrait",
         ClientViewport(
@@ -80,10 +60,11 @@ def test_resolve_placement_rect_portrait_fallback_when_win32_fails(_mock_win32: 
             monitor_y=0,
         ),
     )
-    assert rect == {"x": 0, "y": 960, "w": 1080, "h": 960}
+    assert rect == {"x": 0, "y": 0, "w": 1080, "h": 1920}
 
 
-def test_resolve_placement_rect_none_without_viewport() -> None:
+@patch("app.routers.play.get_monitor_fullscreen_rect", return_value=None)
+def test_resolve_placement_rect_none_without_viewport(_mock_win32: MagicMock) -> None:
     assert resolve_placement_rect("landscape", None) is None
     assert resolve_placement_rect(None, ClientViewport()) is None
 
@@ -126,10 +107,32 @@ def test_place_by_pid_retries_until_window_found(
 @patch("app.services.godot_window_layout._find_game_window_for_pid", return_value=42)
 def test_place_by_pid_win32_success(
     _mock_find: MagicMock,
-    _mock_set: MagicMock,
+    mock_set: MagicMock,
     _mock_sleep: MagicMock,
 ) -> None:
     assert place_by_pid(999, {"x": 960, "y": 0, "w": 960, "h": 1080}, timeout_s=0.01) is True
+    assert mock_set.call_args.kwargs.get("always_on_top") is True
+
+
+@patch("app.services.godot_window_layout.sys.platform", "win32")
+def test_set_window_rect_uses_hwnd_topmost() -> None:
+    """Always on Top：SetWindowPos 使用 HWND_TOPMOST=-1，且不含 SWP_NOZORDER。"""
+    import ctypes
+    from unittest.mock import MagicMock
+
+    from app.services.godot_window_layout import _set_window_rect
+
+    fake_user32 = MagicMock()
+    fake_user32.SetWindowPos.return_value = 1
+    with patch("ctypes.windll") as windll:
+        windll.user32 = fake_user32
+        ok = _set_window_rect(42, {"x": 0, "y": 0, "w": 800, "h": 600}, always_on_top=True)
+    assert ok is True
+    args = fake_user32.SetWindowPos.call_args[0]
+    assert args[0] == 42
+    assert args[1] == -1  # HWND_TOPMOST
+    flags = args[6]
+    assert (flags & 0x0004) == 0  # no SWP_NOZORDER
 
 
 @patch("app.services.godot_window_layout.sys.platform", "win32")

@@ -137,10 +137,19 @@ def append_entry(
     lock: threading.Lock = _lock_for(path)
     with lock:
         entries: list[dict[str, Any]] = _read_entries(path)
-        entries.append(entry)
+        best: dict[str, Any] = entry
+        if session_id:
+            # S-B2 · 同一会话多局：日榜只保留本会话最高分，避免同一小朋友刷屏
+            same_session: list[dict[str, Any]] = [
+                row for row in entries if row.get("session_id") == session_id
+            ]
+            entries = [row for row in entries if row.get("session_id") != session_id]
+            candidates: list[dict[str, Any]] = [*same_session, entry]
+            best = min(candidates, key=lambda row: _sort_key(row, genre))
+        entries.append(best)
         entries = _prune(entries, genre, store_limit)
         _atomic_write(path, entries)
-    return entry
+    return best
 
 
 def get_daily_top(

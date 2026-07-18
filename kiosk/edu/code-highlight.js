@@ -154,16 +154,31 @@
 
       const file = anchor.file || "config/game_config.json";
       const currentFile = window.EduCodeViewer?.getCurrentFile?.() || "";
-      if (window.EduWizard?.fetchWorkspaceFile && file !== currentFile) {
+      if (window.EduWizard && file !== currentFile) {
         try {
+          // 优先 workspace；无 workspace / 失败时回退模板预览（讲解演示仍可定位）
           if (file.startsWith("config/") || file.startsWith("core/")) {
-            await window.EduWizard.fetchWorkspaceFile(file);
+            if (window.EduWizard.hasWorkspace?.()) {
+              await window.EduWizard.fetchWorkspaceFile(file);
+            } else if (window.EduWizard.fetchPreviewFile) {
+              await window.EduWizard.fetchPreviewFile(file);
+            } else {
+              await window.EduWizard.fetchWorkspaceFile(file);
+            }
           } else if (window.EduWizard.fetchPreviewFile) {
             await window.EduWizard.fetchPreviewFile(file);
           }
         } catch (err) {
-          const msg = err instanceof Error ? err.message : String(err);
-          window.EduSession.log(`加载 ${file} 失败 · ${msg}`);
+          try {
+            if (window.EduWizard.fetchPreviewFile) {
+              await window.EduWizard.fetchPreviewFile(file);
+            } else {
+              throw err;
+            }
+          } catch (err2) {
+            const msg = err2 instanceof Error ? err2.message : String(err2);
+            window.EduSession.log(`加载 ${file} 失败 · ${msg}`);
+          }
         }
       }
 

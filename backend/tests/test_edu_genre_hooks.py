@@ -45,6 +45,10 @@ def test_genre_hooks_has_seven_slugs_and_edu_files_exist() -> None:
     assert set(GENRE_HOOKS.keys()) == set(EXPECTED_SLUGS)
     bridge: Path = EDU_DIR / "edu_action_bridge.gd"
     assert bridge.is_file(), f"missing {bridge}"
+    chrome: Path = EDU_DIR / "window_chrome_overlay.gd"
+    assert chrome.is_file(), f"missing {chrome}"
+    sandbox_bridge: Path = EDU_DIR / "ai_sandbox_bridge.gd"
+    assert sandbox_bridge.is_file(), f"missing {sandbox_bridge}"
     for slug, hooks_filename in GENRE_HOOKS.items():
         hooks_path: Path = EDU_DIR / hooks_filename
         assert hooks_path.is_file(), f"missing _edu hooks for {slug}: {hooks_path}"
@@ -54,10 +58,16 @@ def _assert_edu_workspace(workspace_root: Path, genre: str) -> None:
     hooks_filename: str = GENRE_HOOKS[genre]
     assert (workspace_root / "core" / "edu_action_bridge.gd").is_file()
     assert (workspace_root / "core" / hooks_filename).is_file()
+    assert (workspace_root / "core" / "window_chrome_overlay.gd").is_file()
+    assert (workspace_root / "core" / "ai_sandbox_bridge.gd").is_file()
+    assert (workspace_root / "core" / "ai_sandbox").is_dir()
     project_text: str = (workspace_root / "project.godot").read_text(encoding="utf-8")
     assert "EduActionBridge=" in project_text
+    assert "AiSandboxBridge=" in project_text
     main_text: str = (workspace_root / "scenes" / "main.tscn").read_text(encoding="utf-8")
     assert 'name="EduHooks"' in main_text
+    assert 'name="WindowChromeLayer"' in main_text
+    assert "window_chrome_overlay.gd" in main_text
 
 
 def test_generate_pipeline_edu_bridge_for_p1_sample_genres() -> None:

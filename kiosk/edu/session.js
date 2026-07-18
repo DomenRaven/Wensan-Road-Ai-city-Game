@@ -6,13 +6,17 @@
     /** @type {string} */
     apiBase: "http://127.0.0.1:8000",
     /** @type {string} */
-    storageKey: "gameforge_kiosk_session_id",
+    // B 链独立 key，避免打开 A 链 /kiosk/ 时 cleanup 误杀教育会话
+    storageKey: "gameforge_edu_session_id",
     /** @type {string} */
     sessionId: "",
     /** @type {boolean} */
     ready: false,
     /** @type {Record<string, unknown>} */
     spec: {},
+
+    /** @type {boolean} B5 制作期间禁止误杀会话（pagehide / A 链抢 key） */
+    protectRelease: false,
 
     /**
      * @param {string} path
@@ -29,6 +33,30 @@
       }
       if (res.status === 204) return {};
       return res.json();
+    },
+
+    /**
+     * S-B10 · 写操作专用：遇「Session not found / 404」自动清除旧 id → 重建 → 重试一次。
+     * 用于 PATCH / wizard / creative 等会因会话过期而 404 的写请求，避免红字死局。
+     * @param {string} path
+     * @param {RequestInit} [options]
+     * @returns {Promise<Record<string, unknown>>}
+     */
+    async apiWithSession(path, options = {}) {
+      await this.ensureSession();
+      const resolved = () => path.replace(/\/sessions\/[^/]+/, `/sessions/${this.sessionId}`);
+      try {
+        return await this.api(resolved(), options);
+      } catch (err) {
+        const msg = String(/** @type {Error} */ (err).message || err);
+        const isMissing = msg.includes("404") || msg.includes("Session not found");
+        if (!isMissing) throw err;
+        this.log("会话已失效 · 自动重建后重试…");
+        this.sessionId = "";
+        this.rememberSessionId("");
+        await this.ensureSession();
+        return await this.api(resolved(), options);
+      }
     },
 
     /** @param {string} msg */
@@ -48,6 +76,7 @@
 
     /** @param {string} sid */
     releaseBeacon(sid) {
+      if (this.protectRelease) return;
       if (!sid || sid.startsWith("demo-")) return;
       try {
         navigator.sendBeacon(`${this.apiBase}/sessions/${sid}/release`, "");
@@ -58,6 +87,7 @@
 
     /** @param {string} [sid] */
     async releaseAsync(sid) {
+      if (this.protectRelease && (!sid || sid === this.sessionId)) return;
       const id = sid || this.sessionId;
       if (!id || id.startsWith("demo-")) return;
       await this.api(`/sessions/${id}/release`, { method: "POST" }).catch(() => {});
@@ -204,6 +234,9 @@
             const text = await res.text();
             throw new Error(`${res.status}: ${text}`);
           }
+          // S-B10 · 404：必须先清除失效 session_id，再创建新会话
+          this.sessionId = "";
+          this.rememberSessionId("");
           this.log("会话已失效 · 正在重新建立…");
         } catch (err) {
           if (err instanceof TypeError) {
@@ -239,6 +272,8 @@
         cert.public_download_base = publicBase;
         cert.qr_download_host = publicBase;
       }
+      // N-3 · 后端明示是否已具备公网扫码下载能力（未配 PUBLIC_API_BASE 时为 false）
+      cert.ready_for_public_qr = deploy.ready_for_public_qr === true;
       const ttl = deploy.download_ttl_sec;
       if (ttl != null) cert.download_ttl_sec = Number(ttl);
 

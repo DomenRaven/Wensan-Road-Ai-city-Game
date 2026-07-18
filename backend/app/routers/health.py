@@ -34,7 +34,9 @@ def health(request: Request) -> dict[str, Any]:
             else {
                 "public_download_base": settings.public_api_base.strip(),
                 "download_ttl_sec": settings.certificate_download_ttl_sec,
-                "ready_for_public_qr": bool(settings.public_api_base.strip()),
+                "ready_for_public_qr": bool(settings.public_api_base.strip())
+                or bool(settings.certificate_relay_enabled),
+                "relay_enabled": bool(settings.certificate_relay_enabled),
             }
         ),
     }

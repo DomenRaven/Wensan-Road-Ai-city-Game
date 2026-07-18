@@ -1,4 +1,6 @@
-/* Kiosk · Windows TabTip 触控软键盘 · 点击输入即显 · 点外/导航即隐 · 零人为延迟 */
+/* Kiosk · Windows TabTip 触控软键盘
+ * 规则：只在点中 edu-touch-input 时唤起；点空白收起；短防抖避免 show/hide 互抢。
+ */
 (() => {
   "use strict";
 
@@ -8,8 +10,21 @@
   let keyboardIntent = null;
   /** @type {AbortController|null} */
   let inflight = null;
+  /** @type {number} */
+  let actionSeq = 0;
+  /** @type {number} */
+  let showGuardUntil = 0;
+  /** @type {number} */
+  let focusOutTimer = 0;
+  /** @type {HTMLInputElement|HTMLTextAreaElement|null} */
+  let activeTouchInput = null;
 
   const SELECTOR = "input.edu-touch-input, textarea.edu-touch-input, [data-edu-keyboard]";
+  /** 点这些区域不收起（随后会把焦点送回输入框） */
+  const KEEP_OPEN_SELECTOR =
+    ".edu-nlpatch-chip, [data-edu-keyboard-keep], label[for]";
+  const SHOW_GUARD_MS = 400;
+  const FOCUS_OUT_DELAY_MS = 120;
 
   /** @returns {string} */
   function apiBase() {
@@ -54,6 +69,7 @@
   function postKeyboardRequest(action) {
     inflight?.abort();
     inflight = new AbortController();
+    const seq = ++actionSeq;
 
     const path = action === "show" ? "show" : "hide";
     const url = `${apiBase()}/kiosk/touch-keyboard/${path}`;
@@ -68,18 +84,33 @@
       options.body = JSON.stringify({ provider: keyboardProvider() });
     }
 
-    fetch(url, options).catch(() => {
-      /* 后端未启动时静默降级 */
-    });
+    fetch(url, options)
+      .then(() => {
+        if (seq !== actionSeq) return;
+      })
+      .catch(() => {
+        /* 后端未启动时静默降级 */
+      });
   }
 
   /**
    * @param {"show"|"hide"} action
+   * @param {{ force?: boolean }} [opts]
    * @returns {void}
    */
-  function postKeyboard(action) {
+  function postKeyboard(action, opts) {
+    const force = !!opts?.force;
+    if (action === "hide" && !force && Date.now() < showGuardUntil) {
+      return;
+    }
+    if (action === "show" && keyboardIntent === "show" && Date.now() < showGuardUntil) {
+      /* 刚唤起过：忽略重复 show，避免 TabTip 状态抖动 */
+      return;
+    }
+
     keyboardIntent = action;
     if (action === "show") {
+      showGuardUntil = Date.now() + SHOW_GUARD_MS;
       showVirtualKeyboardApi();
     } else {
       hideVirtualKeyboardApi();
@@ -88,7 +119,7 @@
   }
 
   /**
-   * @param {HTMLElement|null|undefined} el
+   * @param {EventTarget|null|undefined} el
    * @returns {boolean}
    */
   function isTouchInput(el) {
@@ -99,11 +130,20 @@
   }
 
   /** @returns {void} */
+  function clearFocusOutTimer() {
+    if (focusOutTimer) {
+      window.clearTimeout(focusOutTimer);
+      focusOutTimer = 0;
+    }
+  }
+
+  /** @returns {void} */
   function blurActiveTouchInput() {
     const active = document.activeElement;
     if (isTouchInput(active)) {
       active.blur();
     }
+    activeTouchInput = null;
   }
 
   /** @returns {void} */
@@ -111,15 +151,19 @@
     postKeyboard("show");
   }
 
-  /** @returns {void} */
-  function hideKeyboard() {
-    postKeyboard("hide");
+  /**
+   * @param {{ force?: boolean }} [opts]
+   * @returns {void}
+   */
+  function hideKeyboard(opts) {
+    postKeyboard("hide", opts);
   }
 
   /** @returns {void} */
   function dismissForNavigation() {
+    clearFocusOutTimer();
     blurActiveTouchInput();
-    hideKeyboard();
+    hideKeyboard({ force: true });
   }
 
   /** @returns {void} */
@@ -128,7 +172,7 @@
   }
 
   /**
-   * @param {HTMLElement} el
+   * @param {Element} el
    * @returns {boolean}
    */
   function isInsideTouchInput(el) {
@@ -136,28 +180,50 @@
   }
 
   /**
-   * @param {HTMLElement} el
+   * @param {Element} el
+   * @returns {boolean}
+   */
+  function isKeepOpenZone(el) {
+    return Boolean(el.closest(KEEP_OPEN_SELECTOR));
+  }
+
+  /**
+   * @param {Element} el
    * @returns {boolean}
    */
   function isNavigationControl(el) {
     return Boolean(
       el.closest(
-        "#btnNext, #btnPrev, #btnDualNext, #btnDualPrev, .btn-primary, .btn-secondary"
+        "#btnNext, #btnPrev, #btnDualNext, #btnDualPrev, #btnReset, #btnCertSave, .btn-primary, .btn-secondary, .edu-nlpatch-close, [data-nlp-dismiss]"
       )
     );
   }
 
   /**
    * @param {HTMLInputElement|HTMLTextAreaElement} target
-   * @param {PointerEvent|Event} [ev]
+   * @param {Event} [ev]
    * @returns {void}
    */
   function activateInput(target, ev) {
-    if (target.disabled) return;
-    if (ev && "isComposing" in ev && ev.isComposing) return;
+    if (target.disabled || target.readOnly) return;
+    if (ev && "isComposing" in ev && /** @type {{isComposing?:boolean}} */ (ev).isComposing) {
+      return;
+    }
 
+    clearFocusOutTimer();
+    activeTouchInput = target;
     target.removeAttribute("readonly");
-    target.focus({ preventScroll: true });
+
+    const alreadyFocused = document.activeElement === target;
+    if (!alreadyFocused) {
+      target.focus({ preventScroll: true });
+    }
+
+    /* 已聚焦且键盘意图为 show：只续期防抖，不再重复打 show（防第二次点击把 TabTip 关掉） */
+    if (alreadyFocused && keyboardIntent === "show") {
+      showGuardUntil = Date.now() + SHOW_GUARD_MS;
+      return;
+    }
     showKeyboard();
   }
 
@@ -183,6 +249,12 @@
    * @returns {void}
    */
   function onPointerDown(ev) {
+    /* 只响应主指针，忽略笔/额外按键带来的重复事件 */
+    if ("button" in ev && /** @type {PointerEvent} */ (ev).button != null) {
+      const pe = /** @type {PointerEvent} */ (ev);
+      if (pe.button !== 0) return;
+    }
+
     const target = targetFromEvent(ev);
     if (target) {
       activateInput(target, ev);
@@ -193,10 +265,23 @@
     if (!(el instanceof Element)) return;
     if (isInsideTouchInput(el)) return;
 
-    if (isNavigationControl(el) || keyboardIntent === "show" || isTouchInput(document.activeElement)) {
-      blurActiveTouchInput();
-      hideKeyboard();
+    /* 快捷芯片等：不收起，等 click 把焦点送回输入框 */
+    if (isKeepOpenZone(el)) {
+      clearFocusOutTimer();
+      return;
     }
+
+    const shouldHide =
+      isNavigationControl(el) ||
+      keyboardIntent === "show" ||
+      isTouchInput(document.activeElement) ||
+      activeTouchInput != null;
+
+    if (!shouldHide) return;
+
+    clearFocusOutTimer();
+    blurActiveTouchInput();
+    hideKeyboard({ force: isNavigationControl(el) });
   }
 
   /**
@@ -204,10 +289,36 @@
    * @returns {void}
    */
   function onFocusOut(ev) {
-    const next = ev.relatedTarget;
-    if (isTouchInput(next)) return;
-    if (keyboardIntent !== "show") return;
-    hideKeyboard();
+    const leaving = ev.target;
+    if (!isTouchInput(leaving)) return;
+
+    clearFocusOutTimer();
+    focusOutTimer = window.setTimeout(() => {
+      focusOutTimer = 0;
+      if (isTouchInput(document.activeElement)) {
+        activeTouchInput = /** @type {HTMLInputElement|HTMLTextAreaElement} */ (
+          document.activeElement
+        );
+        return;
+      }
+      if (keyboardIntent !== "show") return;
+      if (Date.now() < showGuardUntil) return;
+      activeTouchInput = null;
+      hideKeyboard();
+    }, FOCUS_OUT_DELAY_MS);
+  }
+
+  /**
+   * @param {FocusEvent} ev
+   * @returns {void}
+   */
+  function onFocusIn(ev) {
+    const el = ev.target;
+    if (!isTouchInput(el)) return;
+    clearFocusOutTimer();
+    activeTouchInput = /** @type {HTMLInputElement|HTMLTextAreaElement} */ (el);
+    /* 程序化 focus（如芯片填词）也唤起；已 show 则被防抖吞掉 */
+    showKeyboard();
   }
 
   /** @returns {void} */
@@ -226,6 +337,7 @@
 
     document.addEventListener("pointerdown", onPointerDown, true);
     document.addEventListener("focusout", onFocusOut, true);
+    document.addEventListener("focusin", onFocusIn, true);
     warmKeyboard();
   }
 
@@ -241,6 +353,7 @@
         el.setAttribute("lang", "zh-CN");
         el.setAttribute("enterkeyhint", el.tagName === "TEXTAREA" ? "done" : "next");
         el.setAttribute("autocomplete", "off");
+        el.setAttribute("autocapitalize", "off");
         el.removeAttribute("readonly");
         el.style.touchAction = "manipulation";
       }
@@ -251,7 +364,7 @@
     init,
     bind,
     show: showKeyboard,
-    hide: hideKeyboard,
+    hide: () => hideKeyboard({ force: true }),
     invoke: showKeyboard,
     dismiss,
     dismissForNavigation,

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 import time
@@ -13,6 +14,14 @@ from pydantic import BaseModel
 
 from app.config import CONFIG_DIR
 from app.models.session import SessionCreateResponse, SessionListResponse, SessionPhase, SessionRecord
+from app.services.ai_sandbox import destroy_ai_sandbox
+from app.services.creative.learned_skills import harvest_session_experience
+from app.services.certificate_relay import (
+    cleanup_relay_meta,
+    is_publicly_reachable_url,
+    save_relay_meta,
+    upload_certificate_relay,
+)
 from app.services.certificate_tokens import build_public_download_url, issue_token, revoke_tokens_for_session
 from app.services.godot_launcher import get_launcher
 from app.services.workspace import workspace_config_path
@@ -51,6 +60,8 @@ class CertificateUploadResponse(BaseModel):
     download_path: str
     download_url: str
     expires_in_sec: int
+    relay_provider: str | None = None
+    public_reachable: bool = False
 
 
 _CERTIFICATE_MAX_BYTES = 5 * 1024 * 1024
@@ -166,24 +177,64 @@ def patch_session(
 
 
 @router.delete("/{session_id}")
-def reset_session(session_id: str, request: Request) -> dict[str, bool]:
+def reset_session(session_id: str, request: Request) -> dict[str, Any]:
+    """回主页 / 重置：先 harvest 创作经验→Learned Skill，再销毁 workspace。"""
     store = request.app.state.session_store
     settings = request.app.state.settings
     try:
         validate_session_id(session_id)
     except WorkspaceGuardError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    record: SessionRecord | None = store.get(session_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    genre: str = (
+        record.genre
+        or str(record.payload.get("meta", {}).get("genre", "")).strip()
+        or "unknown"
+    )
+    display_name: str = (record.display_name or "").strip()
+    harvest_result: dict[str, Any] = {
+        "ok": True,
+        "skipped": True,
+        "reason": "no_workspace",
+    }
+    try:
+        workspace_root: Path = workspace_root_for_session(settings.workspace_dir, session_id)
+        if workspace_root.is_dir():
+            harvest_result = harvest_session_experience(
+                settings.learned_skills_dir,
+                session_id,
+                workspace_root,
+                genre,
+                display_name=display_name,
+            )
+    except Exception:  # noqa: BLE001 — harvest 失败不阻断销毁
+        harvest_result = {"ok": False, "skipped": True, "reason": "harvest_error"}
+
     if not store.delete(session_id):
         raise HTTPException(status_code=404, detail="Session not found")
     revoke_tokens_for_session(settings.workspace_dir, session_id)
     get_launcher(settings).clear_session(session_id)
+    try:
+        workspace_root = workspace_root_for_session(settings.workspace_dir, session_id)
+        cleanup_relay_meta(workspace_root)
+        destroy_ai_sandbox(workspace_root)
+    except WorkspaceGuardError:
+        pass
     workspace_removed: bool = remove_workspace(settings.workspace_dir, session_id)
-    return {"deleted": True, "workspace_removed": workspace_removed}
+    return {
+        "deleted": True,
+        "workspace_removed": workspace_removed,
+        "harvest": harvest_result,
+    }
 
 
 @router.post("/{session_id}/release")
-def release_session(session_id: str, request: Request) -> dict[str, bool]:
-    """页面关闭/意外退出时释放会话：删 session 记录 + 清理 workspace 副本。"""
+def release_session(session_id: str, request: Request) -> dict[str, Any]:
+    """页面关闭/意外退出：先入库经验，再删 session + workspace。"""
     return reset_session(session_id, request)
 
 
@@ -312,6 +363,26 @@ async def upload_certificate(session_id: str, request: Request) -> CertificateUp
     public_base: str = settings.public_api_base.strip()
     download_path: str = f"/public/certificates/{token}"
     download_url: str = build_public_download_url(public_base, token)
+    relay_provider: str | None = None
+
+    # 无自有公网时：中继到临时图床（线程池，避免堵住事件循环）
+    if not public_base and settings.certificate_relay_enabled:
+        try:
+            relay = await asyncio.to_thread(
+                upload_certificate_relay,
+                body,
+                f"{display_name}_证书.png",
+            )
+            download_url = relay.url
+            expires_in_sec = (
+                min(expires_in_sec, relay.ttl_sec) if expires_in_sec > 0 else relay.ttl_sec
+            )
+            relay_provider = relay.provider
+            save_relay_meta(cert_path.parent, relay)
+        except Exception:  # noqa: BLE001
+            relay_provider = None
+
+    public_reachable = bool(public_base) or is_publicly_reachable_url(download_url)
 
     return CertificateUploadResponse(
         ok=True,
@@ -319,6 +390,8 @@ async def upload_certificate(session_id: str, request: Request) -> CertificateUp
         download_path=download_path,
         download_url=download_url,
         expires_in_sec=expires_in_sec,
+        relay_provider=relay_provider,
+        public_reachable=public_reachable,
     )
 
 

@@ -12,7 +12,7 @@ from app.services.edu_workspace import (
     read_edu_actions,
 )
 from app.services.godot_launcher import LaunchResult, get_launcher
-from app.services.godot_window_layout import WindowRect, get_monitor_bottom_half_rect
+from app.services.godot_window_layout import WindowRect, get_monitor_fullscreen_rect
 from app.services.workspace_guard import WorkspaceGuardError, validate_session_id
 
 router = APIRouter(tags=["play"])
@@ -72,60 +72,46 @@ class PlayActionResponse(BaseModel):
     t_ms: int
 
 
-def _portrait_anchor(client_viewport: ClientViewport) -> tuple[int, int]:
+def _display_anchor(client_viewport: ClientViewport) -> tuple[int, int]:
+    """浏览器/展台所在显示器上的一个点，用于 Win32 定位目标显示器。"""
     kiosk = client_viewport.kiosk_rect
     if kiosk is not None and kiosk.w > 0 and kiosk.h > 0:
-        return kiosk.x + kiosk.w // 2, kiosk.y + min(kiosk.h // 4, 160)
-    return client_viewport.screen_x + 200, client_viewport.screen_y + 200
-
-
-def _monitor_bottom_half(client_viewport: ClientViewport) -> WindowRect | None:
-    sw: int = client_viewport.screen_w
-    sh: int = client_viewport.screen_h
-    if sw <= 0 or sh <= 0:
-        return None
-    half_h: int = sh // 2
-    return {
-        "x": client_viewport.monitor_x,
-        "y": client_viewport.monitor_y + half_h,
-        "w": sw,
-        "h": half_h,
-    }
+        return kiosk.x + kiosk.w // 2, kiosk.y + kiosk.h // 2
+    if client_viewport.screen_w > 0 and client_viewport.screen_h > 0:
+        return (
+            client_viewport.monitor_x + client_viewport.screen_w // 2,
+            client_viewport.monitor_y + client_viewport.screen_h // 2,
+        )
+    return client_viewport.screen_x, client_viewport.screen_y
 
 
 def resolve_placement_rect(
     orientation: Literal["landscape", "portrait"] | None,
     client_viewport: ClientViewport | None,
 ) -> WindowRect | None:
+    """S-A1 / N-1 · Godot 按真实显示器全屏铺满（禁止默认小窗 / 停靠半屏）。
+
+    几何来自「游戏所在那块屏」的当前宽高与方向：优先 Win32 枚举真实显示器边界
+    （多屏 + 横/竖屏自适应），失败时回退浏览器上报的整屏尺寸。orientation 仅用于
+    锚点选择与降级，不再决定窗口大小——显示器自身的 w/h 决定横竖。
+    """
     if client_viewport is None:
         return None
 
-    # P3-3 LOCK · landscape 验收 2026-06-27：godot_zone_rect 屏幕绝对 CSS 像素贴右栏
-    if orientation == "landscape":
-        zone = client_viewport.godot_zone_rect
-        if zone is not None and zone.w > 0 and zone.h > 0:
-            return {"x": zone.x, "y": zone.y, "w": zone.w, "h": zone.h}
-        sw = client_viewport.screen_w
-        sh = client_viewport.screen_h
-        if sw <= 0 or sh <= 0:
-            return None
-        half_w: int = sw // 2
-        mx: int = client_viewport.monitor_x
-        my: int = client_viewport.monitor_y
-        return {"x": mx + half_w, "y": my, "w": half_w, "h": sh}
+    anchor_x, anchor_y = _display_anchor(client_viewport)
+    monitor_rect: WindowRect | None = get_monitor_fullscreen_rect(anchor_x, anchor_y)
+    if monitor_rect is not None:
+        return monitor_rect
 
-    # portrait · 甲方 R3：Win32 取浏览器所在显示器下半屏（不依赖 screen.width 浏览器值）
-    if orientation == "portrait":
-        anchor_x, anchor_y = _portrait_anchor(client_viewport)
-        win_rect: WindowRect | None = get_monitor_bottom_half_rect(anchor_x, anchor_y)
-        if win_rect is not None:
-            return win_rect
-        return _monitor_bottom_half(client_viewport)
-
-    zone = client_viewport.godot_zone_rect
-    if zone is not None and zone.w > 0 and zone.h > 0:
-        return {"x": zone.x, "y": zone.y, "w": zone.w, "h": zone.h}
-
+    sw: int = client_viewport.screen_w
+    sh: int = client_viewport.screen_h
+    if sw > 0 and sh > 0:
+        return {
+            "x": client_viewport.monitor_x,
+            "y": client_viewport.monitor_y,
+            "w": sw,
+            "h": sh,
+        }
     return None
 
 

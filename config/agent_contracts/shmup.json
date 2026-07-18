@@ -1,0 +1,199 @@
+{
+  "genre": "shmup",
+  "bridge_apis": [
+    {
+      "name": "get_player",
+      "sig": "() -> CharacterBody2D",
+      "desc": "平台型玩家（shmup 可能为 null）"
+    },
+    {
+      "name": "get_player_node",
+      "sig": "() -> Node",
+      "desc": "飞机 Area2D 玩家"
+    },
+    {
+      "name": "get_game_manager",
+      "sig": "() -> Node",
+      "desc": "当前主场景"
+    },
+    {
+      "name": "watch_coins",
+      "sig": "(cb: Callable) -> void",
+      "desc": "金币（本品类少用）"
+    },
+    {
+      "name": "get_coin_count",
+      "sig": "() -> int",
+      "desc": "金币数"
+    },
+    {
+      "name": "grant_invincibility",
+      "sig": "(seconds: float) -> void",
+      "desc": "无敌（平台型）"
+    },
+    {
+      "name": "boost_move_speed",
+      "sig": "(multiplier: float, seconds: float) -> void",
+      "desc": "移速"
+    },
+    {
+      "name": "show_countdown",
+      "sig": "(seconds: float, title: String) -> void",
+      "desc": "倒计时 HUD"
+    },
+    {
+      "name": "flash_player_fx",
+      "sig": "(seconds: float) -> void",
+      "desc": "闪烁"
+    },
+    {
+      "name": "set_tuning_number",
+      "sig": "(dotted_path: String, value: float) -> void",
+      "desc": "内存改数值"
+    },
+    {
+      "name": "tint_player_bullets",
+      "sig": "(colors: Array) -> void",
+      "desc": "玩家子弹循环着色（五颜六色）"
+    },
+    {
+      "name": "rainbow_player_bullets",
+      "sig": "() -> void",
+      "desc": "一键彩虹弹色"
+    },
+    {
+      "name": "grant_temp_shield",
+      "sig": "(seconds: float) -> void",
+      "desc": "临时护盾（非 catalog 技能）"
+    },
+    {
+      "name": "activate_bomb",
+      "sig": "() -> bool",
+      "desc": "清屏炸弹（需已 enable bomb）"
+    },
+    {
+      "name": "activate_laser_beam",
+      "sig": "() -> bool",
+      "desc": "穿透激光（需已 enable laser_beam）"
+    },
+    {
+      "name": "ensure_touch_skill_buttons",
+      "sig": "() -> void",
+      "desc": "确保触屏技能 InputMap（展厅硬性）"
+    },
+    {
+      "name": "ensure_touch_action",
+      "sig": "(action_id: String, label: String) -> void",
+      "desc": "通用触屏按钮：注册 InputMap + 屏上可点"
+    },
+    {
+      "name": "is_mouse_steer_blocked",
+      "sig": "() -> bool",
+      "desc": "技能 HUD 按下/悬停时阻止飞机鼠标跟机"
+    },
+    {
+      "name": "set_mouse_steer_blocked",
+      "sig": "(blocked: bool) -> void",
+      "desc": "手动开关鼠标跟机阻断"
+    }
+  ],
+  "catalog_skills": [
+    {
+      "id": "bomb",
+      "label": "清屏炸弹",
+      "desc": "清除屏幕子弹",
+      "trigger": "触屏按钮「炸弹」",
+      "runtime": {
+        "input": "action:bomb",
+        "effect": "bridge:activate_bomb",
+        "touch": "ensure_touch_action|overlay"
+      }
+    },
+    {
+      "id": "laser_beam",
+      "label": "激光",
+      "desc": "穿透激光约 3 秒",
+      "trigger": "触屏按钮「激光」",
+      "runtime": {
+        "input": "action:laser_beam",
+        "effect": "bridge:activate_laser_beam",
+        "touch": "ensure_touch_action|overlay"
+      }
+    }
+  ],
+  "edit_recipes": [
+    {
+      "intent": "开炸弹/激光",
+      "action": "enable_catalog_skill",
+      "paths": "config/game_config.json",
+      "hint": "catalog 最多 2 个：bomb / laser_beam"
+    },
+    {
+      "intent": "鼠标与技能按钮冲突/点按钮飞机会跑",
+      "action": "patch_mouse_steer_guard",
+      "paths": "core/player_ship.gd",
+      "hint": "跟机守卫；禁止只重复 enable catalog"
+    },
+    {
+      "intent": "子弹五颜六色/彩色",
+      "action": "bridge_api",
+      "paths": "core/ai_sandbox/*.gd → tint_player_bullets / rainbow_player_bullets",
+      "hint": "禁止 bullet.set_color / add_method；勿只改无效脚本"
+    },
+    {
+      "intent": "临时护盾",
+      "action": "bridge_api",
+      "paths": "core/ai_sandbox/*.gd → grant_temp_shield",
+      "hint": "护盾不是 catalog；机体内捡道具 shield 是另一套"
+    },
+    {
+      "intent": "改射速/弹速",
+      "action": "edit_session_core_or_tuning",
+      "paths": "core/player_ship.gd 或 set_tuning_number(\"tuning.player.*\")",
+      "hint": "可改会话 core 副本"
+    },
+    {
+      "intent": "改子弹外观帧",
+      "action": "edit_session_core",
+      "paths": "core/bullet.gd / bullet_pool.gd",
+      "hint": "生成链在 bullet_pool.spawn_*"
+    },
+    {
+      "intent": "新机制",
+      "action": "edit_session_core",
+      "paths": "core/** scenes/**",
+      "hint": "会话 core/scenes 自由实现用户所求；桥/catalog 为捷径"
+    }
+  ],
+  "hooks": {
+    "main_scene": "scenes/main.tscn",
+    "player": "core/player_ship.gd",
+    "bullet": "core/bullet.gd",
+    "bullet_pool": "core/bullet_pool.gd",
+    "skills_dir": "core/skills/",
+    "bomb": "core/skills/bomb.gd",
+    "laser": "core/skills/laser_beam.gd",
+    "powerup": "core/powerup_pickup.gd",
+    "config": "config/game_config.json",
+    "sandbox": "core/ai_sandbox/"
+  },
+  "notes": [
+    "护盾：catalog 无 shield；道具 pickup「shield」或桥 grant_temp_shield",
+    "彩色子弹：用 tint_player_bullets / rainbow_player_bullets，接到 apply(bridge)",
+    "炸弹/激光：必须 enable_catalog_skill；运行时由桥 activate_* + 触屏按钮触发（勿只改 config）",
+    "展厅硬性：how_to_play 必须写「点屏幕下方触屏按钮」，禁止只写键盘 Q/E",
+    "玩家是 Area2D（group player），get_player() 可能为 null，用 get_player_node()",
+    "禁止声称「新增护盾技能」却只改 enabled_skills",
+    "可改会话 core，禁止改 templates",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死",
+    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差"
+  ],
+  "forbidden_invented_apis": [
+    "add_method",
+    "bridge.add_method",
+    "merge_overrides",
+    "patch_tuning",
+    "set_color(",
+    "bullet.set_color"
+  ]
+}

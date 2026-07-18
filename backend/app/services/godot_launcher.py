@@ -112,6 +112,28 @@ class GodotLauncher:
         """Drop cached PID when session is reset/deleted."""
         self._clear_session_tracking(session_id)
 
+    @staticmethod
+    def _terminate_pid(pid: int) -> None:
+        """结束旧 Godot 进程（force relaunch 时避免同会话开出第二个窗口）。"""
+        if pid <= 0:
+            return
+        if sys.platform == "win32":
+            try:
+                import ctypes
+
+                PROCESS_TERMINATE: int = 0x0001
+                handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE, False, pid)
+                if handle:
+                    ctypes.windll.kernel32.TerminateProcess(handle, 0)
+                    ctypes.windll.kernel32.CloseHandle(handle)
+            except Exception:
+                pass
+            return
+        try:
+            os.kill(pid, 15)
+        except OSError:
+            pass
+
     def _try_place_window(
         self,
         pid: int | None,
@@ -124,7 +146,13 @@ class GodotLauncher:
             return False, None
         if wait_s > 0:
             time.sleep(wait_s)
-        placed: bool = place_by_pid(pid, layout_rect, timeout_s=timeout_s, interval_s=0.25)
+        placed: bool = place_by_pid(
+            pid,
+            layout_rect,
+            timeout_s=timeout_s,
+            interval_s=0.25,
+            borderless=True,
+        )
         return placed, layout_rect if placed else None
 
     def launch(
@@ -172,7 +200,11 @@ class GodotLauncher:
                 placement_rect=placement_rect,
             )
 
-        if old_pid is not None and self._is_process_running(old_pid) and old_project != project_key:
+        # force relaunch（重新试玩 / AI 用新参数试玩）或换项目：先结束旧进程，
+        # 让新窗口读到最新 game_config.json，避免同会话残留双窗口。
+        if old_pid is not None and self._is_process_running(old_pid) and (force or old_project != project_key):
+            self._terminate_pid(old_pid)
+            time.sleep(0.2)
             self._clear_session_tracking(session_id)
 
         cmd: list[str] = [str(godot), "--path", str(project)]
@@ -191,9 +223,20 @@ class GodotLauncher:
         window_placed, placement_rect = self._try_place_window(
             proc.pid,
             layout_rect,
-            wait_s=0.35,
-            timeout_s=6.0,
+            wait_s=0.45,
+            timeout_s=8.0,
         )
+        # Godot 读完 project.godot 的 960x540 后常再改尺寸：二次置位
+        if layout_rect is not None and self._is_process_running(proc.pid):
+            again, again_rect = self._try_place_window(
+                proc.pid,
+                layout_rect,
+                wait_s=0.9,
+                timeout_s=4.0,
+            )
+            if again:
+                window_placed = True
+                placement_rect = again_rect
         message: str = "已重新启动 Godot 试玩窗口" if force or old_pid is not None else "已启动 Godot 试玩窗口"
         return LaunchResult(
             ok=True,

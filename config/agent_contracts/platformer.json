@@ -1,0 +1,140 @@
+{
+  "genre": "platformer",
+  "bridge_apis": [
+    {
+      "name": "get_player",
+      "sig": "() -> CharacterBody2D",
+      "desc": "平台玩家"
+    },
+    {
+      "name": "get_player_node",
+      "sig": "() -> Node",
+      "desc": "任意玩家节点"
+    },
+    {
+      "name": "get_game_manager",
+      "sig": "() -> Node",
+      "desc": "当前主场景"
+    },
+    {
+      "name": "watch_coins",
+      "sig": "(cb: Callable) -> void",
+      "desc": "监听金币"
+    },
+    {
+      "name": "get_coin_count",
+      "sig": "() -> int",
+      "desc": "金币数"
+    },
+    {
+      "name": "grant_invincibility",
+      "sig": "(seconds: float) -> void",
+      "desc": "无敌"
+    },
+    {
+      "name": "boost_move_speed",
+      "sig": "(multiplier: float, seconds: float) -> void",
+      "desc": "移速"
+    },
+    {
+      "name": "show_countdown",
+      "sig": "(seconds: float, title: String) -> void",
+      "desc": "倒计时"
+    },
+    {
+      "name": "flash_player_fx",
+      "sig": "(seconds: float) -> void",
+      "desc": "闪烁特效"
+    },
+    {
+      "name": "set_tuning_number",
+      "sig": "(dotted_path: String, value: float) -> void",
+      "desc": "内存改数值"
+    },
+    {
+      "name": "ensure_touch_action",
+      "sig": "(action_id: String, label: String) -> void",
+      "desc": "通用触屏按钮"
+    }
+  ],
+  "catalog_skills": [
+    {
+      "id": "double_jump",
+      "label": "二段跳",
+      "desc": "空中再跳一次",
+      "trigger": "触屏「跳」/空中再跳",
+      "runtime": {
+        "input": "action:jump",
+        "effect": "catalog:double_jump",
+        "touch": "overlay|ensure_touch_action"
+      }
+    },
+    {
+      "id": "ground_pound",
+      "label": "下砸",
+      "desc": "空中下砸破障碍",
+      "trigger": "触屏「跳」/空中下砸",
+      "runtime": {
+        "input": "action:jump",
+        "effect": "catalog:ground_pound",
+        "touch": "overlay|ensure_touch_action"
+      }
+    }
+  ],
+  "edit_recipes": [
+    {
+      "intent": "开二段跳/下砸",
+      "action": "enable_catalog_skill",
+      "paths": "config/game_config.json tuning.enabled_skills",
+      "hint": "优先目录技能"
+    },
+    {
+      "intent": "用户明确要无敌/加速",
+      "action": "sandbox_or_rules",
+      "paths": "core/ai_sandbox/*.gd",
+      "hint": "仅当用户说无敌/加速时用 grant_invincibility / boost_move_speed；禁止当默认礼包"
+    },
+    {
+      "intent": "新敌人/新机关/新关卡要素",
+      "action": "edit_session_core",
+      "paths": "core/*.gd scenes/*.tscn",
+      "hint": "会话副本实现用户要的机制本身；勿用无关能力顶替"
+    },
+    {
+      "intent": "改跳跃手感",
+      "action": "edit_session_core_or_tuning",
+      "paths": "core/player_platformer.gd 或 set_tuning_number",
+      "hint": "可改会话 core 副本"
+    },
+    {
+      "intent": "新机制",
+      "action": "sandbox_apply",
+      "paths": "core/** scenes/**",
+      "hint": "自由写会话 GDScript；桥 API 可选捷径"
+    }
+  ],
+  "hooks": {
+    "main_scene": "scenes/main.tscn",
+    "player": "core/player_platformer.gd",
+    "collectible": "core/collectible.gd",
+    "config": "config/game_config.json",
+    "sandbox": "core/ai_sandbox/"
+  },
+  "notes": [
+    "二段跳下落段已由桥自动补齐，开 double_jump 即可",
+    "禁止发明 bridge.add_method",
+    "可改会话 core，禁止改 templates",
+    "catalog/Skill/桥是参考捷径，不是能力上限；前所未有需求现场写",
+    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差",
+    "禁止用户未提及时主动叠加无关 buff/技能",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死"
+  ],
+  "forbidden_invented_apis": [
+    "add_method",
+    "bridge.add_method",
+    "merge_overrides",
+    "patch_tuning",
+    "set_color(",
+    "bullet.set_color"
+  ]
+}

@@ -10,9 +10,11 @@ import urllib.request
 import webbrowser
 from pathlib import Path
 
+LAUNCHER_VERSION: str = "1.2"
 CREATE_NO_WINDOW: int = 0x08000000
 API_HEALTH_URL: str = "http://127.0.0.1:8000/health"
 KIOSK_PROBE_URL: str = "http://127.0.0.1:8080/kiosk/"
+EDU_PROBE_URL: str = "http://127.0.0.1:8080/kiosk/edu/"
 EDU_URL: str = "http://127.0.0.1:8080/kiosk/edu/"
 FAST_URL: str = "http://127.0.0.1:8080/kiosk/"
 
@@ -33,15 +35,19 @@ def find_repo_root(start: Path) -> Path:
     )
 
 
+def probe_url(url: str) -> bool:
+    try:
+        with urllib.request.urlopen(url, timeout=2.0) as response:
+            return 200 <= response.status < 500
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return False
+
+
 def wait_url(url: str, timeout_sec: float = 90.0, interval_sec: float = 0.5) -> bool:
     deadline: float = time.monotonic() + timeout_sec
     while time.monotonic() < deadline:
-        try:
-            with urllib.request.urlopen(url, timeout=2.0) as response:
-                if 200 <= response.status < 500:
-                    return True
-        except (urllib.error.URLError, TimeoutError, OSError):
-            pass
+        if probe_url(url):
+            return True
         time.sleep(interval_sec)
     return False
 
@@ -121,7 +127,8 @@ def main() -> int:
     children: list[subprocess.Popen[bytes]] = []
 
     print("=" * 56)
-    print("  文三路 AI 游戏创作工坊 · 一键启动")
+    print(f"  文三路 AI 游戏创作工坊 · 一键启动 v{LAUNCHER_VERSION}")
+    print(f"  产品版本 1.2 · P4-B/C 展厅落地")
     print(f"  项目目录: {repo_root}")
     print("=" * 56)
 
@@ -131,19 +138,25 @@ def main() -> int:
         venv_python: Path = ensure_backend_venv(backend_dir)
         uvicorn: Path = backend_dir / ".venv" / "Scripts" / "uvicorn.exe"
 
-        print("[2/4] 启动后端 API :8000 …")
-        backend_proc: subprocess.Popen[bytes] = run_hidden(
-            [str(uvicorn), "app.main:app", "--host", "127.0.0.1", "--port", "8000"],
-            cwd=backend_dir,
-        )
-        children.append(backend_proc)
+        if probe_url(API_HEALTH_URL):
+            print("[2/4] 后端 API :8000 已在运行，跳过启动")
+        else:
+            print("[2/4] 启动后端 API :8000 …")
+            backend_proc: subprocess.Popen[bytes] = run_hidden(
+                [str(uvicorn), "app.main:app", "--host", "127.0.0.1", "--port", "8000"],
+                cwd=backend_dir,
+            )
+            children.append(backend_proc)
 
-        print("[3/4] 启动 Kiosk 静态服务 :8080 …")
-        http_proc: subprocess.Popen[bytes] = run_hidden(
-            [str(venv_python), "-m", "http.server", "8080"],
-            cwd=repo_root,
-        )
-        children.append(http_proc)
+        if probe_url(KIOSK_PROBE_URL):
+            print("[3/4] Kiosk 静态服务 :8080 已在运行，跳过启动")
+        else:
+            print("[3/4] 启动 Kiosk 静态服务 :8080 …")
+            http_proc: subprocess.Popen[bytes] = run_hidden(
+                [str(venv_python), "-m", "http.server", "8080", "--bind", "127.0.0.1"],
+                cwd=repo_root,
+            )
+            children.append(http_proc)
 
         print("[4/4] 等待服务就绪…")
         if not wait_url(API_HEALTH_URL):
@@ -152,14 +165,17 @@ def main() -> int:
         if not wait_url(KIOSK_PROBE_URL):
             print("错误：Kiosk 静态服务未在 90 秒内响应。")
             return 1
+        if args.mode == "edu" and not wait_url(EDU_PROBE_URL, timeout_sec=15.0):
+            print("警告：B 链 /kiosk/edu/ 未响应，请确认 kiosk/edu/index.html 存在。")
 
         print()
         print("  服务已就绪：")
-        print(f"    API   → http://127.0.0.1:8000/docs")
+        print("    API   → http://127.0.0.1:8000/docs")
         print(f"    Kiosk → {kiosk_url}")
         print()
+        print("  v1.2 能力：七款触屏 overlay · 日榜 · 触控键盘 · 证书 PNG")
         print("  提示：请确认 backend/.env 中 GODOT_PATH 已配置（试玩必需）。")
-        print("  关闭本窗口或按 Enter 将停止全部后台服务。")
+        print("  关闭本窗口或按 Enter 将停止由本启动器拉起的后台服务。")
         print()
 
         if not args.no_browser:

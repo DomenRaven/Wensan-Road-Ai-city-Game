@@ -33,6 +33,43 @@ def load_optional_skills_catalog() -> dict[str, list[str]]:
     return catalog
 
 
+@lru_cache
+def load_optional_skills_max() -> int:
+    path: Path = CONFIG_DIR / "optional_skills.json"
+    data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    rules: Any = data.get("rules", {})
+    if isinstance(rules, dict):
+        try:
+            return max(1, int(rules.get("max_skills_per_session", 2)))
+        except (TypeError, ValueError):
+            return 2
+    return 2
+
+
+@lru_cache
+def load_optional_skills_entries(genre: str) -> tuple[tuple[str, str, str], ...]:
+    """返回 (id, label, desc) 元组列表，供 LLM 提示。"""
+    path: Path = CONFIG_DIR / "optional_skills.json"
+    data: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    catalog: Any = data.get("catalog", {})
+    entries: Any = catalog.get(genre, []) if isinstance(catalog, dict) else []
+    out: list[tuple[str, str, str]] = []
+    if isinstance(entries, list):
+        for item in entries:
+            if not isinstance(item, dict):
+                continue
+            sid = str(item.get("id", "")).strip()
+            if not sid:
+                continue
+            out.append(
+                (
+                    sid,
+                    str(item.get("label", sid)),
+                    str(item.get("desc", "")),
+                )
+            )
+    return tuple(out)
+
 def trim_max_32(value: str) -> str:
     return value.strip()[:32]
 

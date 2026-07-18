@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -24,11 +26,16 @@ def test_certificate_upload_and_download(client: TestClient) -> None:
     assert created.status_code == 201
     session_id: str = created.json()["session_id"]
 
-    upload = client.put(
-        f"/sessions/{session_id}/certificate",
-        content=_PNG_HEADER,
-        headers={"Content-Type": "image/png"},
-    )
+    # 单测不打外网：中继失败时应回落本地 token 路径
+    with patch(
+        "app.routers.sessions.upload_certificate_relay",
+        side_effect=RuntimeError("relay disabled in unit test"),
+    ):
+        upload = client.put(
+            f"/sessions/{session_id}/certificate",
+            content=_PNG_HEADER,
+            headers={"Content-Type": "image/png"},
+        )
     assert upload.status_code == 200
     body = upload.json()
     assert body["ok"] is True

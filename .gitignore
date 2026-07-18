@@ -1,6 +1,7 @@
 # 环境与密钥
 .env
 .env.*
+!.env.example
 credentials.json
 *.pem
 
@@ -10,9 +11,11 @@ credentials.json
 # Godot 运行与会话
 .godot/
 *.import
-workspace/
+workspace/*
+!workspace/.gitkeep
 exports/
 *.exe
+!启动游戏工坊.exe
 
 # Python / Node
 __pycache__/
@@ -20,13 +23,16 @@ __pycache__/
 node_modules/
 frontend/dist/
 backend/.venv/
+backend/data/
+# Learned Skill 长期库运行时数据（保留目录结构）
+data/learned_skills/**
+!data/learned_skills/.gitkeep
 
 # 本地审核报告（不入库）
 开发文档/AI生成小游戏_任务总结审核报告_v1.0.md
 
 # 大媒体与临时
 *.mp4
-*.docx
 Untitled
 
 # 编辑器与系统
@@ -35,3 +41,11 @@ Thumbs.db
 .DS_Store
 .pytest_cache/
 .clawhub/
+
+# 构建与开发归档（交付包排除）
+05-工具脚本/build/
+05-工具脚本/dist/
+05-工具脚本/_dev_archive/
+交付/_stage_*/
+交付/*.zip
+

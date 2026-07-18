@@ -68,14 +68,78 @@ def get_monitor_bottom_half_rect(anchor_x: int, anchor_y: int) -> WindowRect | N
         return None
 
 
+def get_monitor_fullscreen_rect(anchor_x: int, anchor_y: int) -> WindowRect | None:
+    """Return the FULL bounds of the monitor nearest *anchor* (S-A1 · 铺满整块显示器).
+
+    读真实显示器几何（含横/竖屏自适应），不写死分辨率。Win32 only。
+    """
+    if sys.platform != "win32":
+        return None
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        user32 = ctypes.windll.user32
+
+        class POINT(ctypes.Structure):
+            _fields_ = [("x", ctypes.c_long), ("y", ctypes.c_long)]
+
+        class RECT(ctypes.Structure):
+            _fields_ = [
+                ("left", ctypes.c_long),
+                ("top", ctypes.c_long),
+                ("right", ctypes.c_long),
+                ("bottom", ctypes.c_long),
+            ]
+
+        class MONITORINFO(ctypes.Structure):
+            _fields_ = [
+                ("cbSize", wintypes.DWORD),
+                ("rcMonitor", RECT),
+                ("rcWork", RECT),
+                ("dwFlags", wintypes.DWORD),
+            ]
+
+        MONITOR_DEFAULTTONEAREST: int = 2
+        pt = POINT(int(anchor_x), int(anchor_y))
+        hmon = user32.MonitorFromPoint(pt, MONITOR_DEFAULTTONEAREST)
+        if not hmon:
+            return None
+
+        info = MONITORINFO()
+        info.cbSize = ctypes.sizeof(MONITORINFO)
+        if not user32.GetMonitorInfoW(hmon, ctypes.byref(info)):
+            return None
+
+        mon = info.rcMonitor
+        mon_w: int = int(mon.right - mon.left)
+        mon_h: int = int(mon.bottom - mon.top)
+        if mon_w <= 0 or mon_h <= 0:
+            return None
+        return {
+            "x": int(mon.left),
+            "y": int(mon.top),
+            "w": mon_w,
+            "h": mon_h,
+        }
+    except Exception:
+        return None
+
+
 def place_by_pid(
     pid: int,
     rect: WindowRect,
     *,
     timeout_s: float = 5.0,
     interval_s: float = 0.25,
+    borderless: bool = False,
+    always_on_top: bool = True,
 ) -> bool:
-    """Move a Godot top-level window to *rect* (screen coordinates). Win32 only."""
+    """Move a Godot top-level window to *rect* (screen coordinates). Win32 only.
+
+    *borderless* True 时先去掉标题栏/边框，再铺满 *rect*（S-A1 全屏体验）。
+    *always_on_top* True（默认）→ HWND_TOPMOST，始终在所有应用最上层。
+    """
     if pid <= 0:
         return False
     if sys.platform != "win32":
@@ -84,13 +148,53 @@ def place_by_pid(
     while True:
         try:
             hwnd: int | None = _find_game_window_for_pid(pid)
-            if hwnd is not None and _set_window_rect(hwnd, rect):
-                return True
+            if hwnd is not None:
+                if borderless:
+                    _make_window_borderless(hwnd)
+                if _set_window_rect(hwnd, rect, always_on_top=always_on_top):
+                    return True
         except Exception:
             pass
         if time.monotonic() >= deadline:
             return False
         time.sleep(interval_s)
+
+
+def _make_window_borderless(hwnd: int) -> None:
+    """去掉标题栏与可调边框，让 Godot 窗口可真正铺满显示器。失败静默。"""
+    try:
+        import ctypes
+
+        user32 = ctypes.windll.user32
+        GWL_STYLE: int = -16
+        WS_CAPTION: int = 0x00C00000
+        WS_THICKFRAME: int = 0x00040000
+        WS_MINIMIZEBOX: int = 0x00020000
+        WS_MAXIMIZEBOX: int = 0x00010000
+        WS_SYSMENU: int = 0x00080000
+        get_style = getattr(user32, "GetWindowLongPtrW", user32.GetWindowLongW)
+        set_style = getattr(user32, "SetWindowLongPtrW", user32.SetWindowLongW)
+        style: int = int(get_style(hwnd, GWL_STYLE))
+        new_style: int = style & ~(
+            WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU
+        )
+        if new_style != style:
+            set_style(hwnd, GWL_STYLE, new_style)
+            SWP_NOMOVE: int = 0x0002
+            SWP_NOSIZE: int = 0x0001
+            SWP_NOZORDER: int = 0x0004
+            SWP_FRAMECHANGED: int = 0x0020
+            user32.SetWindowPos(
+                hwnd,
+                0,
+                0,
+                0,
+                0,
+                0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED,
+            )
+    except Exception:
+        pass
 
 
 def _collect_process_tree(root_pid: int) -> set[int]:
@@ -201,17 +305,30 @@ def _find_game_window_for_pid(root_pid: int) -> int | None:
     return best_hwnd
 
 
-def _set_window_rect(hwnd: int, rect: WindowRect) -> bool:
+def _set_window_rect(
+    hwnd: int,
+    rect: WindowRect,
+    *,
+    always_on_top: bool = True,
+) -> bool:
+    """铺满 rect；默认 HWND_TOPMOST（去掉会阻碍置顶的 SWP_NOZORDER）。"""
     import ctypes
 
     user32 = ctypes.windll.user32
-    SWP_NOZORDER: int = 0x0004
     SWP_SHOWWINDOW: int = 0x0040
-    flags: int = SWP_NOZORDER | SWP_SHOWWINDOW
+    SWP_FRAMECHANGED: int = 0x0020
+    HWND_TOPMOST: int = -1
+    HWND_NOTOPMOST: int = -2
+    flags: int = SWP_SHOWWINDOW | SWP_FRAMECHANGED
+    insert_after: int = HWND_TOPMOST if always_on_top else HWND_NOTOPMOST
+    try:
+        user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+    except Exception:
+        pass
     ok: bool = bool(
         user32.SetWindowPos(
             hwnd,
-            0,
+            insert_after,
             int(rect["x"]),
             int(rect["y"]),
             int(rect["w"]),

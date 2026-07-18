@@ -49,10 +49,13 @@ def certificate_deploy_config(settings: Settings) -> dict[str, Any]:
     """展馆实装 · 证书扫码下载契约（供 Kiosk bootstrap 同步）。"""
     public_base: str = settings.public_api_base.strip().rstrip("/")
     ttl_sec: int = settings.certificate_download_ttl_sec
+    relay_on: bool = bool(settings.certificate_relay_enabled)
     return {
         "public_download_base": public_base,
         "download_ttl_sec": ttl_sec,
-        "ready_for_public_qr": bool(public_base),
+        # 自有公网 或 临时图床中继，均可让游客手机扫码
+        "ready_for_public_qr": bool(public_base) or relay_on,
+        "relay_enabled": relay_on,
         "endpoints": {
             "upload": "PUT /sessions/{session_id}/certificate",
             "public_download": "GET /public/certificates/{token}",

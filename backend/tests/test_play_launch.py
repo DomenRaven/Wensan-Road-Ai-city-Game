@@ -144,15 +144,20 @@ def test_play_launch_with_viewport_passes_layout_rect(tmp_path: Path, monkeypatc
                 "screen_y": 0,
                 "screen_w": 1920,
                 "screen_h": 1080,
+                "monitor_x": 0,
+                "monitor_y": 0,
                 "devicePixelRatio": 1.0,
                 "godot_zone_rect": {"x": 960, "y": 80, "w": 960, "h": 1000},
             },
         }
-        with patch("app.routers.play.get_launcher", return_value=fake):
+        # S-A1：Win32 不可用时回退整块显示器，不再半屏停靠
+        with patch("app.routers.play.get_launcher", return_value=fake), patch(
+            "app.routers.play.get_monitor_fullscreen_rect", return_value=None
+        ):
             resp = client.post(f"/sessions/{session_id}/play/launch", json=body)
         assert resp.status_code == 200
         data = resp.json()
         assert data["ok"] is True
         assert data["window_placed"] is True
-        assert data["placement_rect"] == {"x": 960, "y": 80, "w": 960, "h": 1000}
-        assert fake.last_layout_rect == {"x": 960, "y": 80, "w": 960, "h": 1000}
+        assert data["placement_rect"] == {"x": 0, "y": 0, "w": 1920, "h": 1080}
+        assert fake.last_layout_rect == {"x": 0, "y": 0, "w": 1920, "h": 1080}

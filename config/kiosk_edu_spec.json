@@ -4,7 +4,7 @@
   "doc_ref": "开发文档/模板引擎/6.24_B链教育版用户旅程与需求规格_v1.0.md",
   "target_audience": "K12 · 展厅触控 · 14 岁以下",
   "api_base": "http://127.0.0.1:8000",
-  "session_storage_key": "gameforge_kiosk_session_id",
+  "session_storage_key": "gameforge_edu_session_id",
   "config_base": "../../config",
   "assets_base": "../../assets",
   "layout": {

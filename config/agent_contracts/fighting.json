@@ -1,0 +1,128 @@
+{
+  "genre": "fighting",
+  "bridge_apis": [
+    {
+      "name": "get_player",
+      "sig": "() -> CharacterBody2D",
+      "desc": "角色"
+    },
+    {
+      "name": "get_player_node",
+      "sig": "() -> Node",
+      "desc": "玩家节点"
+    },
+    {
+      "name": "get_game_manager",
+      "sig": "() -> Node",
+      "desc": "擂台场景"
+    },
+    {
+      "name": "watch_coins",
+      "sig": "(cb: Callable) -> void",
+      "desc": "少用"
+    },
+    {
+      "name": "get_coin_count",
+      "sig": "() -> int",
+      "desc": "计数"
+    },
+    {
+      "name": "grant_invincibility",
+      "sig": "(seconds: float) -> void",
+      "desc": "无敌帧"
+    },
+    {
+      "name": "boost_move_speed",
+      "sig": "(multiplier: float, seconds: float) -> void",
+      "desc": "移速"
+    },
+    {
+      "name": "show_countdown",
+      "sig": "(seconds: float, title: String) -> void",
+      "desc": "倒计时"
+    },
+    {
+      "name": "flash_player_fx",
+      "sig": "(seconds: float) -> void",
+      "desc": "闪烁"
+    },
+    {
+      "name": "set_tuning_number",
+      "sig": "(dotted_path: String, value: float) -> void",
+      "desc": "数值"
+    },
+    {
+      "name": "grant_temp_shield",
+      "sig": "(seconds: float) -> void",
+      "desc": "临时护盾/霸体感"
+    },
+    {
+      "name": "ensure_touch_action",
+      "sig": "(action_id: String, label: String) -> void",
+      "desc": "通用触屏按钮"
+    }
+  ],
+  "catalog_skills": [
+    {
+      "id": "block_parry",
+      "label": "格挡",
+      "desc": "减伤并反击",
+      "trigger": "触屏格挡",
+      "runtime": {
+        "input": "action:block",
+        "effect": "catalog:block_parry",
+        "touch": "overlay|ensure_touch_action"
+      }
+    },
+    {
+      "id": "special_uppercut",
+      "label": "上勾拳",
+      "desc": "击飞对手",
+      "trigger": "触屏技能键",
+      "runtime": {
+        "input": "action:skill",
+        "effect": "catalog:special_uppercut",
+        "touch": "overlay|ensure_touch_action"
+      }
+    }
+  ],
+  "edit_recipes": [
+    {
+      "intent": "开格挡/上勾拳",
+      "action": "enable_catalog_skill",
+      "paths": "config/game_config.json",
+      "hint": "block_parry / special_uppercut"
+    },
+    {
+      "intent": "临时霸体",
+      "action": "bridge_api",
+      "paths": "grant_temp_shield / grant_invincibility",
+      "hint": "沙箱 apply"
+    },
+    {
+      "intent": "新机制",
+      "action": "edit_session_core",
+      "paths": "core/** scenes/**",
+      "hint": "会话 core/scenes 自由实现用户所求；桥/catalog 为捷径"
+    }
+  ],
+  "hooks": {
+    "main_scene": "scenes/main.tscn",
+    "config": "config/game_config.json",
+    "sandbox": "core/ai_sandbox/"
+  },
+  "notes": [
+    "面向 14 岁以下，无血腥表现",
+    "可改会话 core，禁止改 templates",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死",
+    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差"
+  ],
+  "forbidden_invented_apis": [
+    "add_method",
+    "bridge.add_method",
+    "merge_overrides",
+    "patch_tuning",
+    "set_color(",
+    "bullet.set_color"
+  ]
+}

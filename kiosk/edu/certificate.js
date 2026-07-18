@@ -12,6 +12,29 @@
   let lastSessionId = "";
   /** @type {number} */
   let lastExpiresInSec = 259200;
+  /** @type {number|null} */
+  let autoFlashTimer = null;
+  /** 自动闪现总时长（含淡入淡出） */
+  const AUTO_FLASH_MS = 3500;
+  /** 淡入 / 淡出各约 0.45s，与 CSS transition 对齐 */
+  const FADE_MS = 450;
+
+  /** N-3 · 是否已具备公网扫码下载能力（未配 PUBLIC_API_BASE 则否） */
+  function isPublicQrReady() {
+    const cert = /** @type {Record<string, unknown>|undefined} */ (
+      window.EduSession?.spec?.certificate
+    );
+    return !!(cert?.ready_for_public_qr || cert?.public_download_base);
+  }
+
+  /** 隐藏调试开关（默认关）：?certdebug=1 时允许开发本机另存证书 */
+  function isCertDebugEnabled() {
+    try {
+      return new URLSearchParams(window.location.search).get("certdebug") === "1";
+    } catch (_) {
+      return false;
+    }
+  }
 
   /** @param {string} text */
   function escapeHtml(text) {
@@ -151,7 +174,8 @@
     return {
       subtitle: cert?.subtitle || cert?.title || DEFAULT_SUBTITLE,
       footer: cert?.footer || DEFAULT_FOOTER,
-      btnSave: cert?.btn_save || cert?.btn_print || "保存证书",
+      // N-3 · 主操作改为「扫码下载」，不再引导本机保存
+      btnSave: cert?.btn_scan || "📱 扫码下载证书",
       btnContinue: cert?.btn_continue || "继续试玩",
       qrHint: cert?.qr_hint || DEFAULT_QR_HINT,
     };
@@ -224,6 +248,10 @@
    */
   function formatQrExpiryNote(expiresInSec) {
     const sec = expiresInSec != null && expiresInSec > 0 ? expiresInSec : configuredTtlSec();
+    if (sec <= 3600) {
+      const mins = Math.max(1, Math.round(sec / 60));
+      return `链接约 ${mins} 分钟内有效 · 手机有网即可下载`;
+    }
     const hours = Math.max(1, Math.round(sec / 3600));
     return `链接 ${hours} 小时内有效 · 手机有网即可下载`;
   }
@@ -231,7 +259,7 @@
   /**
    * @param {Blob} blob
    * @param {string} sessionId
-   * @returns {Promise<string>}
+   * @returns {Promise<{url:string, publicReachable:boolean, relayProvider:string|null, expiresInSec:number}>}
    */
   async function uploadCertificatePng(blob, sessionId) {
     const apiBase = window.EduSession?.apiBase || "http://127.0.0.1:8000";
@@ -244,22 +272,41 @@
       const text = await res.text();
       throw new Error(`${res.status}: ${text}`);
     }
-    const data = /** @type {{download_url?:string,download_path?:string,download_token?:string,expires_in_sec?:number}} */ (
-      await res.json()
-    );
+    const data = /** @type {{
+      download_url?:string,
+      download_path?:string,
+      download_token?:string,
+      expires_in_sec?:number,
+      public_reachable?:boolean,
+      relay_provider?:string|null,
+    }} */ (await res.json());
     if (data.expires_in_sec != null && data.expires_in_sec > 0) {
       lastExpiresInSec = data.expires_in_sec;
     }
+    let url = "";
     if (data.download_url && data.download_url.startsWith("http")) {
-      return data.download_url;
+      url = data.download_url;
+    } else {
+      const path =
+        data.download_url ||
+        data.download_path ||
+        (data.download_token ? `/public/certificates/${data.download_token}` : "");
+      if (!path) throw new Error("missing download url");
+      if (path.startsWith("http")) {
+        url = path;
+      } else {
+        url = `${resolvePublicApiBase()}${path.startsWith("/") ? path : `/${path}`}`;
+      }
     }
-    const path =
-      data.download_url ||
-      data.download_path ||
-      (data.download_token ? `/public/certificates/${data.download_token}` : "");
-    if (!path) throw new Error("missing download url");
-    if (path.startsWith("http")) return path;
-    return `${resolvePublicApiBase()}${path.startsWith("/") ? path : `/${path}`}`;
+    const publicReachable =
+      data.public_reachable === true ||
+      (!!data.relay_provider && !/127\.0\.0\.1|localhost/i.test(url));
+    return {
+      url,
+      publicReachable,
+      relayProvider: data.relay_provider || null,
+      expiresInSec: lastExpiresInSec,
+    };
   }
 
   function hideQrPanel() {
@@ -543,6 +590,24 @@
     card.style.setProperty("--cert-accent-light", accentLight);
   }
 
+  /** N-3 · 展馆扫码下载未开通时的提示（禁止把本机另存当成功主路径） */
+  function showQrUnavailableNote(reason) {
+    const panel = document.getElementById("edu-cert-qr-panel");
+    const mount = document.getElementById("eduCertQrMount");
+    const hint = document.getElementById("eduCertQrHint");
+    const note = document.getElementById("eduCertQrNote");
+    if (!panel || !mount) return;
+    mount.innerHTML = `<div class="edu-cert-qr-unavailable" aria-hidden="true">📵</div>`;
+    if (hint) {
+      hint.textContent = reason || "展馆扫码下载暂未开通";
+    }
+    if (note) {
+      note.textContent =
+        "本机调试时手机扫不开 127.0.0.1。请配置 PUBLIC_API_BASE，或确保服务器能访问外网图床中继";
+    }
+    panel.hidden = false;
+  }
+
   async function saveCertificate() {
     const card = document.getElementById("edu-certificate");
     if (!card) return;
@@ -557,6 +622,12 @@
 
     if (!sessionId) {
       window.alert("会话未就绪，请刷新页面后重试");
+      return;
+    }
+
+    // N-3：未配公网下载地址时不做本机保存，明确提示（隐藏调试开关除外）
+    if (!isPublicQrReady() && !isCertDebugEnabled()) {
+      showQrUnavailableNote();
       return;
     }
 
@@ -583,20 +654,34 @@
         },
       });
 
-      const blob = await new Promise<Blob | null>((resolve) => {
+      const blob = await new Promise((resolve) => {
         canvas.toBlob(resolve, "image/png", 0.92);
       });
       if (!blob) throw new Error("PNG encode failed");
 
       if (saveBtn) saveBtn.textContent = "正在上传…";
-      const downloadUrl = await uploadCertificatePng(blob, sessionId);
+      const uploaded = await uploadCertificatePng(blob, sessionId);
 
-      const filename = `${sanitizeFilename(lastDisplayName)}_证书.png`;
-      tryDirectDownload(blob, filename);
-      showQrPanel(downloadUrl);
+      // 默认仅扫码下载，禁止游客本机另存；仅隐藏调试开关允许本机保存
+      if (isCertDebugEnabled()) {
+        const filename = `${sanitizeFilename(lastDisplayName)}_证书.png`;
+        tryDirectDownload(blob, filename);
+      }
+
+      if (!uploaded.publicReachable && !isCertDebugEnabled()) {
+        // 本地回落链（127.0.0.1）对手机无意义：明确提示，不弹「生成失败」
+        showQrUnavailableNote("图床中继未成功，暂无公网下载链接");
+        return;
+      }
+      showQrPanel(uploaded.url);
     } catch (err) {
       console.error("[EduCertificate] save failed", err);
-      window.alert("保存失败，请检查网络后重试，或联系老师帮忙");
+      const detail = err && err.message ? String(err.message).slice(0, 120) : "";
+      window.alert(
+        detail
+          ? `生成失败：${detail}`
+          : "生成失败，请检查网络后重试，或联系老师帮忙"
+      );
     } finally {
       if (saveBtn) {
         saveBtn.disabled = false;
@@ -632,11 +717,37 @@
     return overlay;
   }
 
+  function clearAutoFlash() {
+    if (autoFlashTimer) {
+      window.clearTimeout(autoFlashTimer);
+      autoFlashTimer = null;
+    }
+  }
+
   function hide() {
+    clearAutoFlash();
     const overlay = document.getElementById("edu-certificate-overlay");
-    if (overlay) overlay.hidden = true;
+    if (overlay) {
+      overlay.hidden = true;
+      overlay.classList.remove(
+        "edu-certificate-overlay--flash",
+        "edu-certificate-overlay--in",
+        "edu-certificate-overlay--out"
+      );
+    }
     hideQrPanel();
     document.body.classList.remove("edu-printing");
+  }
+
+  /** 淡出后再隐藏（闪现模式） */
+  function fadeOutThenHide() {
+    const overlay = document.getElementById("edu-certificate-overlay");
+    if (!overlay || overlay.hidden) return;
+    overlay.classList.remove("edu-certificate-overlay--in");
+    overlay.classList.add("edu-certificate-overlay--out");
+    autoFlashTimer = window.setTimeout(() => {
+      hide();
+    }, FADE_MS);
   }
 
   /**
@@ -651,6 +762,7 @@
    *   createdAt?: Date,
    *   questions?: Array<{id:string,widget?:string,prompt:string,options?:Array<{id:string,label:string,value?:unknown}>}>,
    *   answers?: Record<string, string|string[]>,
+   *   mode?: "full"|"auto_flash",
    * }} input
    */
   function show(input) {
@@ -681,7 +793,34 @@
 
     mountOverlay(ctx);
     const overlay = document.getElementById("edu-certificate-overlay");
-    if (overlay) overlay.hidden = false;
+    if (!overlay) return;
+
+    clearAutoFlash();
+    hideQrPanel();
+
+    const flash = input.mode === "auto_flash";
+    overlay.classList.toggle("edu-certificate-overlay--flash", flash);
+    const actions = /** @type {HTMLElement|null} */ (
+      overlay.querySelector(".edu-certificate-actions")
+    );
+    // S-B1 · 闪现态：隐藏操作区，淡入→展示→淡出，总时长约 3.5s（不阻断开始试玩）
+    if (actions) {
+      actions.hidden = flash;
+      actions.style.display = flash ? "none" : "";
+    }
+    overlay.classList.remove("edu-certificate-overlay--out", "edu-certificate-overlay--in");
+    overlay.hidden = false;
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        overlay.classList.add("edu-certificate-overlay--in");
+      });
+    });
+    if (flash) {
+      const holdMs = Math.max(0, AUTO_FLASH_MS - FADE_MS);
+      autoFlashTimer = window.setTimeout(() => {
+        fadeOutThenHide();
+      }, holdMs);
+    }
   }
 
   window.EduCertificate = {

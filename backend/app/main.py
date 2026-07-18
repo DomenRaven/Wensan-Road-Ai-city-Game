@@ -8,7 +8,22 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import Settings, get_settings
 from app.services.bootstrap import run_startup_bootstrap
-from app.routers import bootstrap, creative, edu_preview, generate, health, intent, kiosk, leaderboard, play, public_certificates, sessions, wizard
+from app.routers import (
+    bootstrap,
+    creative,
+    edu_preview,
+    generate,
+    health,
+    intent,
+    kiosk,
+    leaderboard,
+    learned_skills_ops,
+    nl_patch,
+    play,
+    public_certificates,
+    sessions,
+    wizard,
+)
 from app.stores.session_store import StoreBackend, create_session_store
 
 
@@ -46,9 +61,11 @@ def create_app() -> FastAPI:
     app.include_router(creative.router)
     app.include_router(generate.router)
     app.include_router(play.router)
+    app.include_router(nl_patch.router)
     app.include_router(edu_preview.router)
     app.include_router(kiosk.router)
     app.include_router(leaderboard.router)
+    app.include_router(learned_skills_ops.router)
     return app
 
 
