@@ -1519,7 +1519,8 @@
     launchState = null;
     sawGodotRunning = false;
     leaderboardHandledThisRun = false;
-    await window.EduSession.releaseAsync();
+    // 主动回主页/重新开始：先 harvest 有效经验，再清 workspace
+    await window.EduSession.releaseAsync(undefined, { harvest: true });
     genre = "";
     genreLabel = "";
     displayName = "";

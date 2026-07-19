@@ -172,6 +172,7 @@ def _toggle_tabtip() -> tuple[bool, int]:
 
 
 def show_if_hidden() -> dict[str, object]:
+    """仅在窗口不可见时 toggle 打开。禁止信任陈旧 _tabtip_open（否则会误判已开而不动）。"""
     global _tabtip_open
     with _com_lock:
         ensure_tabtip_process()
@@ -179,36 +180,50 @@ def show_if_hidden() -> dict[str, object]:
         if is_tabtip_visible():
             _tabtip_open = True
             return {"ok": True, "action": "show", "already_visible": True}
-        if _tabtip_open:
-            return {"ok": True, "action": "show", "already_visible": True}
+        # 陈旧跟踪：面板已关但 flag 仍 True → 清空后再打开
+        _tabtip_open = False
         ok, hr = _toggle_tabtip()
-        if ok:
-            _tabtip_open = True
+        visible = is_tabtip_visible()
+        _tabtip_open = bool(visible)
         return {
-            "ok": ok,
+            "ok": ok or visible,
             "action": "show",
             "already_visible": False,
             "toggled": ok,
+            "visible_after": visible,
             "hresult": hr,
         }
 
 
 def hide_if_visible() -> dict[str, object]:
+    """仅在窗口可见时 toggle 关闭。禁止「flag 开但不可见」时再 toggle（那会误打开手写板）。"""
     global _tabtip_open
     with _com_lock:
         visible = is_tabtip_visible()
-        was_open = _tabtip_open or visible
-        if not was_open:
-            return {"ok": True, "action": "hide", "already_hidden": True, "toggled": False}
-        ok, hr = _toggle_tabtip()
-        if ok or not is_tabtip_visible():
+        if not visible:
+            # 关键：勿因 _tabtip_open 陈旧而 toggle → 否则点「发送」会误弹键盘
             _tabtip_open = False
+            return {
+                "ok": True,
+                "action": "hide",
+                "already_hidden": True,
+                "toggled": False,
+            }
+        ok, hr = _toggle_tabtip()
+        still = is_tabtip_visible()
+        if still:
+            # 偶发一次 toggle 未关上，再试一次
+            ok2, hr2 = _toggle_tabtip()
+            still = is_tabtip_visible()
+            ok = ok or ok2
+            hr = hr2 if still else hr
+        _tabtip_open = bool(still)
         return {
-            "ok": ok,
+            "ok": ok and not still,
             "action": "hide",
             "already_hidden": False,
-            "toggled": ok,
-            "was_tracked_open": was_open,
+            "toggled": True,
+            "visible_after": still,
             "hresult": hr,
         }
 

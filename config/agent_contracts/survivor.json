@@ -122,9 +122,9 @@
     "sandbox": "core/ai_sandbox/"
   },
   "notes": [
-    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死",
-    "可改会话 core，禁止改 templates",
-    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差"
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考亦可会话另写",
+    "可改会话 core；templates 只读参考",
+    "需求对齐：实现所求机制；实现对齐用户所求机制本身"
   ],
   "forbidden_invented_apis": [
     "add_method",

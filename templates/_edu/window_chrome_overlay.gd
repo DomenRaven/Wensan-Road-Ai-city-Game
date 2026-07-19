@@ -1,11 +1,11 @@
 extends CanvasLayer
 
-## 展厅 · 无边框全屏时的窗口控件（关闭 / 小窗 / 复位）
+## 展厅 · 无边框全屏时的窗口控件（关闭 / 小窗）
 ## 独立高 layer，避免被 HUD / 触控层在游戏中抢走点击。
 ## 由 edu_workspace 注入到 workspace，不修改 templates/*/core 源文件。
 
-const BTN_MIN: Vector2 = Vector2(72, 40)
-const FONT_SIZE: int = 16
+const BTN_MIN: Vector2 = Vector2(36, 20)
+const FONT_SIZE: int = 8
 const WINDOWED_SIZE: Vector2i = Vector2i(960, 540)
 const CHROME_LAYER: int = 128
 
@@ -42,15 +42,14 @@ func _build_chrome() -> void:
 	_bar = HBoxContainer.new()
 	_bar.name = "WindowChromeBar"
 	_bar.position = Vector2(12, 12)
-	_bar.add_theme_constant_override("separation", 8)
+	_bar.add_theme_constant_override("separation", 4)
 	_bar.mouse_filter = Control.MOUSE_FILTER_STOP
-	# 固定命中区域，避免 HBox 未排版时 size 为 0
-	_bar.custom_minimum_size = Vector2(BTN_MIN.x * 3.0 + 16.0, BTN_MIN.y)
+	# 固定命中区域，避免 HBox 未排版时 size 为 0（仅关闭 + 小窗）
+	_bar.custom_minimum_size = Vector2(BTN_MIN.x * 2.0 + 4.0, BTN_MIN.y)
 	_root.add_child(_bar)
 
 	_add_btn("✕ 关闭", _on_close)
 	_add_btn("❐ 小窗", _on_windowed)
-	_add_btn("⛶ 复位", _on_restore_fullscreen)
 
 
 func _add_btn(label: String, handler: Callable) -> void:
@@ -73,8 +72,8 @@ func _add_btn(label: String, handler: Callable) -> void:
 func _make_style(bg: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
 	style.bg_color = bg
-	style.set_corner_radius_all(10)
-	style.set_content_margin_all(8)
+	style.set_corner_radius_all(5)
+	style.set_content_margin_all(4)
 	style.border_width_left = 1
 	style.border_width_top = 1
 	style.border_width_right = 1
@@ -97,7 +96,3 @@ func _on_windowed() -> void:
 		maxi(0, (screen.y - WINDOWED_SIZE.y) / 2)
 	)
 	DisplayServer.window_set_position(pos)
-
-
-func _on_restore_fullscreen() -> void:
-	_apply_exhibition_fullscreen()

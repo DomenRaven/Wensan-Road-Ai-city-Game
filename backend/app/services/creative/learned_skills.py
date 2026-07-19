@@ -93,6 +93,48 @@ def read_session_patch_log(workspace_root: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def format_recent_session_writes_for_prompt(
+    workspace_root: Path,
+    *,
+    limit_rows: int = 6,
+    limit_files: int = 12,
+) -> str:
+    """本局近期成功写入路径，供 Agent 开放读盘定位（HF-11）。"""
+    logs: list[dict[str, Any]] = read_session_patch_log(workspace_root)
+    if not logs:
+        return ""
+    files: list[str] = []
+    notes: list[str] = []
+    for row in reversed(logs[-max(1, limit_rows) :]):
+        if not row.get("ok"):
+            continue
+        summary: str = str(row.get("summary") or "").strip()[:80]
+        user_text: str = str(row.get("user_text") or "").strip()[:60]
+        if summary or user_text:
+            notes.append(f"- 用户「{user_text or '…'}」→ {summary or '（无摘要）'}")
+        for f in row.get("sandbox_files") or []:
+            rel: str = str(f).replace("\\", "/").strip()
+            if rel and rel not in files:
+                files.append(rel)
+            if len(files) >= limit_files:
+                break
+        if len(files) >= limit_files:
+            break
+    if not files and not notes:
+        return ""
+    lines: list[str] = [
+        "【本局近期改动 · 开放读盘时优先阅读】"
+    ]
+    lines.extend(notes[:4])
+    if files:
+        lines.append("路径：" + "、".join(files))
+        lines.append(
+            "反馈类需求：先 read_file 这些路径，对照用户原话核对状态是否成对开闭，"
+            "再 replace_text 最小 patch；done 前确保磁盘已有对应改动。"
+        )
+    return "\n".join(lines)
+
+
 def _load_index(store_dir: Path) -> list[dict[str, Any]]:
     ensure_store(store_dir)
     index: Path = store_dir / "index.jsonl"
@@ -202,10 +244,12 @@ def _score_skill(skill: dict[str, Any], query: str, genre: str) -> tuple[float, 
     fail_count: int = int(skill.get("fail_count") or 0)
     score += min(2.0, 0.15 * float(success_count))
     score += min(1.0, 0.05 * float(use_count))
-    # P1：没生效强降权（最多 -12），verified_gate 加权
+    # P1：没生效强降权（最多 -12），verified_gate 加权；未验证 Skill 额外降权（总纲 Q7）
     score -= min(12.0, 2.0 * float(fail_count))
     if bool(skill.get("verified_gate")):
         score += 2.5
+    else:
+        score -= 1.5
     if fail_count >= 3:
         score -= 3.0  # 多次没生效几乎不再进 Top-K
     return score, relevance
@@ -244,7 +288,7 @@ def format_skills_for_prompt(skills: list[dict[str, Any]]) -> str:
     if not skills:
         return ""
     lines: list[str] = [
-        "【长期库 Learned Skills · 仅当与当前这句话明确相关时才可复用；无关禁止套用】"
+        "【长期库 Learned Skills · 与当前原话明确相关时再复用】"
     ]
     for i, sk in enumerate(skills, start=1):
         phrases: list[str] = [str(p) for p in (sk.get("trigger_phrases") or [])][:4]
@@ -544,6 +588,37 @@ def _upsert_skill(
     return skills, sid, True
 
 
+def session_is_negative_for_harvest(
+    logs: list[dict[str, Any]],
+    *,
+    user_rejected: bool = False,
+) -> tuple[bool, str]:
+    """总纲 G8：终局否定态 → 禁止入库有效 Learned Skill。"""
+    if user_rejected:
+        return True, "user_rejected"
+    if not logs:
+        return False, ""
+    last: dict[str, Any] = logs[-1]
+    if bool(last.get("rolled_back")):
+        return True, "rolled_back"
+    if bool(last.get("playability_suspect")):
+        return True, "playability_suspect"
+    # 显式 False 才算未过门禁；缺字段兼容旧日志
+    if last.get("gate_passed") is False:
+        return True, "ungated"
+    if bool(last.get("partial")):
+        return True, "partial"
+    last_gate_idx: int = -1
+    for i, row in enumerate(logs):
+        if bool(row.get("gate_passed")):
+            last_gate_idx = i
+    for i, row in enumerate(logs):
+        blob: str = f"{row.get('feedback') or ''}\n{row.get('user_text') or ''}"
+        if ("没生效" in blob or "没有生效" in blob) and i > last_gate_idx:
+            return True, "not_effective_after_last_gate"
+    return False, ""
+
+
 def harvest_session_experience(
     store_dir: Path,
     session_id: str,
@@ -551,10 +626,12 @@ def harvest_session_experience(
     genre: str,
     *,
     display_name: str = "",
+    user_rejected: bool = False,
 ) -> dict[str, Any]:
     """销毁前：沉淀 Experience，并提炼 Learned Skill 入库。
 
     本局从未成功 nl-patch → 跳过入库（空经验不计 Skill）。
+    终局否定态 → 可记 experience，但 **不** 入库有效 Skill（总纲 G8）。
     """
     ensure_store(store_dir)
     logs: list[dict[str, Any]] = read_session_patch_log(workspace_root)
@@ -568,6 +645,10 @@ def harvest_session_experience(
             "skills_created": [],
             "skills_merged": [],
         }
+
+    negative, neg_reason = session_is_negative_for_harvest(
+        success_logs, user_rejected=user_rejected
+    )
 
     exp_id: str = f"exp_{uuid.uuid4().hex[:12]}"
     # 隐私：不存真实姓名；展示名可保留短哈希
@@ -595,11 +676,25 @@ def harvest_session_experience(
             )
         )[:40],
         "summaries": [str(r.get("summary") or "")[:200] for r in success_logs][:8],
+        "negative_end_state": negative,
+        "negative_reason": neg_reason,
     }
     exp_path: Path = store_dir / "experiences" / f"{exp_id}.json"
     exp_path.write_text(
         json.dumps(experience, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
+
+    if negative:
+        return {
+            "ok": True,
+            "skipped": True,
+            "reason": f"negative_end_state:{neg_reason}",
+            "experience_id": exp_id,
+            "skills_created": [],
+            "skills_merged": [],
+            "rejected": 0,
+            "patch_count": len(success_logs),
+        }
 
     candidates: list[dict[str, Any]] = _extract_candidate_skills(
         genre, success_logs, workspace_root

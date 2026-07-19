@@ -54,9 +54,9 @@ func apply(bridge) -> void:
 	bullet.set_color(Color.red)
 """
     errs = assert_apis_in_contract(bad, c)
-    assert any("add_method" in e or "禁止" in e for e in errs)
+    assert any("add_method" in e or "勿直接调用" in e or "会话 GDScript" in e for e in errs)
     syn = validate_gdscript(bad)
-    assert any("Color.red" in e or "幻想" in e or "禁止" in e for e in syn)
+    assert any("Color.red" in e or "Color.RED" in e or "勿直接调用" in e for e in syn)
 
 
 def test_assert_apis_allows_contract_methods() -> None:
@@ -134,7 +134,11 @@ def test_done_gate_bugfix_allows_relaunch_howto(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     (root / "core" / "player_platformer.gd").write_text(
-        "extends CharacterBody2D\nfunc _ready() -> void:\n\tpass\n",
+        "extends CharacterBody2D\n"
+        "func _ready() -> void:\n\tpass\n"
+        "func _physics_process(delta: float) -> void:\n\tpass\n"
+        "func notify_hazard() -> void:\n\tpass\n"
+        "func _try_stomp_enemy() -> void:\n\tpass\n",
         encoding="utf-8",
     )
     (root / "scenes" / "player.tscn").write_text(
@@ -294,6 +298,66 @@ def test_done_gate_blocks_empty_write(tmp_path: Path) -> None:
     assert any("写入" in e for e in errs)
 
 
+def test_conditional_smash_rejects_enable_only(tmp_path: Path) -> None:
+    """总纲 TG4：每接3球+球速 → 禁止仅 enabled_skills / catalog 交差。"""
+    from app.services.creative.agent_contracts import (
+        assert_conditional_mechanics_landed,
+        user_text_has_conditional_mechanics,
+    )
+
+    text = "每接 3 个球用一次大力扣杀，速度很快，对面反应不过来"
+    assert user_text_has_conditional_mechanics(text) is True
+    assert user_text_has_conditional_mechanics("开启大力扣杀") is False
+
+    root = tmp_path / "ws"
+    (root / "config").mkdir(parents=True)
+    (root / "config" / "game_config.json").write_text(
+        json.dumps(
+            {
+                "meta": {"genre": "pingpong"},
+                "tuning": {"enabled_skills": ["power_smash"]},
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    # HF-10：最小玩家健康
+    (root / "core").mkdir(parents=True)
+    (root / "core" / "paddle.gd").write_text("extends Area2D\n", encoding="utf-8")
+    (root / "scenes").mkdir(parents=True)
+    (root / "scenes" / "game.tscn").write_text(
+        '[gd_scene load_steps=1 format=3]\n'
+        '[node name="Game" type="Node2D"]\n'
+        '[node name="PlayerPaddle" type="Area2D" parent="."]\n'
+        '[node name="Sprite" type="Sprite2D" parent="PlayerPaddle"]\n'
+        '[node name="Visual" type="ColorRect" parent="PlayerPaddle"]\n',
+        encoding="utf-8",
+    )
+    c = load_contract("pingpong")
+    errs = run_done_gates(
+        root,
+        written_paths=["config/game_config.json"],
+        summary="已为你开启「大力扣杀」。点屏幕下方按钮试玩。",
+        how_to_play=["请重新启动游戏", "点屏幕下方按钮试用"],
+        genre="pingpong",
+        contract=c,
+        catalog_changed=True,
+        user_text=text,
+    )
+    assert any("触发条件" in e or "enabled_skills" in e for e in errs)
+    assert any("summary" in e or "已开启" in e for e in errs)
+
+    # 写了 paddle 逻辑则放行条件门禁（其它门禁可能仍有，但不含「仅 enable」）
+    soft = assert_conditional_mechanics_landed(
+        root,
+        written_paths=["core/paddle.gd", "config/game_config.json"],
+        catalog_changed=True,
+        user_text=text,
+        summary="已按每接3球充能并加快球速落地",
+    )
+    assert soft == []
+
+
 def test_emit_progress_writes_file(tmp_path: Path) -> None:
     root = tmp_path / "ws"
     root.mkdir()
@@ -320,9 +384,9 @@ def test_genre_context_allows_session_core(tmp_path: Path) -> None:
     (templates / "shmup" / "config").mkdir(parents=True)
     (templates / "shmup" / "config" / "game_config.json").write_text("{}", encoding="utf-8")
     ctx = build_genre_llm_context(templates, "shmup")
-    assert "禁止修改 templates" in ctx
+    assert "可写范围" in ctx or "会话 workspace" in ctx
     assert "可改" in ctx or "会话" in ctx
-    assert "禁止修改 templates 与已有 core" not in ctx
+    assert "禁止修改 templates" not in ctx
     assert "禁止改已有 core" not in ctx
     assert "tint_player_bullets" in ctx or "grant_temp_shield" in ctx
     assert "player_ship" in ctx
@@ -358,7 +422,7 @@ def test_assert_player_presence_blocks_bad_paths(tmp_path: Path) -> None:
     )
     (root / "core" / "parkour_hooks.gd").write_text(bad_hooks, encoding="utf-8")
     errs = assert_player_presence_health(root, "parkour")
-    assert any("../Player" in e or "Main/Player" in e for e in errs)
+    assert any("get_nodes_in_group" in e or "get_player_node" in e for e in errs)
     assert any("visible=false" in e for e in errs)
 
     write_errs = validate_player_write_content(
@@ -378,7 +442,7 @@ def test_assert_player_presence_blocks_bad_paths(tmp_path: Path) -> None:
     assert assert_player_presence_health(root, "parkour") == []
 
 
-def test_genre_playbook_warns_player_path() -> None:
+def test_genre_playbook_points_to_player_lookup() -> None:
     from app.config import ROOT_DIR
 
     for genre in (
@@ -391,9 +455,16 @@ def test_genre_playbook_warns_player_path() -> None:
         "pingpong",
     ):
         ctx = build_genre_llm_context(ROOT_DIR / "templates", genre)
-        assert "Player" in ctx or "PlayerPaddle" in ctx or "paddle" in ctx
-        assert "../Player" in ctx or "Main/Player" in ctx or "PlayerPaddle" in ctx
-
+        assert "Player" in ctx or "PlayerPaddle" in ctx or "paddle" in ctx or "player" in ctx
+        assert (
+            "get_nodes_in_group" in ctx
+            or "get_player_node" in ctx
+            or "PlayerPaddle" in ctx
+            or "group=player" in ctx
+        )
+        playbook_sec = ctx.split("### 接线 playbook")[-1].split("## 品类")[0]
+        assert "禁止" not in playbook_sec
+        assert "严禁" not in playbook_sec
 
 def test_all_seven_templates_player_health_ok() -> None:
     """HF-10 全品类：模板基线须通过玩家健康门禁。"""

@@ -1,0 +1,18 @@
+{
+  "format": "gameforge_reference_skills_v1",
+  "updated_at": "2026-07-19",
+  "common": [
+    "_common/agent_loop.md",
+    "_common/godot4_gdscript.md"
+  ],
+  "genres": {
+    "pingpong": "pingpong/SKILL.md",
+    "shmup": "shmup/SKILL.md",
+    "platformer": "platformer/SKILL.md",
+    "parkour": "parkour/SKILL.md",
+    "survivor": "survivor/SKILL.md",
+    "fighting": "fighting/SKILL.md",
+    "racing": "racing/SKILL.md"
+  },
+  "notes": "只读策展包；注入 Agent 见总纲 Q4。否定态会话不得 harvest 为 learned_skills。"
+}

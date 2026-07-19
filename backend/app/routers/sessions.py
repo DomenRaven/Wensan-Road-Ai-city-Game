@@ -176,9 +176,17 @@ def patch_session(
     return record
 
 
-@router.delete("/{session_id}")
-def reset_session(session_id: str, request: Request) -> dict[str, Any]:
-    """回主页 / 重置：先 harvest 创作经验→Learned Skill，再销毁 workspace。"""
+def _teardown_session(
+    session_id: str,
+    request: Request,
+    *,
+    harvest: bool,
+) -> dict[str, Any]:
+    """销毁会话与 workspace。
+
+    harvest=True：讲解员主动回主页/结束 → 可入库有效 Learned Skill。
+    harvest=False：刷新/关页/异常退出/陈旧会话清理 → 只清盘，禁止写 learned_skills。
+    """
     store = request.app.state.session_store
     settings = request.app.state.settings
     try:
@@ -199,11 +207,13 @@ def reset_session(session_id: str, request: Request) -> dict[str, Any]:
     harvest_result: dict[str, Any] = {
         "ok": True,
         "skipped": True,
-        "reason": "no_workspace",
+        "reason": "harvest_disabled" if not harvest else "no_workspace",
     }
     try:
-        workspace_root: Path = workspace_root_for_session(settings.workspace_dir, session_id)
-        if workspace_root.is_dir():
+        workspace_root: Path = workspace_root_for_session(
+            settings.workspace_dir, session_id
+        )
+        if workspace_root.is_dir() and harvest:
             harvest_result = harvest_session_experience(
                 settings.learned_skills_dir,
                 session_id,
@@ -211,6 +221,12 @@ def reset_session(session_id: str, request: Request) -> dict[str, Any]:
                 genre,
                 display_name=display_name,
             )
+        elif workspace_root.is_dir() and not harvest:
+            harvest_result = {
+                "ok": True,
+                "skipped": True,
+                "reason": "abnormal_exit_no_harvest",
+            }
     except Exception:  # noqa: BLE001 — harvest 失败不阻断销毁
         harvest_result = {"ok": False, "skipped": True, "reason": "harvest_error"}
 
@@ -229,13 +245,32 @@ def reset_session(session_id: str, request: Request) -> dict[str, Any]:
         "deleted": True,
         "workspace_removed": workspace_removed,
         "harvest": harvest_result,
+        "harvest_requested": harvest,
     }
 
 
+@router.delete("/{session_id}")
+def reset_session(
+    session_id: str,
+    request: Request,
+    harvest: bool = True,
+) -> dict[str, Any]:
+    """主动重置/结束：默认 harvest=True（有效经验可入库），再销毁 workspace。"""
+    return _teardown_session(session_id, request, harvest=harvest)
+
+
 @router.post("/{session_id}/release")
-def release_session(session_id: str, request: Request) -> dict[str, Any]:
-    """页面关闭/意外退出：先入库经验，再删 session + workspace。"""
-    return reset_session(session_id, request)
+def release_session(
+    session_id: str,
+    request: Request,
+    harvest: bool = False,
+) -> dict[str, Any]:
+    """释放会话。
+
+    默认 harvest=False：pagehide/刷新/sendBeacon/陈旧清理 → 只删 workspace，不写 Skill。
+    讲解员点「回主页/重新开始」应显式 `?harvest=true`。
+    """
+    return _teardown_session(session_id, request, harvest=harvest)
 
 
 @router.get("/{session_id}/workspace/game-config", response_model=WorkspaceGameConfigResponse)

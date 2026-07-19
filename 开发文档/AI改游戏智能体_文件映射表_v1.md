@@ -21,14 +21,18 @@
 | Edu 注入 | `backend/app/services/edu_workspace.py` | 可写 | 复制桥/触控到 workspace、改 main.tscn |
 | 桥运行时 | `templates/_edu/ai_sandbox_bridge.gd` | **可写** | 真 API、catalog 激活、着色/护盾 |
 | 触控 | `templates/_edu/*_touch_overlay.gd` | **可写** | 品类触屏（目标收敛为通用 API） |
-| 窗控件 | `templates/_edu/window_chrome_overlay.gd` | **可写** | 全屏/小窗/关闭 |
+| 窗控件 | `templates/_edu/window_chrome_overlay.gd` | **可写** | 关闭/小窗（半尺寸；无复位） |
 | 品类 hooks | `templates/_edu/{genre}_hooks.gd` | 可写 | B7 埋点，非玩法主逻辑 |
 | 玩法冻结 | `templates/{genre}/core/**` | **只读** | 禁止改 |
 | 会话副本 | `workspace/{session}/**` | Agent 可写 | 本局唯一施工面 |
 | 长期库 | `data/learned_skills/**` | 服务写 | 不随 session 销毁 |
-| Kiosk | `kiosk/edu/nl-patch-dialog.js` · `llm-create-wait.js` | 可写 | 对话、进度、手动重开 |
+| Kiosk | `kiosk/edu/nl-patch-dialog.js` · `llm-create-wait.js` | 可写 | 对话、进度、手动重开；超时 420s；认 gate/partial/rounds |
+| 配置 | `backend/app/config.py` | 可写 | `agent_max_rounds=16` · 软续杯 +16 · 墙钟 360s |
+| Reference | `data/reference_skills/**` | 可写（策展） | 只读注入 Agent；非 express |
+| Live 探针 | `05-工具脚本/e2e_7_19_live_three_tasks.py` | 可写 | HF-13 七品类×3；报告 `reports/live_three_tasks/` |
+| 单案探针 | `05-工具脚本/sandbox_llm_inject_probe.py` | 可写 | 注入/Live 深挖 messages |
 | 启动窗 | `godot_launcher.py` · `godot_window_layout.py` | 可写 | 全屏 + TOPMOST |
-| 单测 | `backend/tests/test_agent_*.py` 等 | 可写 | 门禁/契约/窗 |
+| 单测 | `backend/tests/test_agent_*.py` · `test_hf12_*` · `test_hf13_*` | 可写 | 门禁/契约/保真/tscn lint |
 
 ---
 
@@ -36,9 +40,10 @@
 
 | 步骤 | 主要文件 |
 |------|----------|
-| 用户发话 | `kiosk/edu/nl-patch-dialog.js` → `POST /sessions/{id}/nl-patch` |
+| 用户发话 | `kiosk/edu/nl-patch-dialog.js` → `POST /sessions/{id}/nl-patch`（超时 420s） |
 | 进度轮询 | `GET /sessions/{id}/agent-progress` ← `.agent_progress.json` |
-| 启动 Agent | `llm_patch.apply_nl_patch` → `game_agent.run_game_agent` |
+| 启动 Agent | `llm_patch.apply_nl_patch` → `game_agent.run_game_agent`（墙钟 360s；有 Key 禁 express） |
+| UI 诚实展示 | `NlPatchResponse` 透出 `gate_passed`/`partial`/`agent_rounds`/`rolled_back`；前端据此徽章；未过门禁不炫 sandbox_files |
 | 读契约 | `agent_contracts.load_contract` ← `config/agent_contracts/` |
 | 读品类说明 | `genre_context.build_genre_llm_context` |
 | 检索经验 | `learned_skills.search_learned_skills` |
@@ -109,3 +114,4 @@
 |------|------|
 | 2026-07-18 | v1：对齐需求 v1.2 工作流分层 |
 | 2026-07-18 | 入口改为「有 Key 仅 agent」；链到工作进度与快照 |
+| 2026-07-19 | HF-13：e2e_7_19 / Reference / 墙钟·前端超时 / UI gate 字段 |

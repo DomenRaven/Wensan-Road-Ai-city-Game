@@ -137,6 +137,9 @@ def test_harvest_and_search_and_dedup(tmp_path: Path) -> None:
     )
     r2 = harvest_session_experience(store, "sid-2", root, "platformer")
     assert r2["skills_merged"] or r2["skills_created"]
+    hits2 = search_learned_skills(store, "多加有趣的技能", "platformer", k=5)
+    assert hits2
+    assert int(hits2[0].get("success_count") or 0) >= 2
     # index 不应无限膨胀
     index_lines = [
         ln
@@ -144,6 +147,43 @@ def test_harvest_and_search_and_dedup(tmp_path: Path) -> None:
         if ln.strip()
     ]
     assert len(index_lines) <= 3
+
+
+def test_harvest_skips_negative_end_state(tmp_path: Path) -> None:
+    """总纲 G8：终局 playability_suspect / 没生效 → 不准有效 Skill。"""
+    _templates, _workspace, root, store = _session_tree(tmp_path)
+    append_session_patch_log(
+        root,
+        {
+            "ok": True,
+            "provider": "agent",
+            "user_text": "大力扣杀",
+            "summary": "已开",
+            "gate_passed": True,
+            "sandbox_files": ["config/game_config.json"],
+        },
+    )
+    append_session_patch_log(
+        root,
+        {
+            "ok": True,
+            "provider": "agent",
+            "user_text": "没生效",
+            "feedback": "没生效",
+            "summary": "仍有问题",
+            "gate_passed": False,
+            "partial": True,
+            "playability_suspect": True,
+            "sandbox_files": [],
+        },
+    )
+    before = (store / "index.jsonl").read_text(encoding="utf-8") if (store / "index.jsonl").is_file() else ""
+    r = harvest_session_experience(store, "sid-neg", root, "pingpong")
+    assert r["skipped"] is True
+    assert "negative_end_state" in str(r.get("reason"))
+    assert r["skills_created"] == []
+    after = (store / "index.jsonl").read_text(encoding="utf-8") if (store / "index.jsonl").is_file() else ""
+    assert after == before
 
 
 def test_harvest_skips_when_no_success(tmp_path: Path) -> None:
@@ -309,17 +349,100 @@ def test_release_hook_harvest_before_delete(tmp_path: Path, monkeypatch) -> None
         rec.payload = {"meta": {"genre": "platformer"}}
         client.app.state.session_store.save(rec)
 
-        resp = client.post(f"/sessions/{sid}/release")
+        # 主动结束须显式 harvest=true（默认 release 为异常退出口径，不入库）
+        resp = client.post(f"/sessions/{sid}/release?harvest=true")
         assert resp.status_code == 200
         body = resp.json()
         assert body["deleted"] is True
         assert body["workspace_removed"] is True
+        assert body.get("harvest_requested") is True
         assert not session_root.exists()
         harvest = body.get("harvest") or {}
         assert harvest.get("ok") is True
         assert harvest.get("experience_id") or not harvest.get("skipped", True)
         assert store.exists()
         assert (store / "index.jsonl").is_file()
+
+
+def test_release_abnormal_cleans_workspace_without_harvest(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """刷新/关页：清 workspace，不写 learned_skills / experience。"""
+    templates, workspace, _root, store = _session_tree(tmp_path)
+    settings = Settings(
+        templates_dir=templates,
+        workspace_dir=workspace,
+        learned_skills_dir=store,
+        allow_memory_fallback=True,
+        llm_api_key="",
+        redis_url="memory://",
+    )
+    monkeypatch.setattr("app.main.get_settings", lambda: settings)
+
+    with TestClient(create_app()) as client:
+        created = client.post("/sessions")
+        assert created.status_code == 201
+        sid = created.json()["session_id"]
+        session_root = workspace / sid
+        _write_json(session_root / "config" / "game_config.json", _BASE)
+        sandbox = session_root / "core" / "ai_sandbox"
+        sandbox.mkdir(parents=True)
+        (sandbox / "z.gd").write_text(
+            "extends Node\nfunc apply(bridge) -> void:\n\tpass\n", encoding="utf-8"
+        )
+        append_session_patch_log(
+            session_root,
+            {
+                "ok": True,
+                "provider": "agent",
+                "user_text": "加激光",
+                "summary": "已加激光",
+                "sandbox_files": ["core/ai_sandbox/z.gd"],
+                "applied_capabilities": ["laser_beam"],
+                "gate_passed": True,
+                "changes": [],
+            },
+        )
+        from app.models.session import SessionPhase
+
+        rec = client.app.state.session_store.get(sid)
+        assert rec is not None
+        rec.genre = "shmup"
+        rec.phase = SessionPhase.PLAY
+        rec.payload = {"meta": {"genre": "shmup"}}
+        client.app.state.session_store.save(rec)
+
+        before_index = (
+            (store / "index.jsonl").read_text(encoding="utf-8")
+            if (store / "index.jsonl").is_file()
+            else ""
+        )
+        before_exps = list((store / "experiences").glob("*.json")) if (
+            store / "experiences"
+        ).is_dir() else []
+
+        resp = client.post(f"/sessions/{sid}/release")  # 默认 harvest=false
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["deleted"] is True
+        assert body["workspace_removed"] is True
+        assert body.get("harvest_requested") is False
+        assert not session_root.exists()
+        harvest = body.get("harvest") or {}
+        assert harvest.get("skipped") is True
+        assert harvest.get("reason") == "abnormal_exit_no_harvest"
+        assert not harvest.get("experience_id")
+
+        after_index = (
+            (store / "index.jsonl").read_text(encoding="utf-8")
+            if (store / "index.jsonl").is_file()
+            else ""
+        )
+        after_exps = list((store / "experiences").glob("*.json")) if (
+            store / "experiences"
+        ).is_dir() else []
+        assert after_index == before_index
+        assert len(after_exps) == len(before_exps)
 
 
 def test_export_import_pack(tmp_path: Path) -> None:

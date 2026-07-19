@@ -74,23 +74,39 @@
       else sessionStorage.removeItem(this.storageKey);
     },
 
-    /** @param {string} sid */
+    /**
+     * 刷新/关页：始终清 workspace，永不 harvest（异常退出不写 learned_skills）。
+     * 不受 protectRelease 拦截，避免制作中途刷新留下孤儿目录。
+     * @param {string} sid
+     */
     releaseBeacon(sid) {
-      if (this.protectRelease) return;
       if (!sid || sid.startsWith("demo-")) return;
       try {
-        navigator.sendBeacon(`${this.apiBase}/sessions/${sid}/release`, "");
+        navigator.sendBeacon(
+          `${this.apiBase}/sessions/${sid}/release?harvest=false`,
+          ""
+        );
       } catch (_) {
         /* ignore */
       }
     },
 
-    /** @param {string} [sid] */
-    async releaseAsync(sid) {
-      if (this.protectRelease && (!sid || sid === this.sessionId)) return;
+    /**
+     * @param {string} [sid]
+     * @param {{ harvest?: boolean }} [opts] harvest=true 仅用于讲解员主动回主页/结束
+     */
+    async releaseAsync(sid, opts = {}) {
+      const harvest = opts.harvest === true;
+      // 制作中禁止「带 harvest 的主动结束」误杀；清理-only 仍允许
+      if (this.protectRelease && harvest && (!sid || sid === this.sessionId)) {
+        return;
+      }
       const id = sid || this.sessionId;
       if (!id || id.startsWith("demo-")) return;
-      await this.api(`/sessions/${id}/release`, { method: "POST" }).catch(() => {});
+      const q = harvest ? "harvest=true" : "harvest=false";
+      await this.api(`/sessions/${id}/release?${q}`, { method: "POST" }).catch(
+        () => {}
+      );
       if (id === this.sessionId) {
         this.sessionId = "";
         this.rememberSessionId("");

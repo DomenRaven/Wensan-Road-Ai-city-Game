@@ -51,6 +51,10 @@ class NlPatchResponse(BaseModel):
     message: str
     changes: list[NlPatchChange]
     sandbox_files: list[str] = Field(default_factory=list)
+    attempted_paths: list[str] = Field(
+        default_factory=list,
+        description="门禁未过时曾尝试写入的路径（已回滚则仅作说明）",
+    )
     how_to_play: list[str] = Field(default_factory=list)
     applied_capabilities: list[str] = Field(default_factory=list)
     needs_relaunch: bool = False
@@ -60,6 +64,10 @@ class NlPatchResponse(BaseModel):
     learned_skills: list[str] = Field(default_factory=list)
     demoted_skills: list[str] = Field(default_factory=list)
     gate_passed: bool = False
+    partial: bool = False
+    rolled_back: bool = False
+    express: bool = False
+    agent_rounds: int | None = None
     understanding: str = ""
     goals: list[str] = Field(default_factory=list)
 
@@ -133,6 +141,12 @@ def post_nl_patch(session_id: str, body: NlPatchRequest, request: Request) -> Nl
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
+    rounds_raw = result.get("agent_rounds")
+    try:
+        rounds_n: int | None = int(rounds_raw) if rounds_raw is not None else None
+    except (TypeError, ValueError):
+        rounds_n = None
+
     return NlPatchResponse(
         ok=bool(result.get("ok")),
         provider=str(result.get("provider", "stub")),
@@ -140,6 +154,7 @@ def post_nl_patch(session_id: str, body: NlPatchRequest, request: Request) -> Nl
         message=str(result.get("message", "")),
         changes=[NlPatchChange(**c) for c in result.get("changes", [])],
         sandbox_files=[str(p) for p in result.get("sandbox_files", [])],
+        attempted_paths=[str(p) for p in (result.get("attempted_paths") or [])],
         how_to_play=[str(x) for x in result.get("how_to_play", [])],
         applied_capabilities=[str(x) for x in result.get("applied_capabilities", [])],
         needs_relaunch=bool(result.get("needs_relaunch")),
@@ -149,6 +164,10 @@ def post_nl_patch(session_id: str, body: NlPatchRequest, request: Request) -> Nl
         learned_skills=[str(x) for x in result.get("learned_skills", [])],
         demoted_skills=[str(x) for x in result.get("demoted_skills", [])],
         gate_passed=bool(result.get("gate_passed")),
+        partial=bool(result.get("partial")),
+        rolled_back=bool(result.get("rolled_back")),
+        express=bool(result.get("express")),
+        agent_rounds=rounds_n,
         understanding=str(result.get("understanding", "") or ""),
         goals=[str(x) for x in (result.get("goals") or []) if str(x).strip()],
     )

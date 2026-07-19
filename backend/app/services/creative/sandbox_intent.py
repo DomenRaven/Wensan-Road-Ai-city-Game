@@ -115,13 +115,38 @@ CAPABILITY_CATALOG: list[dict[str, str]] = [
 ]
 
 
-def catalog_for_prompt() -> str:
-    lines = ["【对话可落地的能力（用户说中文即可）】"]
-    for item in CAPABILITY_CATALOG:
-        lines.append(f"- {item['id']} · {item['title']}：试玩时 {item['how']}")
+def catalog_for_prompt(genre: str = "", contract: dict[str, Any] | None = None) -> str:
+    """HF-12：按当前品类输出能力材料，避免 platformer 全局表串味。"""
+    lines = ["【本品类可参考能力（材料，非入口）】"]
+    g = (genre or "").strip()
+    items: list[dict[str, str]] = []
+    if isinstance(contract, dict):
+        for raw in contract.get("catalog_skills") or []:
+            if not isinstance(raw, dict) or not raw.get("id"):
+                continue
+            items.append(
+                {
+                    "id": str(raw.get("id")),
+                    "title": str(raw.get("title") or raw.get("id")),
+                    "how": str(raw.get("how") or raw.get("desc") or "按契约/会话脚本实现"),
+                }
+            )
+    # platformer 仍可补充全局 catalog 中与本品类相关的条目
+    if g == "platformer" and not items:
+        items = list(CAPABILITY_CATALOG)
+    elif g == "platformer":
+        known = {x["id"] for x in items}
+        for item in CAPABILITY_CATALOG:
+            if item["id"] not in known:
+                items.append(item)
+    if not items:
+        lines.append("- （本品类无全局 capability 表；请读契约 catalog_skills / Reference / 会话磁盘）")
+    else:
+        for item in items:
+            lines.append(f"- {item['id']} · {item['title']}：{item['how']}")
     lines.append(
-        "复杂需求可写 sandbox_rules.* / core/ai_sandbox 新文件，"
-        "亦可改会话副本 core（勿碰 templates）。改完必须重开游戏才会生效。"
+        "复杂需求可写 core/ai_sandbox 新文件或改会话 core（templates 只读参考）。"
+        "改完必须重开游戏才会生效。"
     )
     return "\n".join(lines)
 

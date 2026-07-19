@@ -146,9 +146,15 @@
         }
       });
     });
-    document.getElementById("edu-nlpatch-submit")?.addEventListener("click", () => {
+    document.getElementById("edu-nlpatch-submit")?.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      // 先收起 TabTip（后端勿对「陈旧 open」再 toggle，否则会误弹手写板）
       window.EduTouchKeyboard?.dismissForNavigation?.();
-      void submit(input?.value || "", "");
+      const text = input?.value || "";
+      // 下一帧再提交，让 blur/hide 请求先发出
+      window.setTimeout(() => {
+        void submit(text, "");
+      }, 0);
     });
   }
 
@@ -220,15 +226,19 @@
   }
 
   /**
-   * @param {{ok:boolean,provider:string,summary:string,message:string,changes:Array<{path:string,before:unknown,after:unknown}>,sandbox_files?:string[],how_to_play?:string[],applied_capabilities?:string[],needs_relaunch?:boolean,verify_gaps?:string[],repaired?:boolean,learned_skills?:string[],llm_error?:string}} result
+   * 对齐 HF-13 Agent 返回字段：有 Key → provider=agent；门禁靠 gate_passed/partial。
+   * @param {{ok:boolean,provider:string,summary:string,message:string,changes:Array<{path:string,before:unknown,after:unknown}>,sandbox_files?:string[],attempted_paths?:string[],how_to_play?:string[],applied_capabilities?:string[],needs_relaunch?:boolean,verify_gaps?:string[],repaired?:boolean,learned_skills?:string[],llm_error?:string,gate_passed?:boolean,partial?:boolean,rolled_back?:boolean,agent_rounds?:number,understanding?:string,goals?:string[],express?:boolean}} result
    */
   function renderResult(result) {
     stopProgressPoll();
     window.EduLlmCreateWait?.stop?.();
     const isAgent = result.provider === "agent";
     const isLlm = result.provider === "llm";
+    const isPartial = Boolean(result.partial) || result.gate_passed === false;
     const badge = isAgent
-      ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--agent">智能体已改本局副本</span>`
+      ? isPartial
+        ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--stub">智能体施工中 · 尚未验收</span>`
+        : `<span class="edu-nlpatch-badge edu-nlpatch-badge--agent">智能体已改本局副本</span>`
       : isLlm
       ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--llm">AI 大模型已改</span>`
       : `<span class="edu-nlpatch-badge edu-nlpatch-badge--stub">本地降级 · 可重试</span>`;
@@ -239,8 +249,18 @@
     const learnedBadge = learned.length
       ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--llm">复用经验 ${learned.length}</span>`
       : "";
+    const roundsN = Number(result.agent_rounds);
+    const roundsBadge =
+      isAgent && Number.isFinite(roundsN) && roundsN >= 1
+        ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--llm">${roundsN} 轮</span>`
+        : "";
+    const rolledBadge = result.rolled_back
+      ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--stub">已撤回未验收改动</span>`
+      : "";
     const gateBadge = result.gate_passed
       ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--agent">门禁已通过</span>`
+      : isPartial
+      ? `<span class="edu-nlpatch-badge edu-nlpatch-badge--stub">完成一部分 / 尚未验收</span>`
       : "";
 
     const howList = Array.isArray(result.how_to_play) ? result.how_to_play : [];
@@ -261,11 +281,12 @@
       : "";
 
     const sandboxFiles = Array.isArray(result.sandbox_files) ? result.sandbox_files : [];
-    const sandboxHtml = sandboxFiles.length
-      ? `<p class="edu-nlpatch-sandbox">沙箱文件：<code>${sandboxFiles
-          .map((p) => escapeHtml(String(p)))
-          .join("</code> · <code>")}</code></p>`
-      : "";
+    const sandboxHtml =
+      !isPartial && sandboxFiles.length
+        ? `<p class="edu-nlpatch-sandbox">沙箱文件：<code>${sandboxFiles
+            .map((p) => escapeHtml(String(p)))
+            .join("</code> · <code>")}</code></p>`
+        : "";
 
     const changeRows = (result.changes || [])
       .map(
@@ -294,9 +315,15 @@
       ? `<p class="edu-nlpatch-sandbox">理解：${escapeHtml(understanding)}</p>`
       : "";
 
+    const titleText = !result.ok
+      ? "这次没改成"
+      : isPartial
+      ? "完成一部分，尚未验收"
+      : "收到，我们继续聊";
+
     setBody(`
-      <h3 class="edu-nlpatch-title">${result.ok ? "收到，我们继续聊" : "这次没改成"}</h3>
-      <div class="edu-nlpatch-provider">${badge}${gateBadge}${repairedBadge}${learnedBadge}</div>
+      <h3 class="edu-nlpatch-title">${titleText}</h3>
+      <div class="edu-nlpatch-provider">${badge}${gateBadge}${roundsBadge}${rolledBadge}${repairedBadge}${learnedBadge}</div>
       ${historyHtml()}
       ${understandingHtml}
       ${goalsHtml}
@@ -325,15 +352,22 @@
     document.querySelectorAll("[data-feedback]").forEach((node) => {
       node.addEventListener("click", () => {
         const fb = node.getAttribute("data-feedback") || "";
-        void submit(lastUserText || "按刚才的要求再改", fb);
+        window.EduTouchKeyboard?.dismissForNavigation?.();
+        window.setTimeout(() => {
+          void submit(lastUserText || "按刚才的要求再改", fb);
+        }, 0);
       });
     });
     bindComposer("继续说，或反馈问题（例如打不开、没生效）");
     document.getElementById("edu-nlpatch-replay")?.addEventListener("click", () => {
+      window.EduTouchKeyboard?.dismissForNavigation?.();
       close();
       if (typeof ctx.onReplay === "function") ctx.onReplay();
     });
-    document.getElementById("edu-nlpatch-done")?.addEventListener("click", () => close());
+    document.getElementById("edu-nlpatch-done")?.addEventListener("click", () => {
+      window.EduTouchKeyboard?.dismissForNavigation?.();
+      close();
+    });
   }
 
   /**
@@ -363,8 +397,8 @@
     // 对齐大模型对话：同会话始终带短历史；本轮原文始终作 text（最高优先）
     const historyForApi = history.slice(0, -1).slice(-10);
 
-    // 智能体多轮可能数分钟；超过则诚实失败，避免无限转圈
-    const NL_PATCH_TIMEOUT_MS = 360000;
+    // 对齐总纲墙钟 360s：前端略留余量，避免 salvage 返回前被 abort
+    const NL_PATCH_TIMEOUT_MS = 420000;
     const ac = typeof AbortController !== "undefined" ? new AbortController() : null;
     const timeoutId = ac
       ? window.setTimeout(() => ac.abort(), NL_PATCH_TIMEOUT_MS)

@@ -138,13 +138,13 @@
       "intent": "鼠标与技能按钮冲突/点按钮飞机会跑",
       "action": "patch_mouse_steer_guard",
       "paths": "core/player_ship.gd",
-      "hint": "跟机守卫；禁止只重复 enable catalog"
+      "hint": "跟机守卫；用 patch_mouse_steer_guard + 会话守卫"
     },
     {
       "intent": "子弹五颜六色/彩色",
       "action": "bridge_api",
       "paths": "core/ai_sandbox/*.gd → tint_player_bullets / rainbow_player_bullets",
-      "hint": "禁止 bullet.set_color / add_method；勿只改无效脚本"
+      "hint": "改色用桥 tint/rainbow；用会话脚本落地"
     },
     {
       "intent": "临时护盾",
@@ -186,13 +186,13 @@
   "notes": [
     "护盾：catalog 无 shield；道具 pickup「shield」或桥 grant_temp_shield",
     "彩色子弹：用 tint_player_bullets / rainbow_player_bullets，接到 apply(bridge)",
-    "炸弹/激光：必须 enable_catalog_skill；运行时由桥 activate_* + 触屏按钮触发（勿只改 config）",
-    "展厅硬性：how_to_play 必须写「点屏幕下方触屏按钮」，禁止只写键盘 Q/E",
+    "炸弹/激光：enable_catalog_skill 或会话实现；运行时由桥 activate_* + 触屏按钮触发",
+    "展厅硬性：how_to_play 写「点屏幕下方触屏按钮」（触屏可玩）",
     "玩家是 Area2D（group player），get_player() 可能为 null，用 get_player_node()",
-    "禁止声称「新增护盾技能」却只改 enabled_skills",
-    "可改会话 core，禁止改 templates",
-    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死",
-    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差"
+    "护盾：用道具 shield 或桥 grant_temp_shield，并在磁盘落地",
+    "可改会话 core；templates 只读参考",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考亦可会话另写",
+    "需求对齐：实现所求机制；实现对齐用户所求机制本身"
   ],
   "forbidden_invented_apis": [
     "add_method",

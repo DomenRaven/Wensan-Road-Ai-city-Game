@@ -92,13 +92,13 @@
       "intent": "用户明确要无敌/加速",
       "action": "sandbox_or_rules",
       "paths": "core/ai_sandbox/*.gd",
-      "hint": "仅当用户说无敌/加速时用 grant_invincibility / boost_move_speed；禁止当默认礼包"
+      "hint": "无敌/加速：用户点名时用 grant_invincibility / boost_move_speed"
     },
     {
       "intent": "新敌人/新机关/新关卡要素",
       "action": "edit_session_core",
       "paths": "core/*.gd scenes/*.tscn",
-      "hint": "会话副本实现用户要的机制本身；勿用无关能力顶替"
+      "hint": "会话副本实现用户要的机制本身"
     },
     {
       "intent": "改跳跃手感",
@@ -122,12 +122,12 @@
   },
   "notes": [
     "二段跳下落段已由桥自动补齐，开 double_jump 即可",
-    "禁止发明 bridge.add_method",
-    "可改会话 core，禁止改 templates",
+    "桥 API 以契约列表为准；同等效果用会话 GDScript",
+    "可改会话 core；templates 只读参考",
     "catalog/Skill/桥是参考捷径，不是能力上限；前所未有需求现场写",
-    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差",
-    "禁止用户未提及时主动叠加无关 buff/技能",
-    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死"
+    "需求对齐：实现所求机制；实现对齐用户所求机制本身",
+    "用户未提及时，优先只做本轮原话要求",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考亦可会话另写"
   ],
   "forbidden_invented_apis": [
     "add_method",

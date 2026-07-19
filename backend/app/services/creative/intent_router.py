@@ -1,9 +1,9 @@
 """意图路由 A/B/C/D（建议向，品类无关）。
 
-A 开预制 → 建议 enable_catalog_skill（捷径）
-B 改已有 → tuning / 会话 core / 桥
+A 命中 catalog → 建议参考 skill_ids（可 enable 或会话现场实现；有条件必须写逻辑）
+B 故障/调参修盘 → 禁再 enable 交差；可改 tuning / 会话 core / 桥
 C 新机制 → 会话 core / scenes / ai_sandbox 自由实现；桥 API 可选
-D 仅幻想引擎 API（add_method 等）→ 停；前所未有玩法不算 D
+D 仅幻想引擎 API（add_method 等）→ 转会话 GDScript；前所未有玩法不算 D
 """
 
 from __future__ import annotations
@@ -154,7 +154,7 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
     recipe = _match_recipe(text, contract)
     recipe_id = str((recipe or {}).get("intent", "") or "")
 
-    # 运行时故障：人物消失 / 不显示 / 白屏等 → 诊断会话 core，禁止再开技能或叠 buff
+    # 可玩性：白屏 / 人物不显示 → 优先读玩家与近期改动
     if re.search(
         r"人物.*消失|角色.*消失|人不显示|人物.*不显示|看不见.*人|角色.*看不见|"
         r"精灵.*消失|player.*visible|不显示了|人没了|角色没了|"
@@ -171,9 +171,9 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
                 {"tool": "prefer", "action": "read_then_fix_core"},
             ],
             "hint": (
-                "运行故障：先 diagnose + 读玩家脚本/主场景/最近改动；"
-                "查 visible、modulate.a、position、scale、queue_free、错误挂载；"
-                "禁止再 enable 新技能或加金币/无敌；修好后 summary 说明修了什么"
+                "先 diagnose + 读玩家脚本/主场景/本局近期改动；"
+                "核对 visible、modulate.a、position、scale、挂载与 group=player；"
+                "最小写入修复后，summary 说明修好了什么"
             ),
             "stop": False,
             "stop_reason": "",
@@ -181,8 +181,8 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "advisory": True,
         }
 
-    # 输入冲突优先于「再开一遍 catalog」：鼠标跟机抢技能按钮
-    if re.search(
+    # 输入冲突：shmup 左键跟机抢技能按钮（品类门控，避免非 shmup 被「飞机」话术带偏）
+    if genre == "shmup" and re.search(
         r"鼠标|点.*按钮.*(飞|位置|没反应)|只会改变.*位置|技能不能用|按钮.*没反应|"
         r"点了没反应|点技能.*飞|跟机|点屏幕.*飞",
         text,
@@ -196,9 +196,9 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
                 {"tool": "ensure_touch_skill_buttons"},
             ],
             "hint": (
-                "根因：飞机用鼠标左键跟机，点技能按钮也会拖飞机。"
-                "须 patch 会话 core/player_ship.gd 跟机守卫 + 桥 is_mouse_steer_blocked；"
-                "禁止只重复 enable bomb/laser；how_to_play 写清「点技能键时飞机不会跟着跑」"
+                "左键跟机会与技能按钮抢输入："
+                "patch 会话 core/player_ship.gd 跟机守卫 + 桥 is_mouse_steer_blocked；"
+                "how_to_play 写「点技能键时飞机不会跟着跑」"
             ),
             "stop": False,
             "stop_reason": "",
@@ -206,7 +206,7 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "advisory": False,
         }
 
-    # 触屏无效但键盘有效：禁止再走 A 开 catalog（技能已开）；交给 LLM 查桥/HUD
+    # 触屏无效但键盘有效：查桥/HUD
     if re.search(
         r"(按钮|触屏|屏幕).{0,12}(不|没|无法).{0,8}(发射|放|出|用|反应)|"
         r"(键盘|按键|[QqEe]|空格).{0,8}(可以|能|行)|"
@@ -222,9 +222,8 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
                 {"tool": "ensure_touch_skill_buttons"},
             ],
             "hint": (
-                "技能已可用（键盘有效）说明 catalog 已开；问题在触屏 HUD/按钮每帧重建。"
-                "禁止再 enable_catalog_skill；须 refresh_ai_sandbox_bridge 覆盖会话桥，"
-                "how_to_play 勿谎称已修好除非确实改了会话文件"
+                "键盘有效说明能力已在盘上；优先 refresh_ai_sandbox_bridge 与触屏 HUD，"
+                "再确认会话文件确有改动后写 how_to_play"
             ),
             "stop": False,
             "stop_reason": "",
@@ -232,24 +231,44 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "advisory": True,
         }
 
-    # D：超能力面
+    # D：未知桥 API → 改会话实现同等效果
     if _needs_unknown_bridge(text, contract):
         return {
             "intent": "D",
             "recipe_id": recipe_id,
             "skill_ids": skill_ids,
             "actions": [],
-            "hint": "用户点名了不存在的桥/引擎 API：勿发明；改用会话 core 实现同等效果，或说明该钩子需扩 _edu",
+            "hint": "该桥/引擎 API 不在契约列表：请用会话 core GDScript 实现同等效果",
             "stop": True,
-            "stop_reason": "禁止幻想 bridge/引擎 API；将改用会话 GDScript 实现同等效果",
+            "stop_reason": "请用会话 GDScript 实现同等效果（契约外 API 不调用）",
             "genre": genre,
             "advisory": True,
         }
 
-    # 掉落/拾取才开启：即使点名了激光炸弹，也是新机制，禁止走 catalog 快开
+    # 掉落/拾取才开启
     if is_drop_loot_request(text):
         named = skill_ids[:2]
         named_txt = "、".join(named) if named else "该能力"
+        if genre != "shmup":
+            return {
+                "intent": "C",
+                "recipe_id": recipe_id or "drop_loot_unlock",
+                "skill_ids": [],
+                "actions": [
+                    {"tool": "diagnose_workspace"},
+                    {"tool": "prefer", "action": "read_then_write_core"},
+                ],
+                "hint": (
+                    f"目标是让{named_txt}走当前品类真实掉落/拾取链；"
+                    "请先读生成、碰撞/拾取、效果应用与计分/生命相关脚本，"
+                    "再用会话逻辑实现掉落→拾取→效果"
+                ),
+                "stop": False,
+                "stop_reason": "",
+                "genre": genre,
+                "advisory": True,
+                "express": False,
+            }
         return {
             "intent": "C",
             "recipe_id": recipe_id or "drop_loot_unlock",
@@ -257,21 +276,18 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "actions": [
                 {"tool": "diagnose_workspace"},
                 {
-                    "tool": "write_file",
-                    "path": "core/ai_sandbox/drop_loot_unlock.gd",
+                    "tool": "apply_shmup_drop_loot_chain",
+                    "skills": named or ["laser_beam", "bomb"],
                     "hint": (
                         f"实现：{named_txt} 作为敌机/敌人掉落道具；"
-                        "玩家捡到后才解锁或临时可用；禁止只 enable_catalog_skill 当按钮技能交差"
+                        "玩家捡到后才解锁或临时可用"
                     ),
                 },
             ],
             "hint": (
-                "用户要的是「掉落物/捡到才开」，不是底部技能按钮。"
-                "shmup 最小改法：①config powerup_types 加 laser/bomb；"
-                "②仅扩展 player_ship.apply_powerup：拾取后往 GameConfig.tuning.enabled_skills "
-                "追加 laser_beam/bomb，再 AiSandboxBridge.ensure_touch_skill_buttons()；"
-                "③禁止改写 enemy_spawner/main.tscn/game_manager；禁止 Bridge. 幻想 API；"
-                "开局 enabled_skills 保持 []；how_to_play 写打敌机→捡掉落。"
+                "目标是「掉落物/捡到才开」。优先调用 apply_shmup_drop_loot_chain；"
+                "手写须同时改 powerup_types 与 core/player_ship.gd 的 apply_powerup 拾取解锁；"
+                "how_to_play 写「打敌机→捡掉落」。"
             ),
             "stop": False,
             "stop_reason": "",
@@ -280,12 +296,35 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "express": False,
         }
 
-    # A：命中 catalog
+    # HF-12：带条件需求优先开放实现，Catalog 仅材料
+    from app.services.creative.agent_contracts import user_text_has_conditional_mechanics
+
+    if skill_ids and user_text_has_conditional_mechanics(text):
+        return {
+            "intent": "C",
+            "recipe_id": recipe_id or "free_create_with_catalog_reference",
+            "skill_ids": skill_ids,
+            "actions": [
+                {"tool": "diagnose_workspace"},
+                {"tool": "read_file", "path": "config/game_config.json"},
+            ],
+            "hint": (
+                "用户原话含条件/数值/手感：请用会话脚本实现计数/冷却/倍率/触发时机；"
+                f"catalog {', '.join(skill_ids[:3])} 仅作材料参考；"
+                "须在会话脚本写出条件/计数/冷却后再 done"
+            ),
+            "stop": False,
+            "stop_reason": "",
+            "genre": genre,
+            "advisory": True,
+            "express": False,
+        }
+
+    # A：命中 catalog（纯开关类）
     if skill_ids:
         actions = [
             {"tool": "enable_catalog_skill", "skill_id": sid} for sid in skill_ids
         ]
-        # 技能少 + 彩色等可叠加 B/C，但首选仍须 enable
         extra_hint = ""
         if recipe and str(recipe.get("action", "")) in ("bridge_api", "sandbox_apply"):
             extra_hint = f"；同时可按 recipe 施工：{recipe.get('hint', '')}"
@@ -301,14 +340,16 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
             "recipe_id": recipe_id or "catalog",
             "skill_ids": skill_ids,
             "actions": actions,
-            "hint": "命中 catalog，可 enable_catalog_skill 作捷径；也可用会话 core 另写；运行时需触屏接线"
+            "hint": (
+                "可参考 catalog skill_ids：enable 或会话现场实现均可；"
+                "有附加条件时在会话脚本写出条件逻辑"
+            )
             + extra_hint,
             "stop": False,
             "stop_reason": "",
             "genre": genre,
-            # 点名技能（激光/炸弹等）可确定性快开；「技能太少」批量建议仍标 advisory
             "advisory": bool(re.search(r"技能太少|技能少|多加.*技能|多来点技能", text)),
-            "express": True,
+            "express": False,
         }
 
     # 有 recipe：先按 action 分流（bridge/sandbox → C，再 B）
@@ -396,9 +437,8 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
                 }
             ],
             "hint": (
-                "新机制：优先在会话 core/*.gd 与 scenes 实现用户所求玩法；"
-                "ai_sandbox+桥 API、catalog/Skill 是捷径与参考，不是唯一路径；"
-                "实现要对齐需求本身，勿用无关能力顶替后口头交差"
+                "新机制：在会话 core/*.gd 与 scenes 实现用户所求玩法；"
+                "ai_sandbox+桥 API、catalog/Skill 是可选捷径；实现对齐需求本身"
             ),
             "stop": False,
             "stop_reason": "",
@@ -422,18 +462,20 @@ def route_intent(user_text: str, contract: dict[str, Any]) -> dict[str, Any]:
 
 def format_route_for_prompt(route: dict[str, Any]) -> str:
     lines = [
-        "## 意图建议（参考，非死命令；你可自主选更优实现）",
+        "## 意图建议（参考材料，可自主选择更优实现）",
         f"- intent: {route.get('intent')} · recipe: {route.get('recipe_id') or '—'}",
         f"- hint: {route.get('hint', '')}",
     ]
     skills = route.get("skill_ids") or []
     if skills:
-        lines.append(f"- 可复用 catalog（捷径）: {', '.join(skills)}；也可用会话 core 另写等价实现")
+        lines.append(
+            f"- 可参考 catalog: {', '.join(skills)}；也可用会话 core 写等价实现"
+        )
     if route.get("stop"):
-        lines.append(f"- 【硬停·仅幻想 API】{route.get('stop_reason', '')}")
-        lines.append("- 勿发明 bridge 方法；改用会话 GDScript 实现同等效果更佳")
+        lines.append(f"- 提示：{route.get('stop_reason', '')}")
+        lines.append("- 建议：用会话 GDScript 实现同等效果")
     lines.append(
-        "- 门禁只验：磁盘有实现、无幻想 API、声称一致；勿空壳 done"
+        "- 门禁关注：磁盘有实现、API 真实存在、声称与磁盘一致；done 前完成写入"
     )
     return "\n".join(lines)
 
@@ -457,7 +499,7 @@ def enforce_route_on_actions(
         ):
             # 写文件里若仍幻想 bridge 未知方法，交给 assert_apis；此处只拦 add_method
             if "add_method" in content:
-                errors.append("禁止在脚本中发明 bridge.add_method")
+                errors.append("请用会话 GDScript 实现同等效果（勿调用 bridge.add_method）")
         if tool in ("done",) and not any(
             isinstance(x, dict) and str(x.get("tool", "")) == "write_file"
             for x in actions

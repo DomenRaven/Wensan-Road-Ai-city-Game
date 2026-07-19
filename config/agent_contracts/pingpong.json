@@ -3,13 +3,13 @@
   "bridge_apis": [
     {
       "name": "get_player",
-      "sig": "() -> CharacterBody2D",
-      "desc": "球拍侧（若适用）"
+      "sig": "() -> Node",
+      "desc": "兼容入口；乒乓请优先 get_player_node 或 $PlayerPaddle（Area2D）"
     },
     {
       "name": "get_player_node",
       "sig": "() -> Node",
-      "desc": "玩家节点"
+      "desc": "玩家节点（拍子为 Area2D/PlayerPaddle，非 CharacterBody2D）"
     },
     {
       "name": "get_game_manager",
@@ -107,10 +107,10 @@
     "sandbox": "core/ai_sandbox/"
   },
   "notes": [
-    "勿提二段跳等无关品类技能",
-    "可改会话 core，禁止改 templates",
-    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考勿限死",
-    "需求对齐：实现所求机制；勿用无关玩法顶替后口头交差"
+    "品类技能以本品类 catalog/接线为准",
+    "可改会话 core；templates 只读参考",
+    "创作主路径：会话 core/** scenes/**；桥 API 与 catalog 可参考亦可会话另写",
+    "需求对齐：实现所求机制；实现对齐用户所求机制本身"
   ],
   "forbidden_invented_apis": [
     "add_method",

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from pathlib import Path
 from typing import Any
 
@@ -16,18 +17,34 @@ import requests
 from app.config import Settings
 from app.services.agent_workspace import (
     AgentWorkspaceError,
+    align_fragment_newlines,
+    assert_full_read_before_rewrite,
+    existing_file_requires_replace,
     list_workspace_tree,
+    list_workspace_tree_high_signal,
     read_workspace_file,
+    read_workspace_file_page,
+    replace_workspace_text,
+    search_workspace_file,
+    serialize_observations_for_followup,
+    sha256_text,
+    read_text_raw,
     write_workspace_file,
 )
 from app.services.creative.agent_contracts import (
+    PLAYER_PRESENCE_BY_GENRE,
     assert_apis_in_contract,
     assert_player_presence_health,
+    assert_script_structure_fidelity,
     diagnose_workspace,
     dry_run_godot,
     emit_progress,
     format_diagnose_for_prompt,
+    infer_target_funcs_from_patch,
+    lint_tscn_godot4,
     load_contract,
+    gameplay_critical_paths,
+    player_critical_paths,
     restore_last_playable_snapshot,
     run_done_gates,
     save_last_playable_snapshot,
@@ -46,8 +63,13 @@ from app.services.creative.learned_skills import (
     LearnedSkillsError,
     bump_skill_counts,
     enable_catalog_skill,
+    format_recent_session_writes_for_prompt,
     format_skills_for_prompt,
     search_learned_skills,
+)
+from app.services.creative.reference_skills import (
+    format_reference_summary_for_prompt,
+    read_reference_skill,
 )
 from app.services.creative.sandbox_intent import catalog_for_prompt
 from app.services.edu_workspace import (
@@ -55,44 +77,57 @@ from app.services.edu_workspace import (
     refresh_ai_sandbox_bridge,
 )
 
-_AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对话与推理对齐常见大模型（如 DeepSeek）：先听懂本轮、拆解目标，再动手改游戏。
+_AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对话与推理对齐常见大模型：先听懂本轮、拆解目标，再动手改游戏。
 
-【对话 · 全局】
-- 本轮用户原话优先级最高；历史只作背景，换话题就跟新话题走
-- done.summary 用自然中文直接回答本轮原话，说明做了什么 / 修好了什么
-- 若本轮在抱怨故障、没生效、看不到、打不开、人物消失/不显示：先 diagnose + 读玩家/主场景，修复可见性（visible / modulate / position），禁止再开新技能交差
-- 找玩家节点：用 get_tree().get_nodes_in_group("player") 或 AiSandboxBridge.get_player_node()；禁止 get_node("../Player") 与 /root/Main/Player（Player 在 GameRoot/LevelRoot 动态实例下，不在 Main 直属）
-- 禁止把玩家根节点 visible=false / modulate.a=0 / queue_free；无敌闪烁只改 Sprite 且须恢复；禁整写 player_*.gd / scenes/player.tscn 丢掉碰撞与 group=player
-- 若用户说「掉落物 / 敌机掉落 / 捡到才开」：禁止 enable_catalog_skill；shmup 只改 powerup_types + player_ship.apply_powerup（拾取后追加 GameConfig.enabled_skills + AiSandboxBridge.ensure_touch_skill_buttons）。禁止重写 enemy_spawner/main.tscn；禁止 Bridge. 幻想 API。how_to_play 写「打敌机→捡掉落」
-- 写 config/game_config.json 时必须先 read_file 再合并字段，禁止整文件覆盖导致丢失 powerup_types/enemies 等
-- 用户没提就不要送无关大礼包；长期库仅明显相关才复用
+【总原则 · 开放读盘 · 安全最小施工】
+- 新需求与用户反馈（例如没生效、外观/手感不对、数值不符）用同一套循环：
+  diagnose → list_dir / read_file|search_in_file → 对照用户原话做差分 → replace_text（或小文件 write_file）→ self_check → done
+- 优先阅读「本局近期改动」清单中的文件；核对状态是否成对开闭（外观、特效、速度、充能、无敌等）
+- Intent / Catalog / playbook / Reference 是可选材料；最终以会话磁盘与用户原话为准
+- done 须有真实写入（或诚实说明未改原因）；带条件的需求用会话脚本实现条件本身
 
-【聪明拆解 · 每轮必须】
-1. understanding：用一句话复述本轮用户到底要什么
-2. goals：拆成 1～5 条可验收子目标（一条用户话里的多个要求都要拆开）
-3. 再 actions：按 goals 施工，最后 self_check → done
-4. 【快路径】若意图建议已命中 catalog（如激光/炸弹/二段跳）：优先在本轮内 enable_catalog_skill + refresh_ai_sandbox_bridge + done，禁止多轮空读盘
-5. 禁止跳过拆解直接空 done；未覆盖的 goal 要么继续改，要么在 summary 诚实说明
+【对话】
+- 本轮用户原话优先级最高；历史只作背景
+- done.summary 用自然中文直接回答本轮：做了什么 / 怎么试玩
+- 找可操控角色：get_tree().get_nodes_in_group("player") 或 AiSandboxBridge.get_player_node()
+  （角色多在 GameRoot/LevelRoot 下；品类细节见接线 playbook）
+- 保持角色可玩：根节点保持可见与 group=player；视觉效果作用于 Sprite 并在结束时恢复
+- 改 config/game_config.json：先 read_file，再合并字段后写回
+- 长期库 / Reference：仅在与本轮原话明显相关时复用
+
+【每轮输出】
+1. understanding：一句话复述本轮要什么
+2. goals：1～5 条可验收子目标（条件/数值/手感拆开）
+3. actions：先读盘再施工，最后 self_check → done
+4. summary 覆盖全部 goals；试玩说明含重开与触屏操作
 
 【创作】
-- 尽量做出来：会话 core/**、scenes/**、config/**、ai_sandbox 均可写；catalog / 桥 API / Learned Skills 是捷径不是天花板
-- 实现用户要的机制本身，勿用无关玩法顶替后口头当作完成
-- 禁止空 done、幻想 API（add_method / set_color / OS.execute 等）；禁止改 templates/**、project.godot
-- 声称 ⊆ 磁盘；新操作尽量触屏可点；how_to_play 含重开 + 点屏
+- 可写范围：会话 workspace（core/scenes/config/ai_sandbox）
+- templates：只读参考
+- 桥 API：以契约列表为准；同等效果用会话 GDScript 实现
+- 实现用户要的机制本身；声称 ⊆ 磁盘
+- 可用 read_reference_skill；仍以会话磁盘为准
 
-【新机制避坑·会跑 Godot headless 冒烟，parse/script error 会打回】
-- preload / ext_resource 只能指向"你本轮已创建或模板已存在"的文件；先 list_dir/read_file 确认，勿引用不存在的 .gd/.tscn/贴图
-- 只调用确实存在的方法/属性；不确定就 read_file 看目标脚本有没有该 func，勿臆造 interrupt_dash()/try_block() 等
-- 视口尺寸用 get_viewport().get_visible_rect() 或 get_window().size；self 上没有 get_viewport_rect()
-- 访问节点先 get_node_or_null 并判空，避免 "null instance" 报错
-- 拿不准 .tscn 手写格式时，优先用 GDScript 在 _ready() 里 new + add_child 动态生成节点，少手写复杂 .tscn
-- 改已有 .tscn 必须保留原有全部节点（HUD/GameOver/按钮/Retry 等），只增不删；整文件重写极易丢节点→别的脚本 get_node 到 null 崩。首选新写一个脚本用 add_child 挂节点，别动 main.tscn 结构
-- 新节点要真正挂进运行场景（加到 main/关卡场景或用脚本 add_child），否则"写了不生效"
-- 报错带「at: res://xxx.gd:NN」就是出错文件与行号，先 read_file 那个文件再精准改
-- 【最小编辑铁律】改已有 core/*.gd 先 read_file，再只改相关函数/几行，**禁止整文件重写**——整写会丢碰撞/受伤/信号/收集等既有逻辑，典型后果：金币收不到、碰到子弹卡住不扣血、角色崩。改数值/大小走对应字段，勿顺手重写整份脚本
-- 「加金币/道具」等：先弄清它在源码里如何生成（多为程序化生成或注册进管理器），改生成处；勿新建游离场景，那样进不了收集/计分链，会"看着加了其实没用"
+【读写习惯 · Godot 会 headless 冒烟】
+- read_file 支持 offset/limit；仅当返回 eof=false 时用 next_offset 续读，或 search_in_file 定位
+- 若见 prompt_truncated=true 但 eof=true：文件已读完；用 content_resume_offset / search_in_file 看未展示段后即可施工，无需再分页
+- 已有大 .gd/.tscn（>6k 字符或 >120 行）：默认 replace_text（old_text 唯一命中；expected_sha256 可选）
+- replace_text 会自动对齐 CRLF/LF；old_text 唯一命中时陈旧 hash 不挡写入
+- write_file 主要用于新文件、小配置，或 goals 标明 rewrite_scope 的完整重构
+- preload / ext_resource 只指向已存在或本轮新建的文件
+- 只调用目标脚本里真实存在的方法/属性；不确定就先 read_file
+- 视口：get_viewport().get_visible_rect() 或 get_window().size
+- 取节点：get_node_or_null 并判空
+- 改已有 .tscn：保留原有节点，只增不删；复杂结构优先脚本 add_child
+- 新建 .tscn：Godot 4 矩形碰撞用 size（勿 extents）；[sub_resource] 须先于 SubResource() 引用；资源头必须闭合 ]
+- 新机制优先脚本 new Area2D()/add_child，避免「新建 PackedScene + preload」连环炸
+- 报错含 at: res://xxx.gd:NN 时，先读该文件再改
 
-意图建议仅供参考。反馈「键盘行、按钮不行」→ 勿再 enable 同技能，查桥/HUD。
+【产品安全边界】
+- 可写范围：会话 workspace；templates 只读参考
+- 桥 API 以契约列表为准；同等效果用会话 GDScript 实现
+- 玩家根保持可见；视觉效果作用于 Sprite 并恢复
+- 掉落/拾取才开启：按本品类 playbook 接线真实掉落→拾取→效果链；how_to_play 写清试玩步骤
 
 每轮只返回 JSON：
 {
@@ -102,26 +137,56 @@ _AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对�
   "actions": [
     {"tool":"diagnose_workspace"},
     {"tool":"list_dir","path":"core"},
-    {"tool":"read_file","path":"config/game_config.json"},
+    {"tool":"read_file","path":"core/<本品类玩家或玩法脚本>","offset":0,"limit":8000},
+    {"tool":"search_in_file","path":"core/<本品类玩家或玩法脚本>","query":"_ready","max_hits":5},
+    {"tool":"replace_text","path":"core/<本品类玩家或玩法脚本>","old_text":"...","new_text":"...","expected_sha256":"..."},
     {"tool":"search_learned_skills","query":"...","k":3},
-    {"tool":"enable_catalog_skill","skill_id":"laser_beam"},
+    {"tool":"read_reference_skill","which":"genre"},
+    {"tool":"enable_catalog_skill","skill_id":"<契约 catalog_skills 的 id>"},
     {"tool":"refresh_ai_sandbox_bridge"},
-    {"tool":"patch_mouse_steer_guard"},
     {"tool":"write_file","path":"core/custom_mechanic.gd","content":"..."},
-    {"tool":"write_file","path":"scenes/main.tscn","content":"..."},
     {"tool":"validate_gdscript","path":"core/custom_mechanic.gd"},
     {"tool":"self_check","summary":"草稿回复","how_to_play":["重开后点…"]},
+    {"tool":"ensure_player_visibility"},
     {"tool":"emit_progress","stage":"write_changes","detail":"..."},
     {"tool":"done","summary":"自然中文回复本轮原话（覆盖各 goals）","how_to_play":["试玩1","试玩2"]}
   ]
 }
-工具：diagnose_workspace | list_dir | read_file | write_file | enable_catalog_skill | patch_mouse_steer_guard | refresh_ai_sandbox_bridge | ensure_touch_skill_buttons | search_learned_skills | validate_gdscript | self_check | emit_progress | done
+工具：diagnose_workspace | list_dir | read_file | search_in_file | replace_text | write_file | apply_shmup_drop_loot_chain | ensure_player_visibility | enable_catalog_skill | patch_mouse_steer_guard | refresh_ai_sandbox_bridge | ensure_touch_skill_buttons | search_learned_skills | read_reference_skill | validate_gdscript | self_check | emit_progress | done
 """
+
+# HF-11/15：注入 LLM 的工作法提示（正向；品类窄句仅门控后附加）
+_OPEN_READ_WORK_TIP: str = (
+    "【开放读盘·本轮工作法】以用户原话为验收标准；"
+    "先 diagnose + read_file（优先本局近期改动路径）；"
+    "核对相关状态是否成对开闭；用 replace_text 最小 patch 后再 done。"
+)
+_PLAYABILITY_WORK_TIP: str = (
+    "【可玩性提示】本轮描述像白屏或角色看不见："
+    "先 diagnose + 读玩家脚本/场景与本局近期改动；"
+    "用 search_in_file 查 visible / modulate / hide。"
+    "定位到缺陷后立刻 replace_text；"
+    "若未见隐藏/透明问题或需快速加固：优先调用 ensure_player_visibility，"
+    "再 self_check→done。"
+    "summary 只陈述磁盘上已完成的改动。"
+)
+_SHMUP_DROP_LOOT_TIP: str = (
+    "【掉落物施工】本轮优先调用工具 apply_shmup_drop_loot_chain "
+    "（一次写齐 powerup_types + player_ship.apply_powerup 拾取解锁）。"
+    "若手写：须同时改 core/player_ship.gd 的 apply_powerup，"
+    "以及 powerup_pickup / enemy_spawner 的掉落管道。"
+    "开局 tuning.enabled_skills 保持空列表；"
+    "laser_beam/bomb 仅在拾取后写入 config。"
+)
 
 
 _BUGFIX_HINTS: re.Pattern[str] = re.compile(
     r"没生效|不发射|没反应|不能用|只有.?键|人物.*消失|不显示|白屏|黑屏|"
     r"打不开|没法.*启动|闪退|报错|修复"
+)
+_PLAYABILITY_CRITICAL: re.Pattern[str] = re.compile(
+    r"人物.*消失|角色.*消失|人不显示|看不见.*人|人没了|角色没了|"
+    r"白屏|黑屏|看不到画|没有画面|没法.*启动|无法启动|打不开|闪退"
 )
 _NEEDS_LLM_CREATE: re.Pattern[str] = re.compile(
     r"Boss|关卡编辑|新敌人|自己写|前所未有|改引擎|联机|存档"
@@ -129,22 +194,162 @@ _NEEDS_LLM_CREATE: re.Pattern[str] = re.compile(
 
 
 def _can_catalog_express(route: dict[str, Any], user_text: str, feedback: str) -> bool:
-    """明确 catalog 命中时走确定性快车道（秒级），不必多轮 LLM。"""
-    if feedback.strip():
+    """7.19 / 总纲：有 Key 主路径禁止 catalog 秒开。保留函数供单测断言恒 False。"""
+    _ = (route, user_text, feedback)
+    return False
+
+
+def _restore_critical_from_template(
+    settings: Settings,
+    workspace_root: Path,
+    genre: str,
+    rel: str,
+) -> bool:
+    """会话内关键文件缺失时，从 templates/{genre}/ 拷回（不改冻结源）。"""
+    import shutil
+
+    rel_n = rel.replace("\\", "/")
+    src = settings.templates_dir / genre / rel_n
+    if not src.is_file():
         return False
-    if _BUGFIX_HINTS.search(user_text or ""):
-        return False
-    if _NEEDS_LLM_CREATE.search(user_text or ""):
-        return False
-    # 「掉落才开」绝不能快开 catalog 按钮
-    if is_drop_loot_request(user_text or ""):
-        return False
-    if route.get("express") is False:
-        return False
-    if str(route.get("intent") or "") != "A":
-        return False
-    skill_ids = [str(s) for s in (route.get("skill_ids") or []) if str(s).strip()]
-    return bool(skill_ids)
+    dst = workspace_root / rel_n
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
+    return dst.is_file()
+
+
+def _run_ensure_player_visibility(
+    settings: Settings,
+    workspace_root: Path,
+    genre: str,
+) -> dict[str, Any]:
+    """可玩性危急：对玩家场景根 + 脚本 _ready 做最小可见性加固（七品类通用）。"""
+    cfg = PLAYER_PRESENCE_BY_GENRE.get(genre) or {}
+    script_rel = str(cfg.get("script") or "").replace("\\", "/")
+    scene_rel = str(cfg.get("scene") or "scenes/player.tscn").replace("\\", "/")
+    scene_node = str(cfg.get("scene_node") or "Player")
+    written: list[str] = []
+    notes: list[str] = []
+
+    # 缺失时先从模板恢复，禁止 LLM 整文件瞎编玩家核心
+    for rel in (script_rel, scene_rel):
+        if not rel:
+            continue
+        target = workspace_root / rel
+        if not target.is_file():
+            if _restore_critical_from_template(settings, workspace_root, genre, rel):
+                written.append(rel)
+                notes.append(f"{rel} 已从模板恢复")
+            else:
+                raise AgentWorkspaceError(
+                    f"ensure_player_visibility：缺少 {rel} 且模板中也不存在"
+                )
+
+    scene_path = workspace_root / scene_rel
+    if scene_path.is_file():
+        text = read_text_raw(scene_path)
+        # 节点行可能含 groups=["player"]；兼容 \r\n
+        node_re = re.compile(
+            rf'(\[node name="{re.escape(scene_node)}"[^\r\n]*\]\r?\n)',
+            re.M,
+        )
+        m = node_re.search(text)
+        if m:
+            start = m.end()
+            rest = text[start:]
+            next_node = re.search(r"\r?\n\[node ", rest)
+            block = rest[: next_node.start()] if next_node else rest
+            nl = "\r\n" if "\r\n" in text else "\n"
+            new_block = block
+            changed = False
+            if re.search(r"(?m)^visible\s*=\s*false\s*$", new_block):
+                new_block = re.sub(
+                    r"(?m)^visible\s*=\s*false\s*$", "visible = true", new_block
+                )
+                changed = True
+            elif not re.search(r"(?m)^visible\s*=", new_block):
+                new_block = f"visible = true{nl}" + new_block
+                changed = True
+            if not re.search(r"(?m)^modulate\s*=", new_block):
+                new_block = f"modulate = Color(1, 1, 1, 1){nl}" + new_block
+                changed = True
+            if changed:
+                suffix = rest[next_node.start() :] if next_node else ""
+                new_text = text[:start] + new_block + suffix
+                write_workspace_file(
+                    workspace_root,
+                    settings.workspace_dir,
+                    settings.templates_dir,
+                    scene_rel,
+                    new_text,
+                )
+                written.append(scene_rel)
+                notes.append(f"{scene_rel} 根节点可见性已加固")
+
+    if script_rel:
+        script_path = workspace_root / script_rel
+        if script_path.is_file():
+            text = read_text_raw(script_path)
+            has_vis = bool(
+                re.search(r"(?m)^\s*visible\s*=\s*true\s*$", text)
+            ) and bool(
+                re.search(
+                    r"(?m)^\s*modulate\s*=\s*Color\s*\(\s*1\s*,\s*1\s*,\s*1\s*,\s*1\s*\)\s*$",
+                    text,
+                )
+            )
+            if not has_vis:
+                ready = re.search(
+                    r"(func\s+_ready\s*\([^)]*\)\s*(?:->\s*void)?\s*:\s*\r?\n)",
+                    text,
+                )
+                if ready:
+                    nl = "\r\n" if "\r\n" in text else "\n"
+                    insert = (
+                        f"\tvisible = true{nl}"
+                        f"\tmodulate = Color(1, 1, 1, 1){nl}"
+                    )
+                    new_text = text[: ready.end()] + insert + text[ready.end() :]
+                    player_errs = validate_player_write_content(
+                        script_rel, new_text, genre
+                    )
+                    if player_errs:
+                        raise AgentWorkspaceError(
+                            "玩家健康写入拦截: " + "; ".join(player_errs)
+                        )
+                    syn = validate_gdscript(new_text)
+                    if syn:
+                        raise AgentWorkspaceError(
+                            "可见性加固语法未过: " + "; ".join(syn)
+                        )
+                    write_workspace_file(
+                        workspace_root,
+                        settings.workspace_dir,
+                        settings.templates_dir,
+                        script_rel,
+                        new_text,
+                    )
+                    written.append(script_rel)
+                    notes.append(f"{script_rel} _ready 可见性已加固")
+
+    if not written:
+        # 已加固：诚实 noop
+        return {
+            "tool": "ensure_player_visibility",
+            "ok": True,
+            "written": [],
+            "noop": True,
+            "notes": ["玩家场景/脚本已具备可见性加固，无需再改"],
+            "summary": "玩家可见性已就绪，无需再改",
+        }
+    return {
+        "tool": "ensure_player_visibility",
+        "ok": True,
+        "written": list(dict.fromkeys(written)),
+        "noop": False,
+        "notes": notes,
+        "summary": "已加固玩家可见性：" + "；".join(notes),
+    }
 
 
 def _ensure_express_touch_pathway(
@@ -321,13 +526,21 @@ def _run_shmup_drop_loot_express(
     user_text: str,
     route: dict[str, Any],
     contract: dict[str, Any],
+    *,
+    skills: list[str] | None = None,
 ) -> dict[str, Any]:
-    """shmup 掉落物确定性落地：powerup_types + apply_powerup 拾取解锁。"""
+    """shmup 掉落物确定性落地：powerup_types + apply_powerup 拾取解锁。
+
+    HF-12：保留实现能力，供 LLM 工具调用；不再作为 pre-LLM 入口快车道。
+    """
     emit_progress(workspace_root, "understand", user_text[:80] or "掉落才开")
     emit_progress(
-        workspace_root, "write_changes", "掉落物快车道：powerup_types + apply_powerup"
+        workspace_root, "write_changes", "掉落物链：powerup_types + apply_powerup"
     )
     written: list[str] = []
+    want = {str(s).strip() for s in (skills or ["laser_beam", "bomb"]) if str(s).strip()}
+    if not want:
+        want = {"laser_beam", "bomb"}
 
     cfg_path = workspace_root / "config" / "game_config.json"
     cfg: dict[str, Any] = json.loads(cfg_path.read_text(encoding="utf-8"))
@@ -339,9 +552,9 @@ def _run_shmup_drop_loot_express(
     names = {
         str(x.get("name", "")).strip() for x in types if isinstance(x, dict)
     }
-    if "laser" not in names:
+    if ("laser_beam" in want or "laser" in want) and "laser" not in names:
         types.append({"name": "laser", "frame": 14})
-    if "bomb" not in names:
+    if "bomb" in want and "bomb" not in names:
         types.append({"name": "bomb", "frame": 15})
     tuning["powerup_types"] = types
     tuning["enabled_skills"] = []
@@ -357,7 +570,7 @@ def _run_shmup_drop_loot_express(
     player_rel = "core/player_ship.gd"
     player_path = workspace_root / player_rel
     if not player_path.is_file():
-        raise ValueError("掉落物快车道失败：缺少 core/player_ship.gd")
+        raise ValueError("掉落物链失败：缺少 core/player_ship.gd")
     raw = player_path.read_text(encoding="utf-8")
     patched = _patch_shmup_apply_powerup_loot(raw)
     if patched != raw:
@@ -369,6 +582,9 @@ def _run_shmup_drop_loot_express(
             patched,
         )
         written.append(player_rel)
+
+    refresh_ai_sandbox_bridge(workspace_root, settings.templates_dir)
+    written.append("core/ai_sandbox_bridge.gd")
 
     summary = (
         "已把激光和炸弹改成敌机掉落物：开局没有技能按钮，"
@@ -392,7 +608,7 @@ def _run_shmup_drop_loot_express(
         )
     )
     if gate_errors:
-        raise ValueError("掉落物快车道门禁失败: " + "; ".join(gate_errors[:4]))
+        raise ValueError("掉落物链门禁失败: " + "; ".join(gate_errors[:4]))
 
     emit_progress(workspace_root, "done", summary[:80])
     return {
@@ -407,8 +623,8 @@ def _run_shmup_drop_loot_express(
         "needs_relaunch": True,
         "verify_gaps": [],
         "repaired": False,
-        "agent_rounds": 0,
-        "agent_thought": "drop loot express",
+        "agent_rounds": 1,
+        "agent_thought": "apply_shmup_drop_loot_chain",
         "understanding": "把激光和炸弹做成敌机掉落，捡到才解锁",
         "goals": [
             "powerup_types 含 laser/bomb",
@@ -422,6 +638,9 @@ def _run_shmup_drop_loot_express(
         "intent_route": route,
         "diagnose": {},
         "express": False,
+        "tool": "apply_shmup_drop_loot_chain",
+        "path": "core/player_ship.gd",
+        "written": list(dict.fromkeys(written)),
     }
 
 
@@ -482,6 +701,74 @@ def _llm_turn(
     return _extract_json(content)
 
 
+def _goals_allow_full_rewrite(plan_goals: list[str] | None) -> bool:
+    blob = " ".join(plan_goals or [])
+    return bool(
+        re.search(r"rewrite_scope|整体重构|全文重写|完整重写|整文件重构", blob, re.I)
+    )
+
+
+_READISH_TOOLS: frozenset[str] = frozenset(
+    {
+        "diagnose_workspace",
+        "list_dir",
+        "read_file",
+        "search_in_file",
+        "search_learned_skills",
+        "read_reference_skill",
+        "validate_gdscript",
+        "emit_progress",
+    }
+)
+_MUTATE_TOOLS: frozenset[str] = frozenset(
+    {
+        "replace_text",
+        "write_file",
+        "apply_shmup_drop_loot_chain",
+        "ensure_player_visibility",
+        "enable_catalog_skill",
+        "patch_mouse_steer_guard",
+        "refresh_ai_sandbox_bridge",
+        "ensure_touch_skill_buttons",
+        "self_check",
+        "done",
+    }
+)
+
+
+def _schedule_actions_for_round(
+    actions: list[Any], *, max_total: int = 10
+) -> list[dict[str, Any]]:
+    """读盘与施工分池：避免大量 search/read 把 ensure/done 挤出本轮窗口。"""
+    reads: list[dict[str, Any]] = []
+    mutates: list[dict[str, Any]] = []
+    other: list[dict[str, Any]] = []
+    for raw in actions:
+        if not isinstance(raw, dict):
+            continue
+        tool = str(raw.get("tool", "")).strip()
+        if tool in _READISH_TOOLS:
+            reads.append(raw)
+        elif tool in _MUTATE_TOOLS:
+            mutates.append(raw)
+        else:
+            other.append(raw)
+    # 确定性施工工具靠前，避免被零散 replace/write 挤掉
+    _prio = ("ensure_player_visibility", "apply_shmup_drop_loot_chain")
+    mutates.sort(
+        key=lambda a: (
+            0 if str(a.get("tool", "")).strip() in _prio else 1
+        )
+    )
+    mutate_cap = min(6, max(2, max_total - 2))
+    picked_mut = mutates[:mutate_cap]
+    remain = max_total - len(picked_mut)
+    picked_read = reads[: min(5, max(0, remain - min(1, len(other))))]
+    remain -= len(picked_read)
+    picked_other = other[: max(0, remain)]
+    return picked_read + picked_other + picked_mut
+
+
 def _run_action(
     settings: Settings,
     workspace_root: Path,
@@ -493,8 +780,12 @@ def _run_action(
     written_paths: list[str] | None = None,
     catalog_changed: bool = False,
     user_text: str = "",
+    read_eof_by_path: dict[str, bool] | None = None,
+    plan_goals: list[str] | None = None,
 ) -> dict[str, Any]:
     tool = str(action.get("tool", "")).strip()
+    eof_map = read_eof_by_path if read_eof_by_path is not None else {}
+    allow_rewrite = _goals_allow_full_rewrite(plan_goals)
     if tool == "diagnose_workspace":
         diag = diagnose_workspace(workspace_root, genre, contract)
         return {"tool": tool, **diag, "prompt": format_diagnose_for_prompt(diag)}
@@ -509,18 +800,151 @@ def _run_action(
         return {"tool": tool, "path": path, "entries": entries}
     if tool == "read_file":
         path = str(action.get("path", "")).strip()
-        content = read_workspace_file(
+        offset = int(action.get("offset") or 0)
+        limit = int(action.get("limit") or 8000)
+        page = read_workspace_file_page(
             workspace_root,
             settings.workspace_dir,
             settings.templates_dir,
             path,
+            offset=offset,
+            limit=limit,
         )
-        return {"tool": tool, "path": path, "content": content}
+        if page.get("eof"):
+            eof_map[str(page.get("path") or path).replace("\\", "/")] = True
+        elif path:
+            # 分片读过但未 EOF：显式标记，便于后续拦截整写
+            eof_map.setdefault(path.replace("\\", "/"), False)
+        return {"tool": tool, **page}
+    if tool == "search_in_file":
+        path = str(action.get("path", "")).strip()
+        query = str(action.get("query", "") or "")
+        max_hits = int(action.get("max_hits") or 8)
+        context_lines = int(action.get("context_lines") or 2)
+        result = search_workspace_file(
+            workspace_root,
+            settings.workspace_dir,
+            settings.templates_dir,
+            path,
+            query,
+            max_hits=max_hits,
+            context_lines=context_lines,
+        )
+        return {"tool": tool, **result}
+    if tool == "replace_text":
+        path = str(action.get("path", "")).strip()
+        old_text = str(action.get("old_text", ""))
+        new_text = str(action.get("new_text", ""))
+        expected = str(action.get("expected_sha256", "") or "").strip() or None
+        if not path:
+            raise AgentWorkspaceError("replace_text 需要 path")
+        # 先在内存生成候选，再跑玩家健康 / 语法 / API，再落盘
+        target = workspace_root / path.replace("\\", "/")
+        if not target.is_file():
+            raise AgentWorkspaceError(f"文件不存在: {path}")
+        before = read_text_raw(target)
+        # Win 模板 CRLF vs LLM LF：对齐后再判命中/保真
+        old_aligned = align_fragment_newlines(old_text, before)
+        new_aligned = align_fragment_newlines(new_text, before)
+        count = before.count(old_aligned)
+        if count == 0:
+            raise AgentWorkspaceError(
+                "replace_text 零命中: old_text 未在文件中找到"
+                "（已自动尝试 CRLF/LF 对齐；请用 search_in_file 核对原文）"
+            )
+        if count > 1:
+            raise AgentWorkspaceError(
+                f"replace_text 多命中({count}): old_text 须唯一；请扩大上下文"
+            )
+        candidate = before.replace(old_aligned, new_aligned, 1)
+        player_errs = validate_player_write_content(path, candidate, genre)
+        if player_errs:
+            raise AgentWorkspaceError(
+                "玩家健康写入拦截: " + "; ".join(player_errs)
+            )
+        if path.endswith(".gd"):
+            syn = validate_gdscript(candidate)
+            api = assert_apis_in_contract(candidate, contract)
+            if syn or api:
+                raise AgentWorkspaceError(
+                    "写入前校验失败: " + "; ".join(syn + api)
+                )
+        if path.replace("\\", "/").endswith(".tscn"):
+            tscn_errs = lint_tscn_godot4(candidate)
+            if tscn_errs:
+                raise AgentWorkspaceError(
+                    "场景写入前校验失败: " + "; ".join(tscn_errs)
+                )
+        hints = infer_target_funcs_from_patch(old_aligned, before)
+        fidelity = assert_script_structure_fidelity(
+            path,
+            before,
+            candidate,
+            genre=genre,
+            allow_rewrite=allow_rewrite,
+            target_func_hints=hints or None,
+        )
+        if fidelity:
+            raise AgentWorkspaceError(
+                "结构保真门禁未过: " + "; ".join(fidelity)
+            )
+        result = replace_workspace_text(
+            workspace_root,
+            settings.workspace_dir,
+            settings.templates_dir,
+            path,
+            old_aligned,
+            new_aligned,
+            expected_sha256=expected,
+        )
+        # 替换后磁盘已变，清除 eof 缓存，迫使后续再读
+        eof_map.pop(path.replace("\\", "/"), None)
+        return {"tool": tool, **result}
     if tool == "write_file":
         path = str(action.get("path", "")).strip()
         content = str(action.get("content", ""))
         if not path or not content.strip():
             raise AgentWorkspaceError("write_file 需要 path 与 content")
+        rel = path.replace("\\", "/")
+        existing: str | None = None
+        existing_path = workspace_root / rel
+        if existing_path.is_file():
+            try:
+                existing = read_text_raw(existing_path)
+            except OSError:
+                existing = None
+        # 玩法/玩家关键路径：禁止 LLM 整写 stub（缺失时从模板恢复，再要求 replace_text）
+        critical = {p.replace("\\", "/") for p in gameplay_critical_paths(genre)}
+        if rel in critical:
+            if existing is None:
+                if _restore_critical_from_template(
+                    settings, workspace_root, genre, rel
+                ):
+                    raise AgentWorkspaceError(
+                        f"关键玩法文件 {rel} 缺失，已从模板恢复；"
+                        "请用 replace_text 做最小修改，勿 write_file 整文件重建"
+                    )
+                raise AgentWorkspaceError(
+                    f"关键玩法文件 {rel} 缺失且模板中不存在，无法恢复"
+                )
+            raise AgentWorkspaceError(
+                f"关键玩法文件 {rel}：请用 replace_text"
+                "（玩家可见性可用 ensure_player_visibility）"
+            )
+        if existing_file_requires_replace(
+            rel, existing, allow_full_rewrite=allow_rewrite
+        ):
+            raise AgentWorkspaceError(
+                f"已有大文件 {rel} 默认请用 replace_text；"
+                "若需整写请在 goals 标明 rewrite_scope 并先完整 read_file 到 eof"
+            )
+        assert_full_read_before_rewrite(
+            rel,
+            content,
+            eof_map,
+            existing_text=existing,
+            allow_full_rewrite=allow_rewrite,
+        )
         player_errs = validate_player_write_content(path, content, genre)
         if player_errs:
             raise AgentWorkspaceError(
@@ -533,6 +957,25 @@ def _run_action(
                 raise AgentWorkspaceError(
                     "写入前校验失败: " + "; ".join(syn + api)
                 )
+        if rel.endswith(".tscn"):
+            tscn_errs = lint_tscn_godot4(content)
+            if tscn_errs:
+                raise AgentWorkspaceError(
+                    "场景写入前校验失败: " + "; ".join(tscn_errs)
+                    + "；或改用脚本 new Area2D()/add_child 实现新机制"
+                )
+        if existing is not None and rel.endswith((".gd", ".tscn")):
+            fidelity = assert_script_structure_fidelity(
+                rel,
+                existing,
+                content,
+                genre=genre,
+                allow_rewrite=allow_rewrite,
+            )
+            if fidelity:
+                raise AgentWorkspaceError(
+                    "结构保真门禁未过: " + "; ".join(fidelity)
+                )
         written = write_workspace_file(
             workspace_root,
             settings.workspace_dir,
@@ -540,12 +983,13 @@ def _run_action(
             path,
             content,
         )
+        eof_map.pop(rel, None)
         return {"tool": tool, "path": written, "bytes": len(content.encode("utf-8"))}
     if tool == "enable_catalog_skill":
         if is_laser_bomb_drop_request(user_text or ""):
             raise AgentWorkspaceError(
-                "掉落物需求禁止 enable_catalog_skill；"
-                "请改会话 powerup_types/apply_powerup 或写 drop_loot_unlock.gd"
+                "掉落物需求请改会话 powerup_types/apply_powerup "
+                "或调用 apply_shmup_drop_loot_chain（本路径走拾取链）"
             )
         skill_id = str(action.get("skill_id", "")).strip()
         if not skill_id:
@@ -554,6 +998,36 @@ def _run_action(
             return enable_catalog_skill(workspace_root, genre, skill_id)
         except LearnedSkillsError as exc:
             raise AgentWorkspaceError(str(exc)) from exc
+    if tool == "apply_shmup_drop_loot_chain":
+        if genre != "shmup":
+            raise AgentWorkspaceError("apply_shmup_drop_loot_chain 仅用于 shmup")
+        skills_raw = action.get("skills")
+        skills: list[str]
+        if isinstance(skills_raw, list):
+            skills = [str(x) for x in skills_raw if str(x).strip()]
+        else:
+            skills = ["laser_beam", "bomb"]
+        try:
+            result = _run_shmup_drop_loot_express(
+                settings,
+                workspace_root,
+                user_text or "掉落才开",
+                {"intent": "C", "skill_ids": skills},
+                contract,
+                skills=skills,
+            )
+        except ValueError as exc:
+            raise AgentWorkspaceError(str(exc)) from exc
+        return {
+            "tool": tool,
+            "ok": True,
+            "path": "core/player_ship.gd",
+            "written": list(result.get("written") or result.get("sandbox_files") or []),
+            "summary": result.get("summary"),
+            "how_to_play": result.get("how_to_play"),
+        }
+    if tool == "ensure_player_visibility":
+        return _run_ensure_player_visibility(settings, workspace_root, genre)
     if tool == "patch_mouse_steer_guard":
         ok = patch_shmup_mouse_steer_guard(workspace_root)
         return {
@@ -604,6 +1078,12 @@ def _run_action(
                 for h in hits
             ],
         }
+    if tool == "read_reference_skill":
+        which = str(action.get("which") or "genre").strip()
+        payload = read_reference_skill(
+            settings.reference_skills_dir, genre, which=which
+        )
+        return {"tool": tool, **payload}
     if tool == "validate_gdscript":
         path = str(action.get("path", "")).strip()
         content = str(action.get("content", "") or "")
@@ -646,7 +1126,11 @@ def _run_action(
             "tool": tool,
             "ok": not errs,
             "errors": errs,
-            "detail": "门禁通过，可以 done" if not errs else "门禁未过，请继续改再 done",
+            "detail": (
+                "门禁通过，可以 done"
+                if not errs
+                else "完成条件尚未齐备，请按 errors 继续改后再 done"
+            ),
         }
     if tool == "emit_progress":
         stage = str(action.get("stage", "write_changes")).strip() or "write_changes"
@@ -687,20 +1171,31 @@ def _rollback_snapshot(
     return rolled
 
 
-def _is_bugfix_turn(user_text: str, feedback: str, route: dict[str, Any] | None = None) -> bool:
-    """故障修盘局：人物消失/白屏/没生效等，回滚与话术须承认「原先问题可能还在」。"""
+def _is_playability_critical_turn(user_text: str, feedback: str) -> bool:
+    """白屏/人物消失/打不开等可玩性危急（HF-11：仅此类附加可见性软提示）。"""
     blob = f"{user_text or ''}\n{feedback or ''}"
+    return bool(_PLAYABILITY_CRITICAL.search(blob))
+
+
+def _is_bugfix_turn(user_text: str, feedback: str, route: dict[str, Any] | None = None) -> bool:
+    """反馈/修盘局：salvage 须承认可能未修好；HF-11：不再因 Intent B 一律打标。
+
+    仍识别「没生效」等反馈，与创作共用开放读盘循环；可玩性危急另见
+    `_is_playability_critical_turn`。
+    """
+    blob = f"{user_text or ''}\n{feedback or ''}"
+    if _PLAYABILITY_CRITICAL.search(blob):
+        return True
     if re.search(
-        r"消失|不显示|看不见|白屏|黑屏|没法.*启动|无法启动|打不开|闪退|报错|"
-        r"修复|修好|坏了|人物.*没|角色.*没|看不到画|没有画面|没生效|点了没反应|"
-        r"二段跳没用|技能没用|不能用",
+        r"没生效|不发射|没反应|不能用|只有.?键|点了没反应|"
+        r"二段跳没用|技能没用|没有恢复|没恢复|还是红|还是.*色|"
+        r"修好|坏了|报错|修复",
         blob,
     ):
         return True
-    if route and str(route.get("intent") or "") == "B":
-        return True
     if route and "运行故障" in str(route.get("recipe_id") or ""):
         return True
+    # HF-11：Intent B（调参/修盘建议）不再自动等同 bugfix
     return False
 
 
@@ -794,29 +1289,35 @@ def _salvage_agent_return(
         }
 
     if loads_ok and (written_unique or catalog_changed):
-        # 尽力交付：本轮确有改动且游戏能加载、玩家健康过
+        # HF-12：gate 未过默认回滚 pending，不交成功 sandbox_files
+        rolled = _rollback_snapshot(workspace_root, pre_turn_snapshot)
+        health_errs = assert_player_presence_health(workspace_root, genre)
+        if health_errs or playability_suspect:
+            _try_restore_playable()
         if last_summary.strip():
             summary = last_summary.strip()
-            if not re.search(r"可能|再|继续|不满意|如果", summary):
-                summary += "（可能还没完全达到你要的效果，先重开看看；不满意再告诉我，我接着改。）"
+            if not re.search(r"可能|再|继续|不满意|如果|尚未|一部分", summary):
+                summary += "（这轮尚未验收通过，改动已撤回；请继续说明，我接着改。）"
         else:
-            head = last_understanding.strip() or "按你说的改了这局游戏"
+            head = last_understanding.strip() or "按你说的尝试改了这局游戏"
             summary = (
-                f"{head}。我已经改了：{'、'.join(written_unique[:6]) or '本局配置'}。"
-                "可能还没完全到位，先重开看看；不满意再说一句，我继续改。"
+                f"{head}。本轮未过门禁，已撤回尝试改动"
+                f"（曾尝试：{'、'.join(written_unique[:6]) or '本局配置'}）。"
+                "请再补充细节，我继续改。"
             )
         if playability_suspect and not re.search(r"可能还|原先|消失|看不见", summary):
             summary += "若人物/画面仍有问题，直接再说一次，我继续专修。"
-        how = base_how or ["请重新启动游戏后试玩刚才的改动"]
+        how = base_how or ["请重新启动游戏后确认；可继续对话让我接着改"]
         if not any("重开" in h or "启动" in h or "重新" in h for h in how):
-            how.append("重要：重新启动游戏后新改动才会生效")
+            how.append("重要：重新启动游戏后才能看到最新可玩状态")
         return {
             "ok": True,
             "provider": "agent",
             "summary": summary,
             "message": summary,
             "changes": [],
-            "sandbox_files": written_unique,
+            "sandbox_files": [],
+            "attempted_paths": written_unique,
             "how_to_play": how,
             "applied_capabilities": list(route.get("skill_ids") or []),
             "needs_relaunch": True,
@@ -829,6 +1330,8 @@ def _salvage_agent_return(
             "gate_passed": False,
             "partial": True,
             "playability_suspect": playability_suspect,
+            "rolled_back": rolled,
+            "restored_playable": restored_playable,
             "intent_route": route,
             "dry_run": dry,
         }
@@ -886,25 +1389,24 @@ def _salvage_agent_return(
             "dry_run": dry,
         }
 
-    # 本轮没有任何改动 → 温和邀请继续，不用"换个说法/没改成"的上锁话术
+    # 本轮没有任何改动 → 温和邀请继续读盘写盘（HF-11：禁错品类「脚步」范例）
     if playability_suspect:
         if health_errs:
             _try_restore_playable()
         summary = (
             (last_understanding.strip() + "。" if last_understanding.strip() else "")
-            + "这轮还没把故障修好，游戏文件我先没动"
+            + "这轮还没把问题修好，游戏文件我先没改。"
             + ("（已尝试恢复可玩角色快照）" if restored_playable else "")
-            + "。"
-            "你可以直接再说一次同样的问题，或补充「什么时候消失/还能不能听见脚步」之类细节，我继续修。"
+            + "请直接再说一次现象，或补充出现时机；我会先读本局改过的文件再改。"
         )
-        how = ["故障可能还在，请继续告诉我，我接着改"]
+        how = ["问题可能还在；直接再说一次即可，我会继续读盘修复"]
     else:
         summary = (
             (last_understanding.strip() + "。" if last_understanding.strip() else "")
-            + "我还在琢磨怎么把这个改好，先没动你的游戏。"
-            "你可以多给一点细节（想要什么效果、在哪出现），我继续帮你改。"
+            + "我还在定位怎么改，这轮先没动磁盘。"
+            + "请再发一次需求或补充细节；我会先读本局近期改动再写。"
         )
-        how = ["游戏保持原样，可继续试玩"]
+        how = ["游戏保持原样，可继续试玩；再说一次我会继续改"]
     return {
         "ok": True,
         "provider": "agent",
@@ -937,17 +1439,26 @@ def run_game_agent(
     user_text: str,
     history: list[dict[str, str]] | None = None,
     feedback: str = "",
-    max_rounds: int = 8,
+    max_rounds: int | None = None,
     *,
     run_dry_run: bool = False,
 ) -> dict[str, Any]:
     """执行智能体；成功返回 ok/provider=agent。
 
-    轮次耗尽 / 门禁多次未过 / LLM 坏 JSON → **不再抛异常上锁**，而是尽力交付
+    轮次耗尽 / 门禁多次未过 / LLM 坏 JSON / 墙钟超时 → **不再抛异常上锁**，而是尽力交付
     （见 `_salvage_agent_return`）；只有无 Key / 网络类错误才向上抛供入口重试。
     """
     if not settings.llm_api_key.strip():
         raise ValueError("无 LLM_API_KEY，无法启动智能体")
+
+    if max_rounds is None:
+        max_rounds = max(1, int(getattr(settings, "agent_max_rounds", 16) or 16))
+    else:
+        max_rounds = max(1, int(max_rounds))
+    soft_extra: int = max(0, int(getattr(settings, "agent_soft_extra_rounds", 16) or 0))
+    wall_clock_sec: float = float(getattr(settings, "agent_wall_clock_sec", 360.0) or 0.0)
+    absolute_max: int = max_rounds + soft_extra
+    started_monotonic: float = time.monotonic()
 
     contract = load_contract(genre)
     progress_events: list[dict[str, Any]] = []
@@ -957,51 +1468,43 @@ def run_game_agent(
 
     route = route_intent(user_text or feedback, contract)
     bugfix = _is_bugfix_turn(user_text, feedback, route)
+    playability_critical = _is_playability_critical_turn(user_text, feedback)
     # 开局若玩家健康，先存可玩快照（供后续 salvage 从「已坏可加载」救回）
     save_last_playable_snapshot(workspace_root, genre)
 
-    # catalog 捷径：激光/炸弹/二段跳等明确命中 → 秒级落地，不进多轮 LLM
-    # 故障修盘局禁止走「再开 catalog」交差
+    # 7.19：catalog express 恒关闭；保留调用点但不进入（_can_catalog_express→False）
     if (not bugfix) and _can_catalog_express(route, user_text, feedback):
         try:
             return _run_catalog_express(
                 settings, workspace_root, genre, user_text, route, contract
             )
         except ValueError:
-            # 快车道失败再走完整智能体
             emit_progress(workspace_root, "read_contract", "catalog 快车道未过，改走智能体")
 
-    # shmup 掉落物捷径：仅当明确要「激光/炸弹做成掉落」时；通用掉落（爱心/金币等）走 LLM
-    if (
-        genre == "shmup"
-        and is_laser_bomb_drop_request(user_text or "")
-        and not feedback.strip()
-    ):
-        try:
-            return _run_shmup_drop_loot_express(
-                settings, workspace_root, user_text, route, contract
-            )
-        except ValueError:
-            emit_progress(
-                workspace_root, "read_contract", "掉落物快车道未过，改走智能体"
-            )
+    # HF-12：shmup 掉落物改为 LLM 可调用工具，禁止 pre-LLM return
 
     route_block = (
         "【意图建议·仅供参考，你可自主决策】\n" + format_route_for_prompt(route)
     )
 
     genre_ctx = genre_context_as_system_suffix(settings.templates_dir, genre)
-    tree_preview = list_workspace_tree(
+    recent_writes_block = format_recent_session_writes_for_prompt(workspace_root)
+    # 从近期改动文案提取路径供树置顶
+    recent_paths = re.findall(
+        r"(?:^|[\s、：:])((?:core|scenes|config)/[A-Za-z0-9_./\-]+\.(?:gd|tscn|json))",
+        recent_writes_block or "",
+    )
+    tree_preview = list_workspace_tree_high_signal(
         workspace_root,
         settings.workspace_dir,
         settings.templates_dir,
-        "",
+        recent_writes=recent_paths,
         max_entries=40,
     )
     diag = diagnose_workspace(workspace_root, genre, contract)
     diag_block = format_diagnose_for_prompt(diag)
 
-    emit_progress(workspace_root, "search_skills", "检索长期库")
+    emit_progress(workspace_root, "search_skills", "检索长期库与策展参考")
     learned_hits = search_learned_skills(
         settings.learned_skills_dir,
         user_text or feedback,
@@ -1009,50 +1512,40 @@ def run_game_agent(
         k=5,
     )
     learned_block = format_skills_for_prompt(learned_hits)
+    reference_block = format_reference_summary_for_prompt(
+        settings.reference_skills_dir, genre
+    )
 
     emit_progress(workspace_root, "read_contract", f"品类={genre} · 意图建议={route.get('intent')}")
     progress_events.append({"stage": "read_contract"})
 
-    # 确定性助手：catalog 建议命中且非故障反馈时预开技能（advisory 也可预开）
+    # 7.19：不再因 Intent A 预开 catalog；一律交 LLM 多工具循环
     written: list[str] = []
     catalog_changed = False
     # 回合前快照：本轮首次改某文件前记录其原内容，兜底回滚（绝不把游戏改到打不开）
     pre_turn_snapshot: dict[str, bytes | None] = {}
-    has_feedback = bool(feedback.strip()) or bool(
-        re.search(r"没生效|不发射|没反应|不能用|只有.?键", user_text or "")
-    )
-    if route.get("intent") == "A" and not route.get("stop") and not has_feedback:
-        for sid in route.get("skill_ids") or []:
-            try:
-                enable_catalog_skill(workspace_root, genre, str(sid))
-                written.append("config/game_config.json")
-                catalog_changed = True
-            except LearnedSkillsError:
-                pass
+    allow_soft_extension = False
+    # HF-12：跟踪各文件是否已读到 EOF（整写大文件门禁）
+    read_eof_by_path: dict[str, bool] = {}
 
-    # 路由已给出 goals 种子，避免首轮只能拆解不能写
+    # 路由 goals 种子：仅作提示，不预 enable
     plan_goals: list[str] = []
-    if route.get("intent") == "A" and route.get("skill_ids"):
-        plan_goals = [f"开启 {sid}" for sid in route.get("skill_ids") or []][:5]
+    if route.get("intent") == "C" and route.get("skill_ids"):
+        # 条件需求：catalog 仅材料，goals 强调条件本身
+        plan_goals = [
+            str(route.get("hint") or "按用户条件实现机制")[:100]
+        ]
+        for sid in (route.get("skill_ids") or [])[:3]:
+            plan_goals.append(f"可参考 catalog 材料:{sid}")
+    elif route.get("intent") == "A" and route.get("skill_ids"):
+        plan_goals = [
+            f"实现目标能力（可参考 catalog:{sid}）"
+            for sid in route.get("skill_ids") or []
+        ][:5]
     elif str(route.get("hint") or "").strip():
         plan_goals = [str(route.get("hint")).strip()[:80]]
 
-    for act in route.get("actions") or []:
-        if not isinstance(act, dict):
-            continue
-        tool_name = str(act.get("tool", ""))
-        if tool_name == "patch_mouse_steer_guard":
-            if patch_shmup_mouse_steer_guard(workspace_root):
-                written.append("core/player_ship.gd")
-                emit_progress(
-                    workspace_root, "write_changes", "已修补鼠标跟机与技能按钮冲突"
-                )
-        elif tool_name in ("refresh_ai_sandbox_bridge", "ensure_touch_skill_buttons"):
-            if refresh_ai_sandbox_bridge(workspace_root, settings.templates_dir):
-                written.append("core/ai_sandbox_bridge.gd")
-                emit_progress(
-                    workspace_root, "write_changes", "已刷新会话桥（触屏 HUD）"
-                )
+    # HF-12：路由 actions 只作为 LLM 材料，不在首轮 LLM 前预执行任何写盘动作。
 
     if route.get("stop"):
         # 不硬劝退：幻想 API 请求改为「用会话 GDScript 实现同等效果」，继续跑 LLM
@@ -1064,7 +1557,7 @@ def run_game_agent(
             "intent": "C",
             "hint": (
                 str(route.get("hint") or "")
-                + "；勿发明 bridge 方法，请在会话 core/scenes 用 GDScript 实现用户想要的效果"
+                + "；请在会话 core/scenes 用 GDScript 实现用户想要的效果"
             ).strip("；"),
         }
         route_block = format_route_for_prompt(route)
@@ -1085,29 +1578,31 @@ def run_game_agent(
         route_block,
         "当前会话文件（部分）:",
         *[f"- {p}" for p in tree_preview],
-        catalog_for_prompt(),
+        catalog_for_prompt(genre, contract),
     ]
     if learned_block:
         context_bits.append(learned_block)
-    if bugfix:
-        context_bits.append(
-            "【故障修盘·强制】本轮是运行故障反馈：先 diagnose_workspace + 读玩家脚本/"
-            "scenes/player.tscn/hooks；"
-            "找玩家用 get_nodes_in_group('player') 或 AiSandboxBridge.get_player_node()；"
-            "禁止 get_node('../Player') 与 /root/Main/Player（Player 不在 Main 直属）；"
-            "确保可见：勿 visible=false / modulate.a=0 / queue_free；"
-            "禁止 enable 新技能、禁止叠冲刺/无敌/彩虹等新机制；只修让人能看见、能操控。"
-        )
+    if reference_block:
+        context_bits.append(reference_block)
+    if recent_writes_block:
+        context_bits.append(recent_writes_block)
+    # HF-11：统一开放读盘；可玩性危急 / shmup 掉落仅门控附加正向提示
+    if bugfix or recent_writes_block:
+        context_bits.append(_OPEN_READ_WORK_TIP)
+    if playability_critical:
+        context_bits.append(_PLAYABILITY_WORK_TIP)
+    if genre == "shmup" and is_laser_bomb_drop_request(user_text or feedback):
+        context_bits.append(_SHMUP_DROP_LOOT_TIP)
     context_bits.append(
-        "请先给出 understanding + goals（拆解本轮原话），再施工；"
+        "请先给出 understanding + goals，再读盘施工；"
         "一条话里的多个要求都要进 goals 并尽量落地。"
-        "done.summary 用自然中文直接回答本轮，覆盖各 goals；勿复读更早轮次宣传。"
+        "带条件的需求用会话逻辑实现条件；"
+        "done.summary 用自然中文覆盖各 goals。"
     )
     user_blob = turn_text + "\n\n" + "\n".join(context_bits)
 
+    # HF-12：system 只放稳定工作法 + 品类摘要；Reference/Learned 仅进 user。
     system_content = _AGENT_SYSTEM + "\n\n" + genre_ctx
-    if learned_block:
-        system_content += "\n\n" + learned_block
 
     messages: list[dict[str, str]] = [
         {"role": "system", "content": system_content},
@@ -1130,12 +1625,43 @@ def run_game_agent(
     searched_ids: list[str] = []
     gate_failures = 0
     dry_run_result: dict[str, Any] | None = None
+    last_error_sig = ""
+    error_sig_streak = 0
 
-    for _round in range(max(1, max_rounds)):
+    for _round in range(absolute_max):
+        # 软续杯：越过首段 max_rounds 前须已有写盘进展
+        if _round >= max_rounds:
+            if soft_extra <= 0 or not allow_soft_extension:
+                break
+            if _round == max_rounds:
+                emit_progress(
+                    workspace_root,
+                    "write_changes",
+                    f"首段 {max_rounds} 轮有进展，软续杯 +{soft_extra} 轮继续完成…",
+                )
+        if wall_clock_sec > 0 and (time.monotonic() - started_monotonic) >= wall_clock_sec:
+            return _salvage_agent_return(
+                settings,
+                workspace_root,
+                genre,
+                route=route,
+                written=written,
+                catalog_changed=catalog_changed,
+                pre_turn_snapshot=pre_turn_snapshot,
+                last_summary=summary,
+                last_how=how_to_play,
+                last_understanding=last_understanding,
+                plan_goals=plan_goals,
+                progress_events=progress_events,
+                rounds_used=_round + 1,
+                reason=f"墙钟超时（{int(wall_clock_sec)}s），已尽量保留可玩进度",
+                bugfix=bugfix,
+            )
+        budget_label = absolute_max if allow_soft_extension else max_rounds
         emit_progress(
             workspace_root,
             "write_changes" if _round > 0 else "read_contract",
-            f"智能体第 {_round + 1}/{max_rounds} 轮思考中…",
+            f"智能体第 {_round + 1}/{budget_label} 轮思考中…",
         )
         try:
             parsed = _llm_turn(settings, messages)
@@ -1150,11 +1676,12 @@ def run_game_agent(
                     "role": "user",
                     "content": (
                         f"上一轮回复无法解析（{err}）。请只返回合法 JSON 对象，"
-                        "含 understanding、goals、actions；不要 markdown 代码块外的杂文。"
+                        "含 understanding、goals、actions。"
                     ),
                 }
             )
-            if _round >= max(1, max_rounds) - 1:
+            last_budget = absolute_max if allow_soft_extension else max_rounds
+            if _round >= max(1, last_budget) - 1:
                 return _salvage_agent_return(
                     settings,
                     workspace_root,
@@ -1205,7 +1732,14 @@ def run_game_agent(
         has_mutate = any(
             isinstance(a, dict)
             and str(a.get("tool", ""))
-            in ("write_file", "enable_catalog_skill", "done")
+            in (
+                "write_file",
+                "replace_text",
+                "apply_shmup_drop_loot_chain",
+                "ensure_player_visibility",
+                "enable_catalog_skill",
+                "done",
+            )
             for a in actions
         )
         if has_mutate and not plan_goals:
@@ -1237,38 +1771,55 @@ def run_game_agent(
 
         pending_done: dict[str, Any] | None = None
 
-        for raw in actions[:8]:
+        for raw in _schedule_actions_for_round(actions, max_total=10):
             if not isinstance(raw, dict):
                 continue
             tool_name = str(raw.get("tool", "")).strip()
             if tool_name == "done":
                 pending_done = raw
                 continue
-            if tool_name == "write_file":
+            if tool_name in (
+                "write_file",
+                "replace_text",
+                "apply_shmup_drop_loot_chain",
+                "ensure_player_visibility",
+            ):
                 emit_progress(
                     workspace_root,
                     "write_changes",
-                    str(raw.get("path", ""))[:60],
+                    str(raw.get("path", "") or tool_name)[:60],
                 )
             # 改文件前先快照原内容（本轮首次），供兜底回滚
             _snap_targets: list[str] = []
-            if tool_name == "write_file":
+            if tool_name in ("write_file", "replace_text"):
                 _p = str(raw.get("path", "")).strip().replace("\\", "/")
                 if _p:
                     _snap_targets.append(_p)
+            elif tool_name == "apply_shmup_drop_loot_chain":
+                _snap_targets.extend(
+                    ["config/game_config.json", "core/player_ship.gd", "core/ai_sandbox_bridge.gd"]
+                )
+            elif tool_name == "ensure_player_visibility":
+                _pcfg = PLAYER_PRESENCE_BY_GENRE.get(genre) or {}
+                for _key in ("script", "scene"):
+                    _rel = str(_pcfg.get(_key) or "").replace("\\", "/")
+                    if _rel:
+                        _snap_targets.append(_rel)
             elif tool_name == "enable_catalog_skill":
                 _snap_targets.append("config/game_config.json")
             elif tool_name == "patch_mouse_steer_guard":
                 _snap_targets.append("core/player_ship.gd")
             elif tool_name in ("refresh_ai_sandbox_bridge", "ensure_touch_skill_buttons"):
                 _snap_targets.append("core/ai_sandbox_bridge.gd")
+            action_snapshot: dict[str, bytes | None] = {}
             for _st in _snap_targets:
+                _sp = workspace_root / _st
+                try:
+                    action_snapshot[_st] = _sp.read_bytes() if _sp.is_file() else None
+                except OSError:
+                    action_snapshot[_st] = None
                 if _st not in pre_turn_snapshot:
-                    _sp = workspace_root / _st
-                    try:
-                        pre_turn_snapshot[_st] = _sp.read_bytes() if _sp.is_file() else None
-                    except OSError:
-                        pre_turn_snapshot[_st] = None
+                    pre_turn_snapshot[_st] = action_snapshot[_st]
             try:
                 obs = _run_action(
                     settings,
@@ -1280,15 +1831,80 @@ def run_game_agent(
                     written_paths=written,
                     catalog_changed=catalog_changed,
                     user_text=user_text,
+                    read_eof_by_path=read_eof_by_path,
+                    plan_goals=plan_goals,
                 )
             except (AgentWorkspaceError, OSError, ValueError) as exc:
                 obs = {"tool": raw.get("tool"), "error": str(exc)}
+
+            # HF-12：每次代码 mutation 后立即跑 Godot；失败则恢复本动作前版本。
+            action_written: list[str] = []
+            if not obs.get("error"):
+                if obs.get("tool") in ("write_file", "replace_text") and obs.get("path"):
+                    action_written.append(str(obs["path"]))
+                elif obs.get("tool") in (
+                    "apply_shmup_drop_loot_chain",
+                    "ensure_player_visibility",
+                ):
+                    action_written.extend(str(p) for p in (obs.get("written") or []))
+                elif obs.get("tool") in (
+                    "patch_mouse_steer_guard",
+                    "refresh_ai_sandbox_bridge",
+                    "ensure_touch_skill_buttons",
+                ):
+                    path_w = str(obs.get("path") or "")
+                    if path_w:
+                        action_written.append(path_w)
+                    elif obs.get("refreshed_bridge"):
+                        action_written.append("core/ai_sandbox_bridge.gd")
+            action_code_touched = any(
+                p.replace("\\", "/").endswith((".gd", ".tscn"))
+                for p in action_written
+            )
+            if action_code_touched:
+                action_dry = dry_run_godot(
+                    workspace_root, settings.godot_path, timeout_sec=30.0
+                )
+                if (
+                    action_dry
+                    and not action_dry.get("skipped")
+                    and not action_dry.get("ok")
+                ):
+                    rolled = _rollback_snapshot(workspace_root, action_snapshot)
+                    obs = {
+                        "tool": raw.get("tool"),
+                        "error": (
+                            "动作后 Godot 校验尚未通过；已恢复本动作前版本："
+                            + "; ".join(
+                                str(e)
+                                for e in (
+                                    action_dry.get("errors")
+                                    or ["headless 校验失败"]
+                                )[:4]
+                            )
+                        ),
+                        "attempted_paths": action_written,
+                        "rolled_back": rolled,
+                        "dry_run": action_dry,
+                    }
+                else:
+                    obs["dry_run"] = action_dry
             observations.append(obs)
-            if obs.get("tool") == "write_file" and obs.get("path"):
+            if obs.get("tool") in ("write_file", "replace_text") and obs.get("path") and not obs.get("error"):
                 written.append(str(obs["path"]))
+                allow_soft_extension = True
+            if (
+                obs.get("tool") in ("apply_shmup_drop_loot_chain", "ensure_player_visibility")
+                and obs.get("ok")
+                and not obs.get("error")
+            ):
+                for wp in obs.get("written") or []:
+                    written.append(str(wp))
+                allow_soft_extension = True
             if obs.get("tool") == "enable_catalog_skill" and not obs.get("error"):
                 written.append("config/game_config.json")
                 catalog_changed = True
+                allow_soft_extension = True
             if obs.get("tool") in (
                 "patch_mouse_steer_guard",
                 "refresh_ai_sandbox_bridge",
@@ -1297,8 +1913,10 @@ def run_game_agent(
                 path_w = str(obs.get("path") or "")
                 if path_w:
                     written.append(path_w)
+                    allow_soft_extension = True
                 elif obs.get("refreshed_bridge"):
                     written.append("core/ai_sandbox_bridge.gd")
+                    allow_soft_extension = True
             if obs.get("tool") == "search_learned_skills":
                 for hit in obs.get("hits") or []:
                     sid = str(hit.get("skill_id") or "")
@@ -1316,20 +1934,7 @@ def run_game_agent(
             elif not any("重开" in h or "启动" in h or "重新" in h for h in how_to_play):
                 how_to_play.append("重要：重新启动游戏后新改动才会生效")
 
-            # 仅首开 catalog 建议时补 enable；反馈局不强制
-            if (
-                route.get("intent") == "A"
-                and not route.get("advisory")
-                and not has_feedback
-            ):
-                for sid in route.get("skill_ids") or []:
-                    try:
-                        enable_catalog_skill(workspace_root, genre, str(sid))
-                        catalog_changed = True
-                        written.append("config/game_config.json")
-                    except LearnedSkillsError:
-                        pass
-
+            # 7.19：done 前不再强制 enable catalog；由 LLM actions 显式决定
             gate_errors = list(
                 run_done_gates(
                     workspace_root,
@@ -1375,9 +1980,14 @@ def run_game_agent(
                 observations.append(
                     {
                         "tool": "done",
-                        "error": "门禁未通过，禁止成功返回",
+                        "error": "完成条件尚未齐备，请按 gate_errors 继续施工",
                         "gate_errors": gate_errors,
                     }
+                )
+                tool_report = serialize_observations_for_followup(
+                    observations,
+                    total_budget=12000,
+                    per_item_budget=5000,
                 )
                 messages.append(
                     {"role": "assistant", "content": json.dumps(parsed, ensure_ascii=False)}
@@ -1386,14 +1996,17 @@ def run_game_agent(
                     {
                         "role": "user",
                         "content": (
-                            "done 被门禁拒绝，禁止口头成功。错误：\n"
+                            "本轮工具结果：\n"
+                            + tool_report
+                            + "\n完成条件尚未齐备，请按下列说明继续施工：\n"
                             + json.dumps(gate_errors, ensure_ascii=False)
                             + (
                                 "\n本轮 goals：" + "；".join(plan_goals)
                                 if plan_goals
                                 else ""
                             )
-                            + "\n请按 goals 补齐实现与 summary，再写入后重新 done。"
+                            + "\n请读取相关脚本（尤其近期改过的路径），"
+                            "并用 replace_text 最小 patch 完成目标后再 done。"
                         ),
                     }
                 )
@@ -1455,10 +2068,90 @@ def run_game_agent(
 
         follow = (
             "工具结果:\n"
-            + json.dumps(observations, ensure_ascii=False)[:8000]
+            + serialize_observations_for_followup(observations)
         )
         if plan_goals:
             follow += "\n本轮 goals：" + "；".join(plan_goals) + "（未完成的请继续）"
+        # 未读完的文件提醒 continuation
+        pending_reads = [
+            f"{p}(next_offset 续读)"
+            for p, eof in read_eof_by_path.items()
+            if eof is False
+        ]
+        if pending_reads:
+            follow += (
+                "\n尚未读到 EOF 的文件："
+                + "、".join(pending_reads[:6])
+                + "；改这些大文件请用 replace_text 或先续读到 eof。"
+            )
+        # HF-12 Live：可玩性危急局读盘空转 → 催写盘；优先确定性工具
+        if playability_critical and not written and not catalog_changed:
+            follow += (
+                "\n【可玩性催写】已读盘但尚未写入。"
+                "请立刻调用 ensure_player_visibility（一次加固玩家可见性），"
+                "然后 self_check → done；"
+                "也可手写 replace_text。done 须有真实写入。"
+            )
+        # 掉落探针：读盘空转时催专用工具（与 ensure 同级，非 Intent 特例堆叠）
+        if (
+            genre == "shmup"
+            and is_laser_bomb_drop_request(user_text or feedback)
+            and not written
+            and not catalog_changed
+        ):
+            follow += (
+                "\n【掉落催写】已读盘但尚未写入。"
+                "请立刻调用 apply_shmup_drop_loot_chain，"
+                "然后 self_check → done。"
+            )
+        # 通用：多轮仍无落盘 → 催 replace（换行已自动对齐，hash 可省略）
+        mutate_failed = any(
+            isinstance(o, dict)
+            and o.get("error")
+            and str(o.get("tool") or "") in ("replace_text", "write_file")
+            for o in observations
+        )
+        if (
+            not written
+            and not catalog_changed
+            and _round >= 2
+            and (mutate_failed or _round >= 4)
+        ):
+            follow += (
+                "\n【施工催写】尚未成功写入磁盘。"
+                "请立刻 replace_text：old_text 从最近 read/search 原文复制（可省略 expected_sha256）；"
+                "系统会自动对齐 CRLF/LF。成功写入后再 self_check → done。"
+            )
+        # HF-13：同错连击 → 换路（禁重复 write_file 同一坏场景）
+        err_bits = [
+            f"{o.get('tool')}:{str(o.get('error'))[:100]}"
+            for o in observations
+            if isinstance(o, dict) and o.get("error")
+        ]
+        err_sig = "|".join(err_bits)
+        if err_sig:
+            if err_sig == last_error_sig:
+                error_sig_streak += 1
+            else:
+                last_error_sig = err_sig
+                error_sig_streak = 1
+        elif any(
+            isinstance(o, dict)
+            and o.get("tool") in ("replace_text", "write_file")
+            and o.get("path")
+            and not o.get("error")
+            for o in observations
+        ):
+            last_error_sig = ""
+            error_sig_streak = 0
+        if error_sig_streak >= 3:
+            follow += (
+                "\n【换路催写】连续多轮同一写入/校验错误未消除，请换策略："
+                "1) read_file 失败路径后用 replace_text 修具体报错行"
+                "（Godot 4 碰撞用 size 勿 extents；[sub_resource] 先于 SubResource 引用）；"
+                "2) 新机制优先脚本 new Area2D()/add_child，避免新建 PackedScene 再 preload；"
+                "3) 勿重复 write_file 整文件重写同一内容。"
+            )
         follow += "\n请继续；改完后 actions 含 done（须过门禁）。"
         messages.append({"role": "assistant", "content": json.dumps(parsed, ensure_ascii=False)})
         messages.append({"role": "user", "content": follow})
@@ -1477,7 +2170,7 @@ def run_game_agent(
         last_understanding=last_understanding,
         plan_goals=plan_goals,
         progress_events=progress_events,
-        rounds_used=max(1, max_rounds),
+        rounds_used=max(1, absolute_max if allow_soft_extension else max_rounds),
         reason="未在限定轮次内完成",
         bugfix=bugfix,
     )

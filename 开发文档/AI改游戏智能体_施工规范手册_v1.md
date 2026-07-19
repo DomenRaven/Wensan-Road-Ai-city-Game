@@ -3,6 +3,7 @@
 > **对齐**：需求规格 **v1.2**  
 > **配套**：[`文件映射表`](./AI改游戏智能体_文件映射表_v1.md) · [`开工提示词 v3`](./AI改游戏智能体_全任务开工提示词_v3.md)  
 > **读者**：实现 Agent（Cursor）  
+> **7.19 修订优先级**：总纲 G1–G12 优先于本文旧 Intent 强制动作；当前施工从 [`HF-12 安全读写闭环`](./7.19_AI改游戏智能体_HF-12_安全读写闭环_待修复与施工方案.md) P0 开始
 
 ---
 
@@ -42,18 +43,21 @@
 
 ### 3.1 四类意图
 
-| 码 | 判定线索 | 强制动作 |
-|----|----------|----------|
-| A | 命中 catalog id/中文标签 | `enable_catalog_skill`；禁止只 write 空壳 |
-| B | 更快/更慢/颜色/生成 | tuning 或会话 core 或已有桥 API |
-| C | 新机制且桥已有 API | 仅 `ai_sandbox` + `apply(bridge)` |
-| D | 需要新挂钩 | **停** → 扩桥真方法 + 写契约 → 再按 C |
+| 码 | 判定线索 | 7.19 当前语义（均为软建议） |
+|----|----------|------------------------------|
+| A | 命中 catalog id/中文标签，且无附加条件 | Catalog 作为材料；可 enable，也可会话现场实现 |
+| B | 更快/更慢/颜色/生成/反馈 | 先读盘，对照原话最小改会话副本 |
+| C | 新机制或含「每 N 次/冷却/捡到才开」 | 优先会话逻辑；桥/Catalog/Reference 可选 |
+| D | 点名契约外钩子 | 用会话 GDScript 实现同等效果；确需产品钩子再扩 `_edu`/契约 |
+
+> 命中 Catalog 但带条件时按 C/开放实现处理；有 Key 不因 Intent 走 pre-LLM 快车道。
 
 ### 3.2 实现要求（P0-通用）
 
-- 增加确定性路由器（可规则 + LLM 辅助）：输出 `{intent, recipe_id, actions[]}`。  
-- `write_file` / `done` 前校验 actions 与 recipe 一致。  
-- 偏离时返回 error 文案，迫使再改。
+- 路由器输出 `{intent, recipe_id, actions[]}`，只提供材料与建议。  
+- 用户原话、会话磁盘与 goals 的优先级高于 recipe。  
+- 带条件原话在路由前识别，避免先导向裸 enable。  
+- 安全/声称/条件落地由门禁验收，不用 Intent 限制 LLM 能力。
 
 ---
 
@@ -136,6 +140,8 @@ func apply(bridge) -> void:
 
 实现位置：`agent_contracts.py` · `game_agent.py`
 
+> **HF-12 自动闭环已落地**：分页读盘、`replace_text`、diff/函数/信号/export/onready/关键链保真、动作级 dry-run 回滚、`gate_passed=false` 不交成功文件。展厅 Live/人工触屏矩阵仍以 HF-12 §9.2–9.3 为准。
+
 | 检查 | 失败行为 |
 |------|----------|
 | 无写入 | 拒 done |
@@ -144,6 +150,9 @@ func apply(bridge) -> void:
 | how_to_play 无重开 / 无触屏 | 拒 done |
 | catalog「启用了 X」但无 X | 拒 done |
 | runtime 检查点（目标） | 拒 done |
+| 读盘未完整却整写已有大文件（HF-12） | 拒写入 |
+| 删除非目标函数/信号/关键玩法链（HF-12） | 拒 done 并回滚 |
+| `gate_passed=false` / partial（HF-12） | 不作为成功文件交付，不 harvest |
 
 进度：`emit_progress` 阶段名与 kiosk `PHASES` 对齐。
 
@@ -212,3 +221,4 @@ func apply(bridge) -> void:
 | 日期 | 说明 |
 |------|------|
 | 2026-07-18 | v1：对齐需求 v1.2 通用工作流 |
+| 2026-07-19 | 7.19 校准：Intent 改为软建议；HF-12 接管安全 patch/diff/事务门禁 |

@@ -16,6 +16,8 @@
   let showGuardUntil = 0;
   /** @type {number} */
   let focusOutTimer = 0;
+  /** @type {number} */
+  let suppressShowUntil = 0;
   /** @type {HTMLInputElement|HTMLTextAreaElement|null} */
   let activeTouchInput = null;
 
@@ -25,6 +27,8 @@
     ".edu-nlpatch-chip, [data-edu-keyboard-keep], label[for]";
   const SHOW_GUARD_MS = 400;
   const FOCUS_OUT_DELAY_MS = 120;
+  /** 点发送/导航后短暂禁 show，避免 TabTip toggle 误开或 focus 回弹再唤起 */
+  const SUPPRESS_SHOW_MS = 1200;
 
   /** @returns {string} */
   function apiBase() {
@@ -148,6 +152,9 @@
 
   /** @returns {void} */
   function showKeyboard() {
+    if (Date.now() < suppressShowUntil) {
+      return;
+    }
     postKeyboard("show");
   }
 
@@ -163,6 +170,8 @@
   function dismissForNavigation() {
     clearFocusOutTimer();
     blurActiveTouchInput();
+    suppressShowUntil = Date.now() + SUPPRESS_SHOW_MS;
+    keyboardIntent = "hide";
     hideKeyboard({ force: true });
   }
 
@@ -194,7 +203,9 @@
   function isNavigationControl(el) {
     return Boolean(
       el.closest(
-        "#btnNext, #btnPrev, #btnDualNext, #btnDualPrev, #btnReset, #btnCertSave, .btn-primary, .btn-secondary, .edu-nlpatch-close, [data-nlp-dismiss]"
+        "#btnNext, #btnPrev, #btnDualNext, #btnDualPrev, #btnReset, #btnCertSave, " +
+          "#edu-nlpatch-submit, .edu-nlpatch-go, #edu-nlpatch-replay, #edu-nlpatch-done, " +
+          ".btn-primary, .btn-secondary, .edu-nlpatch-close, [data-nlp-dismiss]"
       )
     );
   }
@@ -317,6 +328,10 @@
     if (!isTouchInput(el)) return;
     clearFocusOutTimer();
     activeTouchInput = /** @type {HTMLInputElement|HTMLTextAreaElement} */ (el);
+    /* 发送/导航后的 suppress 窗口内禁止再唤起（防误弹手写板） */
+    if (Date.now() < suppressShowUntil) {
+      return;
+    }
     /* 程序化 focus（如芯片填词）也唤起；已 show 则被防抖吞掉 */
     showKeyboard();
   }

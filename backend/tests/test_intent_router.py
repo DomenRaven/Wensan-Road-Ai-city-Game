@@ -38,11 +38,16 @@ def test_route_drop_loot_is_c_not_catalog_express() -> None:
     assert r.get("skill_ids") == []
     assert r.get("express") is False
     assert not any(a.get("tool") == "enable_catalog_skill" for a in r["actions"])
+    assert any(
+        a.get("tool") == "apply_shmup_drop_loot_chain" for a in r["actions"]
+    )
+    assert "apply_shmup_drop_loot_chain" in str(r.get("hint") or "")
+    assert "player_ship" in str(r.get("hint") or "")
     assert _can_catalog_express(r, text, "") is False
-    # 对比：单纯开激光仍走 A 快车道
+    # 对比：单纯开激光仍走 Intent A 建议，但 express 恒关
     r2 = route_intent("开启激光", c)
     assert r2["intent"] == "A"
-    assert _can_catalog_express(r2, "开启激光", "") is True
+    assert _can_catalog_express(r2, "开启激光", "") is False
 
 
 def test_shmup_drop_loot_express_patches_powerup() -> None:
@@ -175,6 +180,54 @@ def test_done_gate_accepts_drop_loot_powerup_impl(tmp_path: Path) -> None:
         user_text="激光和炸弹是敌机掉落物，掉落才开启",
     )
     assert not any("掉落物" in e for e in errs)
+    # summary 含「开启」不得逼开局 enabled_skills 预开 laser_beam
+    assert not any("enabled_skills 中没有 laser_beam" in e for e in errs)
+
+
+def test_done_gate_rejects_preenabled_skills_for_drop_loot(tmp_path: Path) -> None:
+    """掉落才开：开局 enabled_skills 预开 laser_beam 应失败。"""
+    root = tmp_path / "ws"
+    (root / "config").mkdir(parents=True)
+    (root / "core").mkdir(parents=True)
+    (root / "scenes").mkdir(parents=True)
+    (root / "config" / "game_config.json").write_text(
+        json.dumps(
+            {
+                "tuning": {
+                    "enabled_skills": ["laser_beam"],
+                    "powerup_types": [{"name": "laser", "frame": 8}],
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (root / "core" / "player_ship.gd").write_text(
+        'extends Area2D\nfunc apply_powerup(powerup_name: String) -> void:\n'
+        '\tmatch powerup_name:\n'
+        '\t\t"laser":\n'
+        '\t\t\tskills.append("laser_beam")\n'
+        '\t\t\t# unlocked via enabled_skills\n',
+        encoding="utf-8",
+    )
+    (root / "core" / "enemy_spawner.gd").write_text(
+        "extends Node2D\nsignal request_powerup(spawn_pos: Vector2, count: int)\n",
+        encoding="utf-8",
+    )
+    (root / "scenes" / "main.tscn").write_text(
+        '[gd_scene load_steps=2 format=3]\n[node name="Main" type="Node2D"]\n',
+        encoding="utf-8",
+    )
+    c = load_contract("shmup")
+    errs = run_done_gates(
+        root,
+        written_paths=["config/game_config.json", "core/player_ship.gd"],
+        summary="已实现敌机掉落激光，捡到后才开启。",
+        how_to_play=["重开游戏", "打敌机捡掉落激光道具"],
+        genre="shmup",
+        contract=c,
+        user_text="敌机掉落激光，捡到后才开启",
+    )
+    assert any("开局 enabled_skills 勿预开" in e for e in errs)
 
 
 def test_done_gate_rejects_gutted_spawner_for_drop_loot(tmp_path: Path) -> None:
@@ -227,6 +280,14 @@ def test_route_mouse_skill_conflict_is_b_not_a() -> None:
     assert r["intent"] == "B"
     assert r["skill_ids"] == []
     assert any(a.get("tool") == "patch_mouse_steer_guard" for a in r["actions"])
+
+
+def test_route_mouse_skill_conflict_shmup_only() -> None:
+    """非 shmup 不被「按钮没反应」带进飞机跟机补丁。"""
+    c = load_contract("platformer")
+    r = route_intent("点了没反应，按钮没反应", c)
+    assert r.get("recipe_id") != "鼠标与技能按钮冲突"
+    assert not any(a.get("tool") == "patch_mouse_steer_guard" for a in r["actions"])
 
 
 def test_route_touch_dead_keyboard_ok_not_a() -> None:

@@ -126,17 +126,22 @@
   function releaseSessionBeacon(sid) {
     if (!sid) return;
     try {
-      navigator.sendBeacon(`${API}/sessions/${sid}/release`, "");
+      // 异常退出：只清盘，不写 learned_skills
+      navigator.sendBeacon(`${API}/sessions/${sid}/release?harvest=false`, "");
     } catch (_) {
       /* ignore */
     }
   }
 
-  /** @param {string} [sid] */
-  async function releaseSessionAsync(sid) {
+  /**
+   * @param {string} [sid]
+   * @param {{ harvest?: boolean }} [opts]
+   */
+  async function releaseSessionAsync(sid, opts = {}) {
     const id = sid || sessionId;
     if (!id) return;
-    await api(`/sessions/${id}/release`, { method: "POST" }).catch(() => {});
+    const q = opts.harvest === true ? "harvest=true" : "harvest=false";
+    await api(`/sessions/${id}/release?${q}`, { method: "POST" }).catch(() => {});
     if (id === sessionId) {
       sessionId = "";
       rememberSessionId("");
@@ -975,7 +980,8 @@
 
   btnReset.onclick = async () => {
     if (sessionId) {
-      await releaseSessionAsync(sessionId);
+      // 主动重新开始：可 harvest；刷新/关页走 beacon(harvest=false)
+      await releaseSessionAsync(sessionId, { harvest: true });
     }
     stepIndex = 0;
     selectedGenre = "";

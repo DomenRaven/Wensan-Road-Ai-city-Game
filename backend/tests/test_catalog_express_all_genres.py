@@ -1,4 +1,4 @@
-"""七品类 catalog 快车道：点名开技能不得掉进多轮 LLM。"""
+"""七品类：catalog express 已关闭；点名口语须进完整 Agent。"""
 
 from __future__ import annotations
 
@@ -12,13 +12,12 @@ from app.config import Settings
 from app.services.creative.agent_contracts import load_contract
 from app.services.creative.game_agent import (
     _can_catalog_express,
-    _run_catalog_express,
     run_game_agent,
 )
 from app.services.creative.intent_router import route_intent
 from app.services.config_builder import load_optional_skills_catalog
 
-# 每品类：口语 → 期望 skill_id
+# 每品类：口语 → 期望 skill_id（路由仍可建议 A，但不得 express）
 _EXPRESS_CASES: list[tuple[str, str, str]] = [
     ("platformer", "我想加二段跳", "double_jump"),
     ("platformer", "开下砸", "ground_pound"),
@@ -40,15 +39,21 @@ _EXPRESS_CASES: list[tuple[str, str, str]] = [
 def _settings(templates: Path, workspace: Path) -> Settings:
     learned = workspace.parent / "learned_express"
     learned.mkdir(parents=True, exist_ok=True)
+    ref = workspace.parent / "reference_skills"
+    ref.mkdir(parents=True, exist_ok=True)
     return Settings(
         templates_dir=templates,
         workspace_dir=workspace,
         learned_skills_dir=learned,
+        reference_skills_dir=ref,
         allow_memory_fallback=True,
         llm_api_key="sk-test",
         llm_base_url="https://example.invalid/v1",
         llm_model="test",
         llm_timeout_sec=5.0,
+        agent_max_rounds=16,
+        agent_soft_extra_rounds=16,
+        agent_wall_clock_sec=360.0,
     )
 
 
@@ -66,7 +71,6 @@ def _session_for_genre(tmp_path: Path, genre: str) -> tuple[Path, Path, Path]:
     (templates / genre / "config" / "game_config.json").write_text(
         json.dumps(cfg, ensure_ascii=False), encoding="utf-8"
     )
-    # 最小 _edu 桥/触屏，供快车道拷贝
     edu = templates / "_edu"
     edu.mkdir(parents=True, exist_ok=True)
     (edu / "ai_sandbox_bridge.gd").write_text(
@@ -82,7 +86,6 @@ def _session_for_genre(tmp_path: Path, genre: str) -> tuple[Path, Path, Path]:
         json.dumps(cfg, ensure_ascii=False), encoding="utf-8"
     )
     (root / "core").mkdir(parents=True)
-    # HF-10：快车道 done 门禁要玩家健康；补最小脚本/场景
     presence = PLAYER_PRESENCE_BY_GENRE.get(genre) or {}
     script_rel = str(presence.get("script") or "")
     scene_rel = str(presence.get("scene") or "scenes/player.tscn")
@@ -90,7 +93,6 @@ def _session_for_genre(tmp_path: Path, genre: str) -> tuple[Path, Path, Path]:
     if script_rel:
         sp = root / script_rel
         sp.parent.mkdir(parents=True, exist_ok=True)
-        body = "extends Node\n"
         if genre == "survivor":
             body = 'extends Area2D\nfunc _ready() -> void:\n\tadd_to_group("player")\n'
         elif genre == "pingpong":
@@ -136,7 +138,7 @@ def _session_for_genre(tmp_path: Path, genre: str) -> tuple[Path, Path, Path]:
 
 
 @pytest.mark.parametrize("genre,text,skill_id", _EXPRESS_CASES)
-def test_route_and_express_eligible(genre: str, text: str, skill_id: str) -> None:
+def test_route_catalog_hint_but_express_closed(genre: str, text: str, skill_id: str) -> None:
     contract = load_contract(genre)
     catalog = set(load_optional_skills_catalog().get(genre, []))
     assert skill_id in catalog
@@ -145,49 +147,68 @@ def test_route_and_express_eligible(genre: str, text: str, skill_id: str) -> Non
     route = route_intent(text, contract)
     assert route["intent"] == "A", f"{genre}:{text} -> {route}"
     assert skill_id in route["skill_ids"]
-    assert _can_catalog_express(route, text, "") is True
+    assert _can_catalog_express(route, text, "") is False
 
 
 @pytest.mark.parametrize("genre,text,skill_id", _EXPRESS_CASES)
-def test_express_runs_without_llm(tmp_path: Path, genre: str, text: str, skill_id: str) -> None:
+def test_named_skill_enters_llm_agent(tmp_path: Path, genre: str, text: str, skill_id: str) -> None:
     templates, workspace, root = _session_for_genre(tmp_path, genre)
     settings = _settings(templates, workspace)
-    contract = load_contract(genre)
-    route = route_intent(text, contract)
-
-    with patch("app.services.creative.game_agent._llm_turn") as llm:
+    done_payload = {
+        "understanding": text,
+        "goals": [f"实现 {skill_id}"],
+        "thought": "读盘后施工",
+        "actions": [
+            {"tool": "diagnose_workspace"},
+            {
+                "tool": "done",
+                "summary": f"已按你的要求处理 {skill_id}，请重开试玩",
+                "how_to_play": ["请重新启动游戏后再试玩"],
+            },
+        ],
+    }
+    with patch(
+        "app.services.creative.game_agent._llm_turn",
+        return_value=done_payload,
+    ) as llm:
         with patch(
             "app.services.creative.game_agent.refresh_ai_sandbox_bridge",
             return_value=True,
         ):
-            out = _run_catalog_express(
-                settings, root, genre, text, route, contract
-            )
-    assert out["ok"] is True
-    assert out.get("express") is True
-    assert out["agent_rounds"] == 0
-    assert skill_id in (out.get("applied_capabilities") or [])
-    cfg = json.loads((root / "config" / "game_config.json").read_text(encoding="utf-8"))
-    assert skill_id in cfg["tuning"]["enabled_skills"]
-    llm.assert_not_called()
+            out = run_game_agent(settings, root, genre, text, max_rounds=2)
+    assert out.get("express") is not True
+    assert out["agent_rounds"] >= 1
+    llm.assert_called()
+    _ = skill_id
 
 
 def test_bugfix_does_not_express() -> None:
     c = load_contract("shmup")
     text = "激光按钮没反应，只有键盘可以"
     r = route_intent(text, c)
-    assert r["intent"] != "A" or not _can_catalog_express(r, text, "")
+    assert _can_catalog_express(r, text, "") is False
 
 
-def test_run_game_agent_platformer_express_no_llm(tmp_path: Path) -> None:
+def test_run_game_agent_platformer_no_express(tmp_path: Path) -> None:
     templates, workspace, root = _session_for_genre(tmp_path, "platformer")
     settings = _settings(templates, workspace)
-    with patch("app.services.creative.game_agent._llm_turn") as llm:
-        with patch(
-            "app.services.creative.game_agent.refresh_ai_sandbox_bridge",
-            return_value=True,
-        ):
-            out = run_game_agent(settings, root, "platformer", "我想加二段跳")
-    assert out.get("express") is True
-    assert out["agent_rounds"] == 0
-    llm.assert_not_called()
+    done_payload = {
+        "understanding": "要二段跳",
+        "goals": ["实现二段跳"],
+        "thought": "ok",
+        "actions": [
+            {
+                "tool": "done",
+                "summary": "已处理二段跳，请重开",
+                "how_to_play": ["请重新启动游戏后再试玩"],
+            }
+        ],
+    }
+    with patch(
+        "app.services.creative.game_agent._llm_turn",
+        return_value=done_payload,
+    ) as llm:
+        out = run_game_agent(settings, root, "platformer", "我想加二段跳", max_rounds=2)
+    assert out.get("express") is not True
+    assert out["agent_rounds"] >= 1
+    llm.assert_called()

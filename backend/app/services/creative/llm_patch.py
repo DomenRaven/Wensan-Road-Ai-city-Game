@@ -241,10 +241,10 @@ _SYSTEM_PROMPT: str = (
     "2) 开关预制技能 tuning.enabled_skills（最多2个，仅目录 id）；"
     "3) 【重点】在 core/ai_sandbox/ 【新建】任意 GDScript（可子目录）与 icons/*.svg，"
     "通过 /root/AiSandboxBridge 的 API 实现玩法（金币连击 buff、倒计时、特效等）。"
-    "严禁修改已有 core 源文件与 templates；严禁 OS.execute / FileAccess WRITE / 联机商城广告。"
+    "本路径可写范围：ai_sandbox / icons / config 白名单字段（会话 templates 只读）。"
     "只返回 JSON："
     '{"changes": {...}, "new_files": [{"filename":"coin_streak_buff.gd","content":"..."}], "summary":"..."}。'
-    "复杂需求必须写 new_files，不要只改数字假装完成。"
+    "复杂需求请在 new_files 写出玩法脚本，数值与主题可一并调整。"
     "脚本须 extends Node 或 RefCounted，并实现 func apply(bridge)->void 调用 bridge API。"
     "若用户反馈「没生效」，优先补齐 sandbox_rules / enabled_skills / icons，并写清 summary 告诉怎么试玩。"
 )
@@ -270,7 +270,7 @@ def _build_user_prompt(
     parts: list[str] = [
         f"小朋友的要求：{text}",
         "",
-        catalog_for_prompt(),
+        catalog_for_prompt(genre),
         "",
         genre_context,
         "",
@@ -287,7 +287,7 @@ def _build_user_prompt(
     ]
     fb = str(feedback or "").strip()
     if fb:
-        parts.extend(["", f"【用户反馈·上次未生效】{fb}", "请针对反馈补齐缺失能力，不要重复无效改动。"])
+        parts.extend(["", f"【用户反馈·上次未生效】{fb}", "请针对反馈补齐缺失能力，再给出可试玩说明。"])
     if repair_gaps:
         parts.extend(["", "【自检缺口·必须补齐】", *[f"- {g}" for g in repair_gaps]])
     return "\n".join(parts)
@@ -330,7 +330,7 @@ def _call_llm(
     messages: list[dict[str, str]] = [
         {
             "role": "system",
-            "content": _SYSTEM_PROMPT + "\n\n" + genre_context + "\n\n" + catalog_for_prompt(),
+            "content": _SYSTEM_PROMPT + "\n\n" + genre_context + "\n\n" + catalog_for_prompt(genre),
         },
     ]
     for turn in _normalize_history(history):
@@ -798,6 +798,8 @@ def _log_patch_result(
                 "sandbox_files": result.get("sandbox_files") or [],
                 "applied_capabilities": result.get("applied_capabilities") or [],
                 "gate_passed": bool(result.get("gate_passed")),
+                "partial": bool(result.get("partial")),
+                "playability_suspect": bool(result.get("playability_suspect")),
                 "changes": result.get("changes") or [],
                 "learned_skills": result.get("learned_skills") or [],
             },
@@ -873,8 +875,8 @@ def apply_nl_patch(
     agent_feedback = feedback_text
     if bugfix and not agent_feedback:
         agent_feedback = (
-            "这是运行故障反馈：请 diagnose_workspace + 读玩家/主场景/近期改动，"
-            "修复可见性或启动问题；禁止再开新技能或叠无关 buff。"
+            "这是用户反馈：请 diagnose_workspace，并 read_file 本局近期改动与相关脚本，"
+            "按用户原话对照磁盘做差分后最小写入修复。"
         )
 
     if settings.llm_api_key.strip():
@@ -887,7 +889,7 @@ def apply_nl_patch(
                 if attempt > 0:
                     fb = (
                         (fb + "；" if fb else "")
-                        + "上一轮未完成，请继续：先 understanding+goals，再读盘施工，勿空 done。"
+                        + "上一轮未完成，请继续：understanding+goals，再读盘并写入后 done。"
                     )
                 agent_out: dict[str, Any] = run_game_agent(
                     settings,
@@ -896,7 +898,7 @@ def apply_nl_patch(
                     request_text,
                     history=history,
                     feedback=fb,
-                    max_rounds=10,
+                    max_rounds=None,
                     run_dry_run=False,
                 )
                 how_lines = list(agent_out.get("how_to_play") or [])
@@ -918,6 +920,10 @@ def apply_nl_patch(
                         "message": msg,
                         "changes": list(agent_out.get("changes") or []),
                         "sandbox_files": files,
+                        "attempted_paths": list(
+                            agent_out.get("attempted_paths") or []
+                        ),
+                        "rolled_back": bool(agent_out.get("rolled_back")),
                         "llm_error": "",
                         "how_to_play": how_lines,
                         "applied_capabilities": applied_caps,
@@ -927,6 +933,8 @@ def apply_nl_patch(
                         "agent_rounds": agent_out.get("agent_rounds"),
                         "learned_skills": list(agent_out.get("learned_skills") or []),
                         "gate_passed": bool(agent_out.get("gate_passed")),
+                        "partial": bool(agent_out.get("partial")),
+                        "playability_suspect": bool(agent_out.get("playability_suspect")),
                         "progress": list(agent_out.get("progress") or []),
                         "dry_run": agent_out.get("dry_run") or {},
                         "intent_route": agent_out.get("intent_route"),

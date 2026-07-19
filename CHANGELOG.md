@@ -12,20 +12,38 @@
 
 ### 变更
 
-- **智能体自由创作**：契约/提示改为「会话 core/scenes 主路径；桥与 catalog 为捷径」；幻想 API 不再硬劝退，改为继续让 LLM 用 GDScript 实现；默认意图走自由创作
+- **人工可用性基本通过（2026-07-19）**：讲解员本机可用性收口（HF-12 §9.3）；状态文档/开工词/锁定口径同步；pytest **272**；下一手软短板热修
+- **异常退出清盘不入库**：`POST /sessions/{id}/release` 默认 `harvest=false`（刷新/关页/beacon 只删 workspace）；讲解员回主页/重置显式 `?harvest=true` 才写 learned_skills；`DELETE` 仍默认 harvest
+- **HF-13 Live 首轮闭环 + 文档/前后端对齐**：校准 `e2e_7_19_live_three_tasks.py`；七品类×3 报告齐（r1–r3）；`lint_tscn_godot4` +【换路催写】；对接/锁定/总纲/快照/开工词基线同步；`NlPatchResponse` 透出 `partial`/`agent_rounds`/`rolled_back`；kiosk 徽章对齐；墙钟 360s ↔ 前端超时 420s
+- **HF-13 立项**：七品类×三任务真 LLM 并发探针施工规范 + 开工提示词（`开发文档/7.19_…_HF-13_*`）；测→盯→修→再测；交付物=通用 Agent
+- **文档口径总同步（2026-07-19）**：对接 / 锁定 / HF-12 DoD / 热修 / 快照 / 开工词对齐；代表 Live（pingpong `144435` · platformer `145357` · shmup `144900` · parkour `140701`）记为保真收口；展厅触屏签字仍暂停
+- **HF-12 replace 换行对齐**：`replace_text` 自动对齐 CRLF/LF；唯一命中时陈旧 hash 软忽略；多轮未落盘通用【施工催写】；Live `platformer_coin_condition`（`20260719-145357`）由读盘空转改为 4 轮过门
+- **HF-12 通用关键链保真**：`gameplay_critical_paths` 禁 stub 整写（缺失从模板恢复）；done 扫描关键锚点；掉落读盘空转催 `apply_shmup_drop_loot_chain`；Live 探针 `pingpong_color_feedback` 已变为仅改 `ball.gd` 最小 patch（`20260719-144435`）
+- **文档分类索引**：`开发文档/README.md` 按时间/功能/类型重写；锁定「探针→通用 Agent」、禁止专修单品类尽善尽美
+- **运维清洗**：Learned 脏条目 35→19；inject_probe 仅留 5 份基线；workspace 运行时垃圾清空；旧 Live smoke 归档至 `_dev_archive`；`reports/` 入 `.gitignore`
+- **LLM 注入文案泛化清理**：全局 system 去掉 shmup「打敌机→捡掉落」窄句与 ball/laser 示例偏置；可玩性/掉落轮次 tip 正向化；鼠标跟机冲突 Intent 门控 `genre==shmup`；Reference `agent_loop` 强调 `replace_text` 优先
+- **HF-12 安全读写闭环（自动闭环已落地）**：分页 read/search/replace；结构化 observations；函数/信号/export/onready/关键链保真；每次代码 mutation 后 Godot 校验与动作回滚；salvage 不交未验收文件；drop-loot LLM 工具化并修正非 shmup 泛化；Catalog 隔离；高信号树；Reference 索引；条件路由优先 C；生产入口离线 probe 9/9；Live 探针持续轮换；**266 passed, 2 skipped**；展厅人工签字仍暂停
+- **7.19 总纲落地（代码）**：`max_rounds=16` + 软续杯 +16 + 墙钟 **360s**；关 catalog express；harvest 否定态不入库；Reference Skill 注入；脏 Learned 降权；**条件门禁**（每N/加快禁仅 enable）；前端 nl-patch 超时 420s；**HF-11 开放读盘**（取消 B≡窄故障提示、本局改动注入、salvage 去「脚步」；LLM 可读提示改为正向工作法）
+- **7.19 总纲（文档）**：有 Key 第 1 轮起 LLM 多工具全开；放宽硬轮次；读盘优先；终局未修复不准有效 Learned Skill；Reference 策展包（见 `开发文档/7.19_AI改游戏智能体_总体设计需求_v1.0.md` · `data/reference_skills/`）
+- **7.19 秒哒式自由创作（主路径 + HF-12 自动闭环已落地）**：有 Key 时禁止 catalog 点名快车道；Catalog 降为 Skill 参考；整句 goals 优先；下一门槛为 Live/人工矩阵
+- **智能体自由创作**：契约/提示改为「会话 core/scenes 主路径」；幻想 API 不再硬劝退；默认意图走自由创作
 - **去伪降级**：有 `LLM_API_KEY` 时 **只走** `run_game_agent`（失败重试后诚实 `provider=agent`）；**禁止**再掉进旧 `_call_llm` / stub；无 Key 才用离线 stub
 - **对话对齐 DeepSeek 体验**：本轮原话置顶；强制 `understanding` + `goals[]`；多 goals 覆盖 summary；同会话带历史；UI 展示理解/拆解
 - **故障反馈**：人物消失/白屏等 → Intent B 诊断修盘，禁止叠无关 buff；故障局 done 门禁软化
 - **门禁纳入 Godot 冒烟自愈**：本轮改 `.gd/.tscn` 强制 `dry_run_godot`，错误（含 `at:` 定位）回灌 LLM；`None/True/False` 静态拦截
 - **HF-8 不上锁**：轮次/门禁耗尽 → `_salvage_agent_return` 尽力交付或回滚保加载，禁「没改成」劝退
-- **HF-10 玩家可见/可控（七品类）**：静态门禁 + write 拦截 + last_playable；覆盖 shmup/platformer/parkour/survivor/fighting/racing/pingpong（含 PlayerPaddle）
+- **HF-9 失败语义闭环**：坏 JSON/业务异常软继续；故障局回滚诚实话术
+- **HF-10 玩家可见/可控（七品类）**：静态门禁 + write 拦截 + last_playable；覆盖七品类（含 PlayerPaddle）
 - **项目瘦身**：清理 workspace 运行时报告/证书令牌、根目录重复部署手册与一次性验收 docx、pytest 缓存与 learned_skills 体验运行时
 
 ### 新增
 
+- **HF-12 施工与验收 SSOT**：`开发文档/7.19_AI改游戏智能体_HF-12_安全读写闭环_待修复与施工方案.md`（自动闭环已完成；保留 Live/人工矩阵）
+- **7.19 总纲 + Reference Skills**：`开发文档/7.19_AI改游戏智能体_总体设计需求_v1.0.md` · `data/reference_skills/`（七品类 + 通识，对照本仓库微调）
+- **7.19 文档包**：秒哒式需求说明 / 执行规范 / 开工提示词（`开发文档/7.19_AI改游戏智能体_秒哒式自由创作_*_v1.0.md`）
 - **掉落物快车道（shmup）**：激光/炸弹「掉落才开」与通用掉落（爱心等）语义分流；`assert_drop_loot_done`
 - **七品类真·LLM E2E**：`05-工具脚本/e2e_7_18_live_three_tasks.py`（7×3 全绿）
-- **热修手册**：`开发文档/7.18_AI改游戏智能体_热修手册.md`（HF-1…HF-9）
+- **热修手册**：`开发文档/7.18_AI改游戏智能体_热修手册.md`（HF-1…HF-10）
 - **P0-通用工作流（条件通过）**：`intent_router`（A/B/C/D）· 七品类契约 `runtime` · `assert_catalog_runtime` · 桥 `ensure_touch_action` · Agent 注入路由
 - 单测扩：`test_intent_router` / `test_agent_contracts` / `test_catalog_express_all_genres` 等
 - **Live 可感知矩阵** `05-工具脚本/live_perceivable_matrix.py`

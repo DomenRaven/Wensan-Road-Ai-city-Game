@@ -44,6 +44,104 @@ _TRUSTED_EDU_SCRIPT_NAMES: frozenset[str] = frozenset(
     }
 )
 
+# 7.19 / 总纲 TG4：用户附加条件 → 禁止仅 enable catalog 交差
+_CONDITIONAL_MECHANIC_HINTS: re.Pattern[str] = re.compile(
+    r"每\s*\d+|每一|每接|每吃|每打|每击|连续\s*\d*|连击|满\s*\d+|充能|"
+    r"倍速|加快|球速|速度.{0,6}(很|更)?快|三倍|更快|"
+    r"反应不过|对面.{0,8}(难|慢|反应)|对手.{0,8}(难|慢)|"
+    r"冷却|秒后|持续\s*\d+|倒计时|触发条件"
+)
+
+
+def user_text_has_conditional_mechanics(user_text: str) -> bool:
+    """原话是否含触发条件/手感/数值改写（非「只要开开关」）。"""
+    return bool(_CONDITIONAL_MECHANIC_HINTS.search(user_text or ""))
+
+
+def _is_mechanic_code_path(rel: str) -> bool:
+    """会话玩法脚本/场景（排除桥与触屏 overlay）。"""
+    path = rel.replace("\\", "/").lstrip("/")
+    name = Path(path).name
+    if name in _TRUSTED_EDU_SCRIPT_NAMES:
+        return False
+    if name.endswith("_touch_overlay.gd"):
+        return False
+    if path.endswith((".gd", ".tscn")):
+        return True
+    return False
+
+
+def assert_conditional_mechanics_landed(
+    workspace_root: Path,
+    *,
+    written_paths: list[str],
+    catalog_changed: bool = False,
+    user_text: str = "",
+    summary: str = "",
+    genre: str = "",
+) -> list[str]:
+    """有条件原话时：必须有玩法代码/场景落地，禁止只改 enabled_skills。"""
+    _ = catalog_changed
+    ut: str = (user_text or "").strip()
+    if not user_text_has_conditional_mechanics(ut):
+        return []
+    from app.services.creative.intent_router import is_drop_loot_request
+
+    if is_drop_loot_request(ut):
+        return []
+
+    paths: list[str] = [str(p).replace("\\", "/") for p in written_paths]
+    if not genre:
+        # 兼容旧调用：无 genre 时任意玩法脚本即可
+        if any(_is_mechanic_code_path(p) for p in paths):
+            return []
+        errors: list[str] = [
+            "用户原话含触发条件/手感/数值（如每N次、加快、球速）："
+            "请在会话 core/scenes（或 ai_sandbox）写入计数/倍率等逻辑后再 done"
+        ]
+        if re.search(r"已开启|已为你开启|已启用|已加了", summary or "") and not re.search(
+            r"每|计数|充能|球速|加快|倍|条件|冷却|倒计时", summary or ""
+        ):
+            errors.append("summary 请说明条件如何落地（计数/充能/球速等）")
+        return list(dict.fromkeys(errors))
+
+    chain = CRITICAL_CHAIN_BY_GENRE.get(genre) or {}
+    chain_paths = set(chain.get("paths") or [])
+    hit_chain = any(p in chain_paths for p in paths)
+    # 接线证据：写入内容含计数/冷却等，或命中关键路径 / ai_sandbox 新机制
+    evidence = hit_chain
+    cond_pat = re.compile(
+        r"_count|cooldown|every|充能|倍率|% |\bmod\b|timer|streak|charge",
+        re.I,
+    )
+    for rel in paths:
+        if not _is_mechanic_code_path(rel):
+            continue
+        fp = workspace_root / rel
+        if not fp.is_file():
+            continue
+        try:
+            body = fp.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        if cond_pat.search(body) or rel.startswith("core/ai_sandbox/"):
+            evidence = True
+            break
+    if evidence:
+        return []
+
+    errors = [
+        "用户原话含触发条件/手感/数值（如每N次、加快、球速）："
+        "请写入本品类关键玩法路径或含计数/冷却/倍率的会话脚本后再 done"
+    ]
+    if re.search(r"已开启|已为你开启|已启用|已加了", summary or "") and not re.search(
+        r"每|计数|充能|球速|加快|倍|条件|冷却|倒计时", summary or ""
+    ):
+        errors.append(
+            "summary 请说明条件如何落地（计数/充能/球速等）"
+        )
+    return list(dict.fromkeys(errors))
+
 
 def _is_trusted_edu_script(rel: str) -> bool:
     """会话内从 _edu 注入的桥/触屏脚本：门禁不验其正文（模板已审）。"""
@@ -131,7 +229,11 @@ def _minimal_contract(genre: str) -> dict[str, Any]:
     return {
         "genre": genre,
         "bridge_apis": [
-            {"name": "get_player", "sig": "() -> CharacterBody2D"},
+            {
+                "name": "get_player",
+                "sig": "() -> Node",
+                "desc": "兼容入口；具体玩家类型以当前品类模板为准",
+            },
             {"name": "get_player_node", "sig": "() -> Node"},
             {"name": "get_game_manager", "sig": "() -> Node"},
             {"name": "watch_coins", "sig": "(cb: Callable) -> void"},
@@ -168,8 +270,8 @@ def format_contract_for_prompt(contract: dict[str, Any]) -> str:
     lines: list[str] = [
         f"## 品类 Capability Contract（genre={genre}）",
         "创作主路径：在会话副本 core/**、config/**、scenes/** 用 GDScript/场景实现用户需求。",
-        "bridge_apis 是可选捷径（调用 bridge.xxx 时必须在下列列表）；catalog 可复用勿限死。",
-        "禁止发明 add_method / set_color 等幻想钩子；禁止改 templates。",
+        "bridge_apis 是可选捷径（调用 bridge.xxx 时使用下列列表中的名字）；catalog 可复用也可会话另写。",
+        "可写范围：会话 workspace；桥 API 以列表为准；同等效果可用会话 GDScript 实现。",
         "",
         "### bridge_apis（可选）",
     ]
@@ -223,7 +325,7 @@ def format_contract_for_prompt(contract: dict[str, Any]) -> str:
             lines.append(f"- {n}")
     forbid = contract.get("forbidden_invented_apis") or list(_GLOBAL_FORBIDDEN_APIS)
     lines.append("")
-    lines.append("### 禁止幻想 API")
+    lines.append("### 契约外名称（不作为可调用 API；请用会话 GDScript 实现同等效果）")
     lines.append(", ".join(str(x) for x in forbid))
     return "\n".join(lines)
 
@@ -244,7 +346,7 @@ def validate_gdscript(content: str) -> list[str]:
         errors.append("花括号不配对")
     bad = _BAD_COLOR_LITERALS.search(body)
     if bad:
-        errors.append(f"Godot 4 颜色应为大写常量，勿写 Color.{bad.group(1)}")
+        errors.append(f"Godot 4 颜色请用大写常量，例如 Color.RED（当前为 Color.{bad.group(1)}）")
     # Python 字面量误写：GDScript 用 null/true/false（在去字符串/注释后按整词检测）
     py_lit = re.search(r"(?<![A-Za-z0-9_.])(None|True|False)(?![A-Za-z0-9_])", structural)
     if py_lit:
@@ -254,7 +356,7 @@ def validate_gdscript(content: str) -> list[str]:
         )
     for snip in _GLOBAL_FORBIDDEN_APIS:
         if _contains_forbidden_api(body, snip):
-            errors.append(f"含幻想/禁止 API: {snip}")
+            errors.append(f"契约列表不含此 API：{snip}；请用会话 GDScript 实现同等效果")
     return errors
 
 
@@ -280,7 +382,7 @@ def assert_apis_in_contract(content: str, contract: dict[str, Any]) -> list[str]
     errors: list[str] = []
     for snip in forbid:
         if snip and _contains_forbidden_api(content, snip):
-            errors.append(f"禁止 API: {snip}")
+            errors.append(f"契约列表不含此 API：{snip}；请用会话 GDScript 实现同等效果")
     for m in _BRIDGE_CALL_RE.finditer(content):
         name = m.group(1)
         if name in node_methods:
@@ -461,6 +563,35 @@ def player_critical_paths(genre: str) -> list[str]:
     return paths
 
 
+def gameplay_critical_paths(genre: str) -> list[str]:
+    """玩家存在 + 品类玩法关键链（球/生成器/对局等）——禁止 LLM 整写 stub。"""
+    paths: list[str] = list(player_critical_paths(genre))
+    known = {p.replace("\\", "/") for p in paths}
+    chain = CRITICAL_CHAIN_BY_GENRE.get(genre) or {}
+    for rel in list(chain.get("paths") or []) + list(
+        (chain.get("must_keep_funcs") or {}).keys()
+    ):
+        n = str(rel).replace("\\", "/")
+        if n and n not in known:
+            known.add(n)
+            paths.append(n)
+    return paths
+
+
+def assert_workspace_critical_chain(
+    workspace_root: Path,
+    genre: str,
+) -> list[str]:
+    """done 门禁：会话磁盘上关键玩法锚点须仍在（防「门禁绿但玩法链被 stub 掏空」）。"""
+    return assert_critical_chain_preserved(
+        "",  # unused when scanning all
+        "",
+        genre,
+        before=None,
+        workspace_root=workspace_root,
+    )
+
+
 def _strip_gd_comments_strings(text: str) -> str:
     """粗去注释与字符串，降低门禁误报。"""
     out = re.sub(r"#.*?$", "", text, flags=re.M)
@@ -475,9 +606,10 @@ def _scan_script_player_dangers(rel: str, text: str) -> list[str]:
     errs: list[str] = []
     if _BAD_PLAYER_NODE_PATH.search(text):
         errs.append(
-            f"{rel}: 禁止 get_node('../Player') 或 /root/Main/Player；"
-            "玩家在 GameRoot/LevelRoot 动态实例下，用 get_tree().get_nodes_in_group('player') "
-            "或 AiSandboxBridge.get_player_node()（乒乓用 $PlayerPaddle / match_controller）"
+            f"{rel}: 检测到相对/绝对 Main 路径找玩家；"
+            "请改用 get_tree().get_nodes_in_group('player') "
+            "或 AiSandboxBridge.get_player_node()"
+            "（开局在 GameRoot/LevelRoot；乒乓用 $PlayerPaddle / match_controller）"
         )
     stripped = _strip_gd_comments_strings(text)
     is_player_script = rel in PLAYER_SCRIPT_BY_GENRE.values() or any(
@@ -497,17 +629,16 @@ def _scan_script_player_dangers(rel: str, text: str) -> list[str]:
                     re.I,
                 ):
                     errs.append(
-                        f"{rel}: 禁止把玩家根节点设为 visible=false（护盾/UI 子节点除外）；"
-                        "会导致人物消失且无法操控"
+                        f"{rel}: 检测到玩家根 visible=false；"
+                        "请保持根节点可见（护盾/UI 子节点可单独隐藏）；闪烁只改 Sprite"
                     )
                     break
         if _BAD_ROOT_MODULATE_ZERO.search(stripped):
             errs.append(
-                f"{rel}: 禁止把玩家 modulate/a 永久设为 0（闪烁须成对恢复）；"
-                "会导致人物看不见"
+                f"{rel}: 玩家根 modulate/a 请保持可见；闪烁请成对恢复 Sprite 透明度"
             )
         if _BAD_PLAYER_QUEUE_FREE.search(stripped):
-            errs.append(f"{rel}: 禁止对玩家 queue_free（会直接删掉可操控角色）")
+            errs.append(f"{rel}: 请保留可操控角色节点（用无敌/隐藏 Sprite，代替删除节点）")
     return errs
 
 
@@ -545,7 +676,9 @@ def _scan_player_scene(
         re.S,
     )
     if m and re.search(r"(?m)^visible\s*=\s*false\s*$", m.group(1)):
-        errs.append(f'{scene_rel} 的 {scene_node} 根节点禁止 visible=false')
+        errs.append(
+            f'{scene_rel} 的 {scene_node} 根节点检测到 visible=false；请保持可见'
+        )
     return errs
 
 
@@ -763,7 +896,7 @@ def diagnose_workspace(
         hints.append(
             f"玩家脚本={player_script} 场景={player_scene} 节点={scene_node} "
             f"hooks={hooks_file or '无'}；"
-            "开局后多在 GameRoot/LevelRoot 下，勿用 ../Player 或 /root/Main/Player；"
+            "开局后多在 GameRoot/LevelRoot 下；"
             "用 group=player 或 AiSandboxBridge.get_player_node()"
             + ("；乒乓操控节点是 PlayerPaddle（scenes/game.tscn）" if genre == "pingpong" else "")
         )
@@ -1130,8 +1263,7 @@ def assert_drop_loot_done(
     claim = summary + "\n" + "\n".join(how_to_play)
     if _DROP_BUTTON_PROMO.search(claim) and not _DROP_PLAY_HINT.search(claim):
         errors.append(
-            "掉落物需求：禁止用「已开启/点下方按钮」冒充完成；"
-            "须说明敌机掉落→拾取后才可用"
+            "掉落物需求：summary/how_to_play 请写清「敌机掉落→拾取后才可用」"
         )
     if not _DROP_PLAY_HINT.search(claim):
         errors.append(
@@ -1149,19 +1281,28 @@ def assert_drop_loot_done(
             tuning = cfg.get("tuning") if isinstance(cfg, dict) else {}
             if isinstance(tuning, dict) and "powerup_types" not in tuning:
                 errors.append(
-                    "掉落物需求：game_config 丢失 powerup_types（禁止整表覆盖，"
-                    "须在原配置上追加 laser/bomb）"
+                    "掉落物需求：请保留并扩展 powerup_types（在原配置上追加 laser/bomb）"
                 )
         except (OSError, json.JSONDecodeError, TypeError):
             pass
     if not _drop_loot_impl_evidence(workspace_root, written_paths):
         errors.append(
-            "掉落物需求：须同时做到 powerup_types 含 laser/bomb，且 "
-            "player_ship.apply_powerup 拾取后写入 enabled_skills（或写完整 drop_loot 脚本）"
+            "掉落物需求：请调用 apply_shmup_drop_loot_chain，或同时做到 "
+            "powerup_types 含 laser/bomb，且 core/player_ship.gd 的 apply_powerup "
+            "在拾取 laser/bomb 后写入 enabled_skills（仅改 powerup_pickup 不够）"
         )
     if catalog_changed and not _drop_loot_impl_evidence(workspace_root, written_paths):
         errors.append(
-            "掉落物需求：禁止只 enable_catalog_skill；须落地掉落→拾取逻辑"
+            "掉落物需求：请落地掉落→拾取逻辑（powerup_types + apply_powerup）"
+        )
+    # 「捡到才开」：开局不得预开 laser_beam/bomb
+    pre_enabled = set(_enabled_skills(workspace_root))
+    bad_pre = sorted(pre_enabled & {"laser_beam", "bomb", "laser"})
+    if bad_pre:
+        errors.append(
+            "掉落物需求：开局 enabled_skills 勿预开 "
+            + "、".join(bad_pre)
+            + "（保持 []，由 apply_powerup 拾取后解锁）"
         )
     # shmup：保住敌机→request_powerup 管道，禁止 LLM 整文件掏空 spawner/主场景
     if genre == "shmup":
@@ -1242,7 +1383,7 @@ def run_done_gates(
             and re.search(r"重开|启动|重新|查看|看看|是否", how_blob)
         ):
             errors.append(
-                "how_to_play 须含触屏可玩操作说明（点按/拖动/碰到等，禁止只写键盘）"
+                "how_to_play 请含触屏可玩操作（点按/拖动/碰到等）"
             )
     if drop_loot:
         errors.extend(
@@ -1256,6 +1397,18 @@ def run_done_gates(
                 laser_bomb=laser_bomb_drop,
             )
         )
+
+    # 总纲 TG4 / 7.19：带条件的需求禁止仅 enable 交差
+    errors.extend(
+        assert_conditional_mechanics_landed(
+            workspace_root,
+            written_paths=written_paths,
+            catalog_changed=catalog_changed,
+            user_text=ut,
+            summary=summary,
+            genre=genre,
+        )
+    )
 
     # 本轮优先：问题/故障类原话时，禁止只复读「已加技能」类宣传
     if re.search(
@@ -1279,15 +1432,26 @@ def run_done_gates(
             )
         ):
             errors.append(
-                "本轮用户在反馈问题：summary 须直接回应本轮原话，禁止只复读更早轮次的功能宣传"
+                "本轮用户在反馈问题：summary 请直接回应本轮原话（修好了什么 / 如何再试）"
             )
 
+    # 掉落才开：summary 常写「捡到后开启」，不得逼 LLM 把 laser/bomb 预开进 enabled_skills
     skills = set(_enabled_skills(workspace_root))
     claim_blob = summary + "\n" + "\n".join(how_to_play)
-    if re.search(r"启用.{0,10}炸弹|开启.{0,10}炸弹|已为你启用了炸弹", claim_blob) and "bomb" not in skills:
-        errors.append("声称启用了炸弹但 tuning.enabled_skills 中没有 bomb")
-    if re.search(r"启用.{0,10}激光|开启.{0,10}激光|已为你启用了.{0,6}激光", claim_blob) and "laser_beam" not in skills:
-        errors.append("声称启用了激光但 tuning.enabled_skills 中没有 laser_beam")
+    if not drop_loot:
+        if (
+            re.search(r"启用.{0,10}炸弹|开启.{0,10}炸弹|已为你启用了炸弹", claim_blob)
+            and "bomb" not in skills
+        ):
+            errors.append("声称启用了炸弹但 tuning.enabled_skills 中没有 bomb")
+        if (
+            re.search(
+                r"启用.{0,10}激光|开启.{0,10}激光|已为你启用了.{0,6}激光",
+                claim_blob,
+            )
+            and "laser_beam" not in skills
+        ):
+            errors.append("声称启用了激光但 tuning.enabled_skills 中没有 laser_beam")
 
     for rel in written_paths:
         if not rel.endswith(".gd"):
@@ -1339,6 +1503,8 @@ def run_done_gates(
             written_paths=written_paths,
         )
     )
+    # HF-12：关键玩法链须仍在磁盘（防 stub 整写后门禁仍绿）
+    errors.extend(assert_workspace_critical_chain(workspace_root, genre))
     return list(dict.fromkeys(errors))
 
 
@@ -1416,3 +1582,436 @@ def snippet_has_invented_apis(snippet: str, contract: dict[str, Any] | None = No
     if contract is not None and assert_apis_in_contract(snippet, contract):
         return True
     return False
+
+
+# ---------------------------------------------------------------------------
+# HF-12：Diff / 函数 / 信号 / 关键玩法链保真
+# ---------------------------------------------------------------------------
+
+_GD_FUNC_RE: re.Pattern[str] = re.compile(
+    r"(?m)^func\s+([A-Za-z_][A-Za-z0-9_]*)\s*\((.*?)\)(?:\s*->\s*([^\n:]+))?\s*:"
+)
+_GD_SIGNAL_RE: re.Pattern[str] = re.compile(r"(?m)^signal\s+([A-Za-z_][A-Za-z0-9_]*)")
+_GD_EXTENDS_RE: re.Pattern[str] = re.compile(r"(?m)^extends\s+(\S+)")
+_GD_CLASS_RE: re.Pattern[str] = re.compile(r"(?m)^class_name\s+(\S+)")
+_GD_EXPORT_RE: re.Pattern[str] = re.compile(
+    r"(?m)^@export(?:_[A-Za-z0-9_]+)?\s+var\s+([A-Za-z_][A-Za-z0-9_]*)"
+)
+_GD_ONREADY_RE: re.Pattern[str] = re.compile(
+    r"(?m)^@onready\s+var\s+([A-Za-z_][A-Za-z0-9_]*)"
+)
+_TSCN_NODE_RE: re.Pattern[str] = re.compile(
+    r'(?m)^\[node name="([^"]+)"[^\]]*\]'
+)
+_TSCN_SCRIPT_RE: re.Pattern[str] = re.compile(
+    r'(?m)^script\s*=\s*ExtResource\("([^"]+)"\)'
+)
+
+# 七品类关键玩法链锚点（门禁材料，非 Intent 特例）
+CRITICAL_CHAIN_BY_GENRE: dict[str, dict[str, Any]] = {
+    "platformer": {
+        "paths": [
+            "core/player_platformer.gd",
+            "core/game_manager.gd",
+            "scenes/level_01.tscn",
+        ],
+        "must_keep_funcs": {
+            "core/player_platformer.gd": [
+                "_physics_process",
+                "notify_hazard",
+                "_try_stomp_enemy",
+            ],
+        },
+        "must_keep_tokens": {
+            "scenes/player.tscn": ['groups=["player"]'],
+        },
+    },
+    "shmup": {
+        "paths": [
+            "core/player_ship.gd",
+            "core/enemy_spawner.gd",
+            "core/bullet.gd",
+        ],
+        "must_keep_funcs": {
+            "core/player_ship.gd": [
+                "_physics_process",
+                "apply_powerup",
+                "_fire_bullet",
+            ],
+        },
+        "must_keep_signals": {
+            "core/enemy_spawner.gd": ["request_powerup"],
+        },
+        "must_keep_tokens": {
+            "core/player_ship.gd": ["func apply_powerup"],
+        },
+    },
+    "parkour": {
+        "paths": ["core/player_runner.gd"],
+        "must_keep_funcs": {
+            "core/player_runner.gd": [
+                "_physics_process",
+                "set_playing",
+            ],
+        },
+        "must_keep_tokens": {
+            "core/player_runner.gd": ["_playing"],
+        },
+    },
+    "survivor": {
+        "paths": ["core/player_survivor.gd", "core/auto_weapon.gd"],
+        "must_keep_funcs": {
+            "core/player_survivor.gd": ["_physics_process"],
+        },
+        "must_keep_tokens": {
+            "core/player_survivor.gd": ['add_to_group("player")'],
+        },
+    },
+    "fighting": {
+        "paths": ["core/fighter.gd", "core/player_fighter.gd"],
+        "must_keep_funcs": {
+            "core/fighter.gd": ["_physics_process", "apply_hurt", "try_light_attack"],
+        },
+        "must_keep_tokens": {},
+    },
+    "racing": {
+        "paths": ["core/car_topdown.gd", "core/lap_counter.gd"],
+        "must_keep_funcs": {
+            "core/car_topdown.gd": ["_process", "setup_playing"],
+        },
+        "must_keep_tokens": {},
+    },
+    "pingpong": {
+        "paths": [
+            "core/ball.gd",
+            "core/paddle.gd",
+            "core/match_controller.gd",
+            "scenes/game.tscn",
+        ],
+        "must_keep_funcs": {
+            "core/ball.gd": [
+                "_try_paddle_bounce",
+                "_apply_paddle_bounce",
+                "_check_scoring",
+                "reset_to_center",
+                "halt",
+            ],
+            "core/paddle.gd": [
+                "_physics_process",
+                "configure_bounds",
+                "get_hit_rect",
+            ],
+            "core/match_controller.gd": [
+                "setup",
+                "_start_rally",
+                "_on_ball_scored",
+            ],
+        },
+        "must_keep_tokens": {
+            "scenes/game.tscn": ["PlayerPaddle"],
+            "core/ball.gd": ["signal scored"],
+        },
+    },
+}
+
+
+_DEFAULT_MAX_CHANGED_RATIO: float = 0.20
+
+
+def parse_gdscript_structure(content: str) -> dict[str, Any]:
+    """提取 .gd 结构快照：extends/class/signal/export/onready/函数签名与正文。"""
+    text = content or ""
+    funcs: dict[str, dict[str, str]] = {}
+    matches = list(_GD_FUNC_RE.finditer(text))
+    for i, m in enumerate(matches):
+        name = m.group(1)
+        sig = m.group(0).split(":", 1)[0].strip()
+        start = m.end()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        body = text[start:end]
+        funcs[name] = {"sig": sig, "body": body}
+    extends_m = _GD_EXTENDS_RE.search(text)
+    class_m = _GD_CLASS_RE.search(text)
+    return {
+        "extends": extends_m.group(1) if extends_m else "",
+        "class_name": class_m.group(1) if class_m else "",
+        "signals": _GD_SIGNAL_RE.findall(text),
+        "exports": _GD_EXPORT_RE.findall(text),
+        "onready": _GD_ONREADY_RE.findall(text),
+        "funcs": funcs,
+        "func_names": list(funcs.keys()),
+    }
+
+
+def parse_tscn_structure(content: str) -> dict[str, Any]:
+    nodes = _TSCN_NODE_RE.findall(content or "")
+    scripts = _TSCN_SCRIPT_RE.findall(content or "")
+    return {"nodes": nodes, "script_bindings": scripts}
+
+
+_TSCN_SECTION_OPEN_RE = re.compile(
+    r"^\[(?P<kind>gd_scene|ext_resource|sub_resource|node|resource)\b"
+)
+_TSCN_SUBRESOURCE_ID_RE = re.compile(
+    r'\[sub_resource\b[^\]]*?\bid\s*=\s*"([^"]+)"'
+)
+_TSCN_SUBRESOURCE_USE_RE = re.compile(r'SubResource\s*\(\s*"([^"]+)"\s*\)')
+_TSCN_EXTENTS_RE = re.compile(r"(?m)^[ \t]*extents\s*=")
+
+
+def _tscn_section_header_closed(line: str) -> bool:
+    """资源头是否在本行闭合（忽略属性里 groups=[...] 的中括号）。"""
+    depth = 0
+    in_str = False
+    closed_at = -1
+    for i, ch in enumerate(line):
+        if ch == '"':
+            in_str = not in_str
+            continue
+        if in_str:
+            continue
+        if ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth -= 1
+            if depth == 0:
+                closed_at = i
+                break
+    if closed_at < 0 or depth != 0:
+        return False
+    return all(c.isspace() for c in line[closed_at + 1 :])
+
+
+def lint_tscn_godot4(content: str) -> list[str]:
+    """写入前静态检查 Godot 4 .tscn 常见致命错误（防 dry-run 漏检未引用场景）。"""
+    text = content or ""
+    if not text.strip():
+        return ["场景内容为空"]
+    errs: list[str] = []
+    defined_subs: set[str] = set()
+    for i, raw in enumerate(text.splitlines(), 1):
+        line = raw.rstrip("\r")
+        stripped = line.strip()
+        if not stripped or stripped.startswith(";"):
+            continue
+        if _TSCN_SECTION_OPEN_RE.match(stripped) and not _tscn_section_header_closed(
+            stripped
+        ):
+            errs.append(f"第{i}行: 资源头缺少闭合 ]（如 [node name=\"X\" type=\"Y\"]）")
+        for m in _TSCN_SUBRESOURCE_ID_RE.finditer(stripped):
+            defined_subs.add(m.group(1))
+        for m in _TSCN_SUBRESOURCE_USE_RE.finditer(stripped):
+            rid = m.group(1)
+            if rid not in defined_subs:
+                errs.append(
+                    f"第{i}行: SubResource(\"{rid}\") 在定义之前被引用；"
+                    "请把 [sub_resource ...] 块放在引用之前"
+                )
+    if _TSCN_EXTENTS_RE.search(text):
+        errs.append(
+            "Godot 4 碰撞形状请用 size = Vector2(...)，不要用 Godot 3 的 extents"
+        )
+    return list(dict.fromkeys(errs))
+
+
+def _nonblank_lines(text: str) -> list[str]:
+    return [ln for ln in (text or "").splitlines() if ln.strip()]
+
+
+def _changed_line_ratio(before: str, after: str) -> float:
+    a = _nonblank_lines(before)
+    b = _nonblank_lines(after)
+    if not a:
+        return 0.0 if not b else 1.0
+    i = 0
+    while i < len(a) and i < len(b) and a[i] == b[i]:
+        i += 1
+    j = 0
+    while (
+        j < len(a) - i
+        and j < len(b) - i
+        and a[-(j + 1)] == b[-(j + 1)]
+    ):
+        j += 1
+    changed = max(len(a) - i - j, len(b) - i - j, 0)
+    return min(1.0, changed / max(1, len(a)))
+
+
+def assert_script_structure_fidelity(
+    path: str,
+    before: str,
+    after: str,
+    *,
+    genre: str = "",
+    allow_rewrite: bool = False,
+    max_changed_ratio: float = _DEFAULT_MAX_CHANGED_RATIO,
+    target_func_hints: list[str] | None = None,
+) -> list[str]:
+    """比较本动作前后结构；拦截非目标删除与大范围漂移。"""
+    rel = str(path or "").replace("\\", "/")
+    if not before.strip() or before == after:
+        return []
+    if allow_rewrite:
+        return assert_critical_chain_preserved(rel, after, genre, before=before)
+
+    errs: list[str] = []
+    suffix = Path(rel).suffix.lower()
+    if suffix == ".gd":
+        b = parse_gdscript_structure(before)
+        a = parse_gdscript_structure(after)
+        if b["extends"] and a["extends"] and b["extends"] != a["extends"]:
+            errs.append(f"{rel}: extends 被改成 {a['extends']}（原 {b['extends']}）")
+        if b["class_name"] and a["class_name"] and b["class_name"] != a["class_name"]:
+            errs.append(f"{rel}: class_name 被改动")
+        deleted_funcs = [n for n in b["func_names"] if n not in a["funcs"]]
+        if deleted_funcs:
+            errs.append(
+                f"{rel}: 原有函数需继续保留：{', '.join(deleted_funcs[:8])}；"
+                "请用最小 patch 更新目标函数"
+            )
+        deleted_signals = [s for s in b["signals"] if s not in a["signals"]]
+        if deleted_signals:
+            errs.append(
+                f"{rel}: 原有信号需继续保留：{', '.join(deleted_signals[:6])}"
+            )
+        deleted_exports = [s for s in b["exports"] if s not in a["exports"]]
+        if deleted_exports:
+            errs.append(
+                f"{rel}: 原有 @export 变量需继续保留：{', '.join(deleted_exports[:8])}"
+            )
+        deleted_onready = [s for s in b["onready"] if s not in a["onready"]]
+        if deleted_onready:
+            errs.append(
+                f"{rel}: 原有 @onready 变量需继续保留：{', '.join(deleted_onready[:8])}"
+            )
+        hints = set(target_func_hints or [])
+        modified: list[str] = []
+        for name, meta in b["funcs"].items():
+            if name not in a["funcs"]:
+                continue
+            if meta["body"] != a["funcs"][name]["body"] or meta["sig"] != a["funcs"][name]["sig"]:
+                modified.append(name)
+        if hints:
+            nontarget = [n for n in modified if n not in hints]
+            if nontarget:
+                errs.append(
+                    f"{rel}: 非目标函数被改动 {', '.join(nontarget[:8])}；"
+                    "请只 patch 目标函数"
+                )
+        ratio = _changed_line_ratio(before, after)
+        if ratio > max_changed_ratio:
+            errs.append(
+                f"{rel}: 非空白行改动比例 {ratio:.0%} 超过默认 {max_changed_ratio:.0%}；"
+                "请改用 replace_text 做更小 patch，或 goals 标明 rewrite_scope"
+            )
+    elif suffix == ".tscn":
+        b = parse_tscn_structure(before)
+        a = parse_tscn_structure(after)
+        deleted_nodes = [n for n in b["nodes"] if n not in a["nodes"]]
+        if deleted_nodes:
+            errs.append(
+                f"{rel}: 原有场景节点需继续保留：{', '.join(deleted_nodes[:8])}"
+            )
+
+    errs.extend(assert_critical_chain_preserved(rel, after, genre, before=before))
+    return list(dict.fromkeys(errs))
+
+
+def assert_critical_chain_preserved(
+    path: str,
+    content: str,
+    genre: str,
+    *,
+    before: str | None = None,
+    workspace_root: Path | None = None,
+) -> list[str]:
+    """若改动命中品类关键文件，要求锚点函数/信号/词元仍在。
+
+    若提供 before：只要求「改前已存在」的锚点继续保留（避免迷你夹具误伤）。
+    若提供 workspace_root 且 path 为空：扫描本品类全部关键文件（done 门禁）。
+    """
+    rel = str(path or "").replace("\\", "/")
+    cfg = CRITICAL_CHAIN_BY_GENRE.get(genre) or {}
+    errs: list[str] = []
+    must_funcs: dict[str, list[str]] = cfg.get("must_keep_funcs") or {}
+    must_signals: dict[str, list[str]] = cfg.get("must_keep_signals") or {}
+    must_tokens: dict[str, list[str]] = cfg.get("must_keep_tokens") or {}
+
+    scan_rels: list[str]
+    if workspace_root is not None and not rel:
+        scan_rels = list(
+            dict.fromkeys(
+                list(must_funcs.keys())
+                + list(must_signals.keys())
+                + list(must_tokens.keys())
+                + list(cfg.get("paths") or [])
+            )
+        )
+    else:
+        scan_rels = [rel] if rel else []
+
+    for file_rel in scan_rels:
+        file_rel_n = str(file_rel).replace("\\", "/")
+        disk_text: str | None = None
+        if workspace_root is not None:
+            disk_path = workspace_root / file_rel_n
+            # 缺失文件不在此硬拦（玩家健康/诊断另管）；专拦「文件在但被 stub 掏空」
+            if not disk_path.is_file():
+                continue
+            try:
+                disk_text = disk_path.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                errs.append(f"无法读取关键玩法文件 {file_rel_n}")
+                continue
+        text = disk_text if disk_text is not None else (content or "")
+        src_before = before if before is not None and not workspace_root else text
+        if workspace_root is not None:
+            # done 扫描：锚点相对当前磁盘全文强制存在（不因 stub「改前没有」而放行）
+            src_before = text
+
+        for fname in must_funcs.get(file_rel_n) or []:
+            if workspace_root is None:
+                existed = bool(
+                    re.search(
+                        rf"(?m)^func\s+{re.escape(fname)}\s*\(", src_before or ""
+                    )
+                )
+                if not existed:
+                    continue
+            if not re.search(rf"(?m)^func\s+{re.escape(fname)}\s*\(", text or ""):
+                errs.append(f"{file_rel_n}: 关键玩法函数缺失 {fname}()")
+        for sname in must_signals.get(file_rel_n) or []:
+            if workspace_root is None:
+                existed = bool(
+                    re.search(
+                        rf"(?m)^signal\s+{re.escape(sname)}\b", src_before or ""
+                    )
+                )
+                if not existed:
+                    continue
+            if not re.search(rf"(?m)^signal\s+{re.escape(sname)}\b", text or ""):
+                errs.append(f"{file_rel_n}: 关键信号缺失 {sname}")
+        for tok in must_tokens.get(file_rel_n) or []:
+            if workspace_root is None and before is not None and tok not in (
+                before or ""
+            ):
+                continue
+            if tok and tok not in (text or ""):
+                errs.append(f"{file_rel_n}: 关键链词元缺失 {tok}")
+    return list(dict.fromkeys(errs))
+
+
+def infer_target_funcs_from_patch(old_text: str, before: str) -> list[str]:
+    """根据 replace 的 old_text 推断触及的函数名。"""
+    if not old_text or not before:
+        return []
+    idx = before.find(old_text)
+    if idx < 0:
+        return []
+    head = before[: idx + len(old_text)]
+    names = _GD_FUNC_RE.findall(head)
+    if not names:
+        return []
+    last = names[-1]
+    fname = last[0] if isinstance(last, tuple) else str(last)
+    return [fname]

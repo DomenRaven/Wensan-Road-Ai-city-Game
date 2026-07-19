@@ -25,6 +25,13 @@ class Settings(BaseSettings):
     workspace_dir: Path = ROOT_DIR / "workspace"
     # 创作经验 → Learned Skill 长期库（不随 session 销毁）
     learned_skills_dir: Path = ROOT_DIR / "data" / "learned_skills"
+    # 策展参考 Skill（只读；与 learned 分离）
+    reference_skills_dir: Path = ROOT_DIR / "data" / "reference_skills"
+    # 总纲 Q1–Q3 / HF-13：轮次预算 / 软续杯 / 墙钟（秒）
+    # 前端 kiosk nl-patch 超时 420s（略大于墙钟，避免 salvage 返回前被 abort）
+    agent_max_rounds: int = 16
+    agent_soft_extra_rounds: int = 16
+    agent_wall_clock_sec: float = 360.0
     deployment_server_os: str = "TBD"
     deployment_terminal_layout: str = "TBD"
     # 实装公网域名，如 https://gameforge.example.com — 二维码编码此地址供游客扫码
