@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
+
+logger = logging.getLogger(__name__)
 
 from app.models.session import SessionRecord
 from app.services.agent_queue import AgentQueueError, get_agent_queue
@@ -253,7 +256,13 @@ def post_nl_patch(session_id: str, body: NlPatchRequest, request: Request) -> Nl
         diff_file_count = int(diff_payload.get("file_count") or 0)
         has_diff = True
     except Exception:  # noqa: BLE001 — 学情/Diff 失败不阻断改游戏主路径
-        pass
+        # NB-02：禁止静默吞掉；turn_id 可能仍为空，须落日志便于排查
+        logger.exception(
+            "nl-patch 学情/Diff 落库失败 · session_id=%s turn_id=%r has_diff=%s",
+            session_id,
+            turn_id,
+            has_diff,
+        )
 
     return NlPatchResponse(
         ok=bool(result.get("ok")),

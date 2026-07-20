@@ -1,8 +1,11 @@
-"""7.20 W2 · 学情 SQLite · agent_reply_full · release 不删。"""
+"""7.20 W2 · 学情 SQLite · agent_reply_full · release 不删 · NB-02 HTTP→db。"""
 
 from __future__ import annotations
 
+import json
+import logging
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -100,3 +103,99 @@ def test_learning_db_not_under_learned_skills(client: TestClient) -> None:
     assert db.is_file()
     assert "learned_skills" not in str(db.resolve())
     assert "learning_analytics" in str(db.resolve())
+
+
+def _seed_stub_workspace(client: TestClient, session_id: str) -> Path:
+    settings = get_settings()
+    root = settings.workspace_dir / session_id
+    (root / "config").mkdir(parents=True)
+    (root / "project.godot").write_text("config_version=5\n", encoding="utf-8")
+    cfg = {
+        "meta": {"genre": "platformer", "display_name": "测"},
+        "theme": {"title": "测"},
+        "tuning": {
+            "player": {"move_speed": 200, "jump_velocity": -400},
+            "enemy": {"patrol_speed": 50},
+            "enabled_skills": [],
+        },
+    }
+    (root / "config" / "game_config.json").write_text(
+        json.dumps(cfg, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    rec = client.app.state.session_store.get(session_id)
+    assert rec is not None
+    payload = dict(rec.payload)
+    payload["workspace_path"] = str(root)
+    rec.payload = payload
+    rec.genre = "platformer"
+    client.app.state.session_store.save(rec)
+    return root
+
+
+def test_stub_nl_patch_http_persists_to_learning_db(client: TestClient) -> None:
+    """NB-02：stub nl-patch → 响应 turn_id → learning.db 长回复；release 后仍在。"""
+    sid = client.post("/sessions", json={"auth_mode": "guest"}).json()["session_id"]
+    _seed_stub_workspace(client, sid)
+
+    resp = client.post(
+        f"/sessions/{sid}/nl-patch",
+        json={"text": "让角色跳得更高一点", "history": [], "feedback": ""},
+    )
+    assert resp.status_code == 200, resp.text
+    data = resp.json()
+    assert data["provider"] == "stub"
+    assert data["ok"] is True
+    turn_id = str(data.get("turn_id") or "")
+    assert turn_id.startswith("trn_"), f"期望落库 turn_id，得到 {turn_id!r}"
+
+    store = get_learning_store()
+    saved = store.get_turn(turn_id)
+    assert saved is not None
+    assert saved["session_id"] == sid
+    assert "跳" in (saved.get("user_text") or "")
+    full = str(saved.get("agent_reply_full") or "")
+    assert full.strip(), "agent_reply_full 不得为空"
+    # F5-L2：优先 message，否则 summary
+    assert full == compose_agent_reply_full(
+        str(data.get("message") or ""),
+        str(data.get("summary") or ""),
+        list(data.get("how_to_play") or []),
+    )
+
+    rows = store.list_turns_for_session(sid)
+    assert len(rows) == 1
+    assert rows[0]["id"] == turn_id
+
+    release = client.post(f"/sessions/{sid}/release?harvest=false")
+    assert release.status_code == 200
+    assert store.get_turn(turn_id) is not None
+    assert "learned_skills" not in str(
+        (Path(get_settings().learning_analytics_dir) / "learning.db").resolve()
+    )
+
+
+def test_learning_persist_failure_is_logged(
+    client: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
+    """NB-02：落库失败须打日志，不得静默留下空 turn_id。"""
+    sid = client.post("/sessions", json={"auth_mode": "guest"}).json()["session_id"]
+    _seed_stub_workspace(client, sid)
+
+    with (
+        patch(
+            "app.routers.nl_patch.get_learning_store",
+            side_effect=RuntimeError("模拟学情库不可用"),
+        ),
+        caplog.at_level(logging.ERROR, logger="app.routers.nl_patch"),
+    ):
+        resp = client.post(
+            f"/sessions/{sid}/nl-patch",
+            json={"text": "敌人慢一点", "history": [], "feedback": ""},
+        )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body.get("ok") is True
+    assert (body.get("turn_id") or "") == ""
+    assert any("学情/Diff 落库失败" in r.message for r in caplog.records)
+    assert any(r.exc_info for r in caplog.records if "学情/Diff 落库失败" in r.message)

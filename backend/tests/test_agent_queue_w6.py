@@ -153,3 +153,105 @@ def test_health_exposes_agent_queue(client: TestClient) -> None:
     assert body["max_concurrent_agents"] == 1
     assert body["active_agents"] == 0
     assert body["agent_queue_waiting"] == 0
+
+
+def _bind_workspace(client: TestClient, session_id: str, root: Path) -> None:
+    store = client.app.state.session_store
+    rec = store.get(session_id)
+    assert rec is not None
+    payload = dict(rec.payload)
+    payload["workspace_path"] = str(root)
+    rec.payload = payload
+    rec.genre = "platformer"
+    store.save(rec)
+
+
+def test_http_429_session_busy(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    """NB-13：同会话二次 nl-patch → 429 session_busy。"""
+    sid = client.post("/sessions", json={"auth_mode": "guest"}).json()["session_id"]
+    root = _seed(sid)
+    _bind_workspace(client, sid, root)
+
+    release = threading.Event()
+    entered = threading.Event()
+
+    def holder() -> None:
+        with get_agent_queue().acquire(sid, max_concurrent=4, wait_sec=0.2):
+            entered.set()
+            release.wait(timeout=5.0)
+
+    t = threading.Thread(target=holder, daemon=True)
+    t.start()
+    assert entered.wait(timeout=1.0)
+
+    monkeypatch.setattr(
+        "app.services.creative.llm_patch.run_game_agent",
+        lambda *_a, **_k: {"ok": True, "summary": "x", "message": "x", "changes": []},
+    )
+
+    res = client.post(
+        f"/sessions/{sid}/nl-patch",
+        json={"text": "再改一次", "history": [], "feedback": ""},
+    )
+    assert res.status_code == 429, res.text
+    detail = res.json()["detail"]
+    assert detail["code"] == "session_busy"
+    assert "正在进行" in detail["message"]
+
+    release.set()
+    t.join(timeout=3.0)
+    reset_agent_queue_for_tests()
+
+
+def test_http_429_user_busy(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    """NB-13：同账号另一会话占槽时 → 429 user_busy。"""
+    uname = f"u_busy_{int(time.time() * 1000)}"
+    reg = client.post(
+        "/auth/register",
+        json={"username": uname, "password": "pass1234", "nickname": "忙"},
+    )
+    assert reg.status_code == 201, reg.text
+    token = reg.json()["token"]
+    headers = {"Authorization": f"Bearer {token}"}
+    user_id = str(reg.json()["user"]["id"])
+
+    sid = client.post("/sessions", json={"auth_mode": "login"}, headers=headers).json()[
+        "session_id"
+    ]
+    # payload.workspace_path 优先，扁平种子即可触发 acquire(user_id=…)
+    root = _seed(sid)
+    _bind_workspace(client, sid, root)
+
+    other_sid = "00000000-0000-4000-8000-00000000busy"
+    release = threading.Event()
+    entered = threading.Event()
+
+    def holder() -> None:
+        with get_agent_queue().acquire(
+            other_sid, user_id=user_id, max_concurrent=4, wait_sec=0.2
+        ):
+            entered.set()
+            release.wait(timeout=5.0)
+
+    t = threading.Thread(target=holder, daemon=True)
+    t.start()
+    assert entered.wait(timeout=1.0)
+
+    monkeypatch.setattr(
+        "app.services.creative.llm_patch.run_game_agent",
+        lambda *_a, **_k: {"ok": True, "summary": "x", "message": "x", "changes": []},
+    )
+
+    res = client.post(
+        f"/sessions/{sid}/nl-patch",
+        headers=headers,
+        json={"text": "同账号再改", "history": [], "feedback": ""},
+    )
+    assert res.status_code == 429, res.text
+    detail = res.json()["detail"]
+    assert detail["code"] == "user_busy"
+    assert "同一账号" in detail["message"]
+
+    release.set()
+    t.join(timeout=3.0)
+    reset_agent_queue_for_tests()
