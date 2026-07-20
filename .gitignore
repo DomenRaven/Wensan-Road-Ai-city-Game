@@ -32,6 +32,10 @@ backend/data/
 data/learned_skills/**
 !data/learned_skills/.gitkeep
 
+# 学习分析运行时（SQLite / turn blobs；保留目录）
+data/learning_analytics/**
+!data/learning_analytics/.gitkeep
+
 # 本地审核报告（不入库）
 开发文档/AI生成小游戏_任务总结审核报告_v1.0.md
 
