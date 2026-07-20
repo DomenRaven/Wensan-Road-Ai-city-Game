@@ -58,6 +58,8 @@ class Settings(BaseSettings):
     llm_api_key: str = ""
     llm_model: str = "deepseek-chat"
     llm_timeout_sec: float = 30.0
+    # HF-14 辅助：会话盘写入 .agent/live_trace.jsonl（LLM 轮次/工具/门禁），供 watch_agent_live 盯盘
+    agent_live_trace: bool = True
 
 
 @lru_cache

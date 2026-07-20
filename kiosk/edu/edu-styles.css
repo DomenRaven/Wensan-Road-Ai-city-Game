@@ -5944,22 +5944,33 @@ body[data-orientation="portrait"] .edu-lb-stat-secondary {
 .edu-code-browser-body {
   flex: 1;
   min-height: 0;
+  overflow: hidden;
   display: grid;
   grid-template-columns: minmax(220px, 32%) 1fr;
 }
 .edu-code-browser-tree {
-  overflow: auto;
+  min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scrollbar-gutter: stable;
   border-right: 1px solid #334155;
   padding: 10px;
   background: #0f172a;
 }
 .edu-code-browser-main {
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   padding: 12px 14px 16px;
 }
 .edu-code-browser-anno {
+  flex: 0 0 auto;
   margin-bottom: 8px;
   padding: 10px 12px;
   border-radius: 10px;
@@ -5969,30 +5980,69 @@ body[data-orientation="portrait"] .edu-lb-stat-secondary {
   line-height: 1.5;
 }
 .edu-code-browser-path {
+  flex: 0 0 auto;
   margin-bottom: 8px;
   color: #94a3b8;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 .edu-code-browser-code {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scrollbar-gutter: stable;
   border-radius: 10px;
   border: 1px solid #334155;
   background: #020617;
   padding: 0;
 }
+.edu-code-browser-tree::-webkit-scrollbar,
+.edu-code-browser-code::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+.edu-code-browser-tree::-webkit-scrollbar-thumb,
+.edu-code-browser-code::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 8px;
+  border: 2px solid #0f172a;
+}
+.edu-code-browser-tree::-webkit-scrollbar-track,
+.edu-code-browser-code::-webkit-scrollbar-track {
+  background: #0b1220;
+}
 .edu-code-browser-code code {
   display: block;
+  min-height: min-content;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.84rem;
-  line-height: 1.45;
+  font-size: 1.08rem;
+  line-height: 1.55;
 }
 .cb-line {
   display: grid;
-  grid-template-columns: 48px 1fr;
+  grid-template-columns: 56px 1fr;
+}
+.cb-line--add {
+  background: rgba(34, 197, 94, 0.32);
+}
+.cb-line--add .cb-tx {
+  color: #bbf7d0;
+}
+/* hunk 内未改上下文：浅绿，与 add 连成整块，避免斑马空档 */
+.cb-line--touch {
+  background: rgba(34, 197, 94, 0.14);
+}
+.cb-line--del {
+  background: rgba(239, 68, 68, 0.28);
+}
+.cb-line--del .cb-tx {
+  color: #fecaca;
+  font-style: italic;
 }
 .cb-ln {
   padding: 0 8px;
@@ -6001,9 +6051,15 @@ body[data-orientation="portrait"] .edu-lb-stat-secondary {
   user-select: none;
   border-right: 1px solid #1e293b;
   background: #0b1220;
+  font-size: 0.95rem;
+}
+.cb-line--add .cb-ln,
+.cb-line--touch .cb-ln,
+.cb-line--del .cb-ln {
+  background: transparent;
 }
 .cb-tx {
-  padding: 0 10px;
+  padding: 0 12px;
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -6027,15 +6083,56 @@ body[data-orientation="portrait"] .edu-lb-stat-secondary {
   text-align: left;
   cursor: pointer;
   border-radius: 8px;
-  font-size: 0.92rem;
+  font-size: 1rem;
+}
+.edu-cb-file.is-changed {
+  background: rgba(34, 197, 94, 0.14);
+  box-shadow: inset 8px 0 0 #22c55e;
+  font-weight: 600;
+}
+.edu-cb-file.is-changed .edu-cb-file-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.35);
+  flex-shrink: 0;
+}
+.edu-cb-file:not(.is-changed) .edu-cb-file-mark {
+  display: none;
+}
+.edu-cb-changed-badge {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #16a34a;
+  color: #ecfdf5;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.edu-cb-file-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .edu-cb-dir-btn:hover,
 .edu-cb-file:hover {
   background: rgba(148, 163, 184, 0.15);
 }
+.edu-cb-file.is-changed:hover {
+  background: rgba(34, 197, 94, 0.22);
+}
 .edu-cb-file.is-active {
   background: rgba(56, 189, 248, 0.2);
   color: #e0f2fe;
+}
+.edu-cb-file.is-changed.is-active {
+  background: rgba(34, 197, 94, 0.28);
+  box-shadow: inset 8px 0 0 #4ade80;
 }
 .edu-cb-file.is-disabled {
   opacity: 0.55;

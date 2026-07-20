@@ -11,7 +11,8 @@
 |----|----------|------|------|
 | 契约 | `config/agent_contracts/{genre}.json` | 可写 | 能力面 / recipe / 禁幻想 API |
 | Agent 编排 | `backend/app/services/creative/game_agent.py` | 可写 | 多轮工具、进度、调门禁 |
-| 门禁 | `backend/app/services/creative/agent_contracts.py` | 可写 | 加载契约、validate、assert、progress、dry_run |
+| 门禁 | `backend/app/services/creative/agent_contracts.py` | 可写 | 加载契约、validate、assert、progress、dry_run；**HF-14** evidence 接线；**HF-15** `assert_presentation_predicates`（P0 ✅） |
+| Live 盯盘 | `backend/app/services/creative/agent_live_trace.py` · `05-工具脚本/watch_agent_live.py` | 可写 | 会话 `live_trace.jsonl` 实时监视 |
 | 品类说明 | `backend/app/services/creative/genre_context.py` | 可写 | playbook + 注入契约摘要 |
 | 入口 API | `backend/app/services/creative/llm_patch.py` · `routers/nl_patch.py` | 可写 | 有 Key→仅 agent；无 Key→stub；进度 GET |
 | 会话写权限 | `backend/app/services/agent_workspace.py` | 可写 | 路径红线、禁危险 GD |
@@ -32,7 +33,8 @@
 | Live 探针 | `05-工具脚本/e2e_7_19_live_three_tasks.py` | 可写 | HF-13 七品类×3；报告 `reports/live_three_tasks/` |
 | 单案探针 | `05-工具脚本/sandbox_llm_inject_probe.py` | 可写 | 注入/Live 深挖 messages |
 | 启动窗 | `godot_launcher.py` · `godot_window_layout.py` | 可写 | 全屏 + TOPMOST |
-| 单测 | `backend/tests/test_agent_*.py` · `test_hf12_*` · `test_hf13_*` | 可写 | 门禁/契约/保真/tscn lint |
+| 单测 | `backend/tests/test_agent_*.py` · `test_hf12_*` · `test_hf13_*` · `test_hf14_evidence.py` · `test_hf15_oracle_layers.py` | 可写 | 门禁/契约/保真/evidence/L2 |
+| HF-15 文档切片 | `开发文档/7.20_AI改游戏智能体_预言机分层_*` | 可写 | 需求/施工/执行/开工/映射 |
 
 ---
 
@@ -49,7 +51,7 @@
 | 检索经验 | `learned_skills.search_learned_skills` |
 | 开预制技能 | `learned_skills.enable_catalog_skill` → `workspace/.../config/game_config.json` |
 | 写沙箱/core | `agent_workspace.write_workspace_file` |
-| 门禁 | `run_done_gates` / `assert_claims` / `assert_apis_in_contract` |
+| 门禁 | `run_done_gates` / `assert_claims` / `assert_apis_in_contract` / `assert_evidence_wired` /（HF-15）表现谓词 |
 | 离线 stub | 仅无 `LLM_API_KEY` 时 `llm_patch` stub（有 Key 失败不降级） |
 | 会话诞生注入 | `edu_workspace.apply_edu_workspace_patch` |
 | 运行时效果 | `AiSandboxBridge` + 触控 overlay（已注入会话 core） |
@@ -115,3 +117,4 @@
 | 2026-07-18 | v1：对齐需求 v1.2 工作流分层 |
 | 2026-07-18 | 入口改为「有 Key 仅 agent」；链到工作进度与快照 |
 | 2026-07-19 | HF-13：e2e_7_19 / Reference / 墙钟·前端超时 / UI gate 字段 |
+| 2026-07-20 | HF-14 evidence；HF-15 预言机分层文档切片与 test_hf15 待建 |

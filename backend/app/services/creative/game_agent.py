@@ -34,22 +34,33 @@ from app.services.agent_workspace import (
 from app.services.creative.agent_contracts import (
     PLAYER_PRESENCE_BY_GENRE,
     assert_apis_in_contract,
+    assert_feedback_has_real_diff,
     assert_player_presence_health,
     assert_script_structure_fidelity,
     diagnose_workspace,
     dry_run_godot,
     emit_progress,
+    extract_symbols_added_from_gd,
     format_diagnose_for_prompt,
     infer_target_funcs_from_patch,
     lint_tscn_godot4,
     load_contract,
+    normalize_evidence_list,
     gameplay_critical_paths,
     player_critical_paths,
     restore_last_playable_snapshot,
     run_done_gates,
     save_last_playable_snapshot,
+    update_gate_error_streak,
     validate_gdscript,
     validate_player_write_content,
+)
+from app.services.creative.agent_live_trace import (
+    live_trace_enabled,
+    trace_done,
+    trace_gate,
+    trace_llm_round,
+    trace_tools,
 )
 from app.services.creative.genre_context import genre_context_as_system_suffix
 from app.services.creative.intent_router import (  # noqa: F401
@@ -65,6 +76,7 @@ from app.services.creative.learned_skills import (
     enable_catalog_skill,
     format_recent_session_writes_for_prompt,
     format_skills_for_prompt,
+    read_session_patch_log,
     search_learned_skills,
 )
 from app.services.creative.reference_skills import (
@@ -85,6 +97,9 @@ _AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对�
 - 优先阅读「本局近期改动」清单中的文件；核对状态是否成对开闭（外观、特效、速度、充能、无敌等）
 - Intent / Catalog / playbook / Reference 是可选材料；最终以会话磁盘与用户原话为准
 - done 须有真实写入（或诚实说明未改原因）；带条件的需求用会话脚本实现条件本身
+- done / self_check 须带 evidence[]：每条含 path、symbol、wired_by（_process / _physics_process / Timer 等）
+- 「每过 / 每隔 N 秒」类周期：用 `_process(delta)` 或 Timer 做时间轴，并在 evidence 写明 symbol 与 wired_by
+- 「没生效」：先 read 本局近期改动，对照原话列出差分（接线、数值、开闭成对），再最小 patch；本轮 summary 对应真实代码 diff
 
 【对话】
 - 本轮用户原话优先级最高；历史只作背景
@@ -100,6 +115,7 @@ _AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对�
 2. goals：1～5 条可验收子目标（条件/数值/手感拆开）
 3. actions：先读盘再施工，最后 self_check → done
 4. summary 覆盖全部 goals；试玩说明含重开与触屏操作
+5. evidence 覆盖各 goals（path / symbol / wired_by，供机器核对）
 
 【创作】
 - 可写范围：会话 workspace（core/scenes/config/ai_sandbox）
@@ -107,6 +123,7 @@ _AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对�
 - 桥 API：以契约列表为准；同等效果用会话 GDScript 实现
 - 实现用户要的机制本身；声称 ⊆ 磁盘
 - 可用 read_reference_skill；仍以会话磁盘为准
+- 新增或改写的 GDScript 关键逻辑须带简短中文 # 注释（条件、计数、开关/恢复时机）；整段粘贴须带注释
 
 【读写习惯 · Godot 会 headless 冒烟】
 - read_file 支持 offset/limit；仅当返回 eof=false 时用 next_offset 续读，或 search_in_file 定位
@@ -146,20 +163,38 @@ _AGENT_SYSTEM: str = """你是 GameForge K12 展厅的游戏改关助手。对�
     {"tool":"refresh_ai_sandbox_bridge"},
     {"tool":"write_file","path":"core/custom_mechanic.gd","content":"..."},
     {"tool":"validate_gdscript","path":"core/custom_mechanic.gd"},
-    {"tool":"self_check","summary":"草稿回复","how_to_play":["重开后点…"]},
+    {"tool":"self_check","summary":"草稿回复","how_to_play":["重开后点…"],"evidence":[{"goal":"子目标1","path":"core/<脚本>.gd","symbol":"_update_xxx","wired_by":"_process"}]},
     {"tool":"ensure_player_visibility"},
     {"tool":"emit_progress","stage":"write_changes","detail":"..."},
-    {"tool":"done","summary":"自然中文回复本轮原话（覆盖各 goals）","how_to_play":["试玩1","试玩2"]}
+    {"tool":"done","summary":"自然中文回复本轮原话（覆盖各 goals）","how_to_play":["试玩1","试玩2"],"evidence":[{"goal":"子目标1","path":"core/<脚本>.gd","symbol":"_update_xxx","wired_by":"_process","note":"可选说明"}]}
   ]
 }
 工具：diagnose_workspace | list_dir | read_file | search_in_file | replace_text | write_file | apply_shmup_drop_loot_chain | ensure_player_visibility | enable_catalog_skill | patch_mouse_steer_guard | refresh_ai_sandbox_bridge | ensure_touch_skill_buttons | search_learned_skills | read_reference_skill | validate_gdscript | self_check | emit_progress | done
 """
 
-# HF-11/15：注入 LLM 的工作法提示（正向；品类窄句仅门控后附加）
+# HF-11/14：注入 LLM 的工作法提示（正向·品类泛化；品类窄句仅门控后附加）
 _OPEN_READ_WORK_TIP: str = (
     "【开放读盘·本轮工作法】以用户原话为验收标准；"
     "先 diagnose + read_file（优先本局近期改动路径）；"
     "核对相关状态是否成对开闭；用 replace_text 最小 patch 后再 done。"
+)
+_TIME_CYCLE_WORK_TIP: str = (
+    "【时间周期·接线证据】用户要「每过/每隔 N 秒」或冷却循环时："
+    "用 delta 累加或 Timer 实现更新函数，并在 _process / _physics_process 中调用；"
+    "done.evidence 写清 path、symbol（更新函数名）、wired_by（_process 或 Timer）；"
+    "HUD/开关与更新函数同一机制闭环后再 done。"
+)
+_PRESENTATION_WORK_TIP: str = (
+    "【UI 可见·表现验收】goals 含进度条/冷却条/图标显示时："
+    "场景须有对应 Control 节点，并在 _process/_physics_process/Timer 路径写入 "
+    "ProgressBar.value（或 ratio）或 TextureRect.texture（或可见占位）；"
+    "done 时机器会核对可见驱动，请与 evidence 一并说明接线。"
+)
+_BUGFIX_REREAD_TIP: str = (
+    "【没生效·真差分】先 read 上轮改过的脚本与 config，"
+    "对照用户原话核对：符号是否已定义、是否在 _process/_physics_process/Timer 被调用、"
+    "相关状态是否成对开闭；本轮用 replace_text 写出可核对的代码 diff，"
+    "done.evidence 写明 path/symbol/wired_by，summary 与磁盘一致。"
 )
 _PLAYABILITY_WORK_TIP: str = (
     "【可玩性提示】本轮描述像白屏或角色看不见："
@@ -178,11 +213,24 @@ _SHMUP_DROP_LOOT_TIP: str = (
     "开局 tuning.enabled_skills 保持空列表；"
     "laser_beam/bomb 仅在拾取后写入 config。"
 )
+_MULTI_GOALS_WORK_TIP: str = (
+    "【多目标建议】本轮 goals 较多时，可先完成 2～3 条并 self_check→done，"
+    "其余目标用户可下一轮继续；请在 evidence/summary 与磁盘一致后再宣称完成。"
+)
 
 
 _BUGFIX_HINTS: re.Pattern[str] = re.compile(
     r"没生效|不发射|没反应|不能用|只有.?键|人物.*消失|不显示|白屏|黑屏|"
     r"打不开|没法.*启动|闪退|报错|修复"
+)
+_TIME_CYCLE_HINTS: re.Pattern[str] = re.compile(
+    r"每过\s*\d+\s*秒|每隔\s*\d+\s*秒|每\s*\d+\s*秒|"
+    r"冷却\s*\d+|cd\s*\d+|N\s*秒后|秒后(进入|触发|开启)|"
+    r"计时|倒计时|周期"
+)
+_PRESENTATION_HINTS: re.Pattern[str] = re.compile(
+    r"进度条|冷却条|充能条|ProgressBar|"
+    r"图标|命数图标|血量图标|生命图标|LivesDisplay"
 )
 _PLAYABILITY_CRITICAL: re.Pattern[str] = re.compile(
     r"人物.*消失|角色.*消失|人不显示|看不见.*人|人没了|角色没了|"
@@ -782,6 +830,7 @@ def _run_action(
     user_text: str = "",
     read_eof_by_path: dict[str, bool] | None = None,
     plan_goals: list[str] | None = None,
+    pre_turn_snapshot: dict[str, bytes | None] | None = None,
 ) -> dict[str, Any]:
     tool = str(action.get("tool", "")).strip()
     eof_map = read_eof_by_path if read_eof_by_path is not None else {}
@@ -899,7 +948,8 @@ def _run_action(
         )
         # 替换后磁盘已变，清除 eof 缓存，迫使后续再读
         eof_map.pop(path.replace("\\", "/"), None)
-        return {"tool": tool, **result}
+        symbols_added = extract_symbols_added_from_gd(new_aligned)
+        return {"tool": tool, **result, "symbols_added": symbols_added}
     if tool == "write_file":
         path = str(action.get("path", "")).strip()
         content = str(action.get("content", ""))
@@ -1112,6 +1162,10 @@ def _run_action(
         ][:6]
         if not how_to_play:
             how_to_play = ["请重新启动游戏后点屏幕下方按钮试玩"]
+        evidence = normalize_evidence_list(action.get("evidence"))
+        require_evidence = any(
+            str(p).replace("\\", "/").endswith(".gd") for p in (written_paths or [])
+        )
         errs = run_done_gates(
             workspace_root,
             written_paths=list(dict.fromkeys(written_paths or [])),
@@ -1121,11 +1175,16 @@ def _run_action(
             contract=contract,
             catalog_changed=catalog_changed,
             user_text=user_text,
+            evidence=evidence,
+            require_evidence=require_evidence,
+            goals=plan_goals,
+            pre_turn_snapshot=pre_turn_snapshot,
         )
         return {
             "tool": tool,
             "ok": not errs,
             "errors": errs,
+            "evidence": evidence,
             "detail": (
                 "门禁通过，可以 done"
                 if not errs
@@ -1145,6 +1204,7 @@ def _run_action(
             "how_to_play": [
                 str(x) for x in (action.get("how_to_play") or []) if str(x).strip()
             ][:6],
+            "evidence": normalize_evidence_list(action.get("evidence")),
         }
     raise AgentWorkspaceError(f"未知工具: {tool}")
 
@@ -1259,6 +1319,15 @@ def _salvage_agent_return(
             "这轮改动会让人物看不见或操控不了，我已经撤回/恢复到上一版还能玩的角色。"
             "请再说一次你想要的效果，我换更安全的改法继续做。"
         )
+        trace_done(
+            workspace_root,
+            round_idx=max(0, rounds_used - 1),
+            summary=summary,
+            gate_passed=False,
+            rolled_back=True,
+            written=written_unique,
+            enabled=live_trace_enabled(settings),
+        )
         return {
             "ok": True,
             "provider": "agent",
@@ -1310,6 +1379,15 @@ def _salvage_agent_return(
         how = base_how or ["请重新启动游戏后确认；可继续对话让我接着改"]
         if not any("重开" in h or "启动" in h or "重新" in h for h in how):
             how.append("重要：重新启动游戏后才能看到最新可玩状态")
+        trace_done(
+            workspace_root,
+            round_idx=max(0, rounds_used - 1),
+            summary=summary,
+            gate_passed=False,
+            rolled_back=bool(rolled),
+            written=written_unique,
+            enabled=live_trace_enabled(settings),
+        )
         return {
             "ok": True,
             "provider": "agent",
@@ -1590,10 +1668,43 @@ def run_game_agent(
     # HF-11：统一开放读盘；可玩性危急 / shmup 掉落仅门控附加正向提示
     if bugfix or recent_writes_block:
         context_bits.append(_OPEN_READ_WORK_TIP)
+    if bugfix:
+        context_bits.append(_BUGFIX_REREAD_TIP)
+    blob_for_tips = f"{user_text or ''}\n{feedback or ''}"
+    if _TIME_CYCLE_HINTS.search(blob_for_tips):
+        context_bits.append(_TIME_CYCLE_WORK_TIP)
+    if _PRESENTATION_HINTS.search(blob_for_tips):
+        context_bits.append(_PRESENTATION_WORK_TIP)
     if playability_critical:
         context_bits.append(_PLAYABILITY_WORK_TIP)
     if genre == "shmup" and is_laser_bomb_drop_request(user_text or feedback):
         context_bits.append(_SHMUP_DROP_LOOT_TIP)
+    if len(plan_goals) >= 4:
+        context_bits.append(_MULTI_GOALS_WORK_TIP)
+    # HF-14：反馈轮注入上轮 summary / evidence（若有）
+    prev_log_rows = read_session_patch_log(workspace_root)
+    prev_summary_for_feedback = ""
+    if prev_log_rows:
+        last_ok = next(
+            (r for r in reversed(prev_log_rows) if r.get("ok")),
+            prev_log_rows[-1],
+        )
+        prev_summary_for_feedback = str(last_ok.get("summary") or "").strip()
+        prev_ev = last_ok.get("evidence")
+        if bugfix and (prev_summary_for_feedback or prev_ev):
+            context_bits.append(
+                "【上轮交付·系统注入·对照读盘】\n"
+                + json.dumps(
+                    {
+                        "previous_summary": prev_summary_for_feedback[:240],
+                        "previous_sandbox_files": list(last_ok.get("sandbox_files") or [])[:12],
+                        "previous_evidence": normalize_evidence_list(prev_ev)[:8],
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n本轮反馈「没生效」时：先 read 上述路径，核对 wiring 与数值，"
+                "用 replace_text 补齐后 done，并附新 evidence（相对上轮须有代码 diff）。"
+            )
     if previous_turn_user_rating:
         # F3：结构化注入，非用户原话；低星优先澄清不满点
         rating_json = json.dumps(
@@ -1601,7 +1712,7 @@ def run_game_agent(
             ensure_ascii=False,
         )
         context_bits.append(
-            "【上轮用户星级评价·系统注入·勿当作用户本轮原话】\n"
+            "【上轮用户星级评价·系统注入·按结构化字段处理】\n"
             + rating_json
             + "\n"
             "若 score≤2：优先澄清不满点并复读盘再改；"
@@ -1611,7 +1722,8 @@ def run_game_agent(
         "请先给出 understanding + goals，再读盘施工；"
         "一条话里的多个要求都要进 goals 并尽量落地。"
         "带条件的需求用会话逻辑实现条件；"
-        "done.summary 用自然中文覆盖各 goals。"
+        "done.summary 用自然中文覆盖各 goals；"
+        "done 附带 evidence[]（path/symbol/wired_by）。"
     )
     user_blob = turn_text + "\n\n" + "\n".join(context_bits)
 
@@ -1641,6 +1753,8 @@ def run_game_agent(
     dry_run_result: dict[str, Any] | None = None
     last_error_sig = ""
     error_sig_streak = 0
+    last_gate_error_keys: frozenset[str] = frozenset()
+    gate_error_streak = 0
 
     for _round in range(absolute_max):
         # 软续杯：越过首段 max_rounds 前须已有写盘进展
@@ -1677,14 +1791,30 @@ def run_game_agent(
             "write_changes" if _round > 0 else "read_contract",
             f"智能体第 {_round + 1}/{budget_label} 轮思考中…",
         )
+        _trace_on = live_trace_enabled(settings)
         try:
             parsed = _llm_turn(settings, messages)
+            trace_llm_round(
+                workspace_root,
+                round_idx=_round,
+                messages=messages,
+                parsed=parsed,
+                enabled=_trace_on,
+            )
         except (requests.RequestException, TimeoutError):
             # 网络类交给入口重试
             raise
         except (ValueError, json.JSONDecodeError, KeyError, TypeError) as exc:
             # 坏 JSON / 缺字段：不上锁，回灌后继续；末轮走 salvage
             err = str(exc).strip()[:240]
+            trace_llm_round(
+                workspace_root,
+                round_idx=_round,
+                messages=messages,
+                parsed=None,
+                error=err,
+                enabled=_trace_on,
+            )
             messages.append(
                 {
                     "role": "user",
@@ -1784,6 +1914,8 @@ def run_game_agent(
             )
 
         pending_done: dict[str, Any] | None = None
+        round_self_check_ok: bool | None = None
+        round_self_check_errors: list[str] = []
 
         for raw in _schedule_actions_for_round(actions, max_total=10):
             if not isinstance(raw, dict):
@@ -1847,9 +1979,14 @@ def run_game_agent(
                     user_text=user_text,
                     read_eof_by_path=read_eof_by_path,
                     plan_goals=plan_goals,
+                    pre_turn_snapshot=pre_turn_snapshot,
                 )
             except (AgentWorkspaceError, OSError, ValueError) as exc:
                 obs = {"tool": raw.get("tool"), "error": str(exc)}
+
+            if obs.get("tool") == "self_check":
+                round_self_check_ok = bool(obs.get("ok"))
+                round_self_check_errors = list(obs.get("errors") or [])
 
             # HF-12：每次代码 mutation 后立即跑 Godot；失败则恢复本动作前版本。
             action_written: list[str] = []
@@ -1937,6 +2074,13 @@ def run_game_agent(
                     if sid and sid not in searched_ids:
                         searched_ids.append(sid)
 
+        trace_tools(
+            workspace_root,
+            round_idx=_round,
+            observations=observations,
+            enabled=_trace_on,
+        )
+
         if pending_done is not None:
             emit_progress(workspace_root, "validate", "校验脚本与声称")
             summary = str(pending_done.get("summary") or last_thought or "已按你的话改好游戏")
@@ -1947,6 +2091,11 @@ def run_game_agent(
                 how_to_play = ["请重新启动游戏后再试玩刚才的改动"]
             elif not any("重开" in h or "启动" in h or "重新" in h for h in how_to_play):
                 how_to_play.append("重要：重新启动游戏后新改动才会生效")
+            evidence = normalize_evidence_list(pending_done.get("evidence"))
+            code_written = any(
+                str(p).replace("\\", "/").endswith(".gd") for p in written
+            )
+            require_evidence = bool(code_written)
 
             # 7.19：done 前不再强制 enable catalog；由 LLM actions 显式决定
             gate_errors = list(
@@ -1959,8 +2108,28 @@ def run_game_agent(
                     contract=contract,
                     catalog_changed=catalog_changed,
                     user_text=user_text,
+                    evidence=evidence,
+                    require_evidence=require_evidence,
+                    goals=plan_goals,
+                    pre_turn_snapshot=pre_turn_snapshot,
                 )
             )
+            # HF-15.1 H5：同轮 self_check 未过则 done 不得假装过关
+            if round_self_check_ok is False and round_self_check_errors:
+                gate_errors = list(
+                    dict.fromkeys(round_self_check_errors + gate_errors)
+                )
+            # HF-14 S3：反馈轮无真 diff / summary 近亲复读 → 硬回灌
+            if bugfix:
+                gate_errors.extend(
+                    assert_feedback_has_real_diff(
+                        workspace_root,
+                        written_paths=list(dict.fromkeys(written)),
+                        pre_turn_snapshot=pre_turn_snapshot,
+                        summary=summary,
+                        previous_summary=prev_summary_for_feedback,
+                    )
+                )
             # 多 goals 时：summary 不能近乎为空（防只完成一条就空话交差）。
             # 仅在 summary 过短时才拦——避免对合法长 summary 的 token 命中误伤，浪费自愈轮次。
             # 声称是否⊆磁盘由 assert_claims + dry_run 严格把关，这里只挡"空 done"。
@@ -1991,11 +2160,24 @@ def run_game_agent(
 
             if gate_errors:
                 gate_failures += 1
+                gate_error_streak, last_gate_error_keys = update_gate_error_streak(
+                    gate_error_streak,
+                    last_gate_error_keys,
+                    gate_errors,
+                )
+                trace_gate(
+                    workspace_root,
+                    round_idx=_round,
+                    gate_errors=gate_errors,
+                    evidence=evidence,
+                    enabled=_trace_on,
+                )
                 observations.append(
                     {
                         "tool": "done",
                         "error": "完成条件尚未齐备，请按 gate_errors 继续施工",
                         "gate_errors": gate_errors,
+                        "evidence": evidence,
                     }
                 )
                 tool_report = serialize_observations_for_followup(
@@ -2020,10 +2202,32 @@ def run_game_agent(
                                 else ""
                             )
                             + "\n请读取相关脚本（尤其近期改过的路径），"
-                            "并用 replace_text 最小 patch 完成目标后再 done。"
+                            "用 replace_text 最小 patch 完成目标，"
+                            "done 须带可核对的 evidence[]（path/symbol/wired_by）后再提交。"
                         ),
                     }
                 )
+                if gate_error_streak >= 3:
+                    return _salvage_agent_return(
+                        settings,
+                        workspace_root,
+                        genre,
+                        route=route,
+                        written=written,
+                        catalog_changed=catalog_changed,
+                        pre_turn_snapshot=pre_turn_snapshot,
+                        last_summary=summary,
+                        last_how=how_to_play,
+                        last_understanding=last_understanding,
+                        plan_goals=plan_goals,
+                        progress_events=progress_events,
+                        rounds_used=_round + 1,
+                        reason=(
+                            "连续三次相同门禁失败，已停止空转: "
+                            + "; ".join(gate_errors[:4])
+                        ),
+                        bugfix=bugfix,
+                    )
                 if gate_failures >= 6:
                     # 不上锁：尽力交付本轮已改内容（能加载就给，坏了就回滚保可加载）
                     return _salvage_agent_return(
@@ -2046,6 +2250,8 @@ def run_game_agent(
                 continue
 
             # 门禁通过
+            gate_error_streak = 0
+            last_gate_error_keys = frozenset()
             emit_progress(workspace_root, "done", summary[:80])
             used_ids = list(dict.fromkeys(learned_skill_ids_used + searched_ids))
             if used_ids:
@@ -2057,6 +2263,16 @@ def run_game_agent(
                     failed=False,
                 )
             save_last_playable_snapshot(workspace_root, genre)
+            trace_done(
+                workspace_root,
+                round_idx=_round,
+                summary=summary,
+                gate_passed=True,
+                rolled_back=False,
+                written=list(dict.fromkeys(written)),
+                evidence=evidence,
+                enabled=_trace_on,
+            )
             return {
                 "ok": True,
                 "provider": "agent",
@@ -2065,6 +2281,7 @@ def run_game_agent(
                 "changes": [],
                 "sandbox_files": list(dict.fromkeys(written)),
                 "how_to_play": how_to_play,
+                "evidence": evidence,
                 "applied_capabilities": list(route.get("skill_ids") or []),
                 "needs_relaunch": True,
                 "verify_gaps": [],
@@ -2079,6 +2296,34 @@ def run_game_agent(
                 "intent_route": route,
                 "dry_run": dry_run_result or {},
             }
+
+        elif round_self_check_ok is False and round_self_check_errors:
+            gate_error_streak, last_gate_error_keys = update_gate_error_streak(
+                gate_error_streak,
+                last_gate_error_keys,
+                round_self_check_errors,
+            )
+            if gate_error_streak >= 3:
+                return _salvage_agent_return(
+                    settings,
+                    workspace_root,
+                    genre,
+                    route=route,
+                    written=written,
+                    catalog_changed=catalog_changed,
+                    pre_turn_snapshot=pre_turn_snapshot,
+                    last_summary=summary or last_thought,
+                    last_how=how_to_play or ["请重新启动游戏后再试玩"],
+                    last_understanding=last_understanding,
+                    plan_goals=plan_goals,
+                    progress_events=progress_events,
+                    rounds_used=_round + 1,
+                    reason=(
+                        "连续三次相同门禁失败，已停止空转: "
+                        + "; ".join(round_self_check_errors[:4])
+                    ),
+                    bugfix=bugfix,
+                )
 
         follow = (
             "工具结果:\n"
@@ -2162,9 +2407,9 @@ def run_game_agent(
             follow += (
                 "\n【换路催写】连续多轮同一写入/校验错误未消除，请换策略："
                 "1) read_file 失败路径后用 replace_text 修具体报错行"
-                "（Godot 4 碰撞用 size 勿 extents；[sub_resource] 先于 SubResource 引用）；"
-                "2) 新机制优先脚本 new Area2D()/add_child，避免新建 PackedScene 再 preload；"
-                "3) 勿重复 write_file 整文件重写同一内容。"
+                "（Godot 4 矩形碰撞用 size；[sub_resource] 先于 SubResource 引用）；"
+                "2) 新机制优先脚本 new Area2D()/add_child；"
+                "3) 同一文件优先 replace_text 做最小 patch。"
             )
         follow += "\n请继续；改完后 actions 含 done（须过门禁）。"
         messages.append({"role": "assistant", "content": json.dumps(parsed, ensure_ascii=False)})

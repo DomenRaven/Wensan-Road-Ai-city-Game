@@ -1331,6 +1331,843 @@ def assert_drop_loot_done(
     return list(dict.fromkeys(errors))
 
 
+# ---------------------------------------------------------------------------
+# HF-14：证据验收（evidence[] · 定义 + 接线）
+# ---------------------------------------------------------------------------
+
+_WIRED_BY_PROCESS: frozenset[str] = frozenset(
+    {"_process", "_physics_process", "process", "physics_process"}
+)
+_WIRED_BY_TIMER: frozenset[str] = frozenset({"timer", "Timer", "TIMEOUT", "timeout"})
+
+
+def normalize_evidence_list(raw: Any) -> list[dict[str, Any]]:
+    """把 done/self_check 的 evidence 规范成 dict 列表；非法项丢弃。"""
+    if raw is None:
+        return []
+    if not isinstance(raw, list):
+        return []
+    out: list[dict[str, Any]] = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        path = str(item.get("path") or "").replace("\\", "/").strip().lstrip("/")
+        symbol = str(item.get("symbol") or "").strip()
+        wired_raw = item.get("wired_by")
+        if isinstance(wired_raw, list):
+            wired_by = "|".join(
+                str(x).strip() for x in wired_raw if str(x).strip()
+            )
+        else:
+            wired_by = str(wired_raw or "").strip()
+        goal = str(item.get("goal") or "").strip()
+        note = str(item.get("note") or "").strip()
+        missing = bool(item.get("missing")) or str(item.get("status") or "").lower() == "missing"
+        caller = str(item.get("caller_path") or path).replace("\\", "/").strip().lstrip("/")
+        if not path and not symbol and not missing:
+            continue
+        out.append(
+            {
+                "goal": goal,
+                "path": path,
+                "symbol": symbol,
+                "wired_by": wired_by,
+                "note": note,
+                "missing": missing,
+                "caller_path": caller or path,
+            }
+        )
+    return out
+
+
+def _find_symbol_kind(text: str, symbol: str) -> str | None:
+    """在 GDScript 中定位符号定义类型：func / var / const / signal。"""
+    if not symbol or not text:
+        return None
+    esc = re.escape(symbol)
+    patterns: list[tuple[str, str]] = [
+        ("func", rf"(?m)^\s*(?:static\s+)?func\s+{esc}\s*\("),
+        ("var", rf"(?m)^\s*(?:@\w+\s+)*var\s+{esc}\b"),
+        ("const", rf"(?m)^\s*const\s+{esc}\b"),
+        ("signal", rf"(?m)^\s*signal\s+{esc}\b"),
+    ]
+    for kind, pat in patterns:
+        if re.search(pat, text):
+            return kind
+    return None
+
+
+def _extract_func_body(text: str, func_name: str) -> str | None:
+    """提取 func_name 函数体（含签名行后至下一同级 func/class 前）。"""
+    if not text or not func_name:
+        return None
+    esc = re.escape(func_name)
+    m = re.search(
+        rf"(?m)^(?P<indent>\t*)(?:static\s+)?func\s+{esc}\s*\([^)]*\)[^\n]*:\s*$",
+        text,
+    )
+    if not m:
+        return None
+    indent = m.group("indent") or ""
+    start = m.end()
+    # 下一同级或更外层声明
+    nxt = re.search(
+        rf"(?m)^(?!{re.escape(indent)}\t){re.escape(indent)}"
+        r"(?:(?:static\s+)?func\s+|class\s+|signal\s+)",
+        text[start:],
+    )
+    end = start + nxt.start() if nxt else len(text)
+    return text[m.start() : end]
+
+
+def _symbol_referenced_in(body: str, symbol: str, *, as_call: bool) -> bool:
+    if not body or not symbol:
+        return False
+    cleaned = _strip_gd_comments_strings(body)
+    esc = re.escape(symbol)
+    if as_call:
+        return bool(re.search(rf"\b{esc}\s*\(", cleaned))
+    return bool(re.search(rf"\b{esc}\b", cleaned))
+
+
+_GD_IDENTIFIER_RE: re.Pattern[str] = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _is_valid_evidence_symbol(symbol: str) -> bool:
+    if not symbol or not _GD_IDENTIFIER_RE.match(symbol):
+        return False
+    if symbol in ("func", "var", "const", "signal", "class", "extends"):
+        return False
+    return True
+
+
+def _parse_wired_by_candidates(wired_by: str) -> tuple[list[str], list[str]]:
+    """拆分多 caller；含 '/' 的散文串视为格式错误。"""
+    raw = (wired_by or "").strip()
+    if not raw:
+        return [], []
+    if "/" in raw:
+        return [], [
+            "evidence wired_by 含 '/' 请拆成多条 evidence 或使用 A|B 分隔多个调用方"
+        ]
+    if "|" in raw:
+        parts = raw.split("|")
+    elif "," in raw:
+        parts = raw.split(",")
+    else:
+        parts = [raw]
+    return [p.strip() for p in parts if p.strip()], []
+
+
+def _find_called_funcs_in_body(body: str) -> list[str]:
+    cleaned = _strip_gd_comments_strings(body or "")
+    names = re.findall(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(", cleaned)
+    skip = {
+        "if",
+        "elif",
+        "while",
+        "for",
+        "match",
+        "assert",
+        "print",
+        "push_warning",
+        "push_error",
+        "max",
+        "min",
+        "clamp",
+        "lerp",
+    }
+    out: list[str] = []
+    for n in names:
+        if n not in skip and n not in out:
+            out.append(n)
+    return out
+
+
+def _symbol_wired_via_caller(
+    caller_text: str,
+    caller_name: str,
+    symbol: str,
+    *,
+    as_call: bool,
+    max_hops: int = 2,
+) -> bool:
+    body = _extract_func_body(caller_text, caller_name)
+    if body is None:
+        return False
+    if _symbol_referenced_in(body, symbol, as_call=as_call):
+        return True
+    if max_hops <= 0:
+        return False
+    for callee in _find_called_funcs_in_body(body):
+        if _symbol_wired_via_caller(
+            caller_text,
+            callee,
+            symbol,
+            as_call=as_call,
+            max_hops=max_hops - 1,
+        ):
+            return True
+    return False
+
+
+def _check_process_hook_wired(
+    caller_text: str,
+    caller_rel: str,
+    symbol: str,
+    *,
+    hook: str,
+    as_call: bool,
+    label: str,
+) -> list[str]:
+    body = _extract_func_body(caller_text, hook)
+    if body is None:
+        return [
+            f"evidence 接线失败：{caller_rel} 无 {hook}（symbol={symbol}，{label}）"
+        ]
+    if _symbol_referenced_in(body, symbol, as_call=as_call):
+        return []
+    if _symbol_wired_via_caller(
+        caller_text, hook, symbol, as_call=as_call, max_hops=2
+    ):
+        return []
+    return [
+        f"evidence 接线失败：{hook} 路径内未调用/引用 {symbol}@"
+        f"{caller_rel}（{label}）"
+    ]
+
+
+def _check_timer_wired(
+    caller_text: str,
+    caller_rel: str,
+    symbol: str,
+    *,
+    as_call: bool,
+    label: str,
+) -> list[str]:
+    cleaned = _strip_gd_comments_strings(caller_text)
+    has_timer = bool(re.search(r"\bTimer\b|timeout|\.connect\s*\(", cleaned, re.I))
+    if not has_timer:
+        return [
+            f"evidence 接线失败：声明 Timer 但 {caller_rel} 未见 Timer/connect"
+            f"（{label}）"
+        ]
+    if _symbol_referenced_in(cleaned, symbol, as_call=as_call):
+        return []
+    return [f"evidence 接线失败：Timer 路径下未见 {symbol}（{label}）"]
+
+
+def _check_one_wired_by_candidate(
+    caller_text: str,
+    caller_rel: str,
+    symbol: str,
+    candidate: str,
+    *,
+    as_call: bool,
+    label: str,
+) -> list[str]:
+    wb_key = candidate.strip()
+    wb_norm = wb_key.lstrip("_")
+    if wb_key in _WIRED_BY_PROCESS or f"_{wb_norm}" in _WIRED_BY_PROCESS or wb_norm in {
+        "process",
+        "physics_process",
+    }:
+        hook = wb_key if wb_key.startswith("_") else f"_{wb_norm}"
+        if hook not in ("_process", "_physics_process"):
+            hook = "_process" if "physics" not in hook else "_physics_process"
+        return _check_process_hook_wired(
+            caller_text,
+            caller_rel,
+            symbol,
+            hook=hook,
+            as_call=as_call,
+            label=label,
+        )
+    if wb_key in _WIRED_BY_TIMER or wb_norm.lower() == "timer":
+        return _check_timer_wired(
+            caller_text, caller_rel, symbol, as_call=as_call, label=label
+        )
+    if _symbol_wired_via_caller(
+        caller_text, wb_key, symbol, as_call=as_call, max_hops=2
+    ):
+        return []
+    cleaned = _strip_gd_comments_strings(caller_text)
+    if "connect(" in cleaned and _symbol_referenced_in(
+        cleaned, symbol, as_call=as_call
+    ):
+        return []
+    return [
+        f"evidence 接线失败：{wb_key} 路径内未调用/引用 {symbol}"
+        f"（{caller_rel}，{label}）"
+    ]
+
+
+def _assert_one_evidence_wired(
+    workspace_root: Path,
+    item: dict[str, Any],
+) -> list[str]:
+    """核对单条 evidence：定义存在 + wired_by 调用接到位。"""
+    errs: list[str] = []
+    goal = str(item.get("goal") or "")
+    label = goal or str(item.get("symbol") or item.get("path") or "evidence")
+    if item.get("missing"):
+        errs.append(f"evidence 标明 missing，不得 done：{label}")
+        return errs
+
+    path = str(item.get("path") or "").replace("\\", "/").strip()
+    symbol = str(item.get("symbol") or "").strip()
+    wired_by = str(item.get("wired_by") or "").strip()
+    caller_rel = str(item.get("caller_path") or path).replace("\\", "/").strip()
+
+    # HF-15.1 H1：非法 evidence 形状
+    if path.lower().endswith((".tscn", ".tres")):
+        errs.append(
+            f"evidence 不可用场景路径当 symbol：请改为 .gd 中的 func/var…（{label}）"
+        )
+        return errs
+    if "->" in wired_by or re.search(r"\.gd\s*->", wired_by):
+        errs.append(
+            f"wired_by 须为函数名或 A|B，禁止箭头链（{label}）"
+        )
+        return errs
+
+    if not path or not symbol:
+        errs.append(f"evidence 缺 path/symbol：{label}")
+        return errs
+
+    if not _is_valid_evidence_symbol(symbol):
+        errs.append(
+            f"evidence symbol 须为单个标识符，请拆成多条 evidence："
+            f"{symbol}（{label}）"
+        )
+        return errs
+
+    def_path = workspace_root / path
+    if not def_path.is_file():
+        errs.append(f"evidence 路径不存在：{path}（{label}）")
+        return errs
+    try:
+        def_text = def_path.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        errs.append(f"evidence 无法读取：{path}（{label}）")
+        return errs
+
+    kind = _find_symbol_kind(def_text, symbol)
+    if kind is None:
+        errs.append(
+            f"evidence 符号未定义：{symbol} @ {path}（{label}）；"
+            "须为 func/var/const/signal"
+        )
+        return errs
+
+    if not wired_by:
+        return errs
+
+    candidates, fmt_errs = _parse_wired_by_candidates(wired_by)
+    if fmt_errs:
+        return [f"{fmt_errs[0]}（{label}）"]
+    if not candidates:
+        return errs
+
+    caller_path = workspace_root / caller_rel
+    if not caller_path.is_file():
+        errs.append(f"evidence 调用方路径不存在：{caller_rel}（{label}）")
+        return errs
+    try:
+        caller_text = caller_path.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        errs.append(f"evidence 无法读取调用方：{caller_rel}（{label}）")
+        return errs
+
+    as_call = kind == "func"
+    per_cand: list[list[str]] = []
+    for cand in candidates:
+        per_cand.append(
+            _check_one_wired_by_candidate(
+                caller_text,
+                caller_rel,
+                symbol,
+                cand,
+                as_call=as_call,
+                label=label,
+            )
+        )
+    if any(not e for e in per_cand):
+        return errs
+    # 全部 candidate 失败：回灌第一条谓词原文
+    for e in per_cand:
+        if e:
+            errs.extend(e)
+            break
+    return errs
+
+
+def _symbol_existed_at_turn_start(
+    pre_turn_snapshot: dict[str, bytes | None],
+    path: str,
+    symbol: str,
+) -> bool:
+    """回合初 snapshot 中该 path 是否已定义 symbol（HF-15.1 H2）。"""
+    rel = path.replace("\\", "/").strip()
+    snap = pre_turn_snapshot.get(rel)
+    if snap is None:
+        return False
+    text = snap.decode("utf-8", errors="ignore")
+    return _find_symbol_kind(text, symbol) is not None
+
+
+def assert_evidence_wired(
+    workspace_root: Path,
+    evidence: list[dict[str, Any]] | None,
+    *,
+    goals: list[str] | None = None,
+    require: bool = False,
+    written_paths: list[str] | None = None,
+    pre_turn_snapshot: dict[str, bytes | None] | None = None,
+) -> list[str]:
+    """HF-14：核对 evidence[] ⊆ 磁盘（定义 + wired_by 接线）。
+
+    - require=False 且 evidence 空：跳过（兼容旧调用方）
+    - require=True 且 evidence 空：gate_error
+    - 任一条 missing / 缺定义 / 未接线 → 错误
+    - HF-15.1：新符号须本轮 written_paths 写入（见 pre_turn_snapshot）
+    """
+    items = normalize_evidence_list(evidence)
+    errors: list[str] = []
+    if require and not items:
+        errors.append(
+            "done 须提交 evidence[]：每条含 path/symbol/wired_by"
+            "（周期机制须声明接到 _process/_physics_process/Timer）"
+        )
+        return errors
+    if not items:
+        return []
+
+    for item in items:
+        errors.extend(_assert_one_evidence_wired(workspace_root, item))
+
+    written_set = {
+        str(p).replace("\\", "/").strip()
+        for p in (written_paths or [])
+        if str(p).strip()
+    }
+    if require and written_set and pre_turn_snapshot is not None:
+        for item in items:
+            if item.get("missing"):
+                continue
+            path = str(item.get("path") or "").replace("\\", "/").strip()
+            symbol = str(item.get("symbol") or "").strip()
+            if not path or not symbol:
+                continue
+            if _symbol_existed_at_turn_start(pre_turn_snapshot, path, symbol):
+                continue
+            label = str(item.get("goal") or symbol or path)
+            if path not in written_set:
+                errors.append(
+                    f"evidence 新符号须本轮写入 {path}："
+                    f"{symbol} 回合初不存在且 path 未出现在 written_paths（{label}）"
+                )
+
+    goal_list = [str(g).strip() for g in (goals or []) if str(g).strip()]
+    if require and goal_list and len(items) < 1:
+        errors.append("goals 非空时 evidence 不能为空")
+    return list(dict.fromkeys(errors))
+
+
+# ---------------------------------------------------------------------------
+# HF-15.1：同错早停键 · replace 观测 symbols_added
+# ---------------------------------------------------------------------------
+
+_SYMBOLS_ADDED_RE: re.Pattern[str] = re.compile(
+    r"(?m)^\s*(?:static\s+)?func\s+(\w+)"
+)
+
+
+def extract_symbols_added_from_gd(text: str, *, limit: int = 20) -> list[str]:
+    """从 GDScript 片段提取 func 名（HF-15.1 H4）。"""
+    out: list[str] = []
+    for name in _SYMBOLS_ADDED_RE.findall(text or ""):
+        if name not in out:
+            out.append(name)
+        if len(out) >= limit:
+            break
+    return out
+
+
+def _normalize_one_gate_error_key(err: str) -> str:
+    e = str(err).strip()
+    if not e:
+        return ""
+    sym_m = re.search(r"符号未定义：(\w+)\s*@\s*([^\s（]+)", e)
+    if sym_m:
+        return f"symbol_undefined:{sym_m.group(1)}@{sym_m.group(2)}"
+    if "新符号须本轮写入" in e:
+        sym_m2 = re.search(r"：(\w+)\s", e)
+        path_m = re.search(r"写入\s+([^\s：]+)", e)
+        if sym_m2 and path_m:
+            return f"new_symbol_not_written:{sym_m2.group(1)}@{path_m.group(1)}"
+    if "wired_by 含 '/'" in e or "箭头链" in e or "wired_by 须为函数名" in e:
+        return "wired_by_format"
+    if "不可用场景路径" in e:
+        return "tscn_path_symbol"
+    if "接线失败" in e and "symbol=" in e:
+        return re.sub(r"[\s，。；：\"'（）]+", "", e[:100])
+    return re.sub(r"[\s，。；：\"'（）]+", "", e[:120])[:80]
+
+
+def normalize_gate_error_keys(errors: list[str]) -> frozenset[str]:
+    """门禁失败信息 → 归一化键集合（HF-15.1 H3）。"""
+    keys: list[str] = []
+    for err in errors:
+        key = _normalize_one_gate_error_key(err)
+        if key:
+            keys.append(key)
+    return frozenset(keys)
+
+
+def gate_error_key_sets_similar(
+    left: frozenset[str],
+    right: frozenset[str],
+) -> bool:
+    """连续失败是否视为「同错」（Jaccard ≥ 0.8）。"""
+    if not left or not right:
+        return False
+    if left == right:
+        return True
+    inter = len(left & right)
+    union = len(left | right)
+    return union > 0 and (inter / union) >= 0.8
+
+
+def update_gate_error_streak(
+    streak: int,
+    last_keys: frozenset[str],
+    errors: list[str],
+) -> tuple[int, frozenset[str]]:
+    """更新同错连击计数；返回 (新 streak, 本轮键)。"""
+    keys = normalize_gate_error_keys(errors)
+    if not keys:
+        return streak, last_keys
+    if last_keys and gate_error_key_sets_similar(last_keys, keys):
+        return streak + 1, keys
+    return 1, keys
+
+
+# ---------------------------------------------------------------------------
+# HF-15：L2 表现谓词（进度条 · 图标可见）
+# ---------------------------------------------------------------------------
+
+_L2_PROGRESS_TRIGGERS: tuple[str, ...] = (
+    "进度条",
+    "冷却条",
+    "充能条",
+    "ProgressBar",
+)
+_L2_ICON_TRIGGERS: tuple[str, ...] = (
+    "图标",
+    "命数图标",
+    "血量图标",
+    "生命图标",
+    "LivesDisplay",
+)
+_L2_ICON_NODE_NAME: re.Pattern[str] = re.compile(r"(?i)(life|icon|lives)")
+_PROGRESS_BAR_TYPES: frozenset[str] = frozenset({"ProgressBar", "TextureProgressBar"})
+_PROGRESS_VALUE_WRITE: re.Pattern[str] = re.compile(
+    r"\.(?:value|ratio)\s*[\+\-\*/]?=|\.set_value\s*\(",
+    re.I,
+)
+
+
+def _l2_trigger_blob(
+    goals: list[str] | None,
+    user_text: str = "",
+) -> str:
+    parts = [str(g).strip() for g in (goals or []) if str(g).strip()]
+    parts.append((user_text or "").strip())
+    return "\n".join(parts)
+
+
+def l2_presentation_triggers_hit(
+    goals: list[str] | None,
+    user_text: str = "",
+) -> tuple[bool, bool]:
+    blob = _l2_trigger_blob(goals, user_text)
+    progress = any(t in blob for t in _L2_PROGRESS_TRIGGERS)
+    icon = any(t in blob for t in _L2_ICON_TRIGGERS)
+    return progress, icon
+
+
+def _iter_workspace_gd_scripts(workspace_root: Path) -> list[Path]:
+    out: list[Path] = []
+    for sub in ("core", "scenes"):
+        base = workspace_root / sub
+        if base.is_dir():
+            out.extend(sorted(base.rglob("*.gd")))
+    return out
+
+
+def _iter_workspace_tscn(workspace_root: Path) -> list[Path]:
+    out: list[Path] = []
+    scenes = workspace_root / "scenes"
+    if scenes.is_dir():
+        out.extend(sorted(scenes.rglob("*.tscn")))
+    core = workspace_root / "core"
+    if core.is_dir():
+        out.extend(sorted(core.rglob("*.tscn")))
+    return out
+
+
+def _scan_tscn_progress_bars(text: str, rel: str) -> list[str]:
+    found: list[str] = []
+    for m in re.finditer(
+        r'\[node name="([^"]+)" type="(ProgressBar|TextureProgressBar)"',
+        text,
+    ):
+        found.append(f"{rel}:{m.group(1)}")
+    return found
+
+
+def _scan_tscn_icon_nodes(text: str, rel: str) -> list[tuple[str, bool]]:
+    """返回 (node_id, has_texture_in_scene)。"""
+    nodes: list[tuple[str, bool]] = []
+    for m in re.finditer(
+        r'\[node name="([^"]+)" type="TextureRect"[^\]]*\](.*?)(?=\n\[node |\Z)',
+        text,
+        re.S,
+    ):
+        name = m.group(1)
+        if not _L2_ICON_NODE_NAME.search(name):
+            continue
+        section = m.group(0)
+        has_tex = bool(re.search(r"(?m)^texture\s*=", section))
+        nodes.append((f"{rel}:{name}", has_tex))
+    return nodes
+
+
+def _body_writes_progress_value(body: str) -> bool:
+    cleaned = _strip_gd_comments_strings(body or "")
+    return bool(_PROGRESS_VALUE_WRITE.search(cleaned))
+
+
+def _gd_has_progress_value_in_runtime(text: str) -> bool:
+    for hook in ("_process", "_physics_process"):
+        body = _extract_func_body(text, hook)
+        if body is None:
+            continue
+        if _body_writes_progress_value(body):
+            return True
+        for callee in _find_called_funcs_in_body(body):
+            cb = _extract_func_body(text, callee)
+            if cb and _body_writes_progress_value(cb):
+                return True
+            for cc in _find_called_funcs_in_body(cb or ""):
+                cb2 = _extract_func_body(text, cc)
+                if cb2 and _body_writes_progress_value(cb2):
+                    return True
+    cleaned = _strip_gd_comments_strings(text)
+    if re.search(r"\bTimer\b|timeout|\.connect\s*\(", cleaned, re.I):
+        for m in re.finditer(
+            r"(?m)^(?P<ind>\t*)(?:static\s+)?func\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(",
+            text,
+        ):
+            fname = m.group(2)
+            if fname.startswith("_on_") or "timeout" in fname.lower():
+                fb = _extract_func_body(text, fname)
+                if fb and _body_writes_progress_value(fb):
+                    return True
+    return False
+
+
+def _script_covers_icon_node(text: str, node_name: str) -> bool:
+    cleaned = _strip_gd_comments_strings(text or "")
+    esc = re.escape(node_name)
+    if re.search(r"\.texture\s*=", cleaned):
+        if (
+            node_name in text
+            or re.search(rf'["\']{esc}["\']', text)
+            or re.search(rf"get_node(?:_or_null)?\s*\([^)]*{esc}", text, re.I)
+        ):
+            return True
+    if re.search(
+        r"custom_minimum_size\s*=\s*Vector2\s*\(\s*[^0]",
+        cleaned,
+    ) and re.search(rf"{esc}|Icon|Life", text, re.I):
+        if re.search(
+            r"\.modulate\s*=\s*(?!Color\s*\(\s*1,\s*1,\s*1,\s*0\s*\))",
+            cleaned,
+        ):
+            return True
+    return False
+
+
+def _workspace_icon_visibility_ok(
+    workspace_root: Path,
+    icon_nodes: list[tuple[str, bool]],
+) -> tuple[bool, str]:
+    if not icon_nodes:
+        return True, ""
+    scripts_text = ""
+    for p in _iter_workspace_gd_scripts(workspace_root):
+        try:
+            scripts_text += p.read_text(encoding="utf-8", errors="ignore") + "\n"
+        except OSError:
+            continue
+    for node_id, has_tex in icon_nodes:
+        short = node_id.split(":")[-1]
+        if has_tex:
+            continue
+        if _script_covers_icon_node(scripts_text, short):
+            continue
+        return (
+            False,
+            f"L2 图标可见失败：{short} 无 texture 且无占位路径",
+        )
+    return True, ""
+
+
+def assert_presentation_predicates(
+    workspace_root: Path,
+    *,
+    goals: list[str] | None = None,
+    user_text: str = "",
+) -> list[str]:
+    """HF-15 L2：goals/原话命中高置信词时，核对 UI 可见/驱动谓词。"""
+    want_progress, want_icon = l2_presentation_triggers_hit(goals, user_text)
+    if not want_progress and not want_icon:
+        return []
+
+    errors: list[str] = []
+
+    if want_progress:
+        bar_nodes: list[str] = []
+        for tscn in _iter_workspace_tscn(workspace_root):
+            try:
+                txt = tscn.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                continue
+            rel = tscn.relative_to(workspace_root).as_posix()
+            bar_nodes.extend(_scan_tscn_progress_bars(txt, rel))
+        if bar_nodes:
+            has_write = False
+            for gd in _iter_workspace_gd_scripts(workspace_root):
+                try:
+                    gtxt = gd.read_text(encoding="utf-8", errors="ignore")
+                except OSError:
+                    continue
+                if _gd_has_progress_value_in_runtime(gtxt):
+                    has_write = True
+                    break
+            if not has_write:
+                errors.append(
+                    "L2 进度条失败：场景有 "
+                    + "、".join(bar_nodes[:3])
+                    + " 但脚本未见 _process/_physics_process/Timer 路径对 "
+                    ".value/.ratio 的写入"
+                )
+        else:
+            errors.append(
+                "L2 进度条失败：goals 含进度条/冷却条但场景未见 "
+                "ProgressBar/TextureProgressBar 节点"
+            )
+
+    if want_icon:
+        icon_nodes: list[tuple[str, bool]] = []
+        for tscn in _iter_workspace_tscn(workspace_root):
+            try:
+                txt = tscn.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                continue
+            rel = tscn.relative_to(workspace_root).as_posix()
+            icon_nodes.extend(_scan_tscn_icon_nodes(txt, rel))
+        if icon_nodes:
+            ok, msg = _workspace_icon_visibility_ok(workspace_root, icon_nodes)
+            if not ok and msg:
+                errors.append(msg)
+        # 无 icon 节点时不误杀（宁漏勿杀）
+
+    return list(dict.fromkeys(errors))
+
+
+def _code_fingerprint(text: str) -> str:
+    """去注释/字符串/空白后的指纹，用于反馈轮「真 diff」判断。"""
+    cleaned = _strip_gd_comments_strings(text or "")
+    return re.sub(r"\s+", "", cleaned)
+
+
+def summaries_near_duplicate(a: str, b: str, *, threshold: float = 0.82) -> bool:
+    """启发式：两段 summary 是否近亲复读。"""
+    from difflib import SequenceMatcher
+
+    sa = re.sub(r"\s+", "", (a or "").strip())
+    sb = re.sub(r"\s+", "", (b or "").strip())
+    if not sa or not sb:
+        return False
+    if sa == sb:
+        return True
+    if len(sa) >= 12 and (sa in sb or sb in sa):
+        return True
+    return SequenceMatcher(None, sa, sb).ratio() >= threshold
+
+
+def assert_feedback_has_real_diff(
+    workspace_root: Path,
+    *,
+    written_paths: list[str],
+    pre_turn_snapshot: dict[str, bytes | None],
+    summary: str,
+    previous_summary: str,
+) -> list[str]:
+    """HF-14 S3：反馈轮须有真代码 diff；禁近亲 summary 空转交差。"""
+    errors: list[str] = []
+    real_change = False
+    checked_any = False
+    for rel in written_paths:
+        rel_n = str(rel).replace("\\", "/").strip()
+        if not rel_n.endswith((".gd", ".tscn", ".json")):
+            continue
+        if rel_n not in pre_turn_snapshot:
+            # 本轮新建
+            path = workspace_root / rel_n
+            if path.is_file():
+                real_change = True
+                break
+            continue
+        checked_any = True
+        before_b = pre_turn_snapshot.get(rel_n)
+        path = workspace_root / rel_n
+        if not path.is_file():
+            if before_b is not None:
+                real_change = True
+                break
+            continue
+        try:
+            after = path.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        before = "" if before_b is None else before_b.decode("utf-8", errors="ignore")
+        if _code_fingerprint(before) != _code_fingerprint(after):
+            real_change = True
+            break
+
+    if not written_paths:
+        errors.append(
+            "反馈轮无磁盘写入：请先 read 上轮改动再 replace_text 最小 patch，"
+            "勿只改 summary"
+        )
+    elif not real_change and (checked_any or written_paths):
+        errors.append(
+            "反馈轮相对上轮无真代码 diff（仅空白/注释不算）："
+            "请对照用户原话补接线或逻辑后再 done"
+        )
+
+    if previous_summary.strip() and summaries_near_duplicate(summary, previous_summary):
+        if not real_change:
+            errors.append(
+                "反馈轮 summary 与上轮近亲复读且无新写入：请说明本轮实际补了什么"
+            )
+    return list(dict.fromkeys(errors))
+
+
 def run_done_gates(
     workspace_root: Path,
     *,
@@ -1341,6 +2178,10 @@ def run_done_gates(
     contract: dict[str, Any],
     catalog_changed: bool = False,
     user_text: str = "",
+    evidence: list[dict[str, Any]] | None = None,
+    require_evidence: bool = False,
+    goals: list[str] | None = None,
+    pre_turn_snapshot: dict[str, bytes | None] | None = None,
 ) -> list[str]:
     """done 硬挡：返回错误列表；空列表 = 通过。"""
     errors: list[str] = []
@@ -1505,6 +2346,24 @@ def run_done_gates(
     )
     # HF-12：关键玩法链须仍在磁盘（防 stub 整写后门禁仍绿）
     errors.extend(assert_workspace_critical_chain(workspace_root, genre))
+    # HF-14：evidence 定义 + 接线（require 由 Agent done 打开；旧调用方默认跳过）
+    errors.extend(
+        assert_evidence_wired(
+            workspace_root,
+            evidence,
+            goals=goals,
+            require=require_evidence,
+            written_paths=written_paths,
+            pre_turn_snapshot=pre_turn_snapshot,
+        )
+    )
+    errors.extend(
+        assert_presentation_predicates(
+            workspace_root,
+            goals=goals,
+            user_text=ut,
+        )
+    )
     return list(dict.fromkeys(errors))
 
 

@@ -173,3 +173,45 @@ def test_duplicate_username_rejected(client: TestClient) -> None:
         json={"username": "dup_user", "password": "secret12", "nickname": "二号"},
     )
     assert again.status_code == 409
+
+
+def test_username_allows_digits_and_underscore(client: TestClient) -> None:
+    """用户名不必字母开头；允许数字与下划线。"""
+    ok = client.post(
+        "/auth/register",
+        json={"username": "123abc", "password": "secret12", "nickname": "数字君"},
+    )
+    assert ok.status_code == 201, ok.text
+    assert ok.json()["user"]["username"] == "123abc"
+
+    underscored = client.post(
+        "/auth/register",
+        json={"username": "zz_99", "password": "secret12", "nickname": "下划线"},
+    )
+    assert underscored.status_code == 201, underscored.text
+
+    bad = client.post(
+        "/auth/register",
+        json={"username": "ab", "password": "secret12", "nickname": "太短"},
+    )
+    assert bad.status_code == 400
+
+    bad_char = client.post(
+        "/auth/register",
+        json={"username": "user-name", "password": "secret12", "nickname": "横杠"},
+    )
+    assert bad_char.status_code == 400
+
+
+def test_login_session_get_requires_own_token(client: TestClient) -> None:
+    """登录会话 GET 无 Token → 403；本人 Token → 200（对应 kiosk ensureSession 探活）。"""
+    auth = _register(client, "probe_user")
+    headers = {"Authorization": f"Bearer {auth['token']}"}
+    sid = client.post("/sessions", json={"auth_mode": "login"}, headers=headers).json()[
+        "session_id"
+    ]
+    denied = client.get(f"/sessions/{sid}")
+    assert denied.status_code == 403
+    ok = client.get(f"/sessions/{sid}", headers=headers)
+    assert ok.status_code == 200
+    assert ok.json()["session_id"] == sid

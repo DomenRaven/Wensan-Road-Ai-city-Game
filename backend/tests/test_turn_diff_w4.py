@@ -103,6 +103,62 @@ def test_snapshot_and_persist_survives_release(client: TestClient, tmp_path: Pat
     assert "learned_skills" not in str(blob.resolve())
 
 
+def test_login_user_can_read_turn_diff_after_session_recreate(
+    client: TestClient,
+) -> None:
+    """SW-3：登录会话重建后，path 用新 sid 仍可读本人旧 turn Diff。"""
+    reg = client.post(
+        "/auth/register",
+        json={
+            "username": "diff_owner",
+            "password": "secret12",
+            "nickname": "机主",
+        },
+    )
+    assert reg.status_code == 201, reg.text
+    token = reg.json()["token"]
+    uid = reg.json()["user"]["id"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    sid1 = client.post(
+        "/sessions", json={"auth_mode": "login"}, headers=headers
+    ).json()["session_id"]
+    store = get_learning_store()
+    turn = store.record_agent_turn(
+        session_id=sid1,
+        user_id=uid,
+        auth_mode="login",
+        user_text="加激光",
+        message="已加激光",
+        summary="激光",
+        how_to_play=["重开"],
+        gate_passed=True,
+    )
+    store.save_turn_diff(
+        turn.turn_id,
+        compute_turn_diff(
+            {},
+            {"core/a.gd": "extends Node\n"},
+            overview_note="已加激光",
+        ),
+    )
+
+    # 模拟 API 冷启动后前端重建会话（旧 sid 已不在 store）
+    client.app.state.session_store.delete(sid1)
+    sid2 = client.post(
+        "/sessions", json={"auth_mode": "login"}, headers=headers
+    ).json()["session_id"]
+    assert sid2 != sid1
+
+    got = client.get(
+        f"/sessions/{sid2}/turns/{turn.turn_id}/diff",
+        headers=headers,
+    )
+    assert got.status_code == 200, got.text
+    assert got.json()["turn_id"] == turn.turn_id
+    assert got.json()["file_count"] >= 1
+
+
 def test_no_fake_diff_when_unchanged() -> None:
     snap = {"config/game_config.json": '{"a":1}\n'}
     payload = compute_turn_diff(snap, snap)

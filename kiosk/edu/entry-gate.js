@@ -66,7 +66,7 @@
           <form class="entry-gate-form" id="entryAuthForm">
             <label>用户名
               <input name="username" class="text-input edu-touch-input" autocomplete="username"
-                placeholder="字母开头，3～32 位" required />
+                placeholder="3～32 位，字母/数字/下划线" required />
             </label>
             ${
               isReg

@@ -474,7 +474,6 @@
         return;
       }
       let active = 0;
-      let mode = "diff"; // diff | after
 
       const paint = () => {
         const f = files[active] || files[0];
@@ -486,10 +485,9 @@
               )}</button>`
           )
           .join("");
-        const body =
-          mode === "after"
-            ? `<pre class="edu-diff-after">${escapeHtml(String(f.after_text || ""))}</pre>`
-            : `<div class="edu-diff-unified">${renderUnifiedDiffHtml(String(f.diff_text || ""))}</div>`;
+        const body = `<div class="edu-diff-unified">${renderUnifiedDiffHtml(
+          String(f.diff_text || "")
+        )}</div>`;
         panel.innerHTML = `
           <div class="edu-nlpatch-diff-head">
             <strong>本轮代码改动</strong>
@@ -504,9 +502,10 @@
           <div class="edu-diff-tabs">${tabs}</div>
           <p class="edu-diff-file-note">${escapeHtml(String(f.note || ""))}</p>
           <div class="edu-diff-mode">
-            <button type="button" class="edu-diff-mode-btn${mode === "diff" ? " is-active" : ""}" data-mode="diff">对照 Diff</button>
-            <button type="button" class="edu-diff-mode-btn${mode === "after" ? " is-active" : ""}" data-mode="after">改后全文</button>
+            <button type="button" class="edu-diff-mode-btn is-active" data-mode="diff">对照 Diff</button>
+            <button type="button" class="edu-diff-mode-btn" data-mode="after" id="edu-nlpatch-open-after-full">改后全文</button>
           </div>
+          <p class="edu-nlpatch-summary" style="margin:6px 0 0;font-size:0.9rem;color:#64748b">「改后全文」打开与「查看游戏代码」相同的全屏工作区，并高亮本轮绿/红改动。</p>
           ${body}
         `;
         document.getElementById("edu-nlpatch-diff-close")?.addEventListener("click", () => {
@@ -518,10 +517,14 @@
             paint();
           });
         });
-        panel.querySelectorAll(".edu-diff-mode-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            mode = btn.getAttribute("data-mode") === "after" ? "after" : "diff";
-            paint();
+        document.getElementById("edu-nlpatch-open-after-full")?.addEventListener("click", () => {
+          if (!window.EduCodeBrowser?.show) {
+            window.EduSession?.log?.("EduCodeBrowser 未加载");
+            return;
+          }
+          void window.EduCodeBrowser.show({
+            sessionId: ctx.sessionId,
+            turnId,
           });
         });
       };
@@ -530,6 +533,50 @@
       panel.innerHTML = `<p class="edu-nlpatch-summary" style="color:#b45309">加载 Diff 失败：${escapeHtml(
         String(err?.message || err)
       )}</p>`;
+    }
+  }
+
+  /**
+   * @param {number} score
+   * @param {string} comment
+   * @param {HTMLElement} root
+   * @param {HTMLElement|null} labelEl
+   * @param {HTMLButtonElement|null} submitBtn
+   * @param {HTMLElement|null} thanksEl
+   * @param {HTMLTextAreaElement|null} commentEl
+   * @param {HTMLButtonElement|null} skipBtn
+   * @param {number} selected
+   */
+  function applySubmittedRatingUI(
+    score,
+    comment,
+    root,
+    labelEl,
+    submitBtn,
+    thanksEl,
+    commentEl,
+    skipBtn
+  ) {
+    root.classList.add("is-done");
+    root.classList.remove("is-editable");
+    root.hidden = false;
+    root.querySelectorAll(".edu-nlpatch-star").forEach((btn) => {
+      const n = Number(btn.getAttribute("data-score") || 0);
+      btn.classList.toggle("is-active", n > 0 && n <= score);
+      btn.classList.toggle("is-selected", n === score);
+    });
+    if (commentEl) commentEl.value = comment || "";
+    if (labelEl) {
+      labelEl.textContent = `${score} 星 · ${RATING_LABELS[score] || ""} · 已提交`;
+    }
+    if (thanksEl) {
+      thanksEl.hidden = false;
+      thanksEl.textContent = "已记录，谢谢";
+    }
+    if (skipBtn) skipBtn.textContent = "修改评价";
+    if (submitBtn) {
+      submitBtn.textContent = "已提交";
+      submitBtn.disabled = true;
     }
   }
 
@@ -547,6 +594,9 @@
     const thanksEl = document.getElementById("edu-nlpatch-rating-thanks");
     const commentEl = /** @type {HTMLTextAreaElement|null} */ (
       document.getElementById("edu-nlpatch-rating-comment")
+    );
+    const skipBtn = /** @type {HTMLButtonElement|null} */ (
+      document.getElementById("edu-nlpatch-rating-skip")
     );
 
     /**
@@ -584,9 +634,6 @@
       });
     });
 
-    const skipBtn = /** @type {HTMLButtonElement|null} */ (
-      document.getElementById("edu-nlpatch-rating-skip")
-    );
     skipBtn?.addEventListener("click", () => {
       if (root.classList.contains("is-done")) {
         root.classList.add("is-editable");
@@ -606,28 +653,30 @@
       if (selected < 1 || !ctx.sessionId) return;
       submitBtn.disabled = true;
       try {
+        const comment = String(commentEl?.value || "").trim();
         await window.EduSession.apiWithSession(
           `/sessions/${ctx.sessionId}/turns/${turnId}/rating`,
           {
             method: "POST",
             body: JSON.stringify({
               score: selected,
-              comment: String(commentEl?.value || "").trim(),
+              comment,
             }),
           }
         );
-        root.classList.add("is-done");
-        root.classList.remove("is-editable");
-        if (thanksEl) {
-          thanksEl.hidden = false;
-          thanksEl.textContent = "已记录，谢谢";
+        if (lastResult && String(lastResult.turn_id || "") === turnId) {
+          lastResult._rating = { score: selected, comment };
         }
-        if (labelEl) {
-          labelEl.textContent = `${selected} 星 · ${RATING_LABELS[selected] || ""} · 已提交`;
-        }
-        if (skipBtn) skipBtn.textContent = "修改评价";
-        submitBtn.textContent = "已提交";
-        submitBtn.disabled = true;
+        applySubmittedRatingUI(
+          selected,
+          comment,
+          root,
+          labelEl,
+          submitBtn,
+          thanksEl,
+          commentEl,
+          skipBtn
+        );
       } catch (err) {
         window.EduSession?.log?.(`评价提交失败 · ${err?.message || err}`);
         if (thanksEl) {
@@ -639,6 +688,53 @@
     });
 
     window.EduTouchKeyboard?.bind?.(root);
+
+    // UH-4：关闭弹层再进 → 回填本 turn 已提交评价（本地缓存优先，再 GET）
+    void (async () => {
+      const cached =
+        lastResult && String(lastResult.turn_id || "") === turnId
+          ? lastResult._rating
+          : null;
+      if (cached && Number(cached.score) >= 1) {
+        selected = Number(cached.score);
+        applySubmittedRatingUI(
+          selected,
+          String(cached.comment || ""),
+          root,
+          labelEl,
+          submitBtn,
+          thanksEl,
+          commentEl,
+          skipBtn
+        );
+        return;
+      }
+      if (!ctx.sessionId) return;
+      try {
+        const data = await window.EduSession.apiWithSession(
+          `/sessions/${ctx.sessionId}/turns/${turnId}/rating`
+        );
+        if (data && Number(data.score) >= 1) {
+          selected = Number(data.score);
+          const comment = String(data.comment || "");
+          if (lastResult && String(lastResult.turn_id || "") === turnId) {
+            lastResult._rating = { score: selected, comment };
+          }
+          applySubmittedRatingUI(
+            selected,
+            comment,
+            root,
+            labelEl,
+            submitBtn,
+            thanksEl,
+            commentEl,
+            skipBtn
+          );
+        }
+      } catch (_) {
+        /* 尚无评价 */
+      }
+    })();
   }
 
   /**
@@ -655,6 +751,8 @@
     }
     if (busy) return;
     busy = true;
+    // 防止 AI 长请求期间 pagehide/切后台 sendBeacon 清掉 workspace
+    if (window.EduSession) window.EduSession.protectRelease = true;
 
     const userShown = fb || trimmed;
     history.push({ role: "user", content: userShown });
@@ -689,6 +787,10 @@
         }
       );
       patched = patched || !!result.ok;
+      // LB-2：本会话一旦 AI 改成功，后续关窗/关弹层一律不再自动弹榜
+      if (result.ok) {
+        window.EduWizard?.disableAutoLeaderboard?.("AI 改关成功");
+      }
       const botLine =
         result.message ||
         result.summary ||
@@ -746,6 +848,10 @@
     } finally {
       if (timeoutId != null) window.clearTimeout(timeoutId);
       busy = false;
+      // 弹层仍打开时继续保护 workspace；关闭弹层再允许 pagehide 清盘
+      if (overlayEl?.hidden && window.EduSession) {
+        window.EduSession.protectRelease = false;
+      }
     }
   }
 
@@ -783,7 +889,22 @@
     window.EduLlmCreateWait?.stop?.();
     window.EduTouchKeyboard?.dismissForNavigation?.();
     if (overlayEl) overlayEl.hidden = true;
+    if (window.EduSession) window.EduSession.protectRelease = false;
+    try {
+      window.dispatchEvent(new CustomEvent("edu-nlpatch-closed"));
+    } catch (_) {
+      /* ignore */
+    }
   }
+
+  window.addEventListener("edu-session-recreated", () => {
+    history = [];
+    lastUserText = "";
+    lastResult = null;
+    patched = false;
+    busy = false;
+    stopProgressPoll();
+  });
 
   window.EduNlPatchDialog = { open, close };
 })();

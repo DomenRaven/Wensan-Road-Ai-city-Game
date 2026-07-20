@@ -796,6 +796,7 @@ def _log_patch_result(
                 "summary": result.get("summary") or result.get("message"),
                 "how_to_play": result.get("how_to_play") or [],
                 "sandbox_files": result.get("sandbox_files") or [],
+                "evidence": result.get("evidence") or [],
                 "applied_capabilities": result.get("applied_capabilities") or [],
                 "gate_passed": bool(result.get("gate_passed")),
                 "partial": bool(result.get("partial")),

@@ -510,9 +510,12 @@ def test_hf11_llm_facing_prompts_are_affirmative() -> None:
     """给 LLM 的主提示/品类 playbook/轮次注入：正向工作法，无窄化劫持。"""
     from app.services.creative.game_agent import (
         _AGENT_SYSTEM,
+        _BUGFIX_REREAD_TIP,
         _OPEN_READ_WORK_TIP,
         _PLAYABILITY_WORK_TIP,
+        _PRESENTATION_WORK_TIP,
         _SHMUP_DROP_LOOT_TIP,
+        _TIME_CYCLE_WORK_TIP,
     )
     from app.services.creative.genre_context import _GENRE_PLAYBOOK
     from app.services.creative.intent_router import format_route_for_prompt
@@ -537,6 +540,9 @@ def test_hf11_llm_facing_prompts_are_affirmative() -> None:
         _OPEN_READ_WORK_TIP,
         _PLAYABILITY_WORK_TIP,
         _SHMUP_DROP_LOOT_TIP,
+        _TIME_CYCLE_WORK_TIP,
+        _PRESENTATION_WORK_TIP,
+        _BUGFIX_REREAD_TIP,
     ]
     route_txt = format_route_for_prompt(
         {
@@ -564,9 +570,17 @@ def test_hf11_llm_facing_prompts_are_affirmative() -> None:
     assert "本品类玩家或玩法脚本" in _AGENT_SYSTEM
     assert "ensure_player_visibility" in _PLAYABILITY_WORK_TIP
     assert "apply_shmup_drop_loot_chain" in _SHMUP_DROP_LOOT_TIP
+    assert "wired_by" in _TIME_CYCLE_WORK_TIP
+    assert "evidence" in _TIME_CYCLE_WORK_TIP
+    assert "wired_by" in _BUGFIX_REREAD_TIP
+    # 通用 tip / system：场景泛化，不点名单品类机制或示例脚本
+    for blob in (_AGENT_SYSTEM, _TIME_CYCLE_WORK_TIP, _PRESENTATION_WORK_TIP, _BUGFIX_REREAD_TIP, _OPEN_READ_WORK_TIP):
+        assert "_update_god_mode" not in blob
+        assert "god_mode" not in blob
+        assert "player_ship.gd" not in blob
+        assert "禁止" not in blob
     for playbook in _GENRE_PLAYBOOK.values():
         assert "禁止" not in playbook
-
 
 def test_hf11_recent_writes_prompt(tmp_path: Path) -> None:
     from app.services.creative.learned_skills import (

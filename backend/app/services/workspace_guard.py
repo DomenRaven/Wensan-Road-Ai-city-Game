@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import time
 import uuid
 from pathlib import Path
 from typing import Any
@@ -205,11 +206,34 @@ def remove_workspace(
     return True
 
 
-def cleanup_orphan_workspaces(workspace_dir: Path, active_session_ids: set[str]) -> list[str]:
+def cleanup_orphan_workspaces(
+    workspace_dir: Path,
+    active_session_ids: set[str],
+    *,
+    min_age_sec: float = 0.0,
+) -> list[str]:
+    """删除不在活跃会话集合中的 workspace。
+
+    min_age_sec>0 时跳过「目录过新」的副本，避免 memory 抖动/误判误删刚生成的教学工程。
+    """
     removed: list[str] = []
+    now: float = time.time()
     for sid, uid in list_workspace_session_entries(workspace_dir):
         if sid in active_session_ids:
             continue
+        if min_age_sec > 0:
+            try:
+                target = workspace_root_for_session(
+                    workspace_dir, sid, user_id=uid
+                )
+                if not target.exists() and uid:
+                    target = workspace_root_for_session(
+                        workspace_dir, sid, user_id=None
+                    )
+                if target.exists() and (now - target.stat().st_mtime) < min_age_sec:
+                    continue
+            except (OSError, WorkspaceGuardError):
+                continue
         if remove_workspace(workspace_dir, sid, user_id=uid):
             removed.append(sid)
     return removed

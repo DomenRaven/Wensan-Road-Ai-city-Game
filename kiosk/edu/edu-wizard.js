@@ -67,6 +67,13 @@
   let leaderboardHandledThisRun = false;
   /** @type {boolean} */
   let sawGodotRunning = false;
+  /**
+   * LB-2：仅「尚未被 AI 改过」的首轮初始局允许关窗自动弹榜。
+   * 一旦本会话 nl-patch 成功落地，置 false，后续重开/关 AI 一律不自动弹。
+   */
+  let autoLeaderboardEnabled = true;
+  /** 首轮关窗时若 AI 弹层正开着，记下 sessionId；关弹层后再弹（仅 pending，勿兜底任意 session） */
+  let pendingLeaderboardSessionId = "";
   /** @type {number} */
   let launchPollStartedAt = 0;
   /** @type {{codeWorkspace:HTMLElement|null}} */
@@ -188,9 +195,7 @@
         if (isLoginMode()) {
           b2SubStep = "gameName";
           creatorName = String(window.EduSession.user?.nickname || creatorName);
-          if (!displayName) {
-            displayName = buildLoginDefaultDisplayName(genre);
-          }
+          // 输入框不预填；下一步空提交时再套用 F4-N3 默认名
         }
         if (b2SubStep === "creator") {
           stepTitleEl.textContent = "你的名字是？";
@@ -201,7 +206,7 @@
         } else {
           stepTitleEl.textContent = creatorName ? `你好，${creatorName}！` : "你好！";
           stepSubtitleEl.textContent = isLoginMode()
-            ? "默认作品名已填好，可以改游戏名"
+            ? "点推荐名，或自己起名（不填则用默认作品名）"
             : "";
           stepSubtitleEl.hidden = !isLoginMode();
           btnPrev.disabled = !uiReady;
@@ -450,8 +455,12 @@
             } catch (err) {
               const msg = String(err?.message || err);
               window.EduSession.log(`制作失败 · ${msg}`);
-              // 会话丢失时再重建一次
-              if (msg.includes("404") || msg.includes("Session not found")) {
+              // 仅会话本体丢失时重建；勿把业务 404 当成会话失效（会 takeover 删盘）
+              const sessionGone =
+                typeof window.EduSession.isSessionMissingError === "function"
+                  ? window.EduSession.isSessionMissingError(msg)
+                  : /Session not found|会话不存在/i.test(msg);
+              if (sessionGone) {
                 try {
                   sessionId = await ensureBuildSession();
                   const gen = await window.EduSession.api(`/sessions/${sessionId}/generate/v2`, {
@@ -1039,7 +1048,8 @@
    */
   /** @returns {string} */
   function renderCodeBrowserEntryHtml() {
-    const unlocked = !!window.EduSession?.certificateSaved;
+    // 与证书无关：工作区就绪即可查看真代码
+    const unlocked = !!workspacePath;
     return `
       <div class="edu-code-browser-entry">
         <button type="button" id="btnViewCode" class="btn btn-secondary edu-btn-view-code" ${
@@ -1048,7 +1058,7 @@
           查看游戏代码
         </button>
         <p class="edu-code-browser-entry-hint" id="viewCodeHint">
-          ${unlocked ? "打开真实工作区文件（只读）" : "请先保存证书后再查看真代码"}
+          ${unlocked ? "打开真实工作区文件（只读）" : "工作区未就绪"}
         </p>
       </div>
     `;
@@ -1058,14 +1068,10 @@
     const btn = document.getElementById("btnViewCode");
     const hint = document.getElementById("viewCodeHint");
     const sync = () => {
-      const unlocked = !!window.EduSession?.certificateSaved && !!workspacePath;
+      const unlocked = !!workspacePath;
       if (btn) btn.disabled = !unlocked;
       if (hint) {
-        hint.textContent = !workspacePath
-          ? "工作区未就绪"
-          : unlocked
-          ? "打开真实工作区文件（只读）"
-          : "请先保存证书后再查看真代码";
+        hint.textContent = unlocked ? "打开真实工作区文件（只读）" : "工作区未就绪";
       }
     };
     sync();
@@ -1073,12 +1079,6 @@
       if (btn.disabled) return;
       window.EduCodeBrowser?.show?.({ sessionId: window.EduSession.sessionId });
     });
-    if (window.EduCertificate) {
-      window.EduCertificate.onSaved = () => {
-        window.EduSession.certificateSaved = true;
-        sync();
-      };
-    }
   }
 
   function renderPlayReadyPanel(genreEmoji) {
@@ -1113,13 +1113,15 @@
     `;
   }
 
-  function stopLaunchStatusPolling() {
+  function stopLaunchStatusPolling(opts = {}) {
     if (launchStatusPollTimer) {
       window.clearInterval(launchStatusPollTimer);
       launchStatusPollTimer = null;
     }
     prevGodotRunning = false;
-    sawGodotRunning = false;
+    if (!opts.keepSawRunning) {
+      sawGodotRunning = false;
+    }
   }
 
   function updateLeaderboardButton() {
@@ -1139,27 +1141,62 @@
    * @param {string} sessionId
    */
   async function handleLeaderboardAfterRunClose(sessionId) {
+    if (!autoLeaderboardEnabled) return;
     if (!window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre)) return;
     if (leaderboardHandledThisRun) return;
     leaderboardHandledThisRun = true;
+    // 本会话只自动弹一次（首轮初始局）
+    autoLeaderboardEnabled = false;
+    pendingLeaderboardSessionId = "";
     sawGodotRunning = false;
 
     await new Promise((resolve) => window.setTimeout(resolve, 450));
 
-    const result = await window.EduLeaderboard.submitAfterRun({
-      sessionId,
-      genre,
-      creatorName,
-      displayName,
-    });
-    window.EduLeaderboard.open({
-      genre,
-      entries: result.entries || [],
-      highlightSessionId: result.skippedSubmit ? null : sessionId,
-      highlightCreatedAt: result.skippedSubmit ? null : result.entry?.created_at || null,
-      degraded: !!result.degraded,
-      fallbackEntry: result.entry,
-    });
+    try {
+      const result = await window.EduLeaderboard.submitAfterRun({
+        sessionId,
+        genre,
+        creatorName,
+        displayName,
+      });
+      window.EduLeaderboard.open({
+        genre,
+        entries: result.entries || [],
+        highlightSessionId: result.skippedSubmit ? null : sessionId,
+        highlightCreatedAt: result.skippedSubmit ? null : result.entry?.created_at || null,
+        degraded: !!result.degraded,
+        fallbackEntry: result.entry,
+      });
+    } catch (err) {
+      window.EduSession?.log?.(
+        `自动弹榜失败 · ${/** @type {Error} */ (err).message || err} · 仍打开榜单面板`
+      );
+      try {
+        window.EduLeaderboard.open({
+          genre,
+          entries: [],
+          highlightSessionId: null,
+          degraded: true,
+        });
+      } catch (_) {
+        leaderboardHandledThisRun = false;
+        autoLeaderboardEnabled = true;
+      }
+    }
+  }
+
+  function isNlPatchOverlayOpen() {
+    const el = document.getElementById("edu-nlpatch-overlay");
+    return !!(el && !el.hidden);
+  }
+
+  function disableAutoLeaderboard(reason) {
+    if (!autoLeaderboardEnabled && !pendingLeaderboardSessionId) return;
+    autoLeaderboardEnabled = false;
+    pendingLeaderboardSessionId = "";
+    window.EduSession?.log?.(
+      `自动弹榜已关闭（${reason || "AI 已改本局"}）· 之后可点「今日榜单」查看`
+    );
   }
 
   /**
@@ -1198,11 +1235,11 @@
         if (hintText) hintText.textContent = "点「重新试玩」再玩一次，或点「今日榜单」查看排名";
       }
 
-      // 必须真实跑过 Godot 才自动弹榜；禁止「launch ok 满 1.2s」误弹
-      // AI 改游戏弹层打开时不抢焦点弹榜
-      const nlOpen = !!document.getElementById("edu-nlpatch-overlay");
+      // LB-2：仅首轮未改局自动弹榜；AI 弹层打开时挂起，关弹层仅释放 pending（勿 sessionId 兜底）
+      const nlOpen = isNlPatchOverlayOpen();
       const closedAfterRun = !!sawGodotRunning;
       const shouldHandle =
+        autoLeaderboardEnabled &&
         closedAfterRun &&
         !nlOpen &&
         window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre) &&
@@ -1212,14 +1249,21 @@
         stopLaunchStatusPolling();
         return;
       }
+      if (closedAfterRun && nlOpen && autoLeaderboardEnabled && !leaderboardHandledThisRun) {
+        pendingLeaderboardSessionId = sessionId;
+        prevGodotRunning = false;
+        return;
+      }
       if (closedAfterRun) {
-        // 已确认关窗：停 status 轮询（榜单已处理 / 品类无榜 / AI 弹层打开）
+        // 已关窗：停轮询。已禁用自动弹榜 → 不挂起
         stopLaunchStatusPolling();
         return;
       }
       prevGodotRunning = false;
-    } catch (_) {
-      /* 可选 UI · 静默 */
+    } catch (err) {
+      window.EduSession?.log?.(
+        `play/status 轮询异常 · ${/** @type {Error} */ (err)?.message || err}`
+      );
     }
   }
 
@@ -1227,10 +1271,13 @@
    * @param {string} sessionId
    */
   function startLaunchStatusPolling(sessionId) {
-    stopLaunchStatusPolling();
+    stopLaunchStatusPolling({ keepSawRunning: true });
     leaderboardHandledThisRun = false;
     launchPollStartedAt = Date.now();
-    sawGodotRunning = !!(launchState && launchState.ok && launchState.already_running);
+    // 已有 pid / 刚 launch 成功则视为跑过，避免 status 晚到导致首轮关窗不弹榜
+    if (launchState && launchState.ok && (launchState.pid || launchState.already_running)) {
+      sawGodotRunning = true;
+    }
     void pollLaunchStatus(sessionId);
     launchStatusPollTimer = window.setInterval(() => {
       void pollLaunchStatus(sessionId);
@@ -1364,7 +1411,8 @@
       };
       leaderboardHandledThisRun = false;
       launchPollStartedAt = Date.now();
-      sawGodotRunning = !!data.already_running;
+      // LB-2：launch 成功即视为已开跑（含新 pid），避免 status 晚到导致首轮关窗不弹榜
+      sawGodotRunning = !!(data.already_running || data.pid);
       const isLocalShare =
         launchState.launch_mode === "local_share" || launchState.ready_for_local_godot;
       window.EduSession.log(
@@ -1538,8 +1586,12 @@
 
       displayName = window.EduB2Name.getInput(stepFormEl);
       if (!window.EduB2Name.isValid(displayName)) {
-        window.EduB2Name.showValidationError(stepFormEl);
-        return;
+        if (isLoginMode()) {
+          displayName = buildLoginDefaultDisplayName(genre);
+        } else {
+          window.EduB2Name.showValidationError(stepFormEl);
+          return;
+        }
       }
       window.EduB2Name.clearValidationError(stepFormEl);
       try {
@@ -1641,6 +1693,8 @@
     launchState = null;
     sawGodotRunning = false;
     leaderboardHandledThisRun = false;
+    autoLeaderboardEnabled = true;
+    pendingLeaderboardSessionId = "";
     // 主动回主页/重新开始：先 harvest 有效经验，再清 workspace
     await window.EduSession.releaseAsync(undefined, { harvest: true });
     genre = "";
@@ -1762,6 +1816,37 @@
     }
   }
 
+  window.addEventListener("edu-session-recreated", () => {
+    workspacePath = "";
+    workspaceConfigContent = "";
+    workspaceFileCache.clear();
+    launchState = null;
+    autoLeaderboardEnabled = true;
+    pendingLeaderboardSessionId = "";
+    leaderboardHandledThisRun = false;
+    stopLaunchStatusPolling();
+    window.EduCodeBrowser?.hide?.();
+    window.EduSession?.log?.(
+      "会话已更换 · 已清空本地工作区状态，请重新制作后再试玩/看代码"
+    );
+  });
+
+  // LB-2：关 AI 弹层只释放「首轮关窗时挂起」的 pending；禁止 sessionId 兜底（否则每次对话完都弹首轮分）
+  window.addEventListener("edu-nlpatch-closed", () => {
+    const sid = pendingLeaderboardSessionId;
+    if (!sid || !autoLeaderboardEnabled || leaderboardHandledThisRun) {
+      stopLaunchStatusPolling();
+      return;
+    }
+    if (!window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre)) {
+      pendingLeaderboardSessionId = "";
+      stopLaunchStatusPolling();
+      return;
+    }
+    void handleLeaderboardAfterRunClose(sid);
+    stopLaunchStatusPolling();
+  });
+
   window.EduWizard = {
     get spec() {
       return spec;
@@ -1773,6 +1858,7 @@
     fetchPreviewFile,
     hasWorkspace: () => !!workspacePath,
     setUiEnabled,
+    disableAutoLeaderboard,
   };
   document.addEventListener("DOMContentLoaded", () => init());
 })();

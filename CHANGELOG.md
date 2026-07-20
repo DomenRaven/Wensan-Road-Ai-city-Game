@@ -12,6 +12,13 @@
 
 ### 变更
 
+- **HF-15.1 虚空 Done / 同错早停（P0 已落地）**：非法 evidence（`.tscn` 当 symbol、`wired_by` 含 `->`）硬拒；新符号须本轮 `written_paths`；同错≥3 强制 partial 早停；`replace_text` 附 `symbols_added`；`self_check` 未过则同轮 `done` 合并门禁。单测 `test_hf15_1_hollow_done.py`；验收簇 **28 passed**（hf15_1+hf15+hf14）。规范：`开发文档/7.20_AI改游戏智能体_HF-15.1_虚空Done早停_*`
+- **HF-15 预言机分层 P0 已落地**：`assert_presentation_predicates` + L1 多 caller/间接/拒非法 `wired_by`；接入 `run_done_gates`；`_PRESENTATION_WORK_TIP`；单测 `test_hf15_oracle_layers.py`。验收簇 **22 passed**。总纲 G13。规范：`开发文档/7.20_AI改游戏智能体_预言机分层_*`
+- **HF-14 证据验收闭环（S1–S5 已落地）**：`done`/`self_check` 交 `evidence[]`；`assert_evidence_wired` 机器核定义+`_process`/Timer 接线；反馈轮无真 diff / 近亲 summary 硬回灌；tip 改为 wired_by 导向。合成单测 `tests/test_hf14_evidence.py`。规范：`开发文档/7.20_AI改游戏智能体_证据验收闭环_*`
+- **Agent Live 盯盘**：`.agent/live_trace.jsonl` + `05-工具脚本/watch_agent_live.py`（须跟最新 session）
+- **HF-14 立项纪要（保留）**：纠偏 AG-1（半成品接线，非语义套错）；校验见 `7.20_HF-14_文档真实性与一致性校验_2026-07-20.md`
+- **可用性热修 LB-2 / Diff / 无敌探针（2026-07-20）**：仅首轮未改局关窗自动弹榜（AI 改成功后关闭）；改后全文改动文件标记加粗 + hunk context 浅绿消斑马线（见 `开发文档/7.20_可用性热修_榜单Diff与无敌探针_2026-07-20.md`）
+- **服务器部署包刷新**：清理 reports/探针缓存；Live 探针脚本归档 `_dev_archive`；`pack_exhibition_delivery.ps1` 含 `data/reference_skills`；新增 [`服务器部署_AI智能体自动部署手册_v1.3.md`](开发文档/服务器部署_AI智能体自动部署手册_v1.3.md)（明确**二维码未实装**须服务器 Agent 补齐）
 - **人工可用性基本通过（2026-07-19）**：讲解员本机可用性收口（HF-12 §9.3）；状态文档/开工词/锁定口径同步；pytest **272**；下一手软短板热修
 - **异常退出清盘不入库**：`POST /sessions/{id}/release` 默认 `harvest=false`（刷新/关页/beacon 只删 workspace）；讲解员回主页/重置显式 `?harvest=true` 才写 learned_skills；`DELETE` 仍默认 harvest
 - **HF-13 Live 首轮闭环 + 文档/前后端对齐**：校准 `e2e_7_19_live_three_tasks.py`；七品类×3 报告齐（r1–r3）；`lint_tscn_godot4` +【换路催写】；对接/锁定/总纲/快照/开工词基线同步；`NlPatchResponse` 透出 `partial`/`agent_rounds`/`rolled_back`；kiosk 徽章对齐；墙钟 360s ↔ 前端超时 420s

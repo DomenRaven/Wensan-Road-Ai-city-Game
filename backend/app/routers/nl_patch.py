@@ -137,6 +137,32 @@ def _session_or_404(request: Request, session_id: str) -> SessionRecord:
     return record
 
 
+def _assert_turn_readable(
+    request: Request,
+    session_id: str,
+    turn: dict[str, Any],
+    user: AuthUser | None,
+    *,
+    deny_detail: str = "无权访问该回合",
+) -> None:
+    """回合可读性：同 session_id；或登录用户读取本人旧回合（会话重建后 path sid 可能已变）。"""
+    turn_sid: str = str(turn.get("session_id") or "")
+    owner = turn.get("user_id")
+    live: SessionRecord | None = request.app.state.session_store.get(session_id)
+
+    if turn_sid == session_id:
+        if live is not None:
+            assert_session_access(live, user)
+        elif owner and (user is None or user.id != str(owner)):
+            raise HTTPException(status_code=403, detail=deny_detail)
+        return
+
+    if not owner or user is None or user.id != str(owner):
+        raise HTTPException(status_code=404, detail="turn not found")
+    if live is not None:
+        assert_session_access(live, user)
+
+
 def _genre_of(record: SessionRecord) -> str:
     genre: str = record.genre or str(record.payload.get("meta", {}).get("genre", "")).strip()
     if not genre:
@@ -306,16 +332,15 @@ def get_turn_diff(
     """F2 · 本轮真实 Diff（学情库，release 后仍可回看）。"""
     store = get_learning_store()
     turn = store.get_turn(turn_id)
-    if turn is None or str(turn.get("session_id")) != session_id:
+    if turn is None:
         raise HTTPException(status_code=404, detail="turn not found")
-    # 会话仍在：走会话归属；已 release：登录回合校验 user_id，游客持 id 可回看
-    live = request.app.state.session_store.get(session_id)
-    if live is not None:
-        assert_session_access(live, user)
-    else:
-        owner = turn.get("user_id")
-        if owner and (user is None or user.id != str(owner)):
-            raise HTTPException(status_code=403, detail="无权访问该回合 Diff")
+    _assert_turn_readable(
+        request,
+        session_id,
+        turn,
+        user,
+        deny_detail="无权访问该回合 Diff",
+    )
     payload = store.get_turn_diff(turn_id)
     if payload is None:
         raise HTTPException(status_code=404, detail="diff not found")
@@ -339,6 +364,36 @@ def get_turn_diff(
     )
 
 
+@router.get(
+    "/sessions/{session_id}/turns/{turn_id}/rating",
+    response_model=TurnRatingResponse,
+)
+def get_turn_rating(
+    session_id: str,
+    turn_id: str,
+    request: Request,
+    user: AuthUser | None = Depends(get_optional_user),
+) -> TurnRatingResponse:
+    """UH-4 · 读取本轮已提交评价（关闭弹层再进可回填）。"""
+    record: SessionRecord = _session_or_404(request, session_id)
+    assert_session_access(record, user)
+    store = get_learning_store()
+    turn = store.get_turn(turn_id)
+    if turn is None:
+        raise HTTPException(status_code=404, detail="turn not found")
+    _assert_turn_readable(request, session_id, turn, user)
+    saved = store.get_rating(turn_id)
+    if saved is None:
+        raise HTTPException(status_code=404, detail="rating not found")
+    return TurnRatingResponse(
+        turn_id=str(saved["turn_id"]),
+        score=int(saved["score"]),
+        label=str(saved["label"]),
+        comment=str(saved.get("comment") or ""),
+        revision=int(saved.get("revision") or 1),
+    )
+
+
 @router.post(
     "/sessions/{session_id}/turns/{turn_id}/rating",
     response_model=TurnRatingResponse,
@@ -357,8 +412,9 @@ def post_turn_rating(
         raise HTTPException(status_code=400, detail="score must be 1..5")
     store = get_learning_store()
     turn = store.get_turn(turn_id)
-    if turn is None or str(turn.get("session_id")) != session_id:
+    if turn is None:
         raise HTTPException(status_code=404, detail="turn not found")
+    _assert_turn_readable(request, session_id, turn, user)
     try:
         saved = store.upsert_turn_rating(
             turn_id=turn_id,

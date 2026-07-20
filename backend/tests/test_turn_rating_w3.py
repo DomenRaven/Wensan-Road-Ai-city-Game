@@ -88,6 +88,11 @@ def test_rating_api_and_revision(client: TestClient) -> None:
     assert r2.json()["label"] == "比较满意"
     assert r2.json()["revision"] == 2
 
+    got = client.get(f"/sessions/{sid}/turns/{turn.turn_id}/rating")
+    assert got.status_code == 200, got.text
+    assert got.json()["score"] == 4
+    assert got.json()["comment"] == "现在好了"
+
     payload = store.get_previous_turn_user_rating(sid)
     assert payload is not None
     assert payload["score"] == 4

@@ -12,7 +12,7 @@ from pathlib import Path
 from app.config import Settings, get_settings
 from app.services.auth_store import AuthStore, AuthUser, UserRole
 
-_USERNAME_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]{2,31}$")
+_USERNAME_RE = re.compile(r"^[a-zA-Z0-9_]{3,32}$")
 _NICKNAME_RE = re.compile(r"^[\u4e00-\u9fa5a-zA-Z0-9·]+$")
 _NICKNAME_MAX = 8
 _PASSWORD_MIN = 6
@@ -60,7 +60,7 @@ def verify_password(password: str, encoded: str) -> bool:
 def validate_username(username: str) -> str:
     value: str = username.strip()
     if not _USERNAME_RE.fullmatch(value):
-        raise AuthError("用户名须为 3～32 位，字母开头，仅字母数字下划线")
+        raise AuthError("用户名须为 3～32 位，仅字母、数字与下划线")
     return value
 
 

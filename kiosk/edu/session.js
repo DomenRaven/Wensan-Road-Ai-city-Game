@@ -147,7 +147,18 @@
     },
 
     /**
-     * S-B10 · 写操作专用：遇「Session not found / 404」自动清除旧 id → 重建 → 重试一次。
+     * 是否「会话本身不存在」（可安全重建）。
+     * WS-1：禁止把 workspace/turn/rating/diff 等业务 404 当成会话丢失，
+     * 否则登录 takeover 会 release 旧会话并删掉真实工作区。
+     * @param {string} msg
+     */
+    isSessionMissingError(msg) {
+      // 仅会话本体丢失才重建；workspace/turn/rating/diff 的 404 必须原样抛出（WS-1）
+      return /Session not found|会话不存在/i.test(String(msg || ""));
+    },
+
+    /**
+     * S-B10 · 写操作专用：遇「Session not found」自动清除旧 id → 重建 → 重试一次。
      * 用于 PATCH / wizard / creative 等会因会话过期而 404 的写请求，避免红字死局。
      * @param {string} path
      * @param {RequestInit} [options]
@@ -160,8 +171,7 @@
         return await this.api(resolved(), options);
       } catch (err) {
         const msg = String(/** @type {Error} */ (err).message || err);
-        const isMissing = msg.includes("404") || msg.includes("Session not found");
-        if (!isMissing) throw err;
+        if (!this.isSessionMissingError(msg)) throw err;
         this.log("会话已失效 · 自动重建后重试…");
         this.sessionId = "";
         this.rememberSessionId("");
@@ -192,6 +202,8 @@
      */
     releaseBeacon(sid) {
       if (!sid || sid.startsWith("demo-")) return;
+      // 制作 / AI 改游戏进行中：禁止 pagehide 误杀（移动端切后台也会触发 pagehide）
+      if (this.protectRelease) return;
       try {
         navigator.sendBeacon(
           `${this.apiBase}/sessions/${sid}/release?harvest=false`,
@@ -353,26 +365,48 @@
      * 写操作前确保后端存在有效 session（404 / demo 时自动重建）
      * @returns {Promise<string>}
      */
+    /**
+     * 会话被重建时通知向导/AI 弹层清空旧 turn / workspace 状态，避免 Diff 404 与假「制作完成」。
+     * @param {string} fromId
+     * @param {string} toId
+     */
+    notifySessionRecreated(fromId, toId) {
+      try {
+        window.dispatchEvent(
+          new CustomEvent("edu-session-recreated", {
+            detail: { from: fromId || "", to: toId || "" },
+          })
+        );
+      } catch (_) {
+        /* ignore */
+      }
+    },
+
     async ensureSession() {
+      const previousId = this.sessionId || "";
       if (!this.isDemoSession()) {
         try {
+          // 登录会话带 user_id，探活必须带 Token，否则会 403「无权访问该会话」
           const res = await fetch(`${this.apiBase}/sessions/${this.sessionId}`, {
-            headers: { Accept: "application/json" },
+            headers: { Accept: "application/json", ...this.authHeaders() },
           });
           if (res.ok) return this.sessionId;
-          if (res.status !== 404) {
-            const text = await res.text();
-            throw new Error(`${res.status}: ${text}`);
+          const text = await res.text();
+          const detailMsg = `${res.status}: ${text}`;
+          // 仅 Session not found 可重建；403 等须原样抛出（勿误 takeover 删盘）
+          if (res.status === 404 && this.isSessionMissingError(detailMsg)) {
+            this.sessionId = "";
+            this.rememberSessionId("");
+            this.log("会话已失效 · 正在重新建立…");
+          } else {
+            throw new Error(detailMsg);
           }
-          // S-B10 · 404：必须先清除失效 session_id，再创建新会话
-          this.sessionId = "";
-          this.rememberSessionId("");
-          this.log("会话已失效 · 正在重新建立…");
         } catch (err) {
           if (err instanceof TypeError) {
             throw new Error("无法连接后端 API · 请确认服务已启动");
           }
-          if (!String(/** @type {Error} */ (err).message).includes("404")) throw err;
+          const em = String(/** @type {Error} */ (err).message || err);
+          if (!this.isSessionMissingError(em)) throw err;
         }
       } else if (this.sessionId?.startsWith("demo-")) {
         this.log("演示模式 · 正在连接后端并建立会话…");
@@ -383,7 +417,14 @@
       if (!this.sessionId) throw new Error("创建会话失败");
       this.rememberSessionId(this.sessionId);
       this.ready = true;
-      this.log(`✓ 会话就绪 · ${this.sessionId.slice(0, 8)}…`);
+      if (previousId && previousId !== this.sessionId) {
+        this.log(
+          `⚠ 会话已更换（${previousId.slice(0, 8)}… → ${this.sessionId.slice(0, 8)}…）· 请重新制作后再试玩/看代码`
+        );
+        this.notifySessionRecreated(previousId, this.sessionId);
+      } else {
+        this.log(`✓ 会话就绪 · ${this.sessionId.slice(0, 8)}…`);
+      }
       return this.sessionId;
     },
 

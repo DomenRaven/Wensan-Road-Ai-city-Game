@@ -11,7 +11,10 @@ from app.services.workspace_guard import (
     load_featured_genre_slugs,
     validate_featured_templates,
 )
-from app.stores.session_store import SessionStore
+from app.stores.session_store import MemorySessionStore, SessionStore
+
+# 孤儿清理最短存活：避免刚写入的教学副本在 memory 抖动/误判时被秒删
+_ORPHAN_MIN_AGE_SEC: float = 6 * 3600
 
 
 @dataclass
@@ -64,7 +67,12 @@ def certificate_deploy_config(settings: Settings) -> dict[str, Any]:
     }
 
 
-def run_startup_bootstrap(settings: Settings, store: SessionStore) -> BootstrapReport:
+def run_startup_bootstrap(
+    settings: Settings,
+    store: SessionStore,
+    *,
+    cleanup_orphans: bool = True,
+) -> BootstrapReport:
     workspace_dir: Path = ensure_workspace_root(settings.workspace_dir)
     templates_dir: Path = settings.templates_dir.resolve()
     featured_slugs: list[str] = load_featured_genre_slugs()
@@ -78,9 +86,23 @@ def run_startup_bootstrap(settings: Settings, store: SessionStore) -> BootstrapR
         messages.append("部分精选模板未通过校验")
 
     active_ids: set[str] = {s.session_id for s in store.list_active()}
-    removed: list[str] = cleanup_orphan_workspaces(workspace_dir, active_ids)
-    if removed:
-        messages.append(f"已清理孤立 workspace: {len(removed)} 个")
+    removed: list[str] = []
+    if cleanup_orphans:
+        # memory 冷启动 active 为空时，全量清理会误删全部教学副本（SW-2）
+        if isinstance(store, MemorySessionStore) and not active_ids:
+            messages.append(
+                "memory 会话冷启动且无活跃会话：跳过孤立 workspace 全量清理（防误删）"
+            )
+        else:
+            removed = cleanup_orphan_workspaces(
+                workspace_dir,
+                active_ids,
+                min_age_sec=_ORPHAN_MIN_AGE_SEC,
+            )
+            if removed:
+                messages.append(f"已清理孤立 workspace: {len(removed)} 个")
+    else:
+        messages.append("本次 bootstrap 未执行孤立 workspace 清理")
 
     ready: bool = bool(template_validation.get("ready")) and templates_dir.is_dir()
     return BootstrapReport(
