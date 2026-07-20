@@ -4,6 +4,8 @@ from typing import Any
 
 from fastapi import APIRouter, Request
 
+from app.services.agent_queue import get_agent_queue
+
 router = APIRouter(tags=["health"])
 
 
@@ -13,6 +15,7 @@ def health(request: Request) -> dict[str, Any]:
     store = request.app.state.session_store
     store_ok: bool = store.ping()
     bootstrap = getattr(request.app.state, "bootstrap_report", None)
+    agent_snap = get_agent_queue().snapshot(int(settings.max_concurrent_agents))
     return {
         "status": "ok" if store_ok and (bootstrap is None or bootstrap.ready) else "degraded",
         "app": settings.app_name,
@@ -22,6 +25,10 @@ def health(request: Request) -> dict[str, Any]:
         "store_ok": store_ok,
         "active_sessions": store.count_active(),
         "max_sessions": settings.max_sessions,
+        "max_concurrent_agents": agent_snap.max_concurrent,
+        "active_agents": agent_snap.active,
+        "agent_queue_waiting": agent_snap.waiting,
+        "play_launch_mode": str(getattr(settings, "play_launch_mode", "server")),
         "bootstrap_ready": None if bootstrap is None else bootstrap.ready,
         "deployment": {
             "server_os": settings.deployment_server_os,

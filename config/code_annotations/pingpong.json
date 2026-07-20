@@ -1,0 +1,6 @@
+{
+  "files": {
+    "config/game_config.json": "乒乓球配方：球速、扣杀/旋转球等开关在这里。",
+    "scenes/main.tscn": "对打主场景：球台、球拍与比分界面。"
+  }
+}

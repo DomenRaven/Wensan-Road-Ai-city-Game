@@ -81,6 +81,7 @@ def generate_session_workspace(session_id: str, request: Request) -> GenerateRes
             settings.workspace_dir,
             genre,
             session_id,
+            user_id=record.user_id,
         )
         config_path = build_game_config(
             session_id,
@@ -145,6 +146,7 @@ def generate_session_workspace_v2(session_id: str, request: Request) -> Generate
             settings.workspace_dir,
             genre,
             session_id,
+            user_id=record.user_id,
         )
         config_path: Path = _workspace_config_path(workspace_root)
         base_config_path: Path = settings.templates_dir / genre / "config" / "game_config.json"

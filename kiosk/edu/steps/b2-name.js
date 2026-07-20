@@ -16,11 +16,17 @@
     /**
      * @param {string} name
      */
-    sanitize(name) {
+    /**
+     * @param {string} name
+     * @param {number} [maxLen]
+     */
+    sanitize(name, maxLen = 20) {
+      const limit = Math.max(1, Number(maxLen) || 20);
+      // 登录默认名含全角括号（），需保留
       return this.normalizeText(name)
-        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, "")
+        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s（）()]/g, "")
         .trim()
-        .slice(0, 20);
+        .slice(0, limit);
     },
 
     /**
@@ -52,7 +58,11 @@
      * @param {string[]} suggestions
      */
     render(formEl, spec, ctx, suggestions) {
-      const maxLen = spec.touch_constraints?.max_text_input_length || 20;
+      const maxLen = Number(ctx.maxLen) || spec.touch_constraints?.max_text_input_length || 20;
+      const escapedName = String(ctx.displayName || "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;");
       formEl.innerHTML = `
         <div class="genre-confirm genre-confirm--plain">
           <p class="genre-confirm-msg">让我们制作一个<strong>${ctx.genreLabel}</strong>小游戏吧！</p>
@@ -60,13 +70,13 @@
         <label for="nameInput" class="b2-name-label">你想让它叫什么名字呢？</label>
         <input id="nameInput" class="text-input b2-name-input edu-touch-input" maxlength="${maxLen}"
           inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-          value="${ctx.displayName || ""}" placeholder="输入游戏名字…" />
+          value="${escapedName}" placeholder="输入游戏名字…" />
         <div class="chip-row scroll-x" id="nameChips">
           ${suggestions
             .map((s) => `<button type="button" class="chip" data-name="${s}">${s}</button>`)
             .join("")}
         </div>
-        <p class="hint">最多 ${maxLen} 个字 · 中英文和数字</p>
+        <p class="hint">最多 ${maxLen} 个字 · 中英文、数字与括号</p>
       `;
 
       formEl.querySelectorAll("#nameChips .chip").forEach((chip) => {
@@ -86,7 +96,8 @@
       if (input && document.activeElement === input) {
         input.blur();
       }
-      return this.sanitize(input?.value || "");
+      const maxLen = input?.maxLength > 0 ? input.maxLength : 20;
+      return this.sanitize(input?.value || "", maxLen);
     },
 
     /** @param {string} name */

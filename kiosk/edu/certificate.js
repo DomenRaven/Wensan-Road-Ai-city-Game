@@ -263,9 +263,14 @@
    */
   async function uploadCertificatePng(blob, sessionId) {
     const apiBase = window.EduSession?.apiBase || "http://127.0.0.1:8000";
+    /** @type {Record<string, string>} */
+    const headers = { "Content-Type": "image/png" };
+    if (window.EduSession?.authToken) {
+      headers.Authorization = `Bearer ${window.EduSession.authToken}`;
+    }
     const res = await fetch(`${apiBase}/sessions/${sessionId}/certificate`, {
       method: "PUT",
-      headers: { "Content-Type": "image/png" },
+      headers,
       body: blob,
     });
     if (!res.ok) {
@@ -625,12 +630,6 @@
       return;
     }
 
-    // N-3：未配公网下载地址时不做本机保存，明确提示（隐藏调试开关除外）
-    if (!isPublicQrReady() && !isCertDebugEnabled()) {
-      showQrUnavailableNote();
-      return;
-    }
-
     if (saveBtn) {
       saveBtn.disabled = true;
       saveBtn.textContent = "正在生成…";
@@ -662,6 +661,14 @@
       if (saveBtn) saveBtn.textContent = "正在上传…";
       const uploaded = await uploadCertificatePng(blob, sessionId);
 
+      // F1 门闩：服务器写入证书 PNG 成功即解锁「查看游戏代码」
+      window.EduSession.certificateSaved = true;
+      try {
+        window.EduCertificate?.onSaved?.(sessionId);
+      } catch (_) {
+        /* ignore */
+      }
+
       // 默认仅扫码下载，禁止游客本机另存；仅隐藏调试开关允许本机保存
       if (isCertDebugEnabled()) {
         const filename = `${sanitizeFilename(lastDisplayName)}_证书.png`;
@@ -670,7 +677,7 @@
 
       if (!uploaded.publicReachable && !isCertDebugEnabled()) {
         // 本地回落链（127.0.0.1）对手机无意义：明确提示，不弹「生成失败」
-        showQrUnavailableNote("图床中继未成功，暂无公网下载链接");
+        showQrUnavailableNote("图床中继未成功，暂无公网下载链接（证书已保存到本会话）");
         return;
       }
       showQrPanel(uploaded.url);
@@ -832,5 +839,7 @@
     saveCertificate,
     show,
     hide,
+    /** @type {((sessionId: string) => void)|null} */
+    onSaved: null,
   };
 })();

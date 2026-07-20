@@ -22,7 +22,13 @@ class SessionStore(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def create(self) -> SessionRecord | None:
+    def create(
+        self,
+        *,
+        user_id: str | None = None,
+        auth_mode: str = "guest",
+        creator_name: str = "",
+    ) -> SessionRecord | None:
         raise NotImplementedError
 
     @abstractmethod
@@ -41,6 +47,10 @@ class SessionStore(ABC):
     def list_active(self) -> list[SessionRecord]:
         raise NotImplementedError
 
+    @abstractmethod
+    def find_by_user_id(self, user_id: str) -> SessionRecord | None:
+        raise NotImplementedError
+
 
 class MemorySessionStore(SessionStore):
     def __init__(self, settings: Settings) -> None:
@@ -53,7 +63,13 @@ class MemorySessionStore(SessionStore):
     def count_active(self) -> int:
         return len(self._sessions)
 
-    def create(self) -> SessionRecord | None:
+    def create(
+        self,
+        *,
+        user_id: str | None = None,
+        auth_mode: str = "guest",
+        creator_name: str = "",
+    ) -> SessionRecord | None:
         if self.count_active() >= self._settings.max_sessions:
             return None
         now: float = time.time()
@@ -62,9 +78,14 @@ class MemorySessionStore(SessionStore):
             phase=SessionPhase.INTENT,
             wizard_step="S0",
             wizard_index=0,
+            user_id=user_id,
+            auth_mode=auth_mode if user_id else "guest",
+            creator_name=creator_name,
             created_at=now,
             updated_at=now,
         )
+        if creator_name:
+            record.payload = {"meta": {"creator_name": creator_name}}
         self._sessions[record.session_id] = record
         return record
 
@@ -83,6 +104,15 @@ class MemorySessionStore(SessionStore):
 
     def list_active(self) -> list[SessionRecord]:
         return list(self._sessions.values())
+
+    def find_by_user_id(self, user_id: str) -> SessionRecord | None:
+        uid: str = user_id.strip()
+        if not uid:
+            return None
+        for record in self._sessions.values():
+            if record.user_id == uid:
+                return record
+        return None
 
 
 class RedisSessionStore(SessionStore):
@@ -106,7 +136,13 @@ class RedisSessionStore(SessionStore):
     def count_active(self) -> int:
         return int(self._client.scard(self.INDEX_KEY))
 
-    def create(self) -> SessionRecord | None:
+    def create(
+        self,
+        *,
+        user_id: str | None = None,
+        auth_mode: str = "guest",
+        creator_name: str = "",
+    ) -> SessionRecord | None:
         if self.count_active() >= self._settings.max_sessions:
             return None
         now: float = time.time()
@@ -115,9 +151,14 @@ class RedisSessionStore(SessionStore):
             phase=SessionPhase.INTENT,
             wizard_step="S0",
             wizard_index=0,
+            user_id=user_id,
+            auth_mode=auth_mode if user_id else "guest",
+            creator_name=creator_name,
             created_at=now,
             updated_at=now,
         )
+        if creator_name:
+            record.payload = {"meta": {"creator_name": creator_name}}
         payload: str = record.model_dump_json()
         pipe = self._client.pipeline()
         pipe.set(self._session_key(record.session_id), payload, ex=self._settings.session_ttl_sec)
@@ -154,6 +195,15 @@ class RedisSessionStore(SessionStore):
             if record is not None:
                 sessions.append(record)
         return sessions
+
+    def find_by_user_id(self, user_id: str) -> SessionRecord | None:
+        uid: str = user_id.strip()
+        if not uid:
+            return None
+        for record in self.list_active():
+            if record.user_id == uid:
+                return record
+        return None
 
 
 def create_session_store(settings: Settings) -> tuple[SessionStore, StoreBackend]:

@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import Settings, get_settings
 from app.services.bootstrap import run_startup_bootstrap
 from app.routers import (
+    auth,
     bootstrap,
     creative,
     edu_preview,
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(health.router)
     app.include_router(bootstrap.router)
+    app.include_router(auth.router)
     app.include_router(sessions.router)
     app.include_router(public_certificates.router)
     app.include_router(wizard.router)

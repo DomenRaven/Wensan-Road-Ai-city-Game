@@ -55,9 +55,17 @@ class GodotLauncher:
                 return gui_candidate
         return path
 
-    def resolve_project_path(self, genre: str, session_id: str) -> Path:
+    def resolve_project_path(
+        self,
+        genre: str,
+        session_id: str,
+        *,
+        user_id: str | None = None,
+    ) -> Path:
         sid: str = validate_session_id(session_id)
-        workspace: Path = workspace_root_for_session(self._settings.workspace_dir, sid)
+        workspace: Path = workspace_root_for_session(
+            self._settings.workspace_dir, sid, user_id=user_id
+        )
         if (workspace / "project.godot").is_file():
             return workspace
         template: Path = self._settings.templates_dir / genre
@@ -162,6 +170,7 @@ class GodotLauncher:
         *,
         force: bool = False,
         layout_rect: WindowRect | None = None,
+        user_id: str | None = None,
     ) -> LaunchResult:
         if not genre:
             raise ValueError("Session 尚未选择品类 (S1)")
@@ -172,7 +181,7 @@ class GodotLauncher:
         self._prune_stale(session_id)
 
         godot: Path = self.resolve_godot_path()
-        project: Path = self.resolve_project_path(genre, session_id)
+        project: Path = self.resolve_project_path(genre, session_id, user_id=user_id)
         project_key: str = str(project)
 
         old_pid: int | None = self._running.get(session_id)

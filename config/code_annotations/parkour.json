@@ -1,0 +1,6 @@
+{
+  "files": {
+    "config/game_config.json": "跑酷配方：二段跳、滑铲等能力开关多半在这里。",
+    "scenes/main.tscn": "跑酷主场景：赛道、角色与障碍的组合。"
+  }
+}

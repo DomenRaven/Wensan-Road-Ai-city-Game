@@ -76,6 +76,7 @@
 
   const el = (id) => document.getElementById(id);
   const welcomePanel = el("welcomePanel");
+  const entryGatePanel = el("entryGatePanel");
   const stepPanel = el("stepPanel");
   const dualPaneRoot = el("dualPaneRoot");
   const stepTitleEl = el("stepTitle");
@@ -85,6 +86,23 @@
   const btnPrev = el("btnPrev");
   const btnNext = el("btnNext");
   const btnReset = el("btnReset");
+
+  /** @returns {boolean} */
+  function isLoginMode() {
+    return window.EduSession?.authMode === "login" && !!window.EduSession?.user;
+  }
+
+  /**
+   * F4-N3：{nickname}（{username}）的{品类中文名}游戏
+   * @param {string} genreKey
+   */
+  function buildLoginDefaultDisplayName(genreKey) {
+    const user = window.EduSession?.user;
+    if (!user) return "";
+    const names = /** @type {Record<string, string>} */ (spec.genre_display_names || {});
+    const genreCn = names[genreKey] || genreLabel || "小";
+    return `${user.nickname}（${user.username}）的${genreCn}游戏`.slice(0, 48);
+  }
 
   /** @returns {EduStep} */
   function currentStep() {
@@ -129,6 +147,7 @@
   }
 
   function showPanel(mode) {
+    if (entryGatePanel) entryGatePanel.hidden = mode !== "entry";
     welcomePanel.hidden = mode !== "welcome";
     stepPanel.hidden = mode !== "step";
     dualPaneRoot.hidden = mode !== "dual";
@@ -166,6 +185,13 @@
         btnNext.textContent = "下一步";
       } else if (step === "B2") {
         window.EduB1Intent.destroy?.();
+        if (isLoginMode()) {
+          b2SubStep = "gameName";
+          creatorName = String(window.EduSession.user?.nickname || creatorName);
+          if (!displayName) {
+            displayName = buildLoginDefaultDisplayName(genre);
+          }
+        }
         if (b2SubStep === "creator") {
           stepTitleEl.textContent = "你的名字是？";
           stepSubtitleEl.textContent = "讲解员和证书上会这样叫你";
@@ -174,14 +200,16 @@
           window.EduB2Creator.render(stepFormEl, spec, { creatorName });
         } else {
           stepTitleEl.textContent = creatorName ? `你好，${creatorName}！` : "你好！";
-          stepSubtitleEl.textContent = "";
-          stepSubtitleEl.hidden = true;
+          stepSubtitleEl.textContent = isLoginMode()
+            ? "默认作品名已填好，可以改游戏名"
+            : "";
+          stepSubtitleEl.hidden = !isLoginMode();
           btnPrev.disabled = !uiReady;
           nameSuggestions = await window.EduB2Name.getSuggestions(genre, spec);
           window.EduB2Name.render(
             stepFormEl,
             spec,
-            { genre, displayName, genreLabel, creatorName },
+            { genre, displayName, genreLabel, creatorName, maxLen: isLoginMode() ? 48 : undefined },
             nameSuggestions
           );
         }
@@ -798,7 +826,7 @@
   }
 
   /**
-   * @param {{ok:boolean,already_running?:boolean,pid?:number|null,project_path?:string,message?:string,waiting?:boolean,window_placed?:boolean,placement_rect?:object,orientation?:string}|null} data
+   * @param {{ok:boolean,already_running?:boolean,pid?:number|null,project_path?:string,message?:string,waiting?:boolean,window_placed?:boolean,placement_rect?:object,orientation?:string,launch_mode?:string,ready_for_local_godot?:boolean}|null} data
    * @returns {string}
    */
   function renderLaunchStatusPanel(data) {
@@ -812,14 +840,19 @@
       `;
     }
     if (data.ok) {
-      const mainMsg = data.already_running
-        ? "游戏已在运行 · 请到旁边窗口继续"
-        : "Godot 已启动 · 请到游戏窗口试玩";
+      const isLocalShare = data.launch_mode === "local_share" || !!data.ready_for_local_godot;
+      const mainMsg = isLocalShare
+        ? "本机目录已就绪 · 请用学生机 Godot 打开下方路径"
+        : data.already_running
+          ? "游戏已在运行 · 请到旁边窗口继续"
+          : "Godot 已启动 · 请到游戏窗口试玩";
       const pid = data.pid != null ? String(data.pid) : "—";
       const path = data.project_path || "—";
       const orient = data.orientation || window.EduOrientation?.getMode?.() || "landscape";
       let placementHint = "";
-      if (data.window_placed === true) {
+      if (isLocalShare) {
+        placementHint = `<p class="launch-placement-hint launch-placement-hint--ok">服务器不会替你开游戏窗；机房脚本或本机 Godot 打开该会话目录即可</p>`;
+      } else if (data.window_placed === true) {
         placementHint = `<p class="launch-placement-hint launch-placement-hint--ok">游戏窗口已自动贴到${orient === "portrait" ? "屏幕下方" : "屏幕右侧"}</p>`;
       } else if (data.window_placed === false) {
         placementHint = `<p class="launch-placement-hint launch-placement-hint--manual">请在屏幕${orient === "portrait" ? "下方" : "右侧"}找到游戏窗口</p>`;
@@ -829,10 +862,11 @@
           <span class="launch-inline-icon" aria-hidden="true">✓</span>
           <span class="launch-status ok" id="launchStatus">${mainMsg}</span>
           ${placementHint}
-          <details class="launch-details launch-details--compact">
+          <details class="launch-details launch-details--compact" open>
             <summary>技术信息</summary>
-            <p class="launch-meta">进程 PID：${pid}</p>
+            ${isLocalShare ? "" : `<p class="launch-meta">进程 PID：${pid}</p>`}
             <p class="launch-meta">项目路径：${path}</p>
+            ${isLocalShare ? `<p class="launch-meta">启动模式：local_share（S2-路B）</p>` : ""}
           </details>
           <p class="godot-run-status" id="godotRunStatus" aria-live="polite"></p>
         </div>
@@ -1003,6 +1037,50 @@
    * @param {string} [genreEmoji]
    * @returns {string}
    */
+  /** @returns {string} */
+  function renderCodeBrowserEntryHtml() {
+    const unlocked = !!window.EduSession?.certificateSaved;
+    return `
+      <div class="edu-code-browser-entry">
+        <button type="button" id="btnViewCode" class="btn btn-secondary edu-btn-view-code" ${
+          unlocked ? "" : "disabled"
+        }>
+          查看游戏代码
+        </button>
+        <p class="edu-code-browser-entry-hint" id="viewCodeHint">
+          ${unlocked ? "打开真实工作区文件（只读）" : "请先保存证书后再查看真代码"}
+        </p>
+      </div>
+    `;
+  }
+
+  function bindCodeBrowserEntry() {
+    const btn = document.getElementById("btnViewCode");
+    const hint = document.getElementById("viewCodeHint");
+    const sync = () => {
+      const unlocked = !!window.EduSession?.certificateSaved && !!workspacePath;
+      if (btn) btn.disabled = !unlocked;
+      if (hint) {
+        hint.textContent = !workspacePath
+          ? "工作区未就绪"
+          : unlocked
+          ? "打开真实工作区文件（只读）"
+          : "请先保存证书后再查看真代码";
+      }
+    };
+    sync();
+    btn?.addEventListener("click", () => {
+      if (btn.disabled) return;
+      window.EduCodeBrowser?.show?.({ sessionId: window.EduSession.sessionId });
+    });
+    if (window.EduCertificate) {
+      window.EduCertificate.onSaved = () => {
+        window.EduSession.certificateSaved = true;
+        sync();
+      };
+    }
+  }
+
   function renderPlayReadyPanel(genreEmoji) {
     const icon = genreEmoji || "🎮";
     return `
@@ -1021,6 +1099,7 @@
             <span class="btn-play-launch__text">开始试玩</span>
           </button>
           <div id="launchStatusWrap" class="play-ready-status">${renderLaunchStatusPanel(launchState)}</div>
+          ${renderCodeBrowserEntryHtml()}
         </div>
         <div class="demo-panel-card">
           <p class="demo-panel-label">🎤 讲解员演示区</p>
@@ -1207,6 +1286,7 @@
     );
     bindGenreDemoActions(genre, { launched: false });
     bindAiPatchButton();
+    bindCodeBrowserEntry();
 
     window.EduDualPane.setToolbar(true, `
       <button type="button" id="btnDualPrev" class="btn btn-secondary" disabled>上一步</button>
@@ -1279,12 +1359,22 @@
         window_placed: data.window_placed,
         placement_rect: data.placement_rect || null,
         orientation: window.EduOrientation?.getMode?.() || "landscape",
+        launch_mode: data.launch_mode || "server",
+        ready_for_local_godot: !!data.ready_for_local_godot,
       };
       leaderboardHandledThisRun = false;
       launchPollStartedAt = Date.now();
       sawGodotRunning = !!data.already_running;
+      const isLocalShare =
+        launchState.launch_mode === "local_share" || launchState.ready_for_local_godot;
       window.EduSession.log(
-        force ? "✓ 已用新参数重新启动" : launchState.already_running ? "✓ 游戏已在运行" : "✓ Godot 已启动"
+        isLocalShare
+          ? `✓ 本机试玩路径已就绪 · ${launchState.project_path || ""}`
+          : force
+            ? "✓ 已用新参数重新启动"
+            : launchState.already_running
+              ? "✓ 游戏已在运行"
+              : "✓ Godot 已启动"
       );
       stepIndex = STEPS.indexOf("B7");
       await renderStep();
@@ -1313,8 +1403,16 @@
     window.EduCodeHighlight.setCodeMap(getMergedCodeMap());
 
     const launched = !!(launchState && launchState.ok);
+    const isLocalShare =
+      !!(launchState &&
+        (launchState.launch_mode === "local_share" || launchState.ready_for_local_godot));
     window.EduCodeHighlight.stopPolling();
     stopLaunchStatusPolling();
+
+    const playTitle = isLocalShare ? "请用本机 Godot 打开会话目录" : "游戏已全屏铺满显示器";
+    const playHint = isLocalShare
+      ? "路径见上方技术信息；机房映射盘就绪后由本机启动脚本或 Godot 打开"
+      : "请在游戏窗口试玩；玩完关闭窗口即可看今日榜";
 
     window.EduDualPane.setRightContent(`
       <div class="pane-right-stack">
@@ -1322,8 +1420,8 @@
           ${launched ? renderLaunchStatusPanel(launchState) : ""}
           <div class="play-window-hint play-window-hint--active" id="playWindowHint">
             <span class="play-window-icon" aria-hidden="true">🎮</span>
-            <p class="play-window-title" id="playWindowTitle">游戏已全屏铺满显示器</p>
-            <p class="hint" id="playWindowHintText">请在游戏窗口试玩；玩完关闭窗口即可看今日榜</p>
+            <p class="play-window-title" id="playWindowTitle">${playTitle}</p>
+            <p class="hint" id="playWindowHintText">${playHint}</p>
           </div>
         </div>
         <div class="demo-panel-card demo-panel-card--compact">
@@ -1332,19 +1430,24 @@
             ${renderGenreDemoActionsHtml(genre, { compact: true, launched })}
           </div>
           ${renderAiPatchButtonHtml()}
+          ${renderCodeBrowserEntryHtml()}
         </div>
       </div>
     `);
 
     if (launched) {
       window.EduCodeHighlight.startPolling(window.EduSession.sessionId);
-      startLaunchStatusPolling(window.EduSession.sessionId);
+      // local_share：服务器无 Godot 进程，勿轮询 running 误判「已关闭」
+      if (!isLocalShare) {
+        startLaunchStatusPolling(window.EduSession.sessionId);
+      }
     } else if (workspacePath) {
       window.EduCodeHighlight.startPolling(window.EduSession.sessionId);
     }
 
     bindGenreDemoActions(genre, { launched });
     bindAiPatchButton();
+    bindCodeBrowserEntry();
 
     window.EduDualPane.setToolbar(true, `
       <button type="button" id="btnReplay" class="btn btn-primary">▶ 重新试玩</button>
@@ -1388,7 +1491,7 @@
     }
 
     if (step === "B2") {
-      if (b2SubStep === "creator") {
+      if (b2SubStep === "creator" && !isLoginMode()) {
         if (window.EduB2Creator.isComposing?.(stepFormEl)) {
           window.EduB2Creator.showValidationError(stepFormEl, "请选字确认后再点下一步");
           return;
@@ -1420,6 +1523,17 @@
         b2SubStep = "gameName";
         await renderStep();
         return;
+      }
+      if (isLoginMode() && window.EduSession.user) {
+        creatorName = String(window.EduSession.user.nickname);
+        try {
+          await window.EduSession.apiWithSession(`/sessions/${window.EduSession.sessionId}`, {
+            method: "PATCH",
+            body: JSON.stringify({ creator_name: creatorName }),
+          });
+        } catch (err) {
+          window.EduSession.log(`同步昵称失败 · ${err.message}`);
+        }
       }
 
       displayName = window.EduB2Name.getInput(stepFormEl);
@@ -1488,6 +1602,12 @@
     if (stepIndex <= 1) return;
     if (currentStep() === "B5") return;
     if (currentStep() === "B2" && b2SubStep === "gameName") {
+      if (isLoginMode()) {
+        // 登录模式无「你的名字是？」子步，上一步直接回 B1
+        stepIndex = STEPS.indexOf("B1");
+        await renderStep();
+        return;
+      }
       b2SubStep = "creator";
       await renderStep();
       return;
@@ -1513,6 +1633,8 @@
     window.EduCodeViewer?.setViewportPinned(false);
     window.EduGenreTheme?.clear?.();
     certificateCreatedAt = null;
+    window.EduSession.certificateSaved = false;
+    window.EduCodeBrowser?.hide?.();
     window.EduCodeTheater.stop();
     window.EduCodeHighlight.stopPolling();
     stopLaunchStatusPolling();
@@ -1552,8 +1674,41 @@
       const record = await window.EduSession.api(`/sessions/${sessionId}`);
       if (record.creator_name) creatorName = String(record.creator_name);
       if (record.display_name) displayName = String(record.display_name);
+      if (record.payload?.certificate_saved) {
+        window.EduSession.certificateSaved = true;
+      }
     } catch (_) {
       /* 演示模式或无 GET · 静默 */
+    }
+  }
+
+  /**
+   * @param {"guest"|"login"} mode
+   */
+  async function enterWorkshop(mode) {
+    window.EduSession.authMode = mode;
+    const statusEl = el("bootstrapStatus");
+    showPanel("welcome");
+    if (statusEl) statusEl.textContent = "正在建立创作会话…";
+    try {
+      await window.EduSession.createSession();
+      await hydrateSessionMeta();
+      if (isLoginMode() && window.EduSession.user) {
+        creatorName = String(window.EduSession.user.nickname || "");
+      }
+      if (statusEl) statusEl.textContent = "准备就绪！";
+      setUiEnabled(true);
+      stepIndex = 1;
+      b2SubStep = isLoginMode() ? "gameName" : "creator";
+      await renderStep();
+    } catch (err) {
+      window.EduSession.log(`建立会话失败 · ${err.message || err}`);
+      if (statusEl) statusEl.textContent = "建立会话失败，请返回重试";
+      setUiEnabled(true);
+      showPanel("entry");
+      if (entryGatePanel && window.EduEntryGate) {
+        window.EduEntryGate.mount(entryGatePanel, enterWorkshop);
+      }
     }
   }
 
@@ -1571,17 +1726,20 @@
     });
 
     try {
-      await window.EduSession.bootstrap();
+      await window.EduSession.bootstrap({ createSession: false });
       spec = window.EduSession.spec;
-      await hydrateSessionMeta();
       window.EduOrientation?.configure(/** @type {{orientation_breakpoint_px?: number}} */ (spec.layout));
       window.EduOrientation?.mount();
       window.EduTouchKeyboard?.init();
       window.EduCodeHighlight.configure(spec);
-      if (statusEl) statusEl.textContent = "准备就绪！";
+      if (statusEl) statusEl.textContent = "请选择进入方式";
       setUiEnabled(true);
-      stepIndex = 1;
-      await renderStep();
+      showPanel("entry");
+      if (entryGatePanel && window.EduEntryGate) {
+        window.EduEntryGate.mount(entryGatePanel, enterWorkshop);
+      } else {
+        await enterWorkshop("guest");
+      }
     } catch (err) {
       spec = window.EduSession.spec || {};
       window.EduOrientation?.configure(/** @type {{orientation_breakpoint_px?: number}} */ (spec.layout));
@@ -1590,8 +1748,17 @@
       window.EduCodeHighlight.configure(spec);
       if (statusEl) statusEl.textContent = "演示模式（后端未连接）";
       setUiEnabled(true);
-      stepIndex = 1;
-      await renderStep();
+      showPanel("entry");
+      if (entryGatePanel && window.EduEntryGate) {
+        window.EduEntryGate.mount(entryGatePanel, async () => {
+          setUiEnabled(true);
+          stepIndex = 1;
+          await renderStep();
+        });
+      } else {
+        stepIndex = 1;
+        await renderStep();
+      }
     }
   }
 

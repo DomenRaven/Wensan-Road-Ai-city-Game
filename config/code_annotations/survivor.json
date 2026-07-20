@@ -1,0 +1,6 @@
+{
+  "files": {
+    "config/game_config.json": "生存升级配方：移速、吸经验、技能开关等写在这里。",
+    "scenes/main.tscn": "生存模式主场景：角色、敌人波次与 HUD 的组合。"
+  }
+}

@@ -1442,6 +1442,7 @@ def run_game_agent(
     max_rounds: int | None = None,
     *,
     run_dry_run: bool = False,
+    previous_turn_user_rating: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """执行智能体；成功返回 ok/provider=agent。
 
@@ -1593,6 +1594,19 @@ def run_game_agent(
         context_bits.append(_PLAYABILITY_WORK_TIP)
     if genre == "shmup" and is_laser_bomb_drop_request(user_text or feedback):
         context_bits.append(_SHMUP_DROP_LOOT_TIP)
+    if previous_turn_user_rating:
+        # F3：结构化注入，非用户原话；低星优先澄清不满点
+        rating_json = json.dumps(
+            {"previous_turn_user_rating": previous_turn_user_rating},
+            ensure_ascii=False,
+        )
+        context_bits.append(
+            "【上轮用户星级评价·系统注入·勿当作用户本轮原话】\n"
+            + rating_json
+            + "\n"
+            "若 score≤2：优先澄清不满点并复读盘再改；"
+            "若 score≥4：可在摘要中简短确认方向后继续。"
+        )
     context_bits.append(
         "请先给出 understanding + goals，再读盘施工；"
         "一条话里的多个要求都要进 goals 并尽量落地。"

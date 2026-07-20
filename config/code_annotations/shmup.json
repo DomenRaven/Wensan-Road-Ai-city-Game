@@ -1,0 +1,7 @@
+{
+  "files": {
+    "config/game_config.json": "街机飞机射击的配方：火力、炸弹、激光等开关与手感参数在这里。",
+    "core/player_shmup.gd": "玩家飞机脚本：移动、射击、技能触发多半写在这里。",
+    "scenes/main.tscn": "主战场场景：飞机、敌机生成与界面节点的组合。"
+  }
+}

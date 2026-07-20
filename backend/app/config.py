@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -17,12 +18,24 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     redis_url: str = "redis://127.0.0.1:6379/0"
-    max_sessions: int = 10
+    max_sessions: int = 10  # 机房部署建议 ≥70（环境变量 MAX_SESSIONS）
     session_ttl_sec: int = 900
     allow_memory_fallback: bool = True
+    # S4 · 同时进行的 nl-patch / Agent 上限（建议 4～8）
+    max_concurrent_agents: int = 6
+    agent_queue_wait_sec: float = 90.0
+    # S2-路B · 试玩启动：展厅默认 server（API 机起 Godot）；机房用 local_share（本机开）
+    play_launch_mode: Literal["server", "local_share"] = "server"
     godot_path: str = r"F:\Godot\Godot_v4.6.3-stable_win64.exe\Godot_v4.6.3-stable_win64.exe"
     templates_dir: Path = ROOT_DIR / "templates"
     workspace_dir: Path = ROOT_DIR / "workspace"
+    # 学情 / 教学账号（与 learned_skills 分离）
+    learning_analytics_dir: Path = ROOT_DIR / "data" / "learning_analytics"
+    auth_token_ttl_sec: int = 86400 * 7
+    # 可选：启动时引导创建首个 admin（不走开放注册）
+    bootstrap_admin_username: str = ""
+    bootstrap_admin_password: str = ""
+    bootstrap_admin_nickname: str = "管理员"
     # 创作经验 → Learned Skill 长期库（不随 session 销毁）
     learned_skills_dir: Path = ROOT_DIR / "data" / "learned_skills"
     # 策展参考 Skill（只读；与 learned 分离）

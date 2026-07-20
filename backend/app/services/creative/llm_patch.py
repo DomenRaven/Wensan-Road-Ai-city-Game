@@ -826,6 +826,7 @@ def apply_nl_patch(
     text: str,
     history: list[dict[str, str]] | None = None,
     feedback: str = "",
+    previous_turn_user_rating: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     request_text: str = str(text or "").strip()
     feedback_text: str = str(feedback or "").strip()
@@ -900,6 +901,7 @@ def apply_nl_patch(
                     feedback=fb,
                     max_rounds=None,
                     run_dry_run=False,
+                    previous_turn_user_rating=previous_turn_user_rating,
                 )
                 how_lines = list(agent_out.get("how_to_play") or [])
                 msg = str(agent_out.get("summary") or agent_out.get("message") or "").strip()

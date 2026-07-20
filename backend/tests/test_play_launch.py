@@ -91,6 +91,7 @@ class _FakeLauncher:
         *,
         force: bool = False,
         layout_rect: dict[str, int] | None = None,
+        user_id: str | None = None,
     ) -> LaunchResult:
         self.last_layout_rect = layout_rect
         return LaunchResult(

@@ -9,14 +9,35 @@
     // B 链独立 key，避免打开 A 链 /kiosk/ 时 cleanup 误杀教育会话
     storageKey: "gameforge_edu_session_id",
     /** @type {string} */
+    authTokenKey: "gameforge_edu_auth_token",
+    /** @type {string} */
     sessionId: "",
     /** @type {boolean} */
     ready: false,
     /** @type {Record<string, unknown>} */
     spec: {},
+    /** @type {"guest"|"login"} */
+    authMode: "guest",
+    /** @type {string} */
+    authToken: "",
+    /** @type {{id:string,username:string,nickname:string,role:string,class_label?:string}|null} */
+    user: null,
 
     /** @type {boolean} B5 制作期间禁止误杀会话（pagehide / A 链抢 key） */
     protectRelease: false,
+
+    /** @type {boolean} F1：证书保存成功后门闩 */
+    certificateSaved: false,
+
+    /** @returns {Record<string, string>} */
+    authHeaders() {
+      /** @type {Record<string, string>} */
+      const headers = { "Content-Type": "application/json" };
+      if (this.authToken) {
+        headers.Authorization = `Bearer ${this.authToken}`;
+      }
+      return headers;
+    },
 
     /**
      * @param {string} path
@@ -24,15 +45,105 @@
      */
     async api(path, options = {}) {
       const res = await fetch(`${this.apiBase}${path}`, {
-        headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+        headers: { ...this.authHeaders(), ...(options.headers || {}) },
         ...options,
       });
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`${res.status}: ${text}`);
+        let detail = text;
+        try {
+          const parsed = JSON.parse(text);
+          if (parsed?.detail) {
+            detail = typeof parsed.detail === "string" ? parsed.detail : JSON.stringify(parsed.detail);
+          }
+        } catch (_) {
+          /* keep raw */
+        }
+        throw new Error(`${res.status}: ${detail}`);
       }
       if (res.status === 204) return {};
       return res.json();
+    },
+
+    clearAuth() {
+      this.authToken = "";
+      this.user = null;
+      this.authMode = "guest";
+      try {
+        localStorage.removeItem(this.authTokenKey);
+      } catch (_) {
+        /* ignore */
+      }
+    },
+
+    /**
+     * @param {string} token
+     * @param {{id:string,username:string,nickname:string,role:string,class_label?:string}} user
+     */
+    rememberAuth(token, user) {
+      this.authToken = token;
+      this.user = user;
+      this.authMode = "login";
+      try {
+        localStorage.setItem(this.authTokenKey, token);
+      } catch (_) {
+        /* ignore */
+      }
+    },
+
+    async restoreAuth() {
+      let token = "";
+      try {
+        token = localStorage.getItem(this.authTokenKey) || "";
+      } catch (_) {
+        token = "";
+      }
+      if (!token) return false;
+      this.authToken = token;
+      try {
+        const me = await this.api("/auth/me");
+        this.user = /** @type {{id:string,username:string,nickname:string,role:string}} */ (me.user);
+        this.authMode = "login";
+        return true;
+      } catch (_) {
+        this.clearAuth();
+        return false;
+      }
+    },
+
+    /**
+     * @param {{username:string,password:string,nickname:string,class_label?:string}} body
+     */
+    async register(body) {
+      const data = await this.api("/auth/register", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      this.rememberAuth(String(data.token || ""), /** @type {*} */ (data.user));
+      return data;
+    },
+
+    /**
+     * @param {{username:string,password:string}} body
+     */
+    async login(body) {
+      const data = await this.api("/auth/login", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      this.rememberAuth(String(data.token || ""), /** @type {*} */ (data.user));
+      return data;
+    },
+
+    async logout() {
+      try {
+        if (this.authToken) {
+          await this.api("/auth/logout", { method: "POST", body: "{}" });
+        }
+      } catch (_) {
+        /* ignore */
+      }
+      this.clearAuth();
     },
 
     /**
@@ -157,9 +268,12 @@
      * @returns {Promise<Record<string, unknown>>}
      */
     async createSessionWithRecovery(retries = 2) {
+      const payload = JSON.stringify({
+        auth_mode: this.authMode === "login" && this.authToken ? "login" : "guest",
+      });
       for (let attempt = 0; attempt <= retries; attempt += 1) {
         try {
-          return await this.api("/sessions", { method: "POST", body: "{}" });
+          return await this.api("/sessions", { method: "POST", body: payload });
         } catch (err) {
           const msg = String(/** @type {Error} */ (err).message || err);
           if (!msg.includes("429") || attempt >= retries) throw err;
@@ -334,14 +448,23 @@
       return this.sessionId;
     },
 
-    async bootstrap() {
+    /**
+     * @param {{ createSession?: boolean }} [opts]
+     */
+    async bootstrap(opts = {}) {
+      const shouldCreate = opts.createSession !== false;
       await this.loadSpec();
       await this.cleanupStaleSession();
       try {
         await this.verifyBootstrap();
-        await this.createSession();
+        await this.restoreAuth();
+        if (shouldCreate) {
+          await this.createSession();
+          this.log(`✓ B0 就绪 · session=${this.sessionId.slice(0, 8)}… · API ${this.apiBase}`);
+        } else {
+          this.log(`✓ 展厅就绪 · 等待选择游客/登录 · API ${this.apiBase}`);
+        }
         this.ready = true;
-        this.log(`✓ B0 就绪 · session=${this.sessionId.slice(0, 8)}… · API ${this.apiBase}`);
       } catch (err) {
         this.ready = false;
         this.log(`✗ B0 失败: ${err.message}`);

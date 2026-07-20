@@ -1,0 +1,6 @@
+{
+  "files": {
+    "config/game_config.json": "格斗对战配方：格挡、招式开关与手感参数在这里。",
+    "scenes/main.tscn": "对战主场景：双方角色与擂台节点。"
+  }
+}

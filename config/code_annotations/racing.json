@@ -1,0 +1,6 @@
+{
+  "files": {
+    "config/game_config.json": "欢乐赛车配方：氮气、漂移等手感与开关在这里。",
+    "scenes/main.tscn": "赛车主场景：车辆、赛道与界面节点。"
+  }
+}

@@ -45,12 +45,15 @@ def issue_token(
     session_id: str,
     display_name: str,
     ttl_sec: int,
+    *,
+    user_id: str | None = None,
 ) -> tuple[str, float]:
     """签发 token 并写入映射文件。返回 (token, expires_at)。"""
     token: str = secrets.token_urlsafe(18)
     expires_at: float = time.time() + max(300, ttl_sec)
     payload: dict[str, Any] = {
         "session_id": session_id,
+        "user_id": user_id,
         "filename": f"{_safe_filename(display_name)}_证书.png",
         "expires_at": expires_at,
         "created_at": time.time(),

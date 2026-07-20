@@ -13,6 +13,10 @@ SESSION_ID_PATTERN = re.compile(
     r"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
     re.IGNORECASE,
 )
+USER_ID_PATTERN = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+    re.IGNORECASE,
+)
 
 
 class WorkspaceGuardError(ValueError):
@@ -30,10 +34,31 @@ def validate_session_id(session_id: str) -> str:
     return sid
 
 
-def workspace_root_for_session(workspace_dir: Path, session_id: str) -> Path:
+def validate_user_id(user_id: str) -> str:
+    uid: str = user_id.strip()
+    if not USER_ID_PATTERN.fullmatch(uid):
+        raise WorkspaceGuardError(f"非法 user_id: {user_id!r}")
+    try:
+        uuid.UUID(uid)
+    except ValueError as exc:
+        raise WorkspaceGuardError(f"非法 user_id: {user_id!r}") from exc
+    return uid
+
+
+def workspace_root_for_session(
+    workspace_dir: Path,
+    session_id: str,
+    *,
+    user_id: str | None = None,
+) -> Path:
+    """游客：workspace/{sid}/；登录：workspace/users/{user_id}/{sid}/。"""
     sid: str = validate_session_id(session_id)
     root: Path = workspace_dir.resolve()
-    target: Path = (root / sid).resolve()
+    if user_id:
+        uid: str = validate_user_id(user_id)
+        target = (root / "users" / uid / sid).resolve()
+    else:
+        target = (root / sid).resolve()
     if target != root and root not in target.parents:
         raise WorkspaceGuardError(f"workspace 路径越界: {target}")
     return target
@@ -124,37 +149,68 @@ def validate_featured_templates(templates_dir: Path, slugs: list[str] | None = N
     }
 
 
-def list_workspace_session_ids(workspace_dir: Path) -> list[str]:
+def list_workspace_session_entries(workspace_dir: Path) -> list[tuple[str, str | None]]:
+    """返回 (session_id, user_id|None) 列表，含游客扁平目录与 users/ 隔离目录。"""
     root: Path = ensure_workspace_root(workspace_dir)
-    ids: list[str] = []
+    entries: list[tuple[str, str | None]] = []
     for child in root.iterdir():
-        if not child.is_dir():
+        if not child.is_dir() or child.name.startswith("."):
             continue
-        name: str = child.name
-        if name.startswith("."):
-            continue
-        if SESSION_ID_PATTERN.fullmatch(name):
-            ids.append(name)
-    return ids
+        if SESSION_ID_PATTERN.fullmatch(child.name):
+            entries.append((child.name, None))
+    users_root: Path = root / "users"
+    if users_root.is_dir():
+        for user_dir in users_root.iterdir():
+            if not user_dir.is_dir() or not USER_ID_PATTERN.fullmatch(user_dir.name):
+                continue
+            for sid_dir in user_dir.iterdir():
+                if sid_dir.is_dir() and SESSION_ID_PATTERN.fullmatch(sid_dir.name):
+                    entries.append((sid_dir.name, user_dir.name))
+    return entries
 
 
-def remove_workspace(workspace_dir: Path, session_id: str) -> bool:
-    target: Path = workspace_root_for_session(workspace_dir, session_id)
+def list_workspace_session_ids(workspace_dir: Path) -> list[str]:
+    return [sid for sid, _ in list_workspace_session_entries(workspace_dir)]
+
+
+def remove_workspace(
+    workspace_dir: Path,
+    session_id: str,
+    *,
+    user_id: str | None = None,
+) -> bool:
+    target: Path = workspace_root_for_session(workspace_dir, session_id, user_id=user_id)
     if not target.exists():
-        return False
+        # 兼容：登录路径找不到时再试游客扁平路径（迁移/旧数据）
+        if user_id:
+            flat = workspace_root_for_session(workspace_dir, session_id, user_id=None)
+            if flat.exists():
+                target = flat
+            else:
+                return False
+        else:
+            return False
     try:
         shutil.rmtree(target)
     except PermissionError:
         return False
+    # 清理空的 users/{uid}/ 父目录
+    if user_id:
+        parent: Path = target.parent
+        try:
+            if parent.is_dir() and not any(parent.iterdir()):
+                parent.rmdir()
+        except OSError:
+            pass
     return True
 
 
 def cleanup_orphan_workspaces(workspace_dir: Path, active_session_ids: set[str]) -> list[str]:
     removed: list[str] = []
-    for sid in list_workspace_session_ids(workspace_dir):
+    for sid, uid in list_workspace_session_entries(workspace_dir):
         if sid in active_session_ids:
             continue
-        if remove_workspace(workspace_dir, sid):
+        if remove_workspace(workspace_dir, sid, user_id=uid):
             removed.append(sid)
     return removed
 
@@ -164,15 +220,21 @@ def copy_template_to_workspace(
     workspace_dir: Path,
     genre: str,
     session_id: str,
+    *,
+    user_id: str | None = None,
 ) -> Path:
-    """Copy templates/{genre}/ → workspace/{session_id}/ (B1) · 仅写 workspace。"""
+    """Copy templates/{genre}/ → workspace/.../{session_id}/ · 仅写 workspace。"""
     validate_template_genre(templates_dir, genre)
     source: Path = (templates_dir / genre).resolve()
     root: Path = ensure_workspace_root(workspace_dir)
-    target: Path = workspace_root_for_session(root, session_id)
+    target: Path = workspace_root_for_session(root, session_id, user_id=user_id)
     assert_not_under_templates(target, templates_dir)
+    target.parent.mkdir(parents=True, exist_ok=True)
 
-    tmp: Path = root / f".{validate_session_id(session_id)}.tmp"
+    tmp_name: str = f".{validate_session_id(session_id)}.tmp"
+    tmp: Path = (root / "users" / validate_user_id(user_id) / tmp_name) if user_id else (root / tmp_name)
+    if user_id:
+        tmp.parent.mkdir(parents=True, exist_ok=True)
     if tmp.exists():
         shutil.rmtree(tmp)
     if target.exists():

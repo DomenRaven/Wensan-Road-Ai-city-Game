@@ -25,12 +25,16 @@ def download_certificate_by_token(token: str, request: Request) -> FileResponse:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
     session_id: str = str(meta["session_id"])
+    raw_uid = meta.get("user_id")
+    user_id: str | None = str(raw_uid).strip() if raw_uid else None
     try:
         validate_session_id(session_id)
     except WorkspaceGuardError as exc:
         raise HTTPException(status_code=404, detail="certificate unavailable") from exc
 
-    workspace_root: Path = workspace_root_for_session(workspace_dir, session_id)
+    workspace_root: Path = workspace_root_for_session(
+        workspace_dir, session_id, user_id=user_id or None
+    )
     cert_path: Path = workspace_root / _CERTIFICATE_REL_PATH
     try:
         resolved: Path = assert_under_workspace(cert_path, workspace_dir)

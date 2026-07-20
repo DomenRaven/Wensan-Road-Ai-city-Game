@@ -20,6 +20,14 @@
   /** @type {object|null} 最近一次富结果；重开后再打开对话框要还原，勿只剩气泡输入页 */
   let lastResult = null;
 
+  const RATING_LABELS = {
+    1: "非常不满意",
+    2: "比较不满意",
+    3: "一般般",
+    4: "比较满意",
+    5: "非常满意",
+  };
+
   const EXAMPLES_BY_GENRE = {
     platformer: [
       "让主角跳得更高",
@@ -185,7 +193,8 @@
       ? window.EduLlmCreateWait.render()
       : `<p class="edu-nlpatch-loading-text">AI 正在创作代码…</p>`;
     setBody(`
-      <h3 class="edu-nlpatch-title">智能体正在改本局游戏…</h3>
+      <h3 class="edu-nlpatch-title">排队中 / 智能体施工中…</h3>
+      <p class="edu-nlpatch-sub">人多时会先排队；轮到后开始改本局游戏副本</p>
       ${historyHtml()}
       <div class="edu-nlpatch-wait" id="edu-nlpatch-wait">${wait}</div>
     `);
@@ -227,7 +236,7 @@
 
   /**
    * 对齐 HF-13 Agent 返回字段：有 Key → provider=agent；门禁靠 gate_passed/partial。
-   * @param {{ok:boolean,provider:string,summary:string,message:string,changes:Array<{path:string,before:unknown,after:unknown}>,sandbox_files?:string[],attempted_paths?:string[],how_to_play?:string[],applied_capabilities?:string[],needs_relaunch?:boolean,verify_gaps?:string[],repaired?:boolean,learned_skills?:string[],llm_error?:string,gate_passed?:boolean,partial?:boolean,rolled_back?:boolean,agent_rounds?:number,understanding?:string,goals?:string[],express?:boolean}} result
+   * @param {{ok:boolean,provider:string,summary:string,message:string,changes:Array<{path:string,before:unknown,after:unknown}>,sandbox_files?:string[],attempted_paths?:string[],how_to_play?:string[],applied_capabilities?:string[],needs_relaunch?:boolean,verify_gaps?:string[],repaired?:boolean,learned_skills?:string[],llm_error?:string,gate_passed?:boolean,partial?:boolean,rolled_back?:boolean,agent_rounds?:number,understanding?:string,goals?:string[],express?:boolean,turn_id?:string}} result
    */
   function renderResult(result) {
     stopProgressPoll();
@@ -321,6 +330,39 @@
       ? "完成一部分，尚未验收"
       : "收到，我们继续聊";
 
+    const turnId = String(result.turn_id || "").trim();
+    const showDiffBtn = Boolean(result.has_diff) || !!turnId;
+    const diffCount = Number(result.diff_file_count) || 0;
+    const diffBtnHtml = showDiffBtn
+      ? `<div class="edu-nlpatch-diff-entry">
+          <button type="button" id="edu-nlpatch-open-diff" class="btn btn-secondary edu-nlpatch-diff-btn">
+            查看本轮代码改动${diffCount > 0 ? `（${diffCount} 个文件）` : ""}
+          </button>
+        </div>`
+      : "";
+    const ratingHtml = turnId
+      ? `<div class="edu-nlpatch-rating" id="edu-nlpatch-rating" data-turn-id="${escapeHtml(turnId)}">
+          <p class="edu-nlpatch-rating-title">这次改得怎么样？（可跳过）</p>
+          <div class="edu-nlpatch-stars" role="group" aria-label="星级评价">
+            ${[1, 2, 3, 4, 5]
+              .map(
+                (n) =>
+                  `<button type="button" class="edu-nlpatch-star" data-score="${n}" aria-label="${n}星">${"★".repeat(n)}${"☆".repeat(5 - n)}</button>`
+              )
+              .join("")}
+          </div>
+          <p class="edu-nlpatch-rating-label" id="edu-nlpatch-rating-label">点选 1～5 星</p>
+          <textarea id="edu-nlpatch-rating-comment" class="edu-nlpatch-rating-comment edu-touch-input text-input"
+            rows="2" maxlength="200" placeholder="可选：再写一句想法（最多 200 字）"
+            inputmode="text" lang="zh-CN"></textarea>
+          <div class="edu-nlpatch-rating-actions">
+            <button type="button" id="edu-nlpatch-rating-submit" class="btn btn-primary" disabled>提交评价</button>
+            <button type="button" id="edu-nlpatch-rating-skip" class="btn btn-secondary">暂时跳过</button>
+          </div>
+          <p class="edu-nlpatch-rating-thanks" id="edu-nlpatch-rating-thanks" hidden>已记录，谢谢</p>
+        </div>`
+      : "";
+
     setBody(`
       <h3 class="edu-nlpatch-title">${titleText}</h3>
       <div class="edu-nlpatch-provider">${badge}${gateBadge}${roundsBadge}${rolledBadge}${repairedBadge}${learnedBadge}</div>
@@ -338,6 +380,9 @@
       }
       ${sandboxHtml}
       ${changesHtml}
+      ${diffBtnHtml}
+      <div id="edu-nlpatch-diff-panel" class="edu-nlpatch-diff-panel" hidden></div>
+      ${ratingHtml}
       <textarea id="edu-nlpatch-input" class="edu-nlpatch-input edu-touch-input text-input" rows="2"
         maxlength="500" placeholder="继续说，或反馈问题（例如打不开、没生效）"
         inputmode="text" lang="zh-CN" enterkeyhint="done" autocomplete="off"></textarea>
@@ -348,6 +393,13 @@
         <button type="button" id="edu-nlpatch-done" class="btn btn-secondary">先关闭说明</button>
       </div>
     `);
+
+    if (turnId) bindRatingUI(turnId);
+    if (showDiffBtn && turnId) {
+      document.getElementById("edu-nlpatch-open-diff")?.addEventListener("click", () => {
+        void openDiffPanel(turnId);
+      });
+    }
 
     document.querySelectorAll("[data-feedback]").forEach((node) => {
       node.addEventListener("click", () => {
@@ -368,6 +420,225 @@
       window.EduTouchKeyboard?.dismissForNavigation?.();
       close();
     });
+  }
+
+  /**
+   * @param {string} text
+   */
+  function renderUnifiedDiffHtml(text) {
+    const lines = String(text || "").split("\n");
+    return lines
+      .map((line) => {
+        let cls = "edu-diff-line";
+        if (line.startsWith("+++") || line.startsWith("---") || line.startsWith("@@")) {
+          cls += " edu-diff-line--meta";
+        } else if (line.startsWith("+")) {
+          cls += " edu-diff-line--add";
+        } else if (line.startsWith("-")) {
+          cls += " edu-diff-line--del";
+        }
+        return `<div class="${cls}">${escapeHtml(line || " ")}</div>`;
+      })
+      .join("");
+  }
+
+  /**
+   * @param {string} turnId
+   */
+  async function openDiffPanel(turnId) {
+    const panel = document.getElementById("edu-nlpatch-diff-panel");
+    if (!panel || !ctx.sessionId) return;
+    panel.hidden = false;
+    panel.innerHTML = `<p class="edu-nlpatch-summary">正在加载本轮代码改动…</p>`;
+    try {
+      const data = await window.EduSession.apiWithSession(
+        `/sessions/${ctx.sessionId}/turns/${turnId}/diff`
+      );
+      const files = Array.isArray(data.files) ? data.files : [];
+      if (!files.length) {
+        panel.innerHTML = `
+          <div class="edu-nlpatch-diff-head">
+            <strong>本轮代码改动</strong>
+            <button type="button" class="btn btn-secondary" id="edu-nlpatch-diff-close">收起</button>
+          </div>
+          <p class="edu-nlpatch-summary">${escapeHtml(data.overview_note || "本轮无文本文件净变更。")}</p>
+          ${
+            data.rolled_back
+              ? `<p class="edu-nlpatch-summary" style="color:#b45309">本轮改动已回滚，未保留在工作区。</p>`
+              : ""
+          }
+        `;
+        document.getElementById("edu-nlpatch-diff-close")?.addEventListener("click", () => {
+          panel.hidden = true;
+        });
+        return;
+      }
+      let active = 0;
+      let mode = "diff"; // diff | after
+
+      const paint = () => {
+        const f = files[active] || files[0];
+        const tabs = files
+          .map(
+            (file, i) =>
+              `<button type="button" class="edu-diff-tab${i === active ? " is-active" : ""}" data-idx="${i}">${escapeHtml(
+                String(file.path)
+              )}</button>`
+          )
+          .join("");
+        const body =
+          mode === "after"
+            ? `<pre class="edu-diff-after">${escapeHtml(String(f.after_text || ""))}</pre>`
+            : `<div class="edu-diff-unified">${renderUnifiedDiffHtml(String(f.diff_text || ""))}</div>`;
+        panel.innerHTML = `
+          <div class="edu-nlpatch-diff-head">
+            <strong>本轮代码改动</strong>
+            <button type="button" class="btn btn-secondary" id="edu-nlpatch-diff-close">收起</button>
+          </div>
+          <p class="edu-nlpatch-summary">${escapeHtml(String(data.overview_note || ""))}</p>
+          ${
+            data.rolled_back
+              ? `<p class="edu-nlpatch-summary" style="color:#b45309">本轮改动已回滚；下列为回滚后对照。</p>`
+              : ""
+          }
+          <div class="edu-diff-tabs">${tabs}</div>
+          <p class="edu-diff-file-note">${escapeHtml(String(f.note || ""))}</p>
+          <div class="edu-diff-mode">
+            <button type="button" class="edu-diff-mode-btn${mode === "diff" ? " is-active" : ""}" data-mode="diff">对照 Diff</button>
+            <button type="button" class="edu-diff-mode-btn${mode === "after" ? " is-active" : ""}" data-mode="after">改后全文</button>
+          </div>
+          ${body}
+        `;
+        document.getElementById("edu-nlpatch-diff-close")?.addEventListener("click", () => {
+          panel.hidden = true;
+        });
+        panel.querySelectorAll(".edu-diff-tab").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            active = Number(btn.getAttribute("data-idx") || 0);
+            paint();
+          });
+        });
+        panel.querySelectorAll(".edu-diff-mode-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            mode = btn.getAttribute("data-mode") === "after" ? "after" : "diff";
+            paint();
+          });
+        });
+      };
+      paint();
+    } catch (err) {
+      panel.innerHTML = `<p class="edu-nlpatch-summary" style="color:#b45309">加载 Diff 失败：${escapeHtml(
+        String(err?.message || err)
+      )}</p>`;
+    }
+  }
+
+  /**
+   * @param {string} turnId
+   */
+  function bindRatingUI(turnId) {
+    const root = document.getElementById("edu-nlpatch-rating");
+    if (!root) return;
+    let selected = 0;
+    const labelEl = document.getElementById("edu-nlpatch-rating-label");
+    const submitBtn = /** @type {HTMLButtonElement|null} */ (
+      document.getElementById("edu-nlpatch-rating-submit")
+    );
+    const thanksEl = document.getElementById("edu-nlpatch-rating-thanks");
+    const commentEl = /** @type {HTMLTextAreaElement|null} */ (
+      document.getElementById("edu-nlpatch-rating-comment")
+    );
+
+    /**
+     * @param {number} score
+     */
+    function paintStars(score) {
+      root.querySelectorAll(".edu-nlpatch-star").forEach((btn) => {
+        const n = Number(btn.getAttribute("data-score") || 0);
+        btn.classList.toggle("is-active", n > 0 && n <= score);
+        btn.classList.toggle("is-selected", n === score);
+      });
+      if (labelEl) {
+        labelEl.textContent = score
+          ? `${score} 星 · ${RATING_LABELS[score] || ""}`
+          : "点选 1～5 星";
+      }
+      if (submitBtn) submitBtn.disabled = score < 1;
+    }
+
+    root.querySelectorAll(".edu-nlpatch-star").forEach((btn) => {
+      btn.addEventListener("pointerenter", () => {
+        if (root.classList.contains("is-done")) return;
+        paintStars(Number(btn.getAttribute("data-score") || 0));
+      });
+      btn.addEventListener("pointerleave", () => {
+        if (root.classList.contains("is-done")) return;
+        paintStars(selected);
+      });
+      btn.addEventListener("click", () => {
+        if (root.classList.contains("is-done") && !root.classList.contains("is-editable")) {
+          return;
+        }
+        selected = Number(btn.getAttribute("data-score") || 0);
+        paintStars(selected);
+      });
+    });
+
+    const skipBtn = /** @type {HTMLButtonElement|null} */ (
+      document.getElementById("edu-nlpatch-rating-skip")
+    );
+    skipBtn?.addEventListener("click", () => {
+      if (root.classList.contains("is-done")) {
+        root.classList.add("is-editable");
+        root.classList.remove("is-done");
+        if (thanksEl) thanksEl.hidden = true;
+        if (submitBtn) {
+          submitBtn.disabled = selected < 1;
+          submitBtn.textContent = "修改并提交";
+        }
+        skipBtn.textContent = "暂时跳过";
+        return;
+      }
+      root.hidden = true;
+    });
+
+    submitBtn?.addEventListener("click", async () => {
+      if (selected < 1 || !ctx.sessionId) return;
+      submitBtn.disabled = true;
+      try {
+        await window.EduSession.apiWithSession(
+          `/sessions/${ctx.sessionId}/turns/${turnId}/rating`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              score: selected,
+              comment: String(commentEl?.value || "").trim(),
+            }),
+          }
+        );
+        root.classList.add("is-done");
+        root.classList.remove("is-editable");
+        if (thanksEl) {
+          thanksEl.hidden = false;
+          thanksEl.textContent = "已记录，谢谢";
+        }
+        if (labelEl) {
+          labelEl.textContent = `${selected} 星 · ${RATING_LABELS[selected] || ""} · 已提交`;
+        }
+        if (skipBtn) skipBtn.textContent = "修改评价";
+        submitBtn.textContent = "已提交";
+        submitBtn.disabled = true;
+      } catch (err) {
+        window.EduSession?.log?.(`评价提交失败 · ${err?.message || err}`);
+        if (thanksEl) {
+          thanksEl.hidden = false;
+          thanksEl.textContent = "提交失败，请重试";
+        }
+        submitBtn.disabled = false;
+      }
+    });
+
+    window.EduTouchKeyboard?.bind?.(root);
   }
 
   /**
@@ -432,9 +703,35 @@
         (ac && ac.signal.aborted) ||
         /abort|AbortError|The user aborted/i.test(raw);
       window.EduSession?.log?.(`nl-patch 失败 · ${raw}`);
-      const msg = aborted
-        ? "这轮想得太久了（超过约 6 分钟）。请再发一次，或把需求拆成更短的一句话。"
-        : "网络出了点小问题，请稍后再试一次";
+      let msg = "网络出了点小问题，请稍后再试一次";
+      if (aborted) {
+        msg = "这轮想得太久了（超过约 6 分钟）。请再发一次，或把需求拆成更短的一句话。";
+      } else if (
+        /人数已满|排队|正在进行|同一账号|agent_queue_full|session_busy|user_busy/.test(raw)
+      ) {
+        try {
+          const jsonPart = raw.replace(/^\d+:\s*/, "");
+          const parsed = JSON.parse(jsonPart);
+          msg = String(
+            parsed.message ||
+              (typeof parsed.detail === "string" ? parsed.detail : parsed.detail?.message) ||
+              raw
+          );
+        } catch (_) {
+          if (raw.includes("人数已满") || raw.includes("agent_queue_full")) {
+            msg = "当前同时改游戏的人数已满，请稍后再试";
+          } else if (
+            raw.includes("正在进行") ||
+            raw.includes("同一账号") ||
+            raw.includes("session_busy") ||
+            raw.includes("user_busy")
+          ) {
+            msg = "已有一轮改游戏正在进行，请稍候再发";
+          } else {
+            msg = "当前排队人数较多，请稍后再试";
+          }
+        }
+      }
       history.push({ role: "assistant", content: msg });
       lastResult = {
         ok: false,
