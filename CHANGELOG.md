@@ -12,6 +12,7 @@
 
 ### 变更
 
+- **7.21 教学案例 · 机房 S2-路B 部署**：[`7.21_教学案例_机房S2路B部署_工作历程与经验_2026-07-21.md`](开发文档/7.21_教学案例_机房S2路B部署_工作历程与经验_2026-07-21.md) · Skill [`.cursor/skills/gameforge-lab-s2-deploy/`](.cursor/skills/gameforge-lab-s2-deploy/SKILL.md) · 服务器 §1–§7 · §9 · v1.0.1 · deploy v2 · 双账号
 - **7.21 学生机批量 deploy v2**：一键脚本先 `net use Z:` 再 `Z:\_tools` 复制；修复 UNC 直拷 / `net delete` 误中断；[`学生机_巡检表.md`](机房部署现场记录/学生机_巡检表.md) 含 TEST1/SMB 说明
 - **7.21 教学机房 §9 PASS + 助手 v1.0.1 热修**：首台学生机全链路验收（登录 → 试玩自动开 Godot → 首轮关窗弹榜 → AI 改代码 → release）；修复 Windows `Path("Z:")` 映射 bug（`Z:session` → `Z:\session`）；现场记录 [`机房部署现场记录/2026-07-21_§9验收与助手v1.0.1热修.md`](机房部署现场记录/2026-07-21_§9验收与助手v1.0.1热修.md) · 学生机一键部署脚本入 [`学生机_巡检表.md`](机房部署现场记录/学生机_巡检表.md)
 - **7.21 教学机房助手（S2-路B）**：`GameForgeLabHelper.exe` + `lab_godot_helper.py`（本机 `:17890` 开 Godot / 关窗榜单）；`GameForgeLabServer.exe` + `launch_lab_server.py`（服务器 `0.0.0.0` 启 API/Kiosk）；打包 `pack_lab_helper_zip.ps1` · `build_lab_server_launcher.ps1`；Kiosk `edu-wizard.js` LB-2 首轮自动弹榜；部署文档 `7.21_教学机房_*` · 现场记录 `机房部署现场记录/`
