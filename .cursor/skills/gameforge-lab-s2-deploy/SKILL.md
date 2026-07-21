@@ -11,7 +11,7 @@ description: >-
 
 ## 何时用本 Skill
 
-- 教室服务器 `10.71.121.18` / `PLAY_LAUNCH_MODE=local_share` 部署或验收  
+- 教室服务器 **`PLAY_LAUNCH_MODE=local_share`** · IP 为实测 LAN（原 `10.71.121.18` 或 **学生机兼服务器** 探测 IP）  
 - 学生机批量 deploy · §8/§9 · 助手 `:17890`  
 - 现象：「本机试玩就绪」但 Godot 不弹 · `Copy-Item \\...` 找不到 · `net delete` 中断  
 - 写/对齐 `7.21_教学机房_*` · `机房部署现场记录/`  
@@ -46,6 +46,7 @@ description: >-
 
 | 现象 | 先查 |
 |------|------|
+| Win11 SMB 满（错误 71） | `Get-SmbSession` Count≈20 · ≤20 台同时 Z: |
 | UNC Copy-Item 找不到 | 先 `net use Z:`，勿 UNC 直拷 |
 | `net delete` 找不到网络连接 | 新机正常；用 cmd 静默 delete，勿 Stop 中断 |
 | `/launch` → `Z:session` 无 `\` | 助手 < 1.0.1，更新 `_tools` |
@@ -77,6 +78,9 @@ pytest 门禁簇（Agent 基线，非机房专用）：`backend` 下 hf14/15/15.
 |------|------|
 | 执行任务 | `开发文档/7.21_教学机房_执行任务清单_2026-07-21.md` |
 | PowerShell 手册 | `开发文档/7.21_教学机房S2路B_PowerShell按序执行手册_2026-07-21.md` |
+| 冻结快照 | `开发文档/7.21_教学机房S2路B_冻结快照_2026-07-21.md` |
+| 学生机兼服务器 Cursor 词 | `开发文档/7.21_教学机房_学生机兼服务器_Cursor开工提示词_2026-07-21.md` |
+| deploy v2 脚本 | `05-工具脚本/deploy_lab_student_v2.ps1` |
 | 新窗对接 | `开发文档/7.21_教学机房_工作总结与新窗对接_2026-07-21.md` |
 | §9 足迹 | `机房部署现场记录/2026-07-21_§9验收与助手v1.0.1热修.md` |
 

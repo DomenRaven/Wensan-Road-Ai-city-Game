@@ -55,5 +55,8 @@ Thumbs.db
 05-工具脚本/dist/
 05-工具脚本/_dev_archive/
 交付/_stage_*/
+交付/_lab_classroom_stage/
+交付/_lab_helper_stage/
+交付/_verify_unzip/
 交付/*.zip
 
