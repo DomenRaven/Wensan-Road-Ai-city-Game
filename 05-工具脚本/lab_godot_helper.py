@@ -20,7 +20,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
-HELPER_VERSION: str = "1.0"
+HELPER_VERSION: str = "1.0.1"
 DEFAULT_PORT: int = 17890
 DEFAULT_CONFIG_PATH: Path = Path(r"C:\GameForge\lab_helper.json")
 CREATE_NO_WINDOW: int = 0x08000000
@@ -98,12 +98,22 @@ def save_config(path: Path, cfg: HelperConfig) -> None:
     path.write_text(json.dumps(cfg.to_dict(), ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def local_drive_root(local_drive: str) -> Path:
+    """Windows: ``Path('Z:') / 'sid'`` → ``Z:sid``（非根目录）；须用 ``Z:\\``。"""
+    letter: str = local_drive.strip().rstrip("\\/")
+    if len(letter) == 2 and letter[1] == ":":
+        return Path(f"{letter}\\")
+    if not letter.endswith(":"):
+        return Path(letter + "\\")
+    return Path(letter + "\\")
+
+
 def map_project_path(cfg: HelperConfig, project_path: str) -> Path:
     normalized = project_path.strip()
     prefix = cfg.workspace_prefix
     if normalized.lower().startswith(prefix.lower()):
         rel = normalized[len(prefix) :].lstrip("\\/")
-        return Path(cfg.local_drive) / rel.replace("/", "\\")
+        return local_drive_root(cfg.local_drive) / rel.replace("/", "\\")
     return Path(normalized)
 
 
