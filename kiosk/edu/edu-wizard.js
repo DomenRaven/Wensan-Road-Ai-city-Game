@@ -59,6 +59,8 @@
   let launchState = null;
   /** @type {number|null} */
   let launchStatusPollTimer = null;
+  /** @type {number|null} */
+  let localSharePollTimer = null;
   /** @type {boolean} */
   let launchInFlight = false;
   /** @type {boolean} */
@@ -68,10 +70,12 @@
   /** @type {boolean} */
   let sawGodotRunning = false;
   /**
-   * LB-2：仅「尚未被 AI 改过」的首轮初始局允许关窗自动弹榜。
-   * 一旦本会话 nl-patch 成功落地，置 false，后续重开/关 AI 一律不自动弹。
+   * LB-2：本会话仅「首轮原型试玩」关窗后自动 submit + 弹今日榜单一次。
+   * AI 改关成功 / 手动 reset / 新 session 才会重置。
    */
   let autoLeaderboardEnabled = true;
+  /** @type {boolean} 首轮自动弹榜已消费（双保险，防 autoLeaderboardEnabled 被误复位） */
+  let initialPrototypeLeaderboardDone = false;
   /** 首轮关窗时若 AI 弹层正开着，记下 sessionId；关弹层后再弹（仅 pending，勿兜底任意 session） */
   let pendingLeaderboardSessionId = "";
   /** @type {number} */
@@ -850,8 +854,13 @@
     }
     if (data.ok) {
       const isLocalShare = data.launch_mode === "local_share" || !!data.ready_for_local_godot;
+      const helperOn = isLabHelperEnabled();
       const mainMsg = isLocalShare
-        ? "本机目录已就绪 · 请用学生机 Godot 打开下方路径"
+        ? data.helper_launched
+          ? "本机 Godot 已启动 · 请切换到游戏窗口试玩"
+          : helperOn
+            ? "本机试玩就绪 · 助手将自动打开 Godot"
+            : "本机目录已就绪 · 请运行 GameForgeLabHelper.exe"
         : data.already_running
           ? "游戏已在运行 · 请到旁边窗口继续"
           : "Godot 已启动 · 请到游戏窗口试玩";
@@ -860,7 +869,11 @@
       const orient = data.orientation || window.EduOrientation?.getMode?.() || "landscape";
       let placementHint = "";
       if (isLocalShare) {
-        placementHint = `<p class="launch-placement-hint launch-placement-hint--ok">服务器不会替你开游戏窗；机房脚本或本机 Godot 打开该会话目录即可</p>`;
+        placementHint = data.helper_launched
+          ? `<p class="launch-placement-hint launch-placement-hint--ok">本机助手已打开 Godot；关窗后将自动同步今日榜单</p>`
+          : helperOn
+            ? `<p class="launch-placement-hint launch-placement-hint--ok">请保持 GameForgeLabHelper.exe 运行；试玩时自动开 Godot</p>`
+            : `<p class="launch-placement-hint launch-placement-hint--manual">请先部署并运行 GameForgeLabHelper.exe</p>`;
       } else if (data.window_placed === true) {
         placementHint = `<p class="launch-placement-hint launch-placement-hint--ok">游戏窗口已自动贴到${orient === "portrait" ? "屏幕下方" : "屏幕右侧"}</p>`;
       } else if (data.window_placed === false) {
@@ -1118,10 +1131,165 @@
       window.clearInterval(launchStatusPollTimer);
       launchStatusPollTimer = null;
     }
+    stopLocalSharePolling();
     prevGodotRunning = false;
     if (!opts.keepSawRunning) {
       sawGodotRunning = false;
     }
+  }
+
+  /** @returns {boolean} */
+  function isLabHelperEnabled() {
+    const lab = window.EduSession?.spec?.lab_helper;
+    return !!(lab && lab.enabled !== false);
+  }
+
+  /** @returns {string} */
+  function getLabHelperBase() {
+    if (!isLabHelperEnabled()) return "";
+    const lab = window.EduSession?.spec?.lab_helper || {};
+    return String(lab.base_url || "http://127.0.0.1:17890").replace(/\/$/, "");
+  }
+
+  /**
+   * @param {string} projectPath
+   * @param {boolean} force
+   * @returns {Promise<{ok?:boolean,already_running?:boolean,pid?:number|null,message?:string,error?:string,skipped?:boolean}>}
+   */
+  async function tryLaunchViaLabHelper(projectPath, force) {
+    const base = getLabHelperBase();
+    if (!base || !projectPath) return { ok: false, skipped: true };
+    try {
+      const res = await fetch(`${base}/launch`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ project_path: projectPath, force: !!force }),
+      });
+      const data = await res.json();
+      if (!res.ok && !data.ok) {
+        return { ok: false, message: data.message || `HTTP ${res.status}` };
+      }
+      return data;
+    } catch (err) {
+      const msg = /** @type {Error} */ (err)?.message || String(err);
+      window.EduSession?.log?.(
+        `本机助手未响应 · ${msg} · 请运行 GameForgeLabHelper.exe`
+      );
+      return { ok: false, error: msg };
+    }
+  }
+
+  /**
+   * @returns {boolean} 是否应在关 Godot 后自动 submit + 弹今日榜单（仅首轮原型局）
+   */
+  function shouldAutoLeaderboardAfterClose() {
+    return (
+      autoLeaderboardEnabled &&
+      !initialPrototypeLeaderboardDone &&
+      !leaderboardHandledThisRun &&
+      !!genre &&
+      window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre)
+    );
+  }
+
+  function stopLocalSharePolling() {
+    if (localSharePollTimer) {
+      window.clearInterval(localSharePollTimer);
+      localSharePollTimer = null;
+    }
+  }
+
+  /**
+   * @param {string} sessionId
+   */
+  async function pollLocalShareStatus(sessionId) {
+    const base = getLabHelperBase();
+    const statusEl = document.getElementById("godotRunStatus");
+    if (!base) return;
+
+    try {
+      const res = await fetch(`${base}/status`);
+      const status = await res.json();
+      const running = !!status.running;
+
+      if (running) {
+        sawGodotRunning = true;
+        prevGodotRunning = true;
+        if (statusEl) {
+          statusEl.textContent = "● 本机 Godot 运行中";
+          statusEl.className = "godot-run-status running";
+        }
+        return;
+      }
+
+      if (statusEl && sawGodotRunning) {
+        statusEl.textContent = "○ 游戏窗口已关闭";
+        statusEl.className = "godot-run-status stopped";
+      }
+
+      if (sawGodotRunning || prevGodotRunning) {
+        window.EduCodeHighlight?.stopPolling?.();
+        window.EduCodeHighlight?.clearPresentation?.();
+      }
+
+      if (sawGodotRunning) {
+        const hint = document.getElementById("playWindowHint");
+        const title = document.getElementById("playWindowTitle");
+        const hintText = document.getElementById("playWindowHintText");
+        if (hint) hint.classList.add("play-window-hint--closed");
+        if (title) title.textContent = "游戏已关闭";
+        const nlOpen = isNlPatchOverlayOpen();
+        const willAutoLb =
+          shouldAutoLeaderboardAfterClose() && !nlOpen;
+        if (hintText) {
+          hintText.textContent = willAutoLb
+            ? "正在同步成绩并打开今日榜单…"
+            : "点「重新试玩」再玩一次，或点「今日榜单」查看排名";
+        }
+      }
+
+      const nlOpen = isNlPatchOverlayOpen();
+      const closedAfterRun = !!sawGodotRunning;
+      const shouldHandle = shouldAutoLeaderboardAfterClose() && closedAfterRun && !nlOpen;
+
+      if (shouldHandle) {
+        await handleLeaderboardAfterRunClose(sessionId);
+        stopLocalSharePolling();
+        return;
+      }
+      if (closedAfterRun && nlOpen && shouldAutoLeaderboardAfterClose()) {
+        pendingLeaderboardSessionId = sessionId;
+        prevGodotRunning = false;
+        return;
+      }
+      if (closedAfterRun) {
+        stopLocalSharePolling();
+        const hintTextEl = document.getElementById("playWindowHintText");
+        if (hintTextEl) {
+          hintTextEl.textContent = "点「重新试玩」再玩一次，或点「今日榜单」查看排名";
+        }
+      }
+      prevGodotRunning = false;
+    } catch (err) {
+      window.EduSession?.log?.(
+        `本机助手状态轮询异常 · ${/** @type {Error} */ (err)?.message || err}`
+      );
+    }
+  }
+
+  /**
+   * @param {string} sessionId
+   */
+  function startLocalSharePolling(sessionId) {
+    if (!getLabHelperBase()) return;
+    stopLocalSharePolling();
+    if (launchState && launchState.helper_launched) {
+      sawGodotRunning = true;
+    }
+    void pollLocalShareStatus(sessionId);
+    localSharePollTimer = window.setInterval(() => {
+      void pollLocalShareStatus(sessionId);
+    }, 1500);
   }
 
   function updateLeaderboardButton() {
@@ -1134,6 +1302,35 @@
 
   async function openLeaderboardPanel() {
     if (!window.EduLeaderboard?.openDaily) return;
+    const sid = window.EduSession?.sessionId;
+    if (
+      sid &&
+      genre &&
+      window.EduLeaderboard.submitAfterRun &&
+      window.EduLeaderboard.LEADERBOARD_GENRES?.has(genre)
+    ) {
+      try {
+        const result = await window.EduLeaderboard.submitAfterRun({
+          sessionId: sid,
+          genre,
+          creatorName,
+          displayName,
+        });
+        if (result.entries && result.entries.length >= 0) {
+          window.EduLeaderboard.open({
+            genre,
+            entries: result.entries || [],
+            highlightSessionId: result.skippedSubmit ? null : sid,
+            highlightCreatedAt: result.skippedSubmit ? null : result.entry?.created_at || null,
+            degraded: !!result.degraded,
+            fallbackEntry: result.entry,
+          });
+          return;
+        }
+      } catch (_) {
+        /* 回退只读日榜 */
+      }
+    }
     await window.EduLeaderboard.openDaily(genre || "platformer");
   }
 
@@ -1141,11 +1338,12 @@
    * @param {string} sessionId
    */
   async function handleLeaderboardAfterRunClose(sessionId) {
+    if (initialPrototypeLeaderboardDone) return;
     if (!autoLeaderboardEnabled) return;
     if (!window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre)) return;
     if (leaderboardHandledThisRun) return;
     leaderboardHandledThisRun = true;
-    // 本会话只自动弹一次（首轮初始局）
+    initialPrototypeLeaderboardDone = true;
     autoLeaderboardEnabled = false;
     pendingLeaderboardSessionId = "";
     sawGodotRunning = false;
@@ -1167,6 +1365,9 @@
         degraded: !!result.degraded,
         fallbackEntry: result.entry,
       });
+      window.EduSession?.log?.(
+        "✓ 首轮试玩 · 已自动提交成绩并打开今日榜单（本会话后续试玩不再自动弹出）"
+      );
     } catch (err) {
       window.EduSession?.log?.(
         `自动弹榜失败 · ${/** @type {Error} */ (err).message || err} · 仍打开榜单面板`
@@ -1180,6 +1381,7 @@
         });
       } catch (_) {
         leaderboardHandledThisRun = false;
+        initialPrototypeLeaderboardDone = false;
         autoLeaderboardEnabled = true;
       }
     }
@@ -1191,7 +1393,9 @@
   }
 
   function disableAutoLeaderboard(reason) {
-    if (!autoLeaderboardEnabled && !pendingLeaderboardSessionId) return;
+    if (!autoLeaderboardEnabled && !pendingLeaderboardSessionId && initialPrototypeLeaderboardDone) {
+      return;
+    }
     autoLeaderboardEnabled = false;
     pendingLeaderboardSessionId = "";
     window.EduSession?.log?.(
@@ -1232,24 +1436,25 @@
         const hintText = document.getElementById("playWindowHintText");
         if (hint) hint.classList.add("play-window-hint--closed");
         if (title) title.textContent = "游戏已关闭";
-        if (hintText) hintText.textContent = "点「重新试玩」再玩一次，或点「今日榜单」查看排名";
+        const nlOpenHint = isNlPatchOverlayOpen();
+        if (hintText) {
+          hintText.textContent =
+            shouldAutoLeaderboardAfterClose() && !nlOpenHint
+              ? "正在同步成绩并打开今日榜单…"
+              : "点「重新试玩」再玩一次，或点「今日榜单」查看排名";
+        }
       }
 
       // LB-2：仅首轮未改局自动弹榜；AI 弹层打开时挂起，关弹层仅释放 pending（勿 sessionId 兜底）
       const nlOpen = isNlPatchOverlayOpen();
       const closedAfterRun = !!sawGodotRunning;
-      const shouldHandle =
-        autoLeaderboardEnabled &&
-        closedAfterRun &&
-        !nlOpen &&
-        window.EduLeaderboard?.LEADERBOARD_GENRES?.has(genre) &&
-        !leaderboardHandledThisRun;
+      const shouldHandle = shouldAutoLeaderboardAfterClose() && closedAfterRun && !nlOpen;
       if (shouldHandle) {
         await handleLeaderboardAfterRunClose(sessionId);
         stopLaunchStatusPolling();
         return;
       }
-      if (closedAfterRun && nlOpen && autoLeaderboardEnabled && !leaderboardHandledThisRun) {
+      if (closedAfterRun && nlOpen && shouldAutoLeaderboardAfterClose()) {
         pendingLeaderboardSessionId = sessionId;
         prevGodotRunning = false;
         return;
@@ -1415,10 +1620,24 @@
       sawGodotRunning = !!(data.already_running || data.pid);
       const isLocalShare =
         launchState.launch_mode === "local_share" || launchState.ready_for_local_godot;
+      if (isLocalShare && launchState.project_path && isLabHelperEnabled()) {
+        const helperResult = await tryLaunchViaLabHelper(launchState.project_path, force);
+        if (helperResult.ok) {
+          launchState.helper_launched = true;
+          sawGodotRunning = true;
+          window.EduSession.log(
+            helperResult.already_running
+              ? "✓ 本机 Godot 已在运行"
+              : "✓ 本机 Godot 已通过助手启动"
+          );
+        }
+      }
       window.EduSession.log(
-        isLocalShare
+        isLocalShare && !launchState.helper_launched
           ? `✓ 本机试玩路径已就绪 · ${launchState.project_path || ""}`
-          : force
+          : isLocalShare && launchState.helper_launched
+            ? `✓ 本机试玩已启动 · ${launchState.project_path || ""}`
+            : force
             ? "✓ 已用新参数重新启动"
             : launchState.already_running
               ? "✓ 游戏已在运行"
@@ -1457,9 +1676,17 @@
     window.EduCodeHighlight.stopPolling();
     stopLaunchStatusPolling();
 
-    const playTitle = isLocalShare ? "请用本机 Godot 打开会话目录" : "游戏已全屏铺满显示器";
+    const playTitle = isLocalShare
+      ? isLabHelperEnabled()
+        ? launchState?.helper_launched
+          ? "本机 Godot 已启动"
+          : "正在唤起本机 Godot…"
+        : "请用本机 Godot 打开会话目录"
+      : "游戏已全屏铺满显示器";
     const playHint = isLocalShare
-      ? "路径见上方技术信息；机房映射盘就绪后由本机启动脚本或 Godot 打开"
+      ? isLabHelperEnabled()
+        ? "请在本机 Godot 窗口试玩；玩完关闭窗口将自动打开今日榜单"
+        : "路径见上方技术信息；请先运行 GameForgeLabHelper.exe"
       : "请在游戏窗口试玩；玩完关闭窗口即可看今日榜";
 
     window.EduDualPane.setRightContent(`
@@ -1485,8 +1712,9 @@
 
     if (launched) {
       window.EduCodeHighlight.startPolling(window.EduSession.sessionId);
-      // local_share：服务器无 Godot 进程，勿轮询 running 误判「已关闭」
-      if (!isLocalShare) {
+      if (isLocalShare) {
+        startLocalSharePolling(window.EduSession.sessionId);
+      } else {
         startLaunchStatusPolling(window.EduSession.sessionId);
       }
     } else if (workspacePath) {
@@ -1694,6 +1922,7 @@
     sawGodotRunning = false;
     leaderboardHandledThisRun = false;
     autoLeaderboardEnabled = true;
+    initialPrototypeLeaderboardDone = false;
     pendingLeaderboardSessionId = "";
     // 主动回主页/重新开始：先 harvest 有效经验，再清 workspace
     await window.EduSession.releaseAsync(undefined, { harvest: true });
@@ -1822,6 +2051,7 @@
     workspaceFileCache.clear();
     launchState = null;
     autoLeaderboardEnabled = true;
+    initialPrototypeLeaderboardDone = false;
     pendingLeaderboardSessionId = "";
     leaderboardHandledThisRun = false;
     stopLaunchStatusPolling();
@@ -1834,7 +2064,7 @@
   // LB-2：关 AI 弹层只释放「首轮关窗时挂起」的 pending；禁止 sessionId 兜底（否则每次对话完都弹首轮分）
   window.addEventListener("edu-nlpatch-closed", () => {
     const sid = pendingLeaderboardSessionId;
-    if (!sid || !autoLeaderboardEnabled || leaderboardHandledThisRun) {
+    if (!sid || !shouldAutoLeaderboardAfterClose()) {
       stopLaunchStatusPolling();
       return;
     }

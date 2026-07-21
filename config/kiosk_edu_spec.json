@@ -217,5 +217,12 @@
     "top_limit": 10,
     "store_limit": 50,
     "genres": ["platformer", "shmup", "survivor", "pingpong", "fighting", "parkour", "racing"]
+  },
+  "lab_helper": {
+    "enabled": true,
+    "base_url": "http://127.0.0.1:17890",
+    "workspace_prefix": "E:\\project\\GameForge-K12\\workspace",
+    "local_drive": "Z:",
+    "note": "学生机运行 GameForgeLabHelper.exe；浏览器试玩时 POST /launch 开 Godot，关窗后自动弹今日榜单"
   }
 }

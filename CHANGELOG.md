@@ -12,6 +12,7 @@
 
 ### 变更
 
+- **7.21 教学机房助手（S2-路B）**：`GameForgeLabHelper.exe` + `lab_godot_helper.py`（本机 `:17890` 开 Godot / 关窗榜单）；`GameForgeLabServer.exe` + `launch_lab_server.py`（服务器 `0.0.0.0` 启 API/Kiosk）；打包 `pack_lab_helper_zip.ps1` · `build_lab_server_launcher.ps1`；Kiosk `edu-wizard.js` LB-2 首轮自动弹榜；部署文档 `7.21_教学机房_*` · 现场记录 `机房部署现场记录/`
 - **7.21 总控续工 + 交付包刷新**：[`7.20_AI改游戏智能体_新窗对接_总控续工_2026-07-21.md`](开发文档/7.20_AI改游戏智能体_新窗对接_总控续工_2026-07-21.md)；机房 S2-路B 检查清单索引；`pack_exhibition_delivery` → `GameForge-K12-v1.2-server-20260721.zip`
 - **教学案例（2026-07-20）**：[`7.20_教学案例_Agent预言机与虚空Done闭环_工作历程与经验_2026-07-20.md`](开发文档/7.20_教学案例_Agent预言机与虚空Done闭环_工作历程与经验_2026-07-20.md)；Cursor Skill `.cursor/skills/gameforge-agent-oracle-gates/`
 - **HF-15.1 虚空 Done / 同错早停（P0 已落地）**：非法 evidence（`.tscn` 当 symbol、`wired_by` 含 `->`）硬拒；新符号须本轮 `written_paths`；同错≥3 强制 partial 早停；`replace_text` 附 `symbols_added`；`self_check` 未过则同轮 `done` 合并门禁。单测 `test_hf15_1_hollow_done.py`；验收簇 **28 passed**（hf15_1+hf15+hf14）。规范：`开发文档/7.20_AI改游戏智能体_HF-15.1_虚空Done早停_*`
