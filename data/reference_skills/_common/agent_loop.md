@@ -9,7 +9,11 @@
 3. **可选材料**：`search_learned_skills` / Reference；Catalog 在 goals 合适时再用。  
 4. **施工**：已有大脚本/场景默认 `replace_text`；`write_file` 用于新文件、小配置或 goals 标明的完整重构；桥 API / 触屏按钮按需；带条件的需求用脚本实现条件本身。  
 5. **自检**：`validate_gdscript` → `self_check` → 玩家健康 / dry-run。  
-6. **收工**：`done.summary` 覆盖全部 goals；试玩说明含重开与触屏。
+6. **收工**：`done.summary` 覆盖全部 goals；试玩说明含重开与触屏。  
+   - **先落盘再 done**：`evidence[].symbol` 必须已在对应 `path` 文件中；本轮新建的函数/变量须经过成功的 `replace_text` / `write_file`。  
+   - **禁止虚空完成**：thought 里若仍缺符号，不得在 summary 写「已实现」并连点 `done`。  
+   - **evidence 形状**：`symbol` 是 GDScript 标识符，不是 `.tscn` 节点路径；`wired_by` 用真实函数名，不要写 `A -> B` 散文。  
+   - 多 goals（≥4）时优先拆成多轮对话，降低一次大包假完工。
 
 ## 预算
 

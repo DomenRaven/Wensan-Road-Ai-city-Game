@@ -12,6 +12,8 @@
 
 ### 变更
 
+- **7.21 总控续工 + 交付包刷新**：[`7.20_AI改游戏智能体_新窗对接_总控续工_2026-07-21.md`](开发文档/7.20_AI改游戏智能体_新窗对接_总控续工_2026-07-21.md)；机房 S2-路B 检查清单索引；`pack_exhibition_delivery` → `GameForge-K12-v1.2-server-20260721.zip`
+- **教学案例（2026-07-20）**：[`7.20_教学案例_Agent预言机与虚空Done闭环_工作历程与经验_2026-07-20.md`](开发文档/7.20_教学案例_Agent预言机与虚空Done闭环_工作历程与经验_2026-07-20.md)；Cursor Skill `.cursor/skills/gameforge-agent-oracle-gates/`
 - **HF-15.1 虚空 Done / 同错早停（P0 已落地）**：非法 evidence（`.tscn` 当 symbol、`wired_by` 含 `->`）硬拒；新符号须本轮 `written_paths`；同错≥3 强制 partial 早停；`replace_text` 附 `symbols_added`；`self_check` 未过则同轮 `done` 合并门禁。单测 `test_hf15_1_hollow_done.py`；验收簇 **28 passed**（hf15_1+hf15+hf14）。规范：`开发文档/7.20_AI改游戏智能体_HF-15.1_虚空Done早停_*`
 - **HF-15 预言机分层 P0 已落地**：`assert_presentation_predicates` + L1 多 caller/间接/拒非法 `wired_by`；接入 `run_done_gates`；`_PRESENTATION_WORK_TIP`；单测 `test_hf15_oracle_layers.py`。验收簇 **22 passed**。总纲 G13。规范：`开发文档/7.20_AI改游戏智能体_预言机分层_*`
 - **HF-14 证据验收闭环（S1–S5 已落地）**：`done`/`self_check` 交 `evidence[]`；`assert_evidence_wired` 机器核定义+`_process`/Timer 接线；反馈轮无真 diff / 近亲 summary 硬回灌；tip 改为 wired_by 导向。合成单测 `tests/test_hf14_evidence.py`。规范：`开发文档/7.20_AI改游戏智能体_证据验收闭环_*`

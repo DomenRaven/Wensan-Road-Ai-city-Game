@@ -475,11 +475,12 @@ body.edu-ambient-step .step-panel {
   padding-bottom: 4px;
 }
 
-/* B1 · 居中输入 + 全屏肥皂泡泡 · K12 */
+/* B1 · 居中输入 + 全屏肥皂泡泡 · K12
+ * 横屏：工具栏在倒数第二行，底部留 1fr 空白，避免「上一步/下一步」贴底边 */
 body.edu-step-b1 .step-panel,
 body.edu-step-b2 .step-panel {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto auto auto minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr) auto auto auto auto minmax(48px, 0.85fr);
   align-items: center;
   justify-items: center;
   max-width: none;
@@ -487,7 +488,7 @@ body.edu-step-b2 .step-panel {
   min-height: calc(100dvh - var(--edu-header-h));
   text-align: center;
   pointer-events: none;
-  padding: clamp(12px, 2.5vh, 28px) 20px clamp(16px, 2.5vh, 28px);
+  padding: clamp(12px, 2.5vh, 28px) 20px clamp(20px, 3.5vh, 36px);
   overflow: visible;
 }
 
@@ -529,7 +530,7 @@ body.edu-step-b2 #stepForm {
 
 body.edu-step-b1 .toolbar,
 body.edu-step-b2 .toolbar {
-  grid-row: 6;
+  grid-row: 5;
   pointer-events: auto;
   position: relative;
   z-index: 50;
@@ -540,7 +541,8 @@ body.edu-step-b2 .toolbar {
   width: 100%;
   max-width: 480px;
   margin-top: 0;
-  padding-top: clamp(16px, 3vh, 32px);
+  padding-top: clamp(12px, 2.5vh, 24px);
+  padding-bottom: clamp(8px, 1.5vh, 16px);
 }
 
 body.edu-step-b1 .toolbar .btn,
